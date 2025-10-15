@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Models
 {
     public class Morada
     {
-        
         [Key]
+        [ForeignKey(nameof(Utilizador))]
         public int UtilizadorId { get; set; }
 
         [Required, StringLength(160)]
