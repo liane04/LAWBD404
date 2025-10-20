@@ -47,7 +47,7 @@ namespace Marketplace.Data
 
             // Configuração da herança TPH para Utilizador
             modelBuilder.Entity<Utilizador>()
-                .HasDiscriminator<string>("Tipo")
+                .HasDiscriminator<string>("Discriminator")
                 .HasValue<Administrador>("Administrador")
                 .HasValue<Vendedor>("Vendedor")
                 .HasValue<Comprador>("Comprador");
@@ -64,27 +64,107 @@ namespace Marketplace.Data
                 .HasValue<DenunciaAnuncio>("DenunciaAnuncio")
                 .HasValue<DenunciaUser>("DenunciaUser");
 
-            // Configuração para evitar ciclos de cascade delete
-            modelBuilder.Entity<DenunciaUser>()
-                .HasOne(d => d.UtilizadorAlvo)
-                .WithMany(u => u.DenunciasRecebidas)
+            // IMPORTANTE: Configurações para evitar ciclos de cascade delete
+
+            // AnunciosFavoritos - desativa cascade para Comprador
+            modelBuilder.Entity<AnuncioFav>()
+                .HasOne(af => af.Comprador)
+                .WithMany(c => c.AnunciosFavoritos)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // MarcasFavoritas - desativa cascade para Comprador
+            modelBuilder.Entity<MarcasFav>()
+                .HasOne(mf => mf.Comprador)
+                .WithMany(c => c.MarcasFavoritas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Conversas - desativa cascade para evitar múltiplos paths
+            modelBuilder.Entity<Conversa>()
+                .HasOne(c => c.Comprador)
+                .WithMany(comp => comp.Conversas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Conversa>()
+                .HasOne(c => c.Vendedor)
+                .WithMany(v => v.Conversas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Conversa>()
+                .HasOne(c => c.Anuncio)
+                .WithMany(a => a.Conversas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Denuncias - desativa cascade para evitar ciclos
             modelBuilder.Entity<Denuncia>()
                 .HasOne(d => d.Comprador)
                 .WithMany(c => c.Denuncias)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configurações de precisão
-            modelBuilder.Entity<Anuncio>()
-                .Property(a => a.Preco)
-                .HasPrecision(10, 2);
+            modelBuilder.Entity<DenunciaUser>()
+                .HasOne(d => d.UtilizadorAlvo)
+                .WithMany(u => u.DenunciasRecebidas)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Configuração de delete behavior
+            modelBuilder.Entity<DenunciaAnuncio>()
+                .HasOne(d => d.Anuncio)
+                .WithMany(a => a.Denuncias)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // HistoricoAcao - desativa cascade para evitar múltiplos paths
+            modelBuilder.Entity<HistoricoAcao>()
+                .HasOne(h => h.Administrador)
+                .WithMany(a => a.HistoricoAcoes)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<AcaoAnuncio>()
+                .HasOne(a => a.Anuncio)
+                .WithMany(an => an.AcoesAnuncio)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<AcaoUser>()
+                .HasOne(a => a.Utilizador)
+                .WithMany(u => u.AcoesUser)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Notificacoes - desativa cascade para Comprador
+            modelBuilder.Entity<Notificacoes>()
+                .HasOne(n => n.Comprador)
+                .WithMany(c => c.Notificacoes)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Compras - desativa cascade
+            modelBuilder.Entity<Compra>()
+                .HasOne(c => c.Comprador)
+                .WithMany(comp => comp.Compras)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Compra>()
+                .HasOne(c => c.Anuncio)
+                .WithMany(a => a.Compras)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Reservas - desativa cascade
+            modelBuilder.Entity<Reserva>()
+                .HasOne(r => r.Comprador)
+                .WithMany(c => c.Reservas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Reserva>()
+                .HasOne(r => r.Anuncio)
+                .WithMany(a => a.Reservas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Visitas - desativa cascade para Reserva
             modelBuilder.Entity<Visita>()
                 .HasOne(v => v.Reserva)
                 .WithMany(r => r.Visitas)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Configurações de precisão
+            modelBuilder.Entity<Anuncio>()
+                .Property(a => a.Preco)
+                .HasPrecision(10, 2);
         }
+
     }
 }

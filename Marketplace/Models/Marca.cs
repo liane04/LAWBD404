@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Marketplace.Models
@@ -11,7 +11,7 @@ namespace Marketplace.Models
         [Required, StringLength(100)]
         public string Nome { get; set; } = null!;
 
-        public ICollection<Anuncio> Anuncios { get; set; } = new List<Anuncio>();
+        // Uma marca (ex: Audi) tem vários modelos
         public ICollection<Modelo> Modelos { get; set; } = new List<Modelo>();
     }
 }

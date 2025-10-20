@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Marketplace.Models
 {
@@ -10,6 +11,8 @@ namespace Marketplace.Models
         [Required, StringLength(100)]
         public string Nome { get; set; } = null!;
 
-        public ICollection<Anuncio> Anuncios { get; set; } = new List<Anuncio>();
+        // Relação 1:N - Um tipo (ex: Carro) pode ter vários modelos
+        public ICollection<Modelo> Modelos { get; set; } = new List<Modelo>();
     }
+}
 }
