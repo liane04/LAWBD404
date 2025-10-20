@@ -1,221 +1,152 @@
 ﻿@{
-    // Define o título da página
-    ViewData["Title"] = "Marketplace - Encontre o Seu Veículo Usado";
+    ViewData["Title"] = "Bem-vindo ao AutoMarket";
 }
 
-<div class="row mb-5 mt-4 justify-content-center">
-    <div class="col-lg-8">
-
-        <div class="p-5 hero-box rounded-3 shadow-lg text-center text-white">
-
-            <h1 class="display-3 fw-bolder mb-3">
-                Encontre o Carro Perfeito.
-            </h1>
-
-            <p class="lead mb-4">
-                O seu próximo veículo usado espera por si no Marketplace 404.
-            </p>
+<!-- Secção Hero com Pesquisa Integrada -->
+<section class="hero-section">
+    <div class="container text-center">
+        <!-- Conteúdo do topo: Título e subtítulo -->
+        <div class="hero-content">
+            <h1 class="display-3">O seu próximo carro está aqui.</h1>
+            <p class="lead fs-4">Pesquise, compare e encontre o carro ideal para si de forma fácil e segura.</p>
         </div>
-    </div>
-</div>
-<div class="bg-light pt-5 pb-5">
 
-    <div class="container">
-
-        <h2 class="text-center mb-5 text-dark fw-light">Catágolo</h2>
-
-        <div class="row">
-            <div class="col-lg-3 mb-4">
-                <div class="card p-4 border-0 shadow-lg sticky-top filter-card" style="top: 20px;">
-                    <h5 class="card-title text-primary mb-4 fw-bold">Refinar Pesquisa <i class="bi bi-funnel-fill"></i></h5>
-                    <form>
-
-                        <div class="mb-3">
-                            <label for="marcaModelo" class="form-label small fw-bold">Marca/Modelo</label>
-                            <input type="text" class="form-control" id="marcaModelo" placeholder="Ex: BMW Série 3">
-                        </div>
-
-                        <h6 class="mt-3 mb-2 small fw-bold text-muted">Preço (€)</h6>
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <input type="number" class="form-control" placeholder="Mínimo">
-                            </div>
-                            <div class="col-6">
-                                <input type="number" class="form-control" placeholder="Máximo">
-                            </div>
-                        </div>
-
-                        <h6 class="mt-3 mb-2 small fw-bold text-muted">Quilometragem (km)</h6>
-                        <input type="number" class="form-control" placeholder="Máx. Quilometragem">
-
-                        <div class="mb-3 mt-3">
-                            <label for="combustivel" class="form-label small fw-bold">Combustível</label>
-                            <select class="form-select" id="combustivel">
-                                <option selected>Todos</option>
-                                <option value="gasolina">Gasolina</option>
-                                <option value="diesel">Diesel</option>
-                                <option value="eletrico">Elétrico</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="caixa" class="form-label small fw-bold">Caixa</label>
-                            <select class="form-select" id="caixa">
-                                <option selected>Qualquer</option>
-                                <option value="manual">Manual</option>
-                                <option value="automatica">Automática</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-action w-100 btn-lg">
-                            <i class="bi bi-search"></i> Pesquisar
-                        </button>
-
-                    </form>
-                </div>
-            </div>
-
-            <div class="col-lg-9">
-                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-                    <span class="text-muted fw-bold">Encontrados 154 Anúncios</span>
-                    <div class="d-flex align-items-center">
-                        <label for="ordenacao" class="me-2 col-form-label small text-muted">Ordenar por:</label>
-                        <select class="form-select form-select-sm w-auto" id="ordenacao">
-                            <option selected>Mais recentes</option>
-                            <option value="preco_asc">Preço (Mais Baixo)</option>
-                            <option value="km_asc">Quilometragem (Menor)</option>
+        <!-- Formulário de Pesquisa movido para dentro da Hero Section -->
+        <div class="search-form-container col-lg-10 mx-auto">
+            <form action="#" method="get">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md">
+                        <select name="marcaId" class="form-select form-select-lg" aria-label="Marca">
+                            <option value="">Todas as Marcas</option>
+                            <option value="1">Audi</option>
+                            <option value="2">BMW</option>
+                            <option value="3">Mercedes-Benz</option>
+                            <option value="4">Volkswagen</option>
+                            <option value="5">Ford</option>
                         </select>
                     </div>
-                </div>
-
-                <div id="listaAnuncios" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-
-                    <div class="col">
-                        <div class="card h-100 border-0 shadow-sm transition-hover">
-                            <div class="position-relative">
-                                <img src="/images/suvPRETO.jpg" class="card-img-top" alt="Marca Modelo" style="height: 180px; object-fit: cover;">
-                                <span class="badge bg-primary position-absolute top-0 start-0 m-2 p-2">SUV</span>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title mb-1 text-dark text-truncate">Marca Exemplo Modelo 2023</h5>
-                                <p class="small text-muted mb-3">Publicado por Vendedor XPTO</p>
-                                <h3 class="text-success fw-bolder mb-3">28.500 €</h3>
-                                <div class="d-flex justify-content-between small text-muted mb-3">
-                                    <span><i class="bi bi-speedometer2 me-1"></i> 35.000 km</span>
-                                    <span><i class="bi bi-fuel-pump-fill me-1"></i> Gasolina</span>
-                                    <span><i class="bi bi-calendar-event me-1"></i> 2023</span>
-                                </div>
-                                <div class="mt-auto">
-                                    <a asp-controller="Veiculo" asp-action="Detalhe" class="btn btn-outline-dark w-100">
-                                        Ver Detalhes <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md">
+                        <input type="number" name="precoMax" class="form-control form-control-lg" placeholder="Preço Máximo (€)" aria-label="Preço Máximo">
                     </div>
-
-                    <div class="col">
-                        <div class="card h-100 border-0 shadow-sm transition-hover">
-                            <div class="position-relative">
-                                <img src="https://via.placeholder.com/600x400?text=Carro+Comum+2" class="card-img-top" alt="Marca Modelo" style="height: 180px; object-fit: cover;">
-                                <span class="badge bg-secondary position-absolute top-0 start-0 m-2 p-2">Sedan</span>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title mb-1 text-dark text-truncate">Outra Marca Modelo 2019</h5>
-                                <p class="small text-muted mb-3">Publicado por Particular Y</p>
-                                <h3 class="text-success fw-bolder mb-3">12.900 €</h3>
-                                <div class="d-flex justify-content-between small text-muted mb-3">
-                                    <span><i class="bi bi-speedometer2 me-1"></i> 120.000 km</span>
-                                    <span><i class="bi bi-fuel-pump-fill me-1"></i> Diesel</span>
-                                    <span><i class="bi bi-calendar-event me-1"></i> 2019</span>
-                                </div>
-                                <div class="mt-auto">
-                                    <a asp-controller="Veiculo" asp-action="Detalhe" class="btn btn-outline-dark w-100">Ver Detalhes <i class="bi bi-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md">
+                        <input type="text" name="localizacao" class="form-control form-control-lg" placeholder="Localização (ex: Lisboa)" aria-label="Localização">
                     </div>
-
-                    <div class="col d-none d-lg-block">
-                        <div class="card h-100 border-0 shadow-sm transition-hover">
-                            <div class="position-relative">
-                                <img src="https://via.placeholder.com/600x400?text=Carro+Premium+3" class="card-img-top" alt="Marca Modelo" style="height: 180px; object-fit: cover;">
-                                <span class="badge bg-primary position-absolute top-0 start-0 m-2 p-2">SUV</span>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title mb-1 text-dark text-truncate">Marca Exemplo Modelo 2020</h5>
-                                <p class="small text-muted mb-3">Publicado por Vendedor Z</p>
-                                <h3 class="text-success fw-bolder mb-3">20.000 €</h3>
-                                <div class="d-flex justify-content-between small text-muted mb-3">
-                                    <span><i class="bi bi-speedometer2 me-1"></i> 70.000 km</span>
-                                    <span><i class="bi bi-fuel-pump-fill me-1"></i> Gasolina</span>
-                                    <span><i class="bi bi-calendar-event me-1"></i> 2020</span>
-                                </div>
-                                <div class="mt-auto">
-                                    <a asp-controller="Veiculo" asp-action="Detalhe" class="btn btn-outline-dark w-100">Ver Detalhes <i class="bi bi-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Procurar</button>
                     </div>
                 </div>
-
-                <nav class="mt-5">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Próxima</a></li>
-                    </ul>
-                </nav>
-            </div>
+            </form>
         </div>
     </div>
-</div>
-<hr class="my-5">
+</section>
 
-<div class="container">
 
-    <div class="row mt-5 mb-5 justify-content-center">
-        <div class="col-lg-10">
-            <div class="p-5 bg-light border rounded-3 shadow-sm text-center sell-cta-box">
-                <h3 class="fw-bold mb-3 text-dark">
-                    <i class="bi bi-car-front-fill text-primary"></i> Quer vender o seu veículo?
-                </h3>
-                <p class="lead text-muted mb-4">
-                    Publique o seu anúncio em poucos minutos. Milhares de compradores esperam por si no nosso Marketplace!
-                </p>
-                <a asp-controller="Vendedor" asp-action="NovoAnuncio" class="btn btn-danger btn-lg px-5">
-                    Registar e Vender Agora <i class="bi bi-arrow-right-short"></i>
+<div class="container my-5 py-5">
+    <!-- Secção de Categorias -->
+    <section>
+        <h2 class="section-title">Explorar por Categoria</h2>
+        <div class="row g-4 justify-content-center">
+            <div class="col-6 col-md-4 col-lg">
+                <a href="#" class="text-decoration-none">
+                    <div class="categoria-card">
+                        <div class="icon">🚙</div>
+                        <h5 class="mb-0">SUV</h5>
+                    </div>
                 </a>
-                <div class="mt-3">
-                    <a asp-controller="Account" asp-action="Login" class="small text-decoration-none text-primary">
-                        Já sou vendedor? Aceda à sua área privada.
-                    </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <a href="#" class="text-decoration-none">
+                    <div class="categoria-card">
+                        <div class="icon">🚗</div>
+                        <h5 class="mb-0">Sedan</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <a href="#" class="text-decoration-none">
+                    <div class="categoria-card">
+                        <div class="icon">🏎️</div>
+                        <h5 class="mb-0">Desportivo</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <a href="#" class="text-decoration-none">
+                    <div class="categoria-card">
+                        <div class="icon">🚐</div>
+                        <h5 class="mb-0">Carrinha</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <a href="#" class="text-decoration-none">
+                    <div class="categoria-card">
+                        <div class="icon">🚘</div>
+                        <h5 class="mb-0">Citadino</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Secção Como Funciona -->
+<section class="feature-section">
+    <div class="container">
+        <h2 class="section-title">Como Funciona</h2>
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <div class="feature-icon">🔎</div>
+                <h3>Pesquise</h3>
+                <p class="text-muted">Utilize os nossos filtros avançados para encontrar exatamente o que procura, por marca, preço, localização e muito mais.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-icon">⚖️</div>
+                <h3>Compare</h3>
+                <p class="text-muted">Analise as várias opções lado a lado. Veja fotos, especificações e contacte os vendedores para tirar dúvidas.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-icon">🤝</div>
+                <h3>Feche Negócio</h3>
+                <p class="text-muted">Contacte diretamente o vendedor para agendar uma visita e fazer a sua proposta. Simples, rápido e seguro.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Secção Call to Action -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="mb-3">Pronto para começar?</h2>
+        <p class="lead mb-4">Milhares de anúncios esperam por si. Encontre o seu carro de sonho hoje mesmo.</p>
+        <a href="#" class="btn btn-primary btn-lg">Ver todos os anúncios</a>
+    </div>
+</section>
+
+<!-- Secção de Estatísticas -->
+<section class="stats-section">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="stat-item">
+                    <h2 class="stat-number">10,000+</h2>
+                    <p class="stat-label">Utilizadores Ativos</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="stat-item">
+                    <h2 class="stat-number">25,000+</h2>
+                    <p class="stat-label">Anúncios Publicados</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h2 class="stat-number">500+</h2>
+                    <p class="stat-label">Vendedores Verificados</p>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <div class="row mt-5 mb-5 text-center">
-        <div class="col-md-4 mb-4">
-            <div class="p-4 border rounded-3 h-100">
-                <h1 class="display-4 text-primary fw-bolder">3,500+</h1>
-                <p class="lead text-muted">Anúncios Ativos</p>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="p-4 border rounded-3 h-100">
-                <h1 class="display-4 text-primary fw-bolder">12,000+</h1>
-                <p class="lead text-muted">Compradores Registados</p>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="p-4 border rounded-3 h-100">
-                <h1 class="display-4 text-primary fw-bolder">250+</h1>
-                <p class="lead text-muted">Vendedores Ativos</p>
-            </div>
-        </div>
-    </div>
-
-</div>
