@@ -1,22 +1,125 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
+/* ========================================= */
+/* === 1. AJUSTES BASE E STICKY FOOTER === */
+/* ========================================= */
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    /* Garante espaço para o rodapé (70px) */
+    margin-bottom: 70px;
+}
+
+.footer {
+    /* Fixa o rodapé no fundo do documento */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Altura consistente com a margin-bottom do body */
+    height: 70px;
+    line-height: 70px; /* Centraliza verticalmente o texto */
+    background-color: #f8f9fa;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+}
+
+
+/* ========================================= */
+/* === 2. PALETA DE CORES PERSONALIZADA (CORRETO) === */
+/* ========================================= */
+
+:root {
+    /* COR PRIMÁRIA: Verde-Azulado (#008080) -> Usado para a MARCA, texto, links, e elementos padrão. */
+    --bs-primary: #008080;
+    --bs-primary-rgb: 0, 128, 128;
+    /* NOVA COR DE DESTAQUE/AÇÃO: Laranja Coral (#FF7F50) -> Usado APENAS para botões de Login e Pesquisa. */
+    --bs-action-color: #FF7F50;
+    --bs-action-rgb: 255, 127, 80;
+    /* COR SECUNDÁRIA: Cinza Padrão (Manter ou ajustar) */
+    /* --bs-secondary: #6c757d; */
+    /* COR DE PERIGO/VENDA: Vermelho (Para o botão Vender/Remover) */
+    --bs-danger: #D9534F;
+}
+
+
+/* ========================================= */
+/* === 3. ESTILOS DE ELEMENTOS ESPECÍFICOS E SOBREPOSIÇÃO === */
+/* ========================================= */
+
+/* --- 3.1. BOTÃO DE AÇÃO (LOGIN, PESQUISAR) --- */
+/* Cria uma nova classe btn-action baseada no Laranja Coral */
+.btn-action {
+    color: #fff; /* Texto branco */
+    background-color: var(--bs-action-color);
+    border-color: var(--bs-action-color);
+}
+
+    .btn-action:hover {
+        color: #fff;
+        background-color: #FF6347; /* Tom um pouco mais escuro para o hover */
+        border-color: #FF6347;
+    }
+
+
+/* --- 3.2. HERO SECTION: CAIXA DE DESTAQUE --- */
+.hero-box {
+    /* Fundo usa a cor primária (Verde-Azulado) */
+    background-color: var(--bs-primary) !important;
+    color: white;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3) !important;
+    /* Borda usa a cor de AÇÃO (Laranja) para contraste */
+    border: 3px solid var(--bs-action-color);
+}
+
+    .hero-box h1 {
+        font-weight: 900 !important;
+    }
+
+/* --- 3.3. OUTROS ESTILOS (Mantidos) --- */
+.filter-card {
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.sell-cta-box {
+    background-color: #f0f0f0 !important;
+    /* Linha lateral de PERIGO (VERMELHO) */
+    border-left: 10px solid var(--bs-danger);
+}
+
+/* Efeito Hover nos Cards */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+/* --- 3.3. ESTILOS PARA PAGINAÇÃO ATIVA --- */
+/* Muda o fundo do item de página ativo (o número atual) para Laranja */
+.pagination .page-item.active .page-link {
+    background-color: var(--bs-action-color) !important;
+    border-color: var(--bs-action-color) !important;
+    color: white !important;
+}
+
+/* Opcional: Altera a cor do texto das setas (Anterior/Próxima) para a cor primária (Verde-Azul) */
+.pagination .page-link {
+    color: var(--bs-primary);
+}
+
+    .pagination .page-link:hover {
+        color: white;
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+/* --- 4. ESTILOS PARA O CTA DE VENDAS --- */
+.sell-cta-box {
+    /* Fundo mais neutro para que o botão btn-danger se destaque */
+    background-color: #f0f0f0 !important;
+    /* Linha lateral da cor PERIGO (DANGER) */
+    border-left: 10px solid var(--bs-danger);
 }
