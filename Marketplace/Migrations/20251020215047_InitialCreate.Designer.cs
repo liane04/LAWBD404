@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marketplace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251015185556_InitialCreate")]
+    [Migration("20251020215047_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -468,7 +468,7 @@ namespace Marketplace.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("MarcaId")
+                    b.Property<int>("MarcaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Nome")
@@ -476,9 +476,14 @@ namespace Marketplace.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("TipoId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MarcaId");
+
+                    b.HasIndex("TipoId");
 
                     b.ToTable("Modelos");
                 });
@@ -818,7 +823,7 @@ namespace Marketplace.Migrations
                         .HasForeignKey("CombustivelId");
 
                     b.HasOne("Marketplace.Models.Marca", "Marca")
-                        .WithMany("Anuncios")
+                        .WithMany()
                         .HasForeignKey("MarcaId");
 
                     b.HasOne("Marketplace.Models.Modelo", "Modelo")
@@ -826,7 +831,7 @@ namespace Marketplace.Migrations
                         .HasForeignKey("ModeloId");
 
                     b.HasOne("Marketplace.Models.Tipo", "Tipo")
-                        .WithMany("Anuncios")
+                        .WithMany()
                         .HasForeignKey("TipoId");
 
                     b.HasOne("Marketplace.Models.Vendedor", "Vendedor")
@@ -1017,9 +1022,19 @@ namespace Marketplace.Migrations
                 {
                     b.HasOne("Marketplace.Models.Marca", "Marca")
                         .WithMany("Modelos")
-                        .HasForeignKey("MarcaId");
+                        .HasForeignKey("MarcaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.Tipo", "Tipo")
+                        .WithMany("Modelos")
+                        .HasForeignKey("TipoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Marca");
+
+                    b.Navigation("Tipo");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Notificacoes", b =>
@@ -1206,8 +1221,6 @@ namespace Marketplace.Migrations
 
             modelBuilder.Entity("Marketplace.Models.Marca", b =>
                 {
-                    b.Navigation("Anuncios");
-
                     b.Navigation("Modelos");
                 });
 
@@ -1238,7 +1251,7 @@ namespace Marketplace.Migrations
 
             modelBuilder.Entity("Marketplace.Models.Tipo", b =>
                 {
-                    b.Navigation("Anuncios");
+                    b.Navigation("Modelos");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Utilizador", b =>
