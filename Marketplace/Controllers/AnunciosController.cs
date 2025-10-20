@@ -32,6 +32,8 @@ namespace Marketplace.Controllers
         // GET: Anuncios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+
+            /*
             if (id == null)
             {
                 return NotFound();
@@ -51,6 +53,8 @@ namespace Marketplace.Controllers
             }
 
             return View(anuncio);
+            */
+            return View();
         }
 
         // GET: Anuncios/Create

@@ -437,3 +437,53 @@ body.home-page .navbar:not(.scrolled) {
     border-radius: 0.5rem;
     padding: 1rem;
 }
+
+
+/* Estilos para a gestão de imagens na página de edição */
+.edit-image-thumb {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* Forçar um rácio de 1:1 */
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+    .edit-image-thumb img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .edit-image-thumb .btn-delete-img {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+    }
+
+.anuncio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Adicionado para fixar o tamanho da imagem do anúncio */
+.anuncio-card .card-img-top {
+    height: 200px; /* Define uma altura fixa para todas as imagens */
+    object-fit: cover; /* Garante que a imagem cobre a área sem distorcer */
+    width: 100%;
+}
+
+.anuncio-card .card-body {
+    padding: 1rem;
+}
+
