@@ -164,6 +164,12 @@ namespace Marketplace.Data
             modelBuilder.Entity<Anuncio>()
                 .Property(a => a.Preco)
                 .HasPrecision(10, 2);
+
+            modelBuilder.Entity<AnuncioFav>()
+    .HasOne(af => af.Comprador)
+    .WithMany(c => c.AnunciosFavoritos)
+    .HasForeignKey(af => af.CompradorId)
+    .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

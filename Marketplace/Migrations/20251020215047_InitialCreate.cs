@@ -79,25 +79,6 @@ namespace Marketplace.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Modelos",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    MarcaId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Modelos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Modelos_Marcas_MarcaId",
-                        column: x => x.MarcaId,
-                        principalTable: "Marcas",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Utilizador",
                 columns: table => new
                 {
@@ -127,57 +108,28 @@ namespace Marketplace.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Anuncios",
+                name: "Modelos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Preco = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    Ano = table.Column<int>(type: "int", nullable: true),
-                    Cor = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Descricao = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
-                    Quilometragem = table.Column<int>(type: "int", nullable: true),
-                    Titulo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Caixa = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    VendedorId = table.Column<int>(type: "int", nullable: false),
-                    MarcaId = table.Column<int>(type: "int", nullable: true),
-                    ModeloId = table.Column<int>(type: "int", nullable: true),
-                    CategoriaId = table.Column<int>(type: "int", nullable: true),
-                    CombustivelId = table.Column<int>(type: "int", nullable: true),
-                    TipoId = table.Column<int>(type: "int", nullable: true)
+                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    MarcaId = table.Column<int>(type: "int", nullable: false),
+                    TipoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Anuncios", x => x.Id);
+                    table.PrimaryKey("PK_Modelos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Anuncios_Categorias_CategoriaId",
-                        column: x => x.CategoriaId,
-                        principalTable: "Categorias",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Anuncios_Combustiveis_CombustivelId",
-                        column: x => x.CombustivelId,
-                        principalTable: "Combustiveis",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Anuncios_Marcas_MarcaId",
+                        name: "FK_Modelos_Marcas_MarcaId",
                         column: x => x.MarcaId,
                         principalTable: "Marcas",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Anuncios_Modelos_ModeloId",
-                        column: x => x.ModeloId,
-                        principalTable: "Modelos",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Anuncios_Tipos_TipoId",
+                        name: "FK_Modelos_Tipos_TipoId",
                         column: x => x.TipoId,
                         principalTable: "Tipos",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Anuncios_Utilizador_VendedorId",
-                        column: x => x.VendedorId,
-                        principalTable: "Utilizador",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -283,6 +235,62 @@ namespace Marketplace.Migrations
                     table.ForeignKey(
                         name: "FK_PesquisasPassadas_Utilizador_CompradorId",
                         column: x => x.CompradorId,
+                        principalTable: "Utilizador",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Anuncios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Preco = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
+                    Ano = table.Column<int>(type: "int", nullable: true),
+                    Cor = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Descricao = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    Quilometragem = table.Column<int>(type: "int", nullable: true),
+                    Titulo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Caixa = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    VendedorId = table.Column<int>(type: "int", nullable: false),
+                    MarcaId = table.Column<int>(type: "int", nullable: true),
+                    ModeloId = table.Column<int>(type: "int", nullable: true),
+                    CategoriaId = table.Column<int>(type: "int", nullable: true),
+                    CombustivelId = table.Column<int>(type: "int", nullable: true),
+                    TipoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Anuncios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Anuncios_Categorias_CategoriaId",
+                        column: x => x.CategoriaId,
+                        principalTable: "Categorias",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Anuncios_Combustiveis_CombustivelId",
+                        column: x => x.CombustivelId,
+                        principalTable: "Combustiveis",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Anuncios_Marcas_MarcaId",
+                        column: x => x.MarcaId,
+                        principalTable: "Marcas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Anuncios_Modelos_ModeloId",
+                        column: x => x.ModeloId,
+                        principalTable: "Modelos",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Anuncios_Tipos_TipoId",
+                        column: x => x.TipoId,
+                        principalTable: "Tipos",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Anuncios_Utilizador_VendedorId",
+                        column: x => x.VendedorId,
                         principalTable: "Utilizador",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -752,6 +760,11 @@ namespace Marketplace.Migrations
                 column: "MarcaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Modelos_TipoId",
+                table: "Modelos",
+                column: "TipoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notificacoes_AnuncioFavId",
                 table: "Notificacoes",
                 column: "AnuncioFavId");
@@ -868,13 +881,13 @@ namespace Marketplace.Migrations
                 name: "Modelos");
 
             migrationBuilder.DropTable(
-                name: "Tipos");
-
-            migrationBuilder.DropTable(
                 name: "Utilizador");
 
             migrationBuilder.DropTable(
                 name: "Marcas");
+
+            migrationBuilder.DropTable(
+                name: "Tipos");
 
             migrationBuilder.DropTable(
                 name: "Moradas");
