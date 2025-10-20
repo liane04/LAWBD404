@@ -27,6 +27,12 @@ body {
     min-height: calc(100vh - 70px - 200px); /* Viewport Height - Altura do Navbar - Altura aproximada do Footer */
 }
 
+/* Classe genérica para secções, garantindo espaçamento vertical consistente */
+.page-section {
+    padding: 5rem 0;
+}
+
+
 /* -------------------------------------------------------------------------- */
 /* Tipografia                                  */
 /* -------------------------------------------------------------------------- */
@@ -111,6 +117,7 @@ body.home-page .navbar:not(.scrolled) {
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/imagens/subPRETO.jpg'); /* Imagem de fundo com um overlay escuro */
     background-size: cover; /* A imagem cobre toda a área */
     background-position: center; /* A imagem fica centrada */
+    background-attachment: fixed; /* Efeito parallax: a imagem fica fixa durante o scroll */
     height: 85vh; /* Altura aumentada para conter a pesquisa */
     min-height: 650px; /* Altura mínima aumentada */
     display: flex; /* Alinhamento do conteúdo com flexbox */
@@ -123,7 +130,7 @@ body.home-page .navbar:not(.scrolled) {
 
 /* Espaçamento entre o título e a caixa de pesquisa */
 .hero-content {
-    margin-bottom: 8rem;
+    margin-bottom: 3rem;
 }
 
 
@@ -191,7 +198,6 @@ body.home-page .navbar:not(.scrolled) {
 /* Secção "Como funciona" */
 .feature-section {
     background-color: #ffffff;
-    padding: 5rem 0;
 }
 
 /* Ícones da secção "Como funciona" */
@@ -211,7 +217,6 @@ body.home-page .navbar:not(.scrolled) {
 .cta-section {
     background-color: var(--bs-dark);
     color: white;
-    padding: 5rem 0;
     text-align: center;
 }
 
@@ -226,7 +231,6 @@ body.home-page .navbar:not(.scrolled) {
     background-size: cover;
     background-position: center;
     background-attachment: fixed; /* Efeito parallax: a imagem fica fixa durante o scroll */
-    padding: 5rem 0;
     color: white;
 }
 
@@ -250,6 +254,7 @@ body.home-page .navbar:not(.scrolled) {
 
 .footer {
     font-size: 0.9rem; /* Fonte ligeiramente mais pequena */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Linha de separação para o footer */
 }
 
     .footer a.text-white-50:hover {
