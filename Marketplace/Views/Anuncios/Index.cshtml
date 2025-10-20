@@ -1,107 +1,168 @@
-﻿@model IEnumerable<Marketplace.Models.Anuncio>
-
-@{
-    ViewData["Title"] = "Index";
+﻿@{
+    ViewData["Title"] = "Comprar Carros";
 }
 
-<h1>Index</h1>
+<div class="container my-5">
+    <div class="row">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Preco)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ano)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descricao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quilometragem)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Titulo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Caixa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Vendedor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Marca)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Modelo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Categoria)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Combustivel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tipo)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Preco)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ano)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quilometragem)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Caixa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vendedor.Discriminator)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Marca.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Modelo.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Categoria.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Combustivel.Tipo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tipo.Nome)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <!-- Coluna dos Filtros (Sidebar) -->
+        <div class="col-lg-3">
+            <div class="filters-sidebar">
+                <h4 class="mb-4">Filtros</h4>
+                <form action="#" method="get">
+                    <!-- Filtro de Preço -->
+                    <div class="mb-4">
+                        <h6>Preço</h6>
+                        <div class="d-flex align-items-center">
+                            <input type="number" name="precoMin" class="form-control me-2" placeholder="Min">
+                            <span>-</span>
+                            <input type="number" name="precoMax" class="form-control ms-2" placeholder="Max">
+                        </div>
+                    </div>
+
+                    <!-- Filtro de Marca -->
+                    <div class="mb-4">
+                        <h6>Marca</h6>
+                        <select name="marcaId" class="form-select">
+                            <option value="">Todas as Marcas</option>
+                            <option value="1">Audi</option>
+                            <option value="2">BMW</option>
+                            <option value="3">Mercedes-Benz</option>
+                            <option value="4">Ford</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtro de Ano -->
+                    <div class="mb-4">
+                        <h6>Ano de Registo</h6>
+                        <div class="d-flex align-items-center">
+                            <input type="number" class="form-control me-2" placeholder="Desde">
+                            <span>-</span>
+                            <input type="number" class="form-control ms-2" placeholder="Até">
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Coluna dos Anúncios -->
+        <div class="col-lg-9">
+            <!-- Cabeçalho da Listagem -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0">Mostrando 3 resultados</h5>
+                <div class="d-flex align-items-center">
+                    <label for="ordenar" class="form-label me-2 mb-0">Ordenar:</label>
+                    <select id="ordenar" class="form-select form-select-sm" style="width: auto;">
+                        <option selected>Mais Relevantes</option>
+                        <option>Preço: Ascendente</option>
+                        <option>Preço: Descendente</option>
+                        <option>Mais Recentes</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Anúncio Card 1 (Estático) -->
+            <div class="card anuncio-card mb-4">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="https://placehold.co/400x300/343a40/e9ecef?text=BMW+S3" class="img-fluid rounded-start" alt="Imagem do Carro">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body d-flex flex-column h-100">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">BMW Série 3 320d Pack M</h5>
+                                <button class="btn btn-favorite"><i class="bi bi-heart"></i></button>
+                            </div>
+                            <h6 class="card-price">28.500 €</h6>
+                            <p class="card-text text-muted flex-grow-1">Carro nacional em excelente estado, com todas as revisões na marca.</p>
+                            <div class="anuncio-details-list">
+                                <span>2019</span>
+                                <span>&middot;</span>
+                                <span>98.000 km</span>
+                                <span>&middot;</span>
+                                <span>Diesel</span>
+                                <span>&middot;</span>
+                                <span>Viseu</span>
+                            </div>
+                            <a href="/Anuncios/Details/1" class="btn btn-primary mt-3 stretched-link">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anúncio Card 2 (Estático) -->
+            <div class="card anuncio-card mb-4">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="https://placehold.co/400x300/343a40/e9ecef?text=Audi+A4" class="img-fluid rounded-start" alt="Imagem do Carro">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body d-flex flex-column h-100">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">Audi A4 Avant S-Line</h5>
+                                <button class="btn btn-favorite"><i class="bi bi-heart-fill text-danger"></i></button>
+                            </div>
+                            <h6 class="card-price">32.000 €</h6>
+                            <p class="card-text text-muted flex-grow-1">Versão S-Line com caixa automática e muitos extras. Impecável.</p>
+                            <div class="anuncio-details-list">
+                                <span>2020</span>
+                                <span>&middot;</span>
+                                <span>75.000 km</span>
+                                <span>&middot;</span>
+                                <span>Diesel</span>
+                                <span>&middot;</span>
+                                <span>Porto</span>
+                            </div>
+                            <a href="/Anuncios/Details/2" class="btn btn-primary mt-3 stretched-link">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anúncio Card 3 (Estático) -->
+            <div class="card anuncio-card mb-4">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="https://placehold.co/400x300/343a40/e9ecef?text=Ford+Focus" class="img-fluid rounded-start" alt="Imagem do Carro">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body d-flex flex-column h-100">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">Ford Focus ST-Line</h5>
+                                <button class="btn btn-favorite"><i class="bi bi-heart"></i></button>
+                            </div>
+                            <h6 class="card-price">19.750 €</h6>
+                            <p class="card-text text-muted flex-grow-1">Oportunidade. Carro de garagem, muito estimado e económico.</p>
+                            <div class="anuncio-details-list">
+                                <span>2018</span>
+                                <span>&middot;</span>
+                                <span>112.000 km</span>
+                                <span>&middot;</span>
+                                <span>Gasolina</span>
+                                <span>&middot;</span>
+                                <span>Lisboa</span>
+                            </div>
+                            <a href="/Anuncios/Details/3" class="btn btn-primary mt-3 stretched-link">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- A lógica de paginação pode ser adicionada aqui mais tarde -->
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Próxima</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+

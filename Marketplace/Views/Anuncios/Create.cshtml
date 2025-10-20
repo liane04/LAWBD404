@@ -1,87 +1,96 @@
-﻿@model Marketplace.Models.Anuncio
-
-@{
-    ViewData["Title"] = "Create";
+﻿@{
+    ViewData["Title"] = "Criar Novo Anúncio";
 }
 
-<h1>Create</h1>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="create-form-container card shadow-lg">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="card-title text-center mb-4">Criar Novo Anúncio</h2>
+                    <p class="text-center text-muted mb-5">Preencha os detalhes abaixo para colocar o seu carro à venda.</p>
 
-<h4>Anuncio</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Preco" class="control-label"></label>
-                <input asp-for="Preco" class="form-control" />
-                <span asp-validation-for="Preco" class="text-danger"></span>
+                    <form>
+                        <!-- Secção de Informação Principal -->
+                        <h4 class="form-section-title">Informação Principal</h4>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="titulo" class="form-label">Título do Anúncio</label>
+                                <input type="text" class="form-control" id="titulo" placeholder="Ex: BMW Série 3 320d Pack M">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="preco" class="form-label">Preço</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">€</span>
+                                    <input type="number" class="form-control" id="preco" placeholder="28500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="descricao" rows="4" placeholder="Descreva os pontos fortes do seu carro, o estado geral, extras, etc."></textarea>
+                        </div>
+
+                        <!-- Secção de Detalhes do Veículo -->
+                        <h4 class="form-section-title">Detalhes do Veículo</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="marca" class="form-label">Marca</label>
+                                <select id="marca" class="form-select">
+                                    <option selected disabled>Selecione a marca...</option>
+                                    <option>BMW</option>
+                                    <option>Audi</option>
+                                    <option>Mercedes-Benz</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="modelo" class="form-label">Modelo</label>
+                                <input type="text" class="form-control" id="modelo" placeholder="Ex: Série 3">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ano" class="form-label">Ano de Registo</label>
+                                <input type="number" class="form-control" id="ano" placeholder="2019">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="kms" class="form-label">Quilometragem (km)</label>
+                                <input type="number" class="form-control" id="kms" placeholder="98000">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="combustivel" class="form-label">Combustível</label>
+                                <select id="combustivel" class="form-select">
+                                    <option selected disabled>Selecione...</option>
+                                    <option>Diesel</option>
+                                    <option>Gasolina</option>
+                                    <option>Elétrico</option>
+                                    <option>Híbrido</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="transmissao" class="form-label">Transmissão</label>
+                                <select id="transmissao" class="form-select">
+                                    <option selected disabled>Selecione...</option>
+                                    <option>Manual</option>
+                                    <option>Automática</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Secção de Imagens -->
+                        <h4 class="form-section-title">Fotografias</h4>
+                        <div class="mb-4">
+                            <label for="imagens" class="form-label">Carregar Imagens</label>
+                            <input class="form-control" type="file" id="imagens" multiple>
+                            <div class="form-text">Pode selecionar várias imagens. A primeira será a imagem principal.</div>
+                        </div>
+
+                        <!-- Botão de Submissão -->
+                        <div class="d-grid mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg">Publicar Anúncio</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Ano" class="control-label"></label>
-                <input asp-for="Ano" class="form-control" />
-                <span asp-validation-for="Ano" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cor" class="control-label"></label>
-                <input asp-for="Cor" class="form-control" />
-                <span asp-validation-for="Cor" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descricao" class="control-label"></label>
-                <input asp-for="Descricao" class="form-control" />
-                <span asp-validation-for="Descricao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quilometragem" class="control-label"></label>
-                <input asp-for="Quilometragem" class="form-control" />
-                <span asp-validation-for="Quilometragem" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Titulo" class="control-label"></label>
-                <input asp-for="Titulo" class="form-control" />
-                <span asp-validation-for="Titulo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Caixa" class="control-label"></label>
-                <input asp-for="Caixa" class="form-control" />
-                <span asp-validation-for="Caixa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VendedorId" class="control-label"></label>
-                <select asp-for="VendedorId" class ="form-control" asp-items="ViewBag.VendedorId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="MarcaId" class="control-label"></label>
-                <select asp-for="MarcaId" class ="form-control" asp-items="ViewBag.MarcaId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="ModeloId" class="control-label"></label>
-                <select asp-for="ModeloId" class ="form-control" asp-items="ViewBag.ModeloId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoriaId" class="control-label"></label>
-                <select asp-for="CategoriaId" class ="form-control" asp-items="ViewBag.CategoriaId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CombustivelId" class="control-label"></label>
-                <select asp-for="CombustivelId" class ="form-control" asp-items="ViewBag.CombustivelId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipoId" class="control-label"></label>
-                <select asp-for="TipoId" class ="form-control" asp-items="ViewBag.TipoId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

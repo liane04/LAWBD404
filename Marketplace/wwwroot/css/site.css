@@ -261,3 +261,179 @@ body.home-page .navbar:not(.scrolled) {
         color: #fff !important; /* Link fica branco ao passar o rato */
         text-decoration: underline; /* Adiciona sublinhado */
     }
+
+
+/* -------------------------------------------------------------------------- */
+/* Estilos da Página de Listagem de Anúncios        */
+/* -------------------------------------------------------------------------- */
+
+/* Sidebar de filtros */
+.filters-sidebar {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    border: 1px solid #dee2e6;
+}
+
+/* Cartão de anúncio individual */
+.anuncio-card {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden; /* Garante que a imagem arredondada não ultrapasse o cartão */
+    transition: all 0.2s ease-in-out;
+}
+
+    .anuncio-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    }
+
+    .anuncio-card img {
+        object-fit: cover; /* A imagem cobre a área sem se distorcer */
+        height: 100%;
+    }
+
+    .anuncio-card .card-price {
+        font-size: 1.75rem;
+    }
+
+    .anuncio-card .card-title {
+        font-weight: 600;
+    }
+
+/* Grelha para os detalhes rápidos do anúncio (ano, km, etc.) */
+.anuncio-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+    .anuncio-details-grid span {
+        display: flex;
+        align-items: center;
+    }
+
+    .anuncio-details-grid .bi {
+        margin-right: 0.5rem; /* Espaço entre o ícone e o texto */
+        color: var(--bs-primary);
+    }
+
+
+/* Estilos da Página de Detalhes do Anúncio         */
+/* -------------------------------------------------------------------------- */
+/* Cartão de informações do vendedor */
+.seller-card {
+    border: none;
+    border-radius: 1rem;
+}
+
+.seller-card .card-body {
+    padding: 2rem;
+}
+
+/* Para tornar o cartão do vendedor "fixo" ao fazer scroll em ecrãs grandes */
+@media (min-width: 992px) {
+    .seller-card.sticky-top {
+        top: 100px; /* Distância do topo da página */
+    }
+}
+
+
+/* Grelha de detalhes rápidos na página de detalhes */
+.anuncio-details-grid-details-page {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.5rem;
+    font-size: 1rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+    .anuncio-details-grid-details-page span {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .anuncio-details-grid-details-page .bi {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--bs-primary);
+    }
+
+
+/* Ajustes no carrossel de imagens */
+.carousel-item img {
+    height: 500px; /* Altura fixa para as imagens da galeria */
+    object-fit: cover;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Estilos da Página de Criação/Edição de Anúncio   */
+/* -------------------------------------------------------------------------- */
+
+.create-form-container.card {
+    border: none;
+    border-radius: 1rem;
+}
+
+.form-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Estilos para a gestão de imagens na página de edição */
+.edit-image-thumb {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* Forçar um rácio de 1:1 */
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+    .edit-image-thumb img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .edit-image-thumb .btn-delete-img {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+    }
+
+
+/* -------------------------------------------------------------------------- */
+/* Estilos da Página de Confirmação de Remoção      */
+/* -------------------------------------------------------------------------- */
+
+.delete-container.card {
+    border: 1px solid var(--bs-danger);
+    border-radius: 1rem;
+}
+
+.anuncio-summary-delete {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}

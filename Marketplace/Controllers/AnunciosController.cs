@@ -22,8 +22,11 @@ namespace Marketplace.Controllers
         // GET: Anuncios
         public async Task<IActionResult> Index()
         {
+            /*   codigo comentado prq estava a dar erro a fazer as views estaticas (corrigir aao fazer o resto)
             var marketplaceContext = _context.Anuncio.Include(a => a.Categoria).Include(a => a.Combustivel).Include(a => a.Marca).Include(a => a.Modelo).Include(a => a.Tipo).Include(a => a.Vendedor);
             return View(await marketplaceContext.ToListAsync());
+            */
+            return View();
         }
 
         // GET: Anuncios/Details/5
@@ -58,13 +61,12 @@ namespace Marketplace.Controllers
             ViewData["MarcaId"] = new SelectList(_context.Set<Marca>(), "Id", "Nome");
             ViewData["ModeloId"] = new SelectList(_context.Set<Modelo>(), "Id", "Nome");
             ViewData["TipoId"] = new SelectList(_context.Set<Tipo>(), "Id", "Nome");
-            ViewData["VendedorId"] = new SelectList(_context.Set<Vendedor>(), "Id", "Discriminator");
+            // CORREÇÃO: Alterado "Discriminator" para "Nome" para ser user-friendly.
+            ViewData["VendedorId"] = new SelectList(_context.Set<Vendedor>(), "Id", "Nome");
             return View();
         }
 
         // POST: Anuncios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Preco,Ano,Cor,Descricao,Quilometragem,Titulo,Caixa,VendedorId,MarcaId,ModeloId,CategoriaId,CombustivelId,TipoId")] Anuncio anuncio)
@@ -80,7 +82,8 @@ namespace Marketplace.Controllers
             ViewData["MarcaId"] = new SelectList(_context.Set<Marca>(), "Id", "Nome", anuncio.MarcaId);
             ViewData["ModeloId"] = new SelectList(_context.Set<Modelo>(), "Id", "Nome", anuncio.ModeloId);
             ViewData["TipoId"] = new SelectList(_context.Set<Tipo>(), "Id", "Nome", anuncio.TipoId);
-            ViewData["VendedorId"] = new SelectList(_context.Set<Vendedor>(), "Id", "Discriminator", anuncio.VendedorId);
+            // CORREÇÃO: Alterado "Discriminator" para "Nome"
+            ViewData["VendedorId"] = new SelectList(_context.Set<Vendedor>(), "Id", "Nome", anuncio.VendedorId);
             return View(anuncio);
         }
 
@@ -102,13 +105,12 @@ namespace Marketplace.Controllers
             ViewData["MarcaId"] = new SelectList(_context.Set<Marca>(), "Id", "Nome", anuncio.MarcaId);
             ViewData["ModeloId"] = new SelectList(_context.Set<Modelo>(), "Id", "Nome", anuncio.ModeloId);
             ViewData["TipoId"] = new SelectList(_context.Set<Tipo>(), "Id", "Nome", anuncio.TipoId);
-            ViewData["VendedorId"] = new SelectList(_context.Set<Vendedor>(), "Id", "Discriminator", anuncio.VendedorId);
+            // CORREÇÃO: Alterado "Discriminator" para "Nome"
+            ViewData["VendedorId"] = new SelectList(_context.Set<Vendedor>(), "Id", "Nome", anuncio.VendedorId);
             return View(anuncio);
         }
 
         // POST: Anuncios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Preco,Ano,Cor,Descricao,Quilometragem,Titulo,Caixa,VendedorId,MarcaId,ModeloId,CategoriaId,CombustivelId,TipoId")] Anuncio anuncio)
@@ -143,7 +145,8 @@ namespace Marketplace.Controllers
             ViewData["MarcaId"] = new SelectList(_context.Set<Marca>(), "Id", "Nome", anuncio.MarcaId);
             ViewData["ModeloId"] = new SelectList(_context.Set<Modelo>(), "Id", "Nome", anuncio.ModeloId);
             ViewData["TipoId"] = new SelectList(_context.Set<Tipo>(), "Id", "Nome", anuncio.TipoId);
-            ViewData["VendedorId"] = new SelectList(_context.Set<Vendedor>(), "Id", "Discriminator", anuncio.VendedorId);
+            // CORREÇÃO: Alterado "Discriminator" para "Nome"
+            ViewData["VendedorId"] = new SelectList(_context.Set<Vendedor>(), "Id", "Nome", anuncio.VendedorId);
             return View(anuncio);
         }
 
@@ -192,3 +195,4 @@ namespace Marketplace.Controllers
         }
     }
 }
+
