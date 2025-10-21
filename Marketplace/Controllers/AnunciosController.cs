@@ -193,6 +193,14 @@ namespace Marketplace.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Anuncios/Compare
+        public IActionResult Compare()
+        {
+            // For mockup purposes, we'll use a static view
+            // In production, this would fetch data based on IDs from query string or localStorage
+            return View();
+        }
+
         private bool AnuncioExists(int id)
         {
             return _context.Anuncio.Any(e => e.Id == id);
