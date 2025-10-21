@@ -3,10 +3,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DriveDeal</title>
+    <title>@ViewData["Title"] - 404 Car Marketplace</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="@(ViewData["IsHomePage"] as bool? == true ? "home-page" : "")">
@@ -14,108 +18,235 @@
         <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-car-front-fill me-2"></i>Marketplace 404
+                    <img src="~/imagens/logo.png" alt="404 Car" />
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Início</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door me-1"></i>Início
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Anuncios" asp-action="Index">Comprar Carros</a>
+                            <a class="nav-link" asp-area="" asp-controller="Anuncios" asp-action="Index">
+                                <i class="bi bi-car-front me-1"></i>Comprar Carros
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Sobre Nós</a>
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-info-circle me-1"></i>Sobre Nós
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Contacto</a>
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-envelope me-1"></i>Contacto
+                            </a>
                         </li>
                     </ul>
 
-                    <div class="d-flex align-items-center">
-                        <!-- Maquete Estática: Para alternar entre os estados, comente um bloco e descomente o outro -->
-                        <!-- ESTADO 1: UTILIZADOR SEM LOGIN (Ativo por defeito) -->
-						<!--
-                        <div>
-                            <a class="btn btn-outline-light me-2" asp-controller="Utilizadores" asp-action="Login">Entrar</a>
-                            <a class="btn btn-primary" asp-controller="Utilizadores" asp-action="Registar">Registar</a>
-                        </div>
-						-->
-                        <!-- ESTADO 2: UTILIZADOR COM LOGIN (Exemplo de Comprador) -->
-						<!--
-						<div class="dropdown">
-                            <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle fs-4 me-1"></i> Olá, Utilizador!
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- ESTADO 1: UTILIZADOR SEM LOGIN -->
+                        @* Descomente este bloco para mostrar botões de login/registo *@
+                        <!--
+                        <a class="btn btn-outline-light" asp-controller="Utilizadores" asp-action="Login">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Entrar
+                        </a>
+                        <a class="btn btn-primary" asp-controller="Utilizadores" asp-action="Registar">
+                            <i class="bi bi-person-plus me-1"></i>Registar
+                        </a>
+                        -->
+                        <!-- ESTADO 2: COMPRADOR COM LOGIN -->
+                        @* Descomente este bloco para simular um comprador autenticado *@
+                        <!--
+                        <div class="dropdown">
+                            <a href="#" class="d-flex align-items-center link-light text-decoration-none dropdown-toggle"
+                               id="dropdownComprador" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-4 me-2"></i>
+                                <span class="d-none d-lg-inline">Olá, Comprador!</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser">
-                                <li><a class="dropdown-item" href="#">Favoritos</a></li>
-                                <li><a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">O Meu Perfil</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownComprador">
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-heart me-2"></i>Favoritos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-clock-history me-2"></i>Histórico
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">
+                                        <i class="bi bi-person me-2"></i>O Meu Perfil
+                                    </a>
+                                </li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Sair</a></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Sair
+                                    </a>
+                                </li>
                             </ul>
                         </div>
-						-->
-                        <!-- ESTADO 3: UTILIZADOR COM LOGIN (Exemplo de Vendedor) -->
-
-                        <a class="btn btn-primary me-3" asp-controller="Anuncios" asp-action="Create">
-                            <i class="bi bi-plus-circle-fill me-1"></i> Criar Anúncio
+                        -->
+                        <!-- ESTADO 3: VENDEDOR COM LOGIN (Ativo por defeito) -->
+                        <a class="btn btn-primary me-2" asp-controller="Anuncios" asp-action="Create">
+                            <i class="bi bi-plus-circle-fill me-1"></i>CRIAR ANÚNCIO
                         </a>
                         <div class="dropdown">
-                            <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle fs-4 me-1"></i> Olá, Vendedor!
+                            <a href="#" class="d-flex align-items-center link-light text-decoration-none dropdown-toggle"
+                               id="dropdownVendedor" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-4 me-2"></i>
+                                <span class="d-none d-lg-inline">Olá, Vendedor!</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser">
-                                <li><a class="dropdown-item" href="#">Os Meus Anúncios</a></li>
-                                <li><a class="dropdown-item" href="#">Favoritos</a></li>
-                                <li><a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">O Meu Perfil</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownVendedor">
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-card-list me-2"></i>Os Meus Anúncios
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-graph-up me-2"></i>Estatísticas
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-heart me-2"></i>Favoritos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">
+                                        <i class="bi bi-person me-2"></i>O Meu Perfil
+                                    </a>
+                                </li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Sair</a></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Sair
+                                    </a>
+                                </li>
                             </ul>
                         </div>
-
                     </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div>
+    <div class="main-content">
         <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="footer bg-dark text-white pt-5 pb-4">
+    <footer class="footer pt-5 pb-4">
         <div class="container text-center text-md-start">
             <div class="row">
                 <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mb-4">
-                    <h6 class="text-uppercase fw-bold">DriveDeal</h6>
-                    <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #0d6efd; height: 2px" />
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="~/imagens/logo.png" alt="404 Car Logo" style="height: 50px; width: auto; margin-right: 1rem;" />
+                        <h5 class="text-uppercase fw-bold mb-0">404 Car</h5>
+                    </div>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #8B1A1A; height: 2px" />
                     <p>
-                        A sua plataforma de confiança para comprar e vender carros. Encontre as melhores ofertas do mercado de forma segura e eficiente.
+                        A sua plataforma de confiança para comprar e vender carros usados.
+                        Encontre as melhores ofertas do mercado de forma segura e eficiente.
                     </p>
                 </div>
+
                 <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
                     <h6 class="text-uppercase fw-bold">Links Úteis</h6>
-                    <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #0d6efd; height: 2px" />
-                    <p><a href="#!" class="text-white-50">Termos de Uso</a></p>
-                    <p><a asp-controller="Home" asp-action="Privacy" class="text-white-50">Política de Privacidade</a></p>
-                    <p><a href="#!" class="text-white-50">Ajuda</a></p>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #8B1A1A; height: 2px" />
+                    <p>
+                        <a href="#!" class="text-white-50">
+                            <i class="bi bi-chevron-right"></i> Termos de Uso
+                        </a>
+                    </p>
+                    <p>
+                        <a asp-controller="Home" asp-action="Privacy" class="text-white-50">
+                            <i class="bi bi-chevron-right"></i> Política de Privacidade
+                        </a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-white-50">
+                            <i class="bi bi-chevron-right"></i> Ajuda
+                        </a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-white-50">
+                            <i class="bi bi-chevron-right"></i> FAQ
+                        </a>
+                    </p>
                 </div>
-                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+
+                <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold">Categorias</h6>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #8B1A1A; height: 2px" />
+                    <p>
+                        <a href="#!" class="text-white-50">
+                            <i class="bi bi-chevron-right"></i> Carros Ligeiros
+                        </a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-white-50">
+                            <i class="bi bi-chevron-right"></i> SUVs
+                        </a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-white-50">
+                            <i class="bi bi-chevron-right"></i> Comerciais
+                        </a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-white-50">
+                            <i class="bi bi-chevron-right"></i> Clássicos
+                        </a>
+                    </p>
+                </div>
+
+                <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
                     <h6 class="text-uppercase fw-bold">Contacto</h6>
-                    <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #0d6efd; height: 2px" />
-                    <p><i class="bi bi-geo-alt-fill me-3"></i> Vila Real, Portugal</p>
-                    <p><i class="bi bi-envelope-fill me-3"></i> info@marketplac404.com</p>
-                    <p><i class="bi bi-telephone-fill me-3"></i> +351 259 123 456</p>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #8B1A1A; height: 2px" />
+                    <p>
+                        <i class="bi bi-geo-alt-fill me-3"></i>
+                        Vila Real, Portugal
+                    </p>
+                    <p>
+                        <i class="bi bi-envelope-fill me-3"></i>
+                        info@404car.pt
+                    </p>
+                    <p>
+                        <i class="bi bi-telephone-fill me-3"></i>
+                        +351 259 123 456
+                    </p>
+                    <div class="mt-3">
+                        <a href="#!" class="text-white-50 me-3" title="Facebook">
+                            <i class="bi bi-facebook fs-5"></i>
+                        </a>
+                        <a href="#!" class="text-white-50 me-3" title="Instagram">
+                            <i class="bi bi-instagram fs-5"></i>
+                        </a>
+                        <a href="#!" class="text-white-50 me-3" title="LinkedIn">
+                            <i class="bi bi-linkedin fs-5"></i>
+                        </a>
+                        <a href="#!" class="text-white-50" title="WhatsApp">
+                            <i class="bi bi-whatsapp fs-5"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
-            &copy; @DateTime.Now.Year - DriveDeal - Todos os direitos reservados.
+        <div class="text-center p-3 mt-4" style="background-color: rgba(0, 0, 0, 0.2)">
+            <div class="container">
+                <span>&copy; @DateTime.Now.Year - 404 Car Marketplace - Todos os direitos reservados.</span>
+                <span class="mx-3">|</span>
+                <span>Desenvolvido com <i class="bi bi-heart-fill text-danger"></i> pela equipa 404</span>
+            </div>
         </div>
     </footer>
 
@@ -125,4 +256,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-

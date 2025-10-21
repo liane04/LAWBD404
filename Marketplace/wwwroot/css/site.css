@@ -1,306 +1,378 @@
 /* -------------------------------------------------------------------------- */
-/* Estilos Gerais e Reset                          */
+/* Estilos Gerais e Reset - Cores adaptadas ao logo 404 Car                  */
 /* -------------------------------------------------------------------------- */
 
-/* :root define variáveis CSS globais para serem usadas em todo o site. */
-/* Facilita a manutenção, pois as cores e fontes principais podem ser mudadas num só lugar. */
 :root {
-    --bs-primary: #0d6efd; /* Cor primária (azul do Bootstrap) */
-    --bs-dark: #212529; /* Cor escura para fundos, texto, etc. */
-    --bs-light: #f8f9fa; /* Cor clara para fundos */
-    --bs-font-sans-serif: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* Fonte principal do site */
+    --primary-color: #8B1A1A; /* Vermelho bordï¿½ do logo */
+    --primary-dark: #6B0F0F; /* Vermelho mais escuro */
+    --primary-light: #A52A2A; /* Vermelho mais claro para hover */
+    --secondary-color: #1a1a1a; /* Preto suave para navbar */
+    --navbar-bg: #2d2d2d; /* Cinza escuro moderno */
+    --bg-light: #f5f5f5;
+    --bg-white: #ffffff;
+    --text-dark: #1a1a1a;
+    --text-muted: #6c757d;
+    --white: #ffffff;
+    --border-color: #e0e0e0;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+    --border-radius: 0.75rem;
+    --transition: all 0.3s ease;
+    --font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 html {
-    font-size: 16px; /* Define o tamanho base da fonte para o site */
+    font-size: 16px;
 }
 
 body {
-    font-family: var(--bs-font-sans-serif); /* Aplica a fonte principal definida nas variáveis */
-    background-color: #f8f9fa; /* Cor de fundo geral */
-    color: #333; /* Cor do texto principal */
-    padding-top: 70px; /* Adiciona um espaçamento no topo do body para não ficar por baixo do navbar fixo */
+    font-family: var(--font-family);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    padding-top: 70px;
+    line-height: 1.6;
 }
 
-/* Garante que o conteúdo principal ocupe pelo menos a altura da janela, descontando o cabeçalho e o rodapé */
 .main-content {
-    min-height: calc(100vh - 70px - 200px); /* Viewport Height - Altura do Navbar - Altura aproximada do Footer */
+    min-height: calc(100vh - 70px - 200px);
 }
 
-/* Classe genérica para secções, garantindo espaçamento vertical consistente */
 .page-section {
     padding: 5rem 0;
 }
 
-
 /* -------------------------------------------------------------------------- */
-/* Tipografia                                  */
+/* Tipografia                                                                */
 /* -------------------------------------------------------------------------- */
 
-/* Estilos para todos os títulos */
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 700; /* Títulos a negrito */
-    color: var(--bs-dark); /* Cor escura para os títulos */
-}
-
-/* Estilo para os títulos das secções */
-.section-title {
-    text-align: center; /* Título centrado */
-    margin-bottom: 4rem; /* Espaçamento inferior */
     font-weight: 700;
-    color: #343a40;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Botões                                    */
-/* -------------------------------------------------------------------------- */
-
-.btn {
-    border-radius: 0.5rem; /* Bordas arredondadas */
-    font-weight: 500; /* Peso da fonte */
-    padding: 0.6rem 1.25rem; /* Espaçamento interno */
-    transition: all 0.2s ease-in-out; /* Animação suave para hover */
+.section-title {
+    text-align: center;
+    margin-bottom: 4rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    position: relative;
+    padding-bottom: 1rem;
 }
 
-.btn-primary {
-    background-color: var(--bs-primary); /* Cor de fundo do botão primário */
-    border-color: var(--bs-primary); /* Cor da borda */
-}
-
-    /* Efeito ao passar o rato por cima do botão */
-    .btn-primary:hover {
-        opacity: 0.9; /* Ligeira transparência */
-        transform: translateY(-2px); /* Move o botão ligeiramente para cima */
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        border-radius: 2px;
     }
 
 /* -------------------------------------------------------------------------- */
-/* Navbar                                   */
+/* Botï¿½es                                                                    */
+/* -------------------------------------------------------------------------- */
+
+.btn {
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    padding: 0.7rem 1.5rem;
+    transition: var(--transition);
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        color: var(--white);
+    }
+
+.btn-outline-light {
+    border: 2px solid var(--white);
+    color: var(--white);
+    background: transparent;
+}
+
+    .btn-outline-light:hover {
+        background: var(--white);
+        color: var(--primary-color);
+        border-color: var(--white);
+    }
+
+/* -------------------------------------------------------------------------- */
+/* Navbar                                                                    */
 /* -------------------------------------------------------------------------- */
 
 .navbar {
-    transition: background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out; /* Animação suave para a mudança de cor e sombra */
-    padding: 0.8rem 1rem; /* Espaçamento interno */
+    transition: all 0.4s ease-in-out;
+    padding: 1rem 1rem;
+    box-shadow: var(--shadow-sm);
+    background: linear-gradient(135deg, var(--secondary-color), #34495e) !important;
 }
 
-/* Estado padrão da navbar para todas as páginas (exceto a home no topo) */
-.navbar {
-    background-color: var(--bs-dark) !important; /* Fundo escuro */
-}
-
-/* Navbar específica para a home page, ANTES do scroll */
 body.home-page .navbar:not(.scrolled) {
-    background-color: transparent !important; /* Fundo transparente */
+    background: transparent !important;
+    box-shadow: none;
 }
 
-/* Navbar em QUALQUER página, DEPOIS do scroll */
 .navbar.scrolled {
-    background-color: var(--bs-dark) !important; /* Fundo volta a ser escuro */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Adiciona uma sombra para dar profundidade */
+    background: linear-gradient(135deg, var(--secondary-color), #34495e) !important;
+    box-shadow: var(--shadow-md);
 }
 
 .navbar-brand {
-    font-size: 1.5rem; /* Tamanho da fonte do logo/nome do site */
-    font-weight: 700; /* Fonte a negrito */
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white) !important;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
 }
+
+    .navbar-brand img {
+        height: 45px;
+        width: auto;
+        margin-right: 0.75rem;
+        filter: brightness(1.1);
+        transition: var(--transition);
+    }
+
+    .navbar-brand:hover img {
+        transform: scale(1.05);
+    }
+
+    .navbar-brand i {
+        color: var(--primary-color);
+        font-size: 1.8rem;
+        margin-right: 0.5rem;
+    }
 
 .nav-link {
     font-size: 1rem;
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.9) !important;
+    padding: 0.5rem 1rem !important;
+    transition: var(--transition);
+    position: relative;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Estilos da Página Inicial (Home)                     */
-/* -------------------------------------------------------------------------- */
-
-/* Secção principal com a imagem de fundo */
-.hero-section {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/imagens/subPRETO.jpg'); /* Imagem de fundo com um overlay escuro */
-    background-size: cover; /* A imagem cobre toda a área */
-    background-position: center; /* A imagem fica centrada */
-    background-attachment: fixed; /* Efeito parallax: a imagem fica fixa durante o scroll */
-    height: 85vh; /* Altura aumentada para conter a pesquisa */
-    min-height: 650px; /* Altura mínima aumentada */
-    display: flex; /* Alinhamento do conteúdo com flexbox */
-    align-items: center; /* Alinha verticalmente ao centro */
-    justify-content: center; /* Alinha horizontalmente ao centro */
-    color: white;
-    text-align: center;
-    padding: 2rem 0; /* Adiciona padding vertical */
-}
-
-/* Espaçamento entre o título e a caixa de pesquisa */
-.hero-content {
-    margin-bottom: 3rem;
-}
-
-
-.hero-section h1 {
-    font-size: clamp(3.5rem, 7vw, 5rem); /* Tamanho da fonte responsivo (mínimo, preferido, máximo) */
-    font-weight: 800; /* Fonte extra-negrito */
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Sombra no texto para melhor legibilidade */
-    color: white;
-}
-
-/* O contentor do formulário de pesquisa */
-.search-form-container {
-    background: rgba(255, 255, 255, 0.95); /* Fundo branco ligeiramente transparente */
-    border: 1px solid #dee2e6; /* Borda cinzenta clara */
-    padding: 2rem; /* Espaçamento interno */
-    border-radius: 1.5rem; /* Bordas muito arredondadas */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra para dar efeito de elevação */
-}
-
-    /* Estilos para os campos do formulário de pesquisa */
-    .search-form-container .form-control,
-    .search-form-container .form-select {
-        background-color: #f8f9fa; /* Fundo ligeiramente cinzento */
-        color: #333;
-        border: 1px solid #ced4da; /* Borda */
-        border-radius: 0.5rem;
-        padding: 0.75rem 1.25rem;
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease;
     }
 
-        /* Cor do texto de placeholder */
-        .search-form-container .form-control::placeholder {
-            color: #6c757d;
-        }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+        width: 60%;
+    }
 
-/* Estilos dos cartões de categoria */
-.categoria-card {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 1rem;
-    padding: 2rem;
+    .nav-link:hover {
+        color: var(--white) !important;
+    }
+
+/* -------------------------------------------------------------------------- */
+/* Hero Section                                                              */
+/* -------------------------------------------------------------------------- */
+
+.hero-section {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/imagens/subPRETO.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
     text-align: center;
-    transition: all 0.3s ease-in-out; /* Animação suave */
-    height: 100%;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.04); /* Sombra subtil */
+    padding: 2rem 0;
+    position: relative;
 }
 
-    /* Efeito ao passar o rato por cima do cartão */
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(139, 26, 26, 0.3), rgba(44, 62, 80, 0.3));
+        pointer-events: none;
+    }
+
+.hero-content {
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-section h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 1s ease;
+}
+
+.hero-section .lead {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 300;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 2rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Search Form */
+.search-form-container {
+    background: rgba(255, 255, 255, 0.98);
+    border: none;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+    .search-form-container h3 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-form-container .form-control,
+    .search-form-container .form-select {
+        background-color: #f8f9fa;
+        color: var(--text-dark);
+        border: 2px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 0.85rem 1.25rem;
+        transition: var(--transition);
+        font-size: 0.95rem;
+    }
+
+        .search-form-container .form-control:focus,
+        .search-form-container .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(139, 26, 26, 0.15);
+            background-color: var(--white);
+        }
+
+        .search-form-container .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+/* -------------------------------------------------------------------------- */
+/* Cards e Anï¿½ncios                                                          */
+/* -------------------------------------------------------------------------- */
+
+.categoria-card {
+    background-color: var(--white);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    text-align: center;
+    transition: var(--transition);
+    height: 100%;
+    box-shadow: var(--shadow-sm);
+}
+
     .categoria-card:hover {
-        border-color: var(--bs-primary); /* Borda fica azul */
-        box-shadow: 0 8px 15px rgba(0,0,0,0.1); /* Sombra aumenta */
-        transform: translateY(-5px); /* Cartão sobe ligeiramente */
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-8px);
     }
 
     .categoria-card .icon {
-        font-size: 3rem; /* Tamanho do ícone/emoji */
+        font-size: 3rem;
         margin-bottom: 1rem;
-        color: var(--bs-primary);
+        color: var(--primary-color);
     }
 
     .categoria-card h5 {
         font-weight: 600;
-        color: #343a40;
+        color: var(--secondary-color);
     }
 
-/* Secção "Como funciona" */
-.feature-section {
-    background-color: #ffffff;
-}
-
-/* Ícones da secção "Como funciona" */
-.feature-icon {
-    font-size: 2.5rem;
-    width: 5rem;
-    height: 5rem;
-    line-height: 5rem;
-    text-align: center;
-    border-radius: 50%; /* Círculo perfeito */
-    background-color: #e7f1ff; /* Fundo azul claro */
-    color: var(--bs-primary); /* Ícone azul */
-    margin: 0 auto 1.5rem; /* Centrado e com margem inferior */
-}
-
-/* Secção "Call to Action" (Chamada para Ação) */
-.cta-section {
-    background-color: var(--bs-dark);
-    color: white;
-    text-align: center;
-}
-
-    .cta-section h2, .cta-section h3 {
-        font-weight: 700;
-        color: white;
-    }
-
-/* Secção de Estatísticas */
-.stats-section {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/imagens/subPRETO.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed; /* Efeito parallax: a imagem fica fixa durante o scroll */
-    color: white;
-}
-
-.stat-item h2.stat-number, .stat-item h2 {
-    font-size: clamp(2.5rem, 5vw, 3.5rem); /* Tamanho do número responsivo */
-    font-weight: 800;
-    color: white; /* Garante que o número é branco */
-    margin-bottom: 0.5rem;
-}
-
-.stat-item p.stat-label {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.8); /* Branco com um pouco de transparência para contraste */
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* Footer                                   */
-/* -------------------------------------------------------------------------- */
-
-.footer {
-    font-size: 0.9rem; /* Fonte ligeiramente mais pequena */
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Linha de separação para o footer */
-}
-
-    .footer a.text-white-50:hover {
-        color: #fff !important; /* Link fica branco ao passar o rato */
-        text-decoration: underline; /* Adiciona sublinhado */
-    }
-
-
-/* -------------------------------------------------------------------------- */
-/* Estilos da Página de Listagem de Anúncios        */
-/* -------------------------------------------------------------------------- */
-
-/* Sidebar de filtros */
-.filters-sidebar {
-    background-color: #ffffff;
-    border-radius: 1rem;
-    border: 1px solid #dee2e6;
-}
-
-/* Cartão de anúncio individual */
+/* Anï¿½ncio Cards */
 .anuncio-card {
     border: none;
-    border-radius: 1rem;
-    overflow: hidden; /* Garante que a imagem arredondada não ultrapasse o cartão */
-    transition: all 0.2s ease-in-out;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    background: var(--white);
+    height: 100%;
 }
 
     .anuncio-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-lg);
     }
 
-    .anuncio-card img {
-        object-fit: cover; /* A imagem cobre a área sem se distorcer */
-        height: 100%;
+    .anuncio-card .card-img-top {
+        height: 220px;
+        object-fit: cover;
+        width: 100%;
+        transition: var(--transition);
+    }
+
+    .anuncio-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .anuncio-card .card-body {
+        padding: 1.5rem;
     }
 
     .anuncio-card .card-price {
         font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
     }
 
     .anuncio-card .card-title {
         font-weight: 600;
+        color: var(--text-dark);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
     }
 
-/* Grelha para os detalhes rápidos do anúncio (ano, km, etc.) */
 .anuncio-details-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -308,194 +380,179 @@ body.home-page .navbar:not(.scrolled) {
     padding-top: 1rem;
     border-top: 1px solid #f0f0f0;
     font-size: 0.9rem;
-    color: #6c757d;
+    color: var(--text-muted);
 }
 
     .anuncio-details-grid span {
         display: flex;
         align-items: center;
+        gap: 0.5rem;
     }
 
     .anuncio-details-grid .bi {
-        margin-right: 0.5rem; /* Espaço entre o ícone e o texto */
-        color: var(--bs-primary);
+        color: var(--primary-color);
+        font-size: 1.1rem;
     }
 
-
-/* Estilos da Página de Detalhes do Anúncio         */
 /* -------------------------------------------------------------------------- */
-/* Cartão de informações do vendedor */
-.seller-card {
-    border: none;
-    border-radius: 1rem;
+/* Features e Stats                                                          */
+/* -------------------------------------------------------------------------- */
+
+.feature-section {
+    background-color: var(--white);
 }
 
-.seller-card .card-body {
-    padding: 2rem;
-}
-
-/* Para tornar o cartão do vendedor "fixo" ao fazer scroll em ecrãs grandes */
-@media (min-width: 992px) {
-    .seller-card.sticky-top {
-        top: 100px; /* Distância do topo da página */
-    }
-}
-
-
-/* Grelha de detalhes rápidos na página de detalhes */
-.anuncio-details-grid-details-page {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1.5rem;
-    font-size: 1rem;
-    color: #6c757d;
+.feature-icon {
+    font-size: 2.5rem;
+    width: 5rem;
+    height: 5rem;
+    line-height: 5rem;
     text-align: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(139, 26, 26, 0.1), rgba(139, 26, 26, 0.2));
+    color: var(--primary-color);
+    margin: 0 auto 1.5rem;
+    transition: var(--transition);
 }
 
-    .anuncio-details-grid-details-page span {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    .feature-icon:hover {
+        transform: scale(1.1) rotate(5deg);
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: var(--white);
     }
 
-    .anuncio-details-grid-details-page .bi {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        color: var(--bs-primary);
-    }
+.stats-section {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/imagens/subPRETO.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--white);
+    padding: 5rem 0;
+}
 
+.stat-item h2.stat-number,
+.stat-item h2 {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: var(--primary-light);
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
 
-/* Ajustes no carrossel de imagens */
-.carousel-item img {
-    height: 500px; /* Altura fixa para as imagens da galeria */
-    object-fit: cover;
+.stat-item p.stat-label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.stat-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(139, 26, 26, 0.2);
+    border: 3px solid var(--primary-light);
+    transition: var(--transition);
+}
+
+.stat-icon-wrapper i {
+    font-size: 2.5rem;
+    color: var(--primary-light);
+}
+
+.stat-item:hover .stat-icon-wrapper {
+    transform: scale(1.1);
+    background: var(--primary-light);
+    box-shadow: 0 0 20px rgba(165, 42, 42, 0.5);
+}
+
+.stat-item:hover .stat-icon-wrapper i {
+    color: var(--white);
 }
 
 /* -------------------------------------------------------------------------- */
-/* Estilos da Página de Criação/Edição de Anúncio   */
+/* CTA Section                                                               */
 /* -------------------------------------------------------------------------- */
 
-.create-form-container.card {
-    border: none;
-    border-radius: 1rem;
+.cta-section {
+    background: linear-gradient(135deg, var(--secondary-color), #34495e);
+    color: var(--white);
+    text-align: center;
+    padding: 5rem 0;
 }
 
-.form-section-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e9ecef;
-}
-
-/* Estilos para a gestão de imagens na página de edição */
-.edit-image-thumb {
-    position: relative;
-    width: 100%;
-    padding-top: 100%; /* Forçar um rácio de 1:1 */
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-    .edit-image-thumb img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    .cta-section h2,
+    .cta-section h3 {
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 1.5rem;
     }
-
-    .edit-image-thumb .btn-delete-img {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        border-radius: 50%;
-        width: 2rem;
-        height: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        line-height: 1;
-    }
-
 
 /* -------------------------------------------------------------------------- */
-/* Estilos da Página de Confirmação de Remoção      */
+/* Footer                                                                    */
 /* -------------------------------------------------------------------------- */
 
-.delete-container.card {
-    border: 1px solid var(--bs-danger);
-    border-radius: 1rem;
+.footer {
+    background: linear-gradient(135deg, var(--secondary-color), #1a252f);
+    color: var(--white);
+    font-size: 0.9rem;
+    border-top: 3px solid var(--primary-color);
 }
 
-.anuncio-summary-delete {
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 0.5rem;
-    padding: 1rem;
-}
-
-
-/* Estilos para a gestão de imagens na página de edição */
-.edit-image-thumb {
-    position: relative;
-    width: 100%;
-    padding-top: 100%; /* Forçar um rácio de 1:1 */
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-    .edit-image-thumb img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    .footer h6 {
+        color: var(--white);
+        font-weight: 700;
+        margin-bottom: 1rem;
     }
 
-    .edit-image-thumb .btn-delete-img {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        border-radius: 50%;
-        width: 2rem;
-        height: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        line-height: 1;
+    .footer hr {
+        background-color: var(--primary-color) !important;
+        opacity: 1;
     }
 
-.anuncio-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    .footer a.text-white-50 {
+        transition: var(--transition);
+        text-decoration: none;
+    }
+
+        .footer a.text-white-50:hover {
+            color: var(--primary-light) !important;
+            text-decoration: none;
+            transform: translateX(5px);
+            display: inline-block;
+        }
+
+/* -------------------------------------------------------------------------- */
+/* Filters Sidebar                                                           */
+/* -------------------------------------------------------------------------- */
+
+.filters-sidebar {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
 }
 
-/* Adicionado para fixar o tamanho da imagem do anúncio */
-.anuncio-card .card-img-top {
-    height: 200px; /* Define uma altura fixa para todas as imagens */
-    object-fit: cover; /* Garante que a imagem cobre a área sem distorcer */
-    width: 100%;
-}
+    .filters-sidebar h5 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--primary-color);
+    }
 
-.anuncio-card .card-body {
-    padding: 1rem;
-}
+/* -------------------------------------------------------------------------- */
+/* Pï¿½ginas de Autenticaï¿½ï¿½o                                                   */
+/* -------------------------------------------------------------------------- */
 
-
-/* =================================================================
-   Estilos das Páginas de Autenticação (Login/Registar)
-================================================================= */
 .auth-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: calc(100vh - 150px); /* Ajustar altura para preencher a tela */
+    min-height: calc(100vh - 150px);
     padding: 2rem 0;
 }
 
@@ -504,28 +561,91 @@ body.home-page .navbar:not(.scrolled) {
         max-width: 450px;
         border: none;
         border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
     }
 
+    .auth-container .card-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: var(--white);
+        font-weight: 700;
+        text-align: center;
+        border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+    }
 
-/* =================================================================
-   Estilos da Página de Perfil do Utilizador
-================================================================= */
+/* -------------------------------------------------------------------------- */
+/* Perfil do Utilizador                                                      */
+/* -------------------------------------------------------------------------- */
+
 .perfil-nav .list-group-item.active {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
-    color: dimgrey; /* CORREÇÃO: Garante que o texto fica branco no item ativo */
+    color: var(--white);
 }
 
 .perfil-nav .list-group-item-action:hover {
     color: var(--primary-color);
+    background-color: rgba(139, 26, 26, 0.05);
 }
 
-/* NOVO ESTILO ADICIONADO PARA CORRIGIR AS IMAGENS NO PERFIL */
 .managed-ad-item img {
     width: 80px;
     height: 60px;
     object-fit: cover;
-    border-radius: 0.25rem;
-    flex-shrink: 0; /* Impede que a imagem encolha */
+    border-radius: 0.5rem;
+    flex-shrink: 0;
+    border: 2px solid var(--border-color);
 }
 
+/* -------------------------------------------------------------------------- */
+/* Dropdown do Utilizador                                                    */
+/* -------------------------------------------------------------------------- */
+
+.dropdown-toggle::after {
+    margin-left: 0.5rem;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--border-radius);
+    padding: 0.5rem 0;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1.5rem;
+    transition: var(--transition);
+    color: var(--text-dark);
+}
+
+    .dropdown-item:hover {
+        background-color: rgba(139, 26, 26, 0.08);
+        color: var(--primary-color);
+    }
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: var(--border-color);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Responsividade                                                            */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 60px;
+    }
+
+    .hero-section {
+        min-height: 70vh;
+        padding: 3rem 1rem;
+    }
+
+    .search-form-container {
+        padding: 1.5rem;
+    }
+
+    .page-section {
+        padding: 3rem 0;
+    }
+}
