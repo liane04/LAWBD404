@@ -57,9 +57,12 @@
                                 <li><a class="dropdown-item" href="#">Sair</a></li>
                             </ul>
                         </div>
+
+
+
 						-->
                         <!-- ESTADO 3: UTILIZADOR COM LOGIN (Exemplo de Vendedor) -->
-
+                        <!--
                         <a class="btn btn-primary me-3" asp-controller="Anuncios" asp-action="Create">
                             <i class="bi bi-plus-circle-fill me-1"></i> Criar Anúncio
                         </a>
@@ -71,6 +74,20 @@
                                 <li><a class="dropdown-item" href="#">Os Meus Anúncios</a></li>
                                 <li><a class="dropdown-item" href="#">Favoritos</a></li>
                                 <li><a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">O Meu Perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Sair</a></li>
+                            </ul>
+                        </div>
+                        -->
+
+                        <!-- ESTADO 4: ADMINISTRADOR COM LOGIN (Ativo para teste) -->
+                        <div class="dropdown">
+                            <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownAdmin" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-fill-gear fs-4 me-1"></i> Olá, Admin!
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownAdmin">
+                                <li><a class="dropdown-item" asp-controller="Administrador" asp-action="Index"><i class="bi bi-speedometer2 me-2"></i>Painel de Gestão</a></li>
+                                <li><a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">Ver Perfil Público</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">Sair</a></li>
                             </ul>
