@@ -3,49 +3,86 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Marketplace</title>
+    <title>@ViewData["Title"] - DriveDeal</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" xintegrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKcPNevAZCvso65XjCgeCUiJPL/+Vo4H7MQ5PfDXWRwyKjeZAGoOKMusg6hYg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+<body class="@(ViewData["IsHomePage"] as bool? == true ? "home-page" : "")">
+    <header class="fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-car-front-fill me-2"></i>
-                    AutoMarket 404
+                    <i class="bi bi-car-front-fill me-2"></i>Marketplace 404
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse">
+                <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Início</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Anuncios" asp-action="Index">Ver Anúncios</a>
+                            <a class="nav-link" asp-area="" asp-controller="Anuncios" asp-action="Index">Comprar Carros</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Sobre Nós</a>
+                            <a class="nav-link" href="#">Sobre Nós</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contacto</a>
                         </li>
                     </ul>
+
                     <div class="d-flex align-items-center">
-                        <a href="#" class="btn btn-outline-light me-2">
-                            <i class="bi bi-person-circle me-1"></i> Entrar
-                        </a>
-                        <a href="#" class="btn btn-primary">
+                        <!-- Maquete Estática: Para alternar entre os estados, comente um bloco e descomente o outro -->
+                        <!-- ESTADO 1: UTILIZADOR SEM LOGIN (Ativo por defeito) -->
+						<!--
+                        <div>
+                            <a class="btn btn-outline-light me-2" asp-controller="Utilizadores" asp-action="Login">Entrar</a>
+                            <a class="btn btn-primary" asp-controller="Utilizadores" asp-action="Registar">Registar</a>
+                        </div>
+						-->
+                        <!-- ESTADO 2: UTILIZADOR COM LOGIN (Exemplo de Comprador) -->
+						<!--
+						<div class="dropdown">
+                            <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-4 me-1"></i> Olá, Utilizador!
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser">
+                                <li><a class="dropdown-item" href="#">Favoritos</a></li>
+                                <li><a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">O Meu Perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Sair</a></li>
+                            </ul>
+                        </div>
+						-->
+                        <!-- ESTADO 3: UTILIZADOR COM LOGIN (Exemplo de Vendedor) -->
+
+                        <a class="btn btn-primary me-3" asp-controller="Anuncios" asp-action="Create">
                             <i class="bi bi-plus-circle-fill me-1"></i> Criar Anúncio
                         </a>
+                        <div class="dropdown">
+                            <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-4 me-1"></i> Olá, Vendedor!
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser">
+                                <li><a class="dropdown-item" href="#">Os Meus Anúncios</a></li>
+                                <li><a class="dropdown-item" href="#">Favoritos</a></li>
+                                <li><a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">O Meu Perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Sair</a></li>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="main-content">
+    <div>
         <main role="main">
             @RenderBody()
         </main>
@@ -55,7 +92,7 @@
         <div class="container text-center text-md-start">
             <div class="row">
                 <div class="col-md-4 col-lg-4 col-xl-4 mx-auto mb-4">
-                    <h6 class="text-uppercase fw-bold">AutoMarket</h6>
+                    <h6 class="text-uppercase fw-bold">DriveDeal</h6>
                     <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #0d6efd; height: 2px" />
                     <p>
                         A sua plataforma de confiança para comprar e vender carros. Encontre as melhores ofertas do mercado de forma segura e eficiente.
@@ -65,20 +102,20 @@
                     <h6 class="text-uppercase fw-bold">Links Úteis</h6>
                     <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #0d6efd; height: 2px" />
                     <p><a href="#!" class="text-white-50">Termos de Uso</a></p>
-                    <p><a href="/Home/Privacy" class="text-white-50">Política de Privacidade</a></p>
+                    <p><a asp-controller="Home" asp-action="Privacy" class="text-white-50">Política de Privacidade</a></p>
                     <p><a href="#!" class="text-white-50">Ajuda</a></p>
                 </div>
                 <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
                     <h6 class="text-uppercase fw-bold">Contacto</h6>
                     <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #0d6efd; height: 2px" />
                     <p><i class="bi bi-geo-alt-fill me-3"></i> Vila Real, Portugal</p>
-                    <p><i class="bi bi-envelope-fill me-3"></i> info@automarket.com</p>
+                    <p><i class="bi bi-envelope-fill me-3"></i> info@marketplac404.com</p>
                     <p><i class="bi bi-telephone-fill me-3"></i> +351 259 123 456</p>
                 </div>
             </div>
         </div>
         <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
-            &copy; @DateTime.Now.Year - AutoMarket - Todos os direitos reservados.
+            &copy; @DateTime.Now.Year - DriveDeal - Todos os direitos reservados.
         </div>
     </footer>
 
@@ -88,3 +125,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

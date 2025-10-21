@@ -487,3 +487,45 @@ body.home-page .navbar:not(.scrolled) {
     padding: 1rem;
 }
 
+
+/* =================================================================
+   Estilos das Páginas de Autenticação (Login/Registar)
+================================================================= */
+.auth-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 150px); /* Ajustar altura para preencher a tela */
+    padding: 2rem 0;
+}
+
+    .auth-container .card {
+        width: 100%;
+        max-width: 450px;
+        border: none;
+        border-radius: var(--border-radius);
+    }
+
+
+/* =================================================================
+   Estilos da Página de Perfil do Utilizador
+================================================================= */
+.perfil-nav .list-group-item.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: dimgrey; /* CORREÇÃO: Garante que o texto fica branco no item ativo */
+}
+
+.perfil-nav .list-group-item-action:hover {
+    color: var(--primary-color);
+}
+
+/* NOVO ESTILO ADICIONADO PARA CORRIGIR AS IMAGENS NO PERFIL */
+.managed-ad-item img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    flex-shrink: 0; /* Impede que a imagem encolha */
+}
+

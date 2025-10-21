@@ -15,5 +15,6 @@ namespace Marketplace.Data
         }
 
         public DbSet<Marketplace.Models.Anuncio> Anuncio { get; set; } = default!;
+        public DbSet<Marketplace.Models.Utilizador> Utilizador { get; set; } = default!;
     }
 }
