@@ -525,24 +525,116 @@ body.home-page .navbar:not(.scrolled) {
         }
 
 /* -------------------------------------------------------------------------- */
+/* Page Header Section                                                       */
+/* -------------------------------------------------------------------------- */
+
+.page-header-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.page-header-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+}
+
+    .page-header-title i {
+        color: var(--primary-color);
+    }
+
+.page-header-subtitle {
+    font-size: 1.1rem;
+}
+
+/* -------------------------------------------------------------------------- */
 /* Filters Sidebar                                                           */
 /* -------------------------------------------------------------------------- */
 
 .filters-sidebar {
     background-color: var(--white);
     border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    padding: 1.5rem;
-    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--border-color);
+    padding: 0;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
 }
 
-    .filters-sidebar h5 {
-        color: var(--primary-color);
+.filters-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: var(--white);
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .filters-header h5 {
+        color: var(--white);
         font-weight: 700;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 2px solid var(--primary-color);
+        margin: 0;
     }
+
+    .filters-header .btn-link {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+        .filters-header .btn-link:hover {
+            color: rgba(255,255,255,0.8);
+        }
+
+.filters-sidebar form {
+    padding: 1.5rem;
+}
+
+.filter-group {
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+    .filter-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+.filter-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+    .filter-label i {
+        color: var(--primary-color);
+        font-size: 1rem;
+    }
+
+.price-range-container .form-range {
+    margin-bottom: 0.5rem;
+}
+
+    .price-range-container .form-range::-webkit-slider-thumb {
+        background-color: var(--primary-color);
+    }
+
+    .price-range-container .form-range::-moz-range-thumb {
+        background-color: var(--primary-color);
+    }
+
+.price-value {
+    font-size: 1.1rem;
+}
 
 /* -------------------------------------------------------------------------- */
 /* P�ginas de Autentica��o                                                   */
@@ -625,6 +717,211 @@ body.home-page .navbar:not(.scrolled) {
 .dropdown-divider {
     margin: 0.5rem 0;
     border-color: var(--border-color);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Results Toolbar & Card Enhancements                                       */
+/* -------------------------------------------------------------------------- */
+
+.results-toolbar {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.results-info .results-count {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.results-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.view-toggle .btn-group .btn {
+    padding: 0.4rem 0.75rem;
+}
+
+    .view-toggle .btn-group .btn.active {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border-color: var(--primary-color);
+    }
+
+.sort-dropdown .form-select {
+    min-width: 200px;
+}
+
+/* Enhanced Anuncio Cards */
+.anuncio-card {
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    background: var(--white);
+    height: 100%;
+}
+
+    .anuncio-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-color);
+    }
+
+.card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 220px;
+}
+
+    .card-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .anuncio-card:hover .card-img-wrapper img {
+        transform: scale(1.08);
+    }
+
+.badge-destaque,
+.badge-novo {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: var(--white);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.badge-novo {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.btn-favorito {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+    .btn-favorito i {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        transition: var(--transition);
+    }
+
+    .btn-favorito:hover {
+        background-color: var(--white);
+        transform: scale(1.1);
+    }
+
+    .btn-favorito.active i,
+    .btn-favorito:hover i {
+        color: var(--primary-color);
+    }
+
+.card-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.anuncio-card .card-title {
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+}
+
+.anuncio-card .card-price {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+}
+
+.anuncio-card .card-text {
+    line-height: 1.6;
+}
+
+.anuncio-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+    .anuncio-details-grid span {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .anuncio-details-grid .bi {
+        color: var(--primary-color);
+        font-size: 1rem;
+    }
+
+.anuncio-card .card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+}
+
+/* Pagination Enhancements */
+.pagination .page-link {
+    color: var(--primary-color);
+    border-color: var(--border-color);
+    transition: var(--transition);
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: var(--text-muted);
 }
 
 /* -------------------------------------------------------------------------- */
