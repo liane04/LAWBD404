@@ -6,10 +6,18 @@
     <div class="row">
         <!-- Coluna da Esquerda: Menu de Navegação Lateral -->
         <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Painel de Gestão</h5>
+
+            <!-- Cartão de Perfil do Admin -->
+            <div class="card shadow-sm mb-3 admin-profile-card">
+                <div class="card-body text-center">
+                    <img src="https://placehold.co/100x100/343a40/ffffff?text=Admin" alt="Foto do Administrador" class="rounded-circle mb-3">
+                    <h5 class="card-title mb-0">Adminstrador Principal</h5>
+                    <p class="card-text text-muted small">admin@marketplace404.pt</p>
                 </div>
+            </div>
+
+            <!-- Menu de Navegação -->
+            <div class="card shadow-sm">
                 <div class="list-group list-group-flush admin-sidebar">
                     <a href="#" class="list-group-item list-group-item-action active" data-target="#dashboard-content">
                         <i class="bi bi-speedometer2 me-2"></i>Dashboard
@@ -34,81 +42,156 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Estatísticas foram removidas da barra lateral -->
+
         </div>
 
         <!-- Coluna da Direita: Conteúdo Principal Dinâmico -->
         <div class="col-md-9">
 
-            <!-- Secção Dashboard -->
+            <!-- Secção Dashboard (Conteúdo alterado) -->
             <div id="dashboard-content" class="admin-content-section">
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-                        <h3 class="mb-4">Dashboard</h3>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
-                                        <div class="display-4 text-primary">1,254</div>
-                                        <h6 class="card-subtitle text-muted mt-2">Utilizadores Ativos</h6>
+                        <h3 class="mb-4">Bem-vindo, Administrador!</h3>
+                        <p class="lead">Selecione uma opção no menu à esquerda para começar a gerir a plataforma.</p>
+
+                        <!-- Estatísticas Movidas para o Dashboard -->
+                        <div class="row mt-4 mb-4">
+                            <div class="col-md-4">
+                                <div class="card shadow-sm dashboard-stat-card stat-primary">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title fs-6 mb-0">Utilizadores Ativos</h5>
+                                            <div class="display-6 fw-bold">1,254</div>
+                                        </div>
+                                        <i class="bi bi-people-fill fs-2 text-primary opacity-25"></i>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
-                                        <div class="display-4 text-success">832</div>
-                                        <h6 class="card-subtitle text-muted mt-2">Anúncios Ativos</h6>
+                            <div class="col-md-4">
+                                <div class="card shadow-sm dashboard-stat-card stat-success">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title fs-6 mb-0">Anúncios Ativos</h5>
+                                            <div class="display-6 fw-bold">832</div>
+                                        </div>
+                                        <i class="bi bi-megaphone-fill fs-2 text-success opacity-25"></i>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
-                                        <div class="display-4 text-warning">12</div>
-                                        <h6 class="card-subtitle text-muted mt-2">Vendedores a Validar</h6>
+                            <div class="col-md-4">
+                                <div class="card shadow-sm dashboard-stat-card stat-warning">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title fs-6 mb-0">A Validar</h5>
+                                            <div class="display-6 fw-bold">12</div>
+                                        </div>
+                                        <i class="bi bi-person-check-fill fs-2 text-warning opacity-25"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <hr class="my-4">
+                        <p>Aqui pode validar novos vendedores, moderar anúncios, gerir denúncias e consultar o estado geral do Marketplace 404.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Secção Validar Vendedores -->
+            <!-- ======================= Conteúdo: Validar Vendedores ======================= -->
             <div id="validar-vendedores-content" class="admin-content-section" style="display: none;">
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-                        <h3 class="mb-4">Validar Vendedores Pendentes</h3>
+                        <h3 class="mb-4">Validar Vendedores</h3>
+                        <p class="text-muted">Abaixo estão os pedidos de registo de vendedor que aguardam a sua aprovação.</p>
+
+                        <!-- Tabela de Vendedores Pendentes -->
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
-                                <thead>
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Nome</th>
-                                        <th>Email</th>
-                                        <th>NIF</th>
-                                        <th>Data de Registo</th>
-                                        <th class="text-end">Ações</th>
+                                        <th scope="col">Utilizador</th>
+                                        <th scope="col">Data de Pedido</th>
+                                        <th scope="col">NIF (para validação)</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col" class="text-end">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!-- Exemplo de Vendedor 1: Pendente -->
                                     <tr>
-                                        <td>Ana Sofia Pereira</td>
-                                        <td>ana.sofia@email.com</td>
-                                        <td>212345678</td>
-                                        <td>20/10/2025</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=JP" alt="Avatar" class="rounded-circle me-3">
+                                                <div>
+                                                    <div class="fw-bold">João Pereira</div>
+                                                    <div class="small text-muted">joao.pereira@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>22/10/2025</td>
+                                        <td>
+                                            <span class="font-monospace">211345678</span>
+                                            <!-- Botão de copiar (estático) -->
+                                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="alert('NIF copiado! (funcionalidade a implementar)')"><i class="bi bi-clipboard"></i></button>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-warning-soft text-dark">Pendente</span>
+                                        </td>
                                         <td class="text-end">
-                                            <button class="btn btn-sm btn-success">Aprovar</button>
-                                            <button class="btn btn-sm btn-danger">Rejeitar</button>
+                                            <button class="btn btn-sm btn-success"><i class="bi bi-check-circle me-1"></i> Aprovar</button>
+                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Rejeitar</button>
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#validarVendedorModal"><i class="bi bi-eye me-1"></i> Ver</button>
                                         </td>
                                     </tr>
+                                    <!-- Exemplo de Vendedor 2: Pendente -->
                                     <tr>
-                                        <td>Carlos Manuel Antunes</td>
-                                        <td>carlos.antunes@email.com</td>
-                                        <td>298765432</td>
-                                        <td>19/10/2025</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/40x40/FFF3E0/FFA000?text=MS" alt="Avatar" class="rounded-circle me-3">
+                                                <div>
+                                                    <div class="fw-bold">Maria Santos</div>
+                                                    <div class="small text-muted">msantos@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>21/10/2025</td>
+                                        <td>
+                                            <span class="font-monospace">255678123</span>
+                                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="alert('NIF copiado! (funcionalidade a implementar)')"><i class="bi bi-clipboard"></i></button>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-warning-soft text-dark">Pendente</span>
+                                        </td>
                                         <td class="text-end">
-                                            <button class="btn btn-sm btn-success">Aprovar</button>
-                                            <button class="btn btn-sm btn-danger">Rejeitar</button>
+                                            <button class="btn btn-sm btn-success"><i class="bi bi-check-circle me-1"></i> Aprovar</button>
+                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Rejeitar</button>
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#validarVendedorModal"><i class="bi bi-eye me-1"></i> Ver</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Exemplo de Vendedor 3: Rejeitado -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/40x40/F0F3F5/6C757D?text=RG" alt="Avatar" class="rounded-circle me-3">
+                                                <div>
+                                                    <div class="fw-bold">Rui Gonçalves</div>
+                                                    <div class="small text-muted">rui.g@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>20/10/2025</td>
+                                        <td>
+                                            <span class="font-monospace">123123123</span>
+                                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="alert('NIF copiado! (funcionalidade a implementar)')"><i class="bi bi-clipboard"></i></button>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-danger-soft">Rejeitado</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>Ações</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -117,39 +200,99 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Secção Gerir Utilizadores -->
+            <!-- ======================= Conteúdo: Gerir Utilizadores ======================= -->
             <div id="gerir-utilizadores-content" class="admin-content-section" style="display: none;">
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-                        <h3 class="mb-4">Gerir Utilizadores</h3>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="mb-0">Gerir Utilizadores</h3>
+                            <!-- Botão para abrir o modal -->
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criarUtilizadorModal">
+                                <i class="bi bi-plus-circle me-1"></i> Criar Novo ADMINISTRADOR
+                            </button>
+                        </div>
+
+                        <!-- Tabela de Utilizadores -->
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
-                                <thead>
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Nome</th>
-                                        <th>Tipo de Conta</th>
-                                        <th>Estado</th>
-                                        <th class="text-end">Ações</th>
+                                        <th scope="col">Nome</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Tipo de Conta</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col" class="text-end">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!-- Exemplo de Utilizador 1 -->
                                     <tr>
-                                        <td>Beatriz Costa</td>
-                                        <td><span class="badge bg-info-soft">Comprador</span></td>
-                                        <td><span class="badge bg-success-soft">Ativo</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS" alt="Avatar" class="rounded-circle me-3">
+                                                <div>
+                                                    <div class="fw-bold">Ana Silva</div>
+                                                    <div class="small text-muted">as.silva@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>as.silva@email.com</td>
+                                        <td>
+                                            <span class="badge bg-primary-soft">Comprador</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success-soft">Ativo</span>
+                                        </td>
                                         <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary">Ver Perfil</button>
-                                            <button class="btn btn-sm btn-outline-danger">Bloquear</button>
+                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i> Editar</button>
+                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-lock me-1"></i> Bloquear</button>
                                         </td>
                                     </tr>
+                                    <!-- Exemplo de Utilizador 2 -->
                                     <tr>
-                                        <td>Rui Santos (Stand Veloz)</td>
-                                        <td><span class="badge bg-primary-soft">Vendedor</span></td>
-                                        <td><span class="badge bg-danger-soft">Bloqueado</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/40x40/F0F3F5/6C757D?text=BV" alt="Avatar" class="rounded-circle me-3">
+                                                <div>
+                                                    <div class="fw-bold">Bruno Vieira</div>
+                                                    <div class="small text-muted">bruno.v@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>bruno.v@email.com</td>
+                                        <td>
+                                            <span class="badge bg-info-soft">Vendedor</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-danger-soft">Bloqueado</span>
+                                        </td>
                                         <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary">Ver Perfil</button>
-                                            <button class="btn btn-sm btn-outline-success">Desbloquear</button>
+                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i> Editar</button>
+                                            <button class="btn btn-sm btn-outline-success"><i class="bi bi-unlock me-1"></i> Desbloquear</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Exemplo de Utilizador 3 -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/40x40/FFF3E0/FFA000?text=CR" alt="Avatar" class="rounded-circle me-3">
+                                                <div>
+                                                    <div class="fw-bold">Carla Ribeiro</div>
+                                                    <div class="small text-muted">c.ribeiro@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>c.ribeiro@email.com</td>
+                                        <td>
+                                            <span class="badge bg-primary-soft">Comprador</span>
+                                            <span class="badge bg-info-soft">Vendedor</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success-soft">Ativo</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i> Editar</button>
+                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-lock me-1"></i> Bloquear</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -159,30 +302,88 @@
                 </div>
             </div>
 
-            <!-- Secção Moderar Anúncios -->
+            <!-- ======================= Conteúdo: Moderar Anúncios ======================= -->
             <div id="moderar-anuncios-content" class="admin-content-section" style="display: none;">
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
                         <h3 class="mb-4">Moderar Anúncios</h3>
+
+                        <!-- Tabela de Anúncios -->
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
-                                <thead>
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Anúncio</th>
-                                        <th>Vendedor</th>
-                                        <th>Motivo do Alerta</th>
-                                        <th class="text-end">Ações</th>
+                                        <th scope="col" style="width: 120px;">Anúncio</th>
+                                        <th scope="col">Título</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col">Notas</th>
+                                        <th scope="col" class="text-end">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!-- Exemplo de Anúncio 1 -->
                                     <tr>
-                                        <td>BMW Série 1 116d</td>
-                                        <td>Stand Veloz</td>
-                                        <td>Preço irrealista</td>
+                                        <td>
+                                            <img src="~/imagens/bmwSerie1.jpg" alt="[Imagem de um BMW Série 1]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">BMW Série 1 116d</div>
+                                            <div class="small text-muted">Vendedor: Ana Silva</div>
+                                        </td>
+                                        <td><span class="badge bg-success-soft">Ativo</span></td>
+                                        <td class="small">--</td>
                                         <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-info">Ver Anúncio</button>
-                                            <button class="btn btn-sm btn-outline-warning">Pausar</button>
-                                            <button class="btn btn-sm btn-outline-danger">Remover</button>
+                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pause-circle me-1"></i> Pausar</button>
+                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i> Remover</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Exemplo de Anúncio 2 -->
+                                    <tr>
+                                        <td>
+                                            <img src="https://placehold.co/100x60/F0F3F5/6C757D?text=Audi+A3" alt="[Imagem de um Audi A3]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">Audi A3 2.0 TDI (Fotos Falsas)</div>
+                                            <div class="small text-muted">Vendedor: Bruno Vieira</div>
+                                        </td>
+                                        <td><span class="badge bg-danger-soft">Removido</span></td>
+                                        <td class="small">Anúncio removido por violar termos (fotos).</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>Pausar</button>
+                                            <button class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-counterclockwise me-1"></i> Restaurar</button>
+                                        </td>
+                                    </tr>
+                                    <!-- NOVO Exemplo de Anúncio 3 -->
+                                    <tr>
+                                        <td>
+                                            <img src="https://placehold.co/100x60/FFF3E0/FFA000?text=VW+Golf" alt="[Imagem de um VW Golf]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">VW Golf 1.6 TDI</div>
+                                            <div class="small text-muted">Vendedor: Miguel Costa</div>
+                                        </td>
+                                        <td><span class="badge bg-warning-soft text-dark">Pendente de Revisão</span></td>
+                                        <td class="small">Anúncio novo, aguarda primeira aprovação.</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-success"><i class="bi bi-check-circle me-1"></i> Aprovar</button>
+                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Rejeitar</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- NOVO Exemplo de Anúncio 4 -->
+                                    <tr>
+                                        <td>
+                                            <img src="https://placehold.co/100x60/EBF4FF/1E63FF?text=Peugeot+208" alt="[Imagem de um Peugeot 208]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">Peugeot 208 Elétrico</div>
+                                            <div class="small text-muted">Vendedor: Carla Ribeiro</div>
+                                        </td>
+                                        <td><span class="badge bg-success-soft">Ativo</span></td>
+                                        <td class="small text-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i> 1 Denúncia Recebida</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-warning"><i class="bi bi-eye me-1"></i> Ver Denúncia</button>
+                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pause-circle me-1"></i> Pausar</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -234,16 +435,47 @@
                 </div>
             </div>
 
-            <!-- Secção Estatísticas -->
-            <div id="estatisticas-content" class="admin-content-section" style="display: none;">
+            <!-- ... código existente ... --><!-- Secção Estatísticas --><div id="estatisticas-content" class="admin-content-section" style="display: none;">
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-                        <h3 class="mb-4">Estatísticas do Site</h3>
-                        <p class="text-muted">Esta secção irá conter gráficos e relatórios detalhados sobre a performance do site.</p>
-                        <div class="text-center p-5 border rounded bg-light">
-                            <i class="bi bi-bar-chart-line-fill fs-1 text-primary"></i>
-                            <p class="mt-2">Gráficos de vendas, utilizadores e anúncios em breve.</p>
+                        <h3 class="mb-4">Estatísticas Detalhadas</h3>
+
+                        <!-- Gráfico de Variação de Vendas --><div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-header bg-white border-0">
+                                        <h5 class="mb-0">Variação de Vendas nos Últimos 6 Meses</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <img src="~/imagens/6meses.png" class="img-fluid rounded" alt="[Gráfico de linha de variação de vendas]">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-header bg-white border-0">
+                                        <h5 class="mb-0">Top Marcas/Modelos</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <img src="~/imagens/marcasvendidas.png" class="img-fluid rounded" alt="[Gráfico doughnut de top marcas]">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-header bg-white border-0">
+                                        <h5 class="mb-0">Distribuição de Anúncios por Estado</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <img src="~/imagens/estadosAnuncios.png" class="img-fluid rounded" alt="[Gráfico de distribuição de anúncios por estado]">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -314,6 +546,11 @@
                     this.classList.add('active');
                 });
             });
+ 
+
+             // Gráfico 1: Novos Registos (Gráfico de Barras)
+           
+            // --- FIM DO CÓDIGO DOS GRÁFICOS ---
         });
     </script>
 }
