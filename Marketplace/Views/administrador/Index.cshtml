@@ -6,10 +6,18 @@
     <div class="row">
         <!-- Coluna da Esquerda: Menu de Navegação Lateral -->
         <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Painel de Gestão</h5>
+
+            <!-- Cartão de Perfil do Admin -->
+            <div class="card shadow-sm mb-3 admin-profile-card">
+                <div class="card-body text-center">
+                    <img src="https://placehold.co/100x100/343a40/ffffff?text=Admin" alt="Foto do Administrador" class="rounded-circle mb-3">
+                    <h5 class="card-title mb-0">Adminstrador Principal</h5>
+                    <p class="card-text text-muted small">admin@marketplace404.pt</p>
                 </div>
+            </div>
+
+            <!-- Menu de Navegação -->
+            <div class="card shadow-sm">
                 <div class="list-group list-group-flush admin-sidebar">
                     <a href="#" class="list-group-item list-group-item-action active" data-target="#dashboard-content">
                         <i class="bi bi-speedometer2 me-2"></i>Dashboard
@@ -34,42 +42,60 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Estatísticas foram removidas da barra lateral -->
+
         </div>
 
         <!-- Coluna da Direita: Conteúdo Principal Dinâmico -->
         <div class="col-md-9">
 
-            <!-- Secção Dashboard -->
+            <!-- Secção Dashboard (Conteúdo alterado) -->
             <div id="dashboard-content" class="admin-content-section">
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-                        <h3 class="mb-4">Dashboard</h3>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
-                                        <div class="display-4 text-primary">1,254</div>
-                                        <h6 class="card-subtitle text-muted mt-2">Utilizadores Ativos</h6>
+                        <h3 class="mb-4">Bem-vindo, Administrador!</h3>
+                        <p class="lead">Selecione uma opção no menu à esquerda para começar a gerir a plataforma.</p>
+
+                        <!-- Estatísticas Movidas para o Dashboard -->
+                        <div class="row mt-4 mb-4">
+                            <div class="col-md-4">
+                                <div class="card shadow-sm dashboard-stat-card stat-primary">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title fs-6 mb-0">Utilizadores Ativos</h5>
+                                            <div class="display-6 fw-bold">1,254</div>
+                                        </div>
+                                        <i class="bi bi-people-fill fs-2 text-primary opacity-25"></i>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
-                                        <div class="display-4 text-success">832</div>
-                                        <h6 class="card-subtitle text-muted mt-2">Anúncios Ativos</h6>
+                            <div class="col-md-4">
+                                <div class="card shadow-sm dashboard-stat-card stat-success">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title fs-6 mb-0">Anúncios Ativos</h5>
+                                            <div class="display-6 fw-bold">832</div>
+                                        </div>
+                                        <i class="bi bi-megaphone-fill fs-2 text-success opacity-25"></i>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
-                                        <div class="display-4 text-warning">12</div>
-                                        <h6 class="card-subtitle text-muted mt-2">Vendedores a Validar</h6>
+                            <div class="col-md-4">
+                                <div class="card shadow-sm dashboard-stat-card stat-warning">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title fs-6 mb-0">A Validar</h5>
+                                            <div class="display-6 fw-bold">12</div>
+                                        </div>
+                                        <i class="bi bi-person-check-fill fs-2 text-warning opacity-25"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <hr class="my-4">
+                        <p>Aqui pode validar novos vendedores, moderar anúncios, gerir denúncias e consultar o estado geral do Marketplace 404.</p>
                     </div>
                 </div>
             </div>
@@ -239,11 +265,30 @@
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
                         <h3 class="mb-4">Estatísticas do Site</h3>
-                        <p class="text-muted">Esta secção irá conter gráficos e relatórios detalhados sobre a performance do site.</p>
-                        <div class="text-center p-5 border rounded bg-light">
-                            <i class="bi bi-bar-chart-line-fill fs-1 text-primary"></i>
-                            <p class="mt-2">Gráficos de vendas, utilizadores e anúncios em breve.</p>
+
+                        <div class="row">
+                            <div class="col-lg-8 mb-4">
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-header bg-white border-0">
+                                        <h5 class="mb-0">Novos Registos (Últimos 6 Meses)</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="novosRegistosChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-4">
+                                <div class="card shadow-sm border-0">
+                                    <div class="card-header bg-white border-0">
+                                        <h5 class="mb-0">Anúncios por Categoria</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="anunciosCategoriaChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -314,6 +359,83 @@
                     this.classList.add('active');
                 });
             });
+ 
+
+                   // Gráfico 1: Novos Registos (Gráfico de Barras)
+            const ctxRegistos = document.getElementById('novosRegistosChart');
+            if (ctxRegistos) {
+                new Chart(ctxRegistos, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro'],
+                        datasets: [{
+                            label: 'Compradores',
+                            data: [65, 59, 80, 81, 56, 55],
+                            backgroundColor: 'rgba(13, 110, 253, 0.6)', // Cor primária com transparência
+                            borderColor: 'rgba(13, 110, 253, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Vendedores',
+                            data: [28, 48, 40, 19, 86, 27],
+                            backgroundColor: 'rgba(25, 135, 84, 0.6)', // Cor de sucesso com transparência
+                            borderColor: 'rgba(25, 135, 84, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico 2: Anúncios por Categoria (Gráfico Doughnut)
+            const ctxCategorias = document.getElementById('anunciosCategoriaChart');
+            if (ctxCategorias) {
+                new Chart(ctxCategorias, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [
+                            'SUV',
+                            'Sedan',
+                            'Desportivo',
+                            'Carrinha',
+                            'Citadino'
+                        ],
+                        datasets: [{
+                            label: 'Nº de Anúncios',
+                            data: [300, 150, 50, 120, 212],
+                            backgroundColor: [
+                                'rgb(13, 110, 253)',
+                                'rgb(25, 135, 84)',
+                                'rgb(220, 53, 69)',
+                                'rgb(255, 193, 7)',
+                                'rgb(108, 117, 125)'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            }
+                        }
+                    }
+                });
+            }
+            // --- FIM DO CÓDIGO DOS GRÁFICOS ---
         });
     </script>
 }
