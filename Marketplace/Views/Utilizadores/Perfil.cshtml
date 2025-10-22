@@ -2,23 +2,69 @@
     ViewData["Title"] = "Meu Perfil";
 }
 
-<div class="container mt-5 pt-5">
-    <div class="row">
+<div class="container mt-5 pt-5 mb-5 pb-5">
+    <div class="row g-4">
         <!-- Barra Lateral de Navegação do Perfil -->
         <div class="col-lg-3">
-            <div class="perfil-nav card shadow-sm">
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <img src="https://placehold.co/100x100/0d6efd/white?text=User" class="rounded-circle" alt="Foto de Perfil">
-                        <h5 class="mt-3 mb-0">Nome do Utilizador</h5>
-                        <small class="text-muted">Comprador & Vendedor</small>
+            <div class="perfil-sidebar card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <!-- Cabeçalho do Perfil -->
+                    <div class="perfil-header text-center p-4">
+                        <div class="perfil-avatar-wrapper position-relative d-inline-block mb-3">
+                            <img src="https://placehold.co/120x120/2563eb/white?text=JD"
+                                 class="perfil-avatar rounded-circle"
+                                 alt="Foto de Perfil">
+                            <button class="perfil-avatar-edit btn btn-sm btn-primary rounded-circle position-absolute">
+                                <i class="bi bi-camera-fill"></i>
+                            </button>
+                        </div>
+                        <h5 class="mb-2 fw-bold">João Duarte Silva</h5>
+                        <div class="perfil-user-badges mb-2">
+                            <span class="perfil-badge perfil-badge-comprador">
+                                <i class="bi bi-person-check-fill"></i> Comprador
+                            </span>
+                            <span class="perfil-badge perfil-badge-vendedor">
+                                <i class="bi bi-shop"></i> Vendedor
+                            </span>
+                        </div>
+                        <small class="perfil-member-since">
+                            <i class="bi bi-calendar-check me-1"></i>Membro desde Out 2025
+                        </small>
                     </div>
-                    <div class="list-group list-group-flush">
-                        <a href="#dados-pessoais" class="list-group-item list-group-item-action active" data-bs-toggle="tab"><i class="bi bi-person-fill me-2"></i>Dados Pessoais</a>
-                        <a href="#meus-anuncios" class="list-group-item list-group-item-action" data-bs-toggle="tab"><i class="bi bi-card-list me-2"></i>Meus Anúncios</a>
-                        <a href="#favoritos" class="list-group-item list-group-item-action" data-bs-toggle="tab"><i class="bi bi-heart-fill me-2"></i>Anúncios Favoritos</a>
-                        <a href="#definicoes" class="list-group-item list-group-item-action" data-bs-toggle="tab"><i class="bi bi-gear-fill me-2"></i>Definições</a>
-                        <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action text-danger"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
+
+                    <hr class="m-0">
+
+                    <!-- Menu de Navegação -->
+                    <div class="perfil-nav-menu">
+                        <a href="#dados-pessoais" class="perfil-nav-item active" data-bs-toggle="tab">
+                            <i class="bi bi-person-fill"></i>
+                            <span>Dados Pessoais</span>
+                            <i class="bi bi-chevron-right ms-auto"></i>
+                        </a>
+                        <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab">
+                            <i class="bi bi-card-list"></i>
+                            <span>Meus Anúncios</span>
+                            <span class="badge bg-primary rounded-pill ms-auto">3</span>
+                        </a>
+                        <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab">
+                            <i class="bi bi-heart-fill"></i>
+                            <span>Anúncios Favoritos</span>
+                            <span class="badge bg-danger rounded-pill ms-auto">2</span>
+                        </a>
+                        <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab">
+                            <i class="bi bi-gear-fill"></i>
+                            <span>Definições</span>
+                            <i class="bi bi-chevron-right ms-auto"></i>
+                        </a>
+                    </div>
+
+                    <hr class="m-0">
+
+                    <!-- Botão de Sair -->
+                    <div class="p-3">
+                        <a asp-controller="Home" asp-action="Index" class="perfil-logout-btn btn btn-outline-danger w-100">
+                            <i class="bi bi-box-arrow-right me-2"></i>Terminar Sessão
+                        </a>
                     </div>
                 </div>
             </div>
@@ -29,68 +75,359 @@
             <div class="tab-content">
                 <!-- Aba: Dados Pessoais -->
                 <div class="tab-pane fade show active" id="dados-pessoais">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h4>Os Meus Dados</h4>
+                    <!-- Cabeçalho da Página -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="mb-1 fw-bold">
+                                <i class="bi bi-person-circle text-primary me-2"></i>Dados Pessoais
+                            </h3>
+                            <p class="text-muted mb-0">Gerir as suas informações pessoais e de contacto</p>
                         </div>
-                        <div class="card-body">
-                            <p><strong>Nome:</strong> Nome Completo do Utilizador</p>
-                            <p><strong>Email:</strong> email@exemplo.com</p>
-                            <p><strong>Contacto Telefónico:</strong> 912 345 678</p>
-                            <p><strong>Morada:</strong> Rua Exemplo, 123, 5000-000 Vila Real</p>
-                            <a asp-action="Edit" class="btn btn-primary mt-3">Editar Perfil</a>
+                        <a asp-action="Edit" class="btn btn-primary">
+                            <i class="bi bi-pencil-square me-2"></i>Editar Perfil
+                        </a>
+                    </div>
+
+                    <!-- Informações Pessoais -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="mb-0 fw-semibold">
+                                <i class="bi bi-info-circle text-primary me-2"></i>Informação Pessoal
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-person-badge"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">Nome Completo</label>
+                                            <p class="perfil-info-value">João Duarte Silva</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-at"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">Username</label>
+                                            <p class="perfil-info-value">joao.silva</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-envelope"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">Email</label>
+                                            <p class="perfil-info-value">joao.silva@exemplo.com</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-shield-check"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">Estado da Conta</label>
+                                            <p class="perfil-info-value">
+                                                <span class="badge bg-success-subtle text-success">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informações de Contacto -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="mb-0 fw-semibold">
+                                <i class="bi bi-telephone text-primary me-2"></i>Contactos
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-phone"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">Telemóvel</label>
+                                            <p class="perfil-info-value">+351 912 345 678</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-telephone-fill"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">Telefone Alternativo</label>
+                                            <p class="perfil-info-value text-muted">Não definido</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Morada -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="mb-0 fw-semibold">
+                                <i class="bi bi-geo-alt text-primary me-2"></i>Morada
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <div class="col-md-8">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-house-door"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">Rua</label>
+                                            <p class="perfil-info-value">Rua Dr. Manuel Cardona, nº 123, 2º Esq.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-mailbox"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">Código Postal</label>
+                                            <p class="perfil-info-value">5000-558</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-pin-map"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">Localidade</label>
+                                            <p class="perfil-info-value">Vila Real</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="perfil-info-item">
+                                        <div class="perfil-info-icon">
+                                            <i class="bi bi-flag"></i>
+                                        </div>
+                                        <div class="perfil-info-content">
+                                            <label class="perfil-info-label">País</label>
+                                            <p class="perfil-info-value">Portugal</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Aba: Meus Anúncios (para Vendedores) -->
                 <div class="tab-pane fade" id="meus-anuncios">
-                    <div class="card shadow-sm">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h4>Meus Anúncios</h4>
-                            <a asp-controller="Anuncios" asp-action="Create" class="btn btn-success"><i class="bi bi-plus-circle me-1"></i> Criar Novo Anúncio</a>
+                    <!-- Cabeçalho da Página -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="mb-1 fw-bold">
+                                <i class="bi bi-card-list text-primary me-2"></i>Meus Anúncios
+                            </h3>
+                            <p class="text-muted mb-0">Gerir os seus veículos anunciados na plataforma</p>
                         </div>
-                        <div class="card-body">
-                            <!-- Exemplo de anúncio gerido 1 -->
-                            <div class="managed-ad-item d-flex align-items-center mb-3">
-                                <img src="~/imagens/bmwSerie1.jpg" alt="[Imagem de um BMW Série 1]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0 d-inline-block">BMW Série 1 116d</h6>
-                                    <span class="badge bg-success ms-2">Ativo</span>
-                                    <small class="text-muted d-block">Publicado a 20/10/2025</small>
-                                </div>
-                                <div class="ms-auto">
-                                    <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary me-2">Editar</a>
-                                    <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger">Apagar</a>
+                        <a asp-controller="Anuncios" asp-action="Create" class="btn btn-success">
+                            <i class="bi bi-plus-circle me-2"></i>Criar Novo Anúncio
+                        </a>
+                    </div>
+
+                    <!-- Filtros/Tabs de Estado -->
+                    <div class="anuncios-filter-tabs mb-4">
+                        <button class="anuncios-filter-btn active" data-filter="todos">
+                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">3</span>
+                        </button>
+                        <button class="anuncios-filter-btn" data-filter="ativos">
+                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">1</span>
+                        </button>
+                        <button class="anuncios-filter-btn" data-filter="pendentes">
+                            <i class="bi bi-clock-fill me-1"></i>Pendentes <span class="badge bg-warning ms-1">1</span>
+                        </button>
+                        <button class="anuncios-filter-btn" data-filter="vendidos">
+                            <i class="bi bi-archive-fill me-1"></i>Vendidos <span class="badge bg-secondary ms-1">1</span>
+                        </button>
+                    </div>
+
+                    <!-- Lista de Anúncios -->
+                    <div class="anuncios-list">
+                        <!-- Anúncio 1 - Ativo -->
+                        <div class="anuncio-card card shadow-sm border-0 mb-3" data-status="ativo" data-destacado="false">
+                            <div class="card-body p-3">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-auto">
+                                        <div class="anuncio-thumbnail">
+                                            <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1">
+                                            <span class="anuncio-status-badge badge-ativo">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="anuncio-info">
+                                            <h5 class="anuncio-title mb-1">BMW Série 1 116d</h5>
+                                            <div class="anuncio-meta">
+                                                <span class="anuncio-meta-item">
+                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 20/10/2025
+                                                </span>
+                                                <span class="anuncio-meta-item">
+                                                    <i class="bi bi-eye-fill me-1"></i>127 visualizações
+                                                </span>
+                                                <span class="anuncio-meta-item">
+                                                    <i class="bi bi-heart-fill me-1"></i>8 favoritos
+                                                </span>
+                                            </div>
+                                            <div class="anuncio-price mt-2">
+                                                <span class="price-label">Preço:</span>
+                                                <span class="price-value">15.900€</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="anuncio-actions d-flex flex-column gap-2">
+                                            <div class="d-flex gap-2">
+                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger" title="Apagar">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                            <button class="btn btn-sm btn-warning btn-destacar w-100" data-bs-toggle="modal" data-bs-target="#destacarModal" title="Destacar Anúncio">
+                                                <i class="bi bi-star-fill me-1"></i>Destacar
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <hr>
-                            <!-- Exemplo de anúncio gerido 2 -->
-                            <div class="managed-ad-item d-flex align-items-center mb-3">
-                                <img src="~/imagens/mercedezClassA.jpg" alt="[Imagem de um Mercedes Classe A]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0 d-inline-block">Mercedes-Benz Classe A</h6>
-                                    <span class="badge bg-warning text-dark ms-2">Pendente</span>
-                                    <small class="text-muted d-block">Publicado a 15/10/2025</small>
+                        </div>
+
+                        <!-- Anúncio 2 - Pendente (Destacado) -->
+                        <div class="anuncio-card anuncio-destacado card shadow-sm border-warning mb-3" data-status="pendente" data-destacado="true">
+                            <div class="card-body p-3">
+                                <div class="anuncio-destacado-badge">
+                                    <i class="bi bi-star-fill me-1"></i>Em Destaque
                                 </div>
-                                <div class="ms-auto">
-                                    <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary me-2">Editar</a>
-                                    <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger">Apagar</a>
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-auto">
+                                        <div class="anuncio-thumbnail">
+                                            <img src="~/imagens/mercedezClassA.jpg" alt="Mercedes Classe A">
+                                            <span class="anuncio-status-badge badge-pendente">
+                                                <i class="bi bi-clock-fill"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="anuncio-info">
+                                            <h5 class="anuncio-title mb-1">Mercedes-Benz Classe A</h5>
+                                            <div class="anuncio-meta">
+                                                <span class="anuncio-meta-item">
+                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 15/10/2025
+                                                </span>
+                                                <span class="anuncio-meta-item text-warning">
+                                                    <i class="bi bi-exclamation-circle-fill me-1"></i>Aguarda aprovação
+                                                </span>
+                                                <span class="anuncio-meta-item text-warning">
+                                                    <i class="bi bi-star-fill me-1"></i>Destaque até 25/10/2025
+                                                </span>
+                                            </div>
+                                            <div class="anuncio-price mt-2">
+                                                <span class="price-label">Preço:</span>
+                                                <span class="price-value">22.500€</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="anuncio-actions d-flex flex-column gap-2">
+                                            <div class="d-flex gap-2">
+                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger" title="Apagar">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                            <button class="btn btn-sm btn-success btn-renovar-destaque w-100" title="Renovar Destaque">
+                                                <i class="bi bi-arrow-clockwise me-1"></i>Renovar
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <hr>
-                            <!-- Exemplo de anúncio gerido 3 -->
-                            <div class="managed-ad-item d-flex align-items-center">
-                                <img src="~/imagens/audiA3.jpg" alt="[Imagem de um Audi A3]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0 d-inline-block">Audi A3 Sportback</h6>
-                                    <span class="badge bg-secondary ms-2">Vendido</span>
-                                    <small class="text-muted d-block">Publicado a 12/10/2025</small>
-                                </div>
-                                <div class="ms-auto">
-                                    <!-- Para anúncios vendidos, os botões podem estar desativados -->
-                                    <a href="#" class="btn btn-sm btn-outline-primary me-2 disabled">Editar</a>
-                                    <a href="#" class="btn btn-sm btn-outline-danger disabled">Apagar</a>
+                        </div>
+
+                        <!-- Anúncio 3 - Vendido -->
+                        <div class="anuncio-card card shadow-sm border-0 mb-3 anuncio-vendido" data-status="vendido">
+                            <div class="card-body p-3">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-auto">
+                                        <div class="anuncio-thumbnail">
+                                            <img src="~/imagens/audiA3.jpg" alt="Audi A3">
+                                            <span class="anuncio-status-badge badge-vendido">
+                                                <i class="bi bi-check2-all"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="anuncio-info">
+                                            <h5 class="anuncio-title mb-1">Audi A3 Sportback</h5>
+                                            <div class="anuncio-meta">
+                                                <span class="anuncio-meta-item">
+                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 12/10/2025
+                                                </span>
+                                                <span class="anuncio-meta-item text-success">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>Vendido em 18/10/2025
+                                                </span>
+                                            </div>
+                                            <div class="anuncio-price mt-2">
+                                                <span class="price-label">Preço de Venda:</span>
+                                                <span class="price-value">18.200€</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="anuncio-actions d-flex gap-2">
+                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -99,50 +436,495 @@
 
                 <!-- Aba: Anúncios Favoritos (para Compradores) -->
                 <div class="tab-pane fade" id="favoritos">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h4>Meus Favoritos</h4>
+                    <!-- Cabeçalho da Página -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="mb-1 fw-bold">
+                                <i class="bi bi-heart-fill text-danger me-2"></i>Anúncios Favoritos
+                            </h3>
+                            <p class="text-muted mb-0">Os seus veículos guardados para consulta rápida</p>
                         </div>
-                        <div class="card-body">
-                            <!-- Exemplo de anúncio favorito 1 -->
-                            <div class="managed-ad-item d-flex align-items-center mb-3">
-                                <img src="~/imagens/audiA3.jpg" alt="[Imagem de um Audi A3]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0">Audi A3 Sportback</h6>
-                                    <small class="text-muted">Adicionado a 18/10/2025</small>
-                                </div>
-                                <div class="ms-auto">
-                                    <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary me-2">Ver Anúncio</a>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                </div>
+                        <div class="favoritos-stats d-flex gap-3">
+                            <div class="stat-item text-center">
+                                <div class="stat-value text-primary fw-bold">2</div>
+                                <div class="stat-label text-muted small">Favoritos</div>
                             </div>
-                            <hr>
-                            <!-- Exemplo de anúncio favorito 2 -->
-                            <div class="managed-ad-item d-flex align-items-center">
-                                <img src="~/imagens/bmwSerie1.jpg" alt="[Imagem de um BMW Série 1]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0">BMW Série 1 116d</h6>
-                                    <small class="text-muted">Adicionado a 17/10/2025</small>
-                                </div>
-                                <div class="ms-auto">
-                                    <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary me-2">Ver Anúncio</a>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                </div>
+                            <div class="stat-item text-center">
+                                <div class="stat-value text-success fw-bold">15.900€</div>
+                                <div class="stat-label text-muted small">Média de Preço</div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Filtros de Ordenação -->
+                    <div class="favoritos-sort-bar mb-4 d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-funnel text-muted"></i>
+                            <span class="text-muted small">Ordenar por:</span>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary active">
+                                <i class="bi bi-clock me-1"></i>Mais Recentes
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-currency-euro me-1"></i>Menor Preço
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-currency-euro me-1"></i>Maior Preço
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Favoritos -->
+                    <div class="favoritos-grid">
+                        <!-- Favorito 1 -->
+                        <div class="favorito-card card shadow-sm border-0 mb-3">
+                            <div class="card-body p-0">
+                                <div class="row g-0">
+                                    <div class="col-md-5">
+                                        <div class="favorito-image-wrapper">
+                                            <img src="~/imagens/audiA3.jpg" alt="Audi A3 Sportback" class="favorito-image">
+                                            <button class="favorito-heart-btn active" title="Remover dos favoritos">
+                                                <i class="bi bi-heart-fill"></i>
+                                            </button>
+                                            <span class="favorito-badge badge-disponivel">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Disponível
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div class="favorito-content p-4">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div>
+                                                    <h5 class="favorito-title mb-1">Audi A3 Sportback</h5>
+                                                    <p class="favorito-subtitle text-muted mb-0">2.0 TDI Sport | 2019</p>
+                                                </div>
+                                                <div class="favorito-price-tag">
+                                                    <span class="price-value">18.500€</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="favorito-specs mt-3 mb-3">
+                                                <div class="spec-item">
+                                                    <i class="bi bi-speedometer2 text-primary"></i>
+                                                    <span>85.000 km</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <i class="bi bi-fuel-pump text-primary"></i>
+                                                    <span>Diesel</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <i class="bi bi-gear text-primary"></i>
+                                                    <span>Manual</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <i class="bi bi-geo-alt text-primary"></i>
+                                                    <span>Porto</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="favorito-meta d-flex align-items-center justify-content-between mb-3">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-heart-fill text-danger me-1"></i>
+                                                    Adicionado a 18/10/2025
+                                                </small>
+                                                <span class="badge bg-success-subtle text-success">
+                                                    <i class="bi bi-arrow-down-circle me-1"></i>Preço reduzido
+                                                </span>
+                                            </div>
+
+                                            <div class="favorito-actions d-flex gap-2">
+                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary flex-grow-1">
+                                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                                </a>
+                                                <button class="btn btn-outline-primary" title="Contactar Vendedor">
+                                                    <i class="bi bi-chat-dots"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger favorito-remove-btn" title="Remover dos favoritos">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Favorito 2 -->
+                        <div class="favorito-card card shadow-sm border-0 mb-3">
+                            <div class="card-body p-0">
+                                <div class="row g-0">
+                                    <div class="col-md-5">
+                                        <div class="favorito-image-wrapper">
+                                            <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1" class="favorito-image">
+                                            <button class="favorito-heart-btn active" title="Remover dos favoritos">
+                                                <i class="bi bi-heart-fill"></i>
+                                            </button>
+                                            <span class="favorito-badge badge-disponivel">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Disponível
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div class="favorito-content p-4">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div>
+                                                    <h5 class="favorito-title mb-1">BMW Série 1 116d</h5>
+                                                    <p class="favorito-subtitle text-muted mb-0">Advantage | 2018</p>
+                                                </div>
+                                                <div class="favorito-price-tag">
+                                                    <span class="price-value">13.300€</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="favorito-specs mt-3 mb-3">
+                                                <div class="spec-item">
+                                                    <i class="bi bi-speedometer2 text-primary"></i>
+                                                    <span>120.000 km</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <i class="bi bi-fuel-pump text-primary"></i>
+                                                    <span>Diesel</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <i class="bi bi-gear text-primary"></i>
+                                                    <span>Manual</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <i class="bi bi-geo-alt text-primary"></i>
+                                                    <span>Lisboa</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="favorito-meta d-flex align-items-center justify-content-between mb-3">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-heart-fill text-danger me-1"></i>
+                                                    Adicionado a 17/10/2025
+                                                </small>
+                                                <span class="badge bg-primary-subtle text-primary">
+                                                    <i class="bi bi-star-fill me-1"></i>Destaque
+                                                </span>
+                                            </div>
+
+                                            <div class="favorito-actions d-flex gap-2">
+                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary flex-grow-1">
+                                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                                </a>
+                                                <button class="btn btn-outline-primary" title="Contactar Vendedor">
+                                                    <i class="bi bi-chat-dots"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger favorito-remove-btn" title="Remover dos favoritos">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado Vazio (mostrar quando não houver favoritos) -->
+                    <div class="favoritos-empty text-center py-5 d-none">
+                        <div class="mb-4">
+                            <i class="bi bi-heart" style="font-size: 4rem; color: #e2e8f0;"></i>
+                        </div>
+                        <h4 class="text-muted mb-2">Ainda não tem favoritos</h4>
+                        <p class="text-muted mb-4">Guarde os anúncios que mais gosta para acesso rápido</p>
+                        <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                            <i class="bi bi-search me-2"></i>Explorar Anúncios
+                        </a>
                     </div>
                 </div>
 
                 <!-- Aba: Definições -->
                 <div class="tab-pane fade" id="definicoes">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h4>Definições da Conta</h4>
+                    <!-- Cabeçalho da Página -->
+                    <div class="mb-4">
+                        <h3 class="mb-1 fw-bold">
+                            <i class="bi bi-gear-fill text-primary me-2"></i>Definições da Conta
+                        </h3>
+                        <p class="text-muted mb-0">Gerir as preferências e segurança da sua conta</p>
+                    </div>
+
+                    <!-- Segurança da Conta -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="mb-0 fw-semibold">
+                                <i class="bi bi-shield-lock text-primary me-2"></i>Segurança
+                            </h5>
                         </div>
-                        <div class="card-body">
-                            <p>Aqui pode alterar as suas preferências de notificação, gerir a sua password e outras definições de segurança.</p>
-                            <a asp-action="Edit" class="btn btn-secondary mt-3">Alterar Password</a>
+                        <div class="card-body p-4">
+                            <!-- Alterar Password -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-primary-subtle">
+                                        <i class="bi bi-key-fill text-primary"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Alterar Password</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Última alteração há 3 meses. Recomendamos alterar a cada 6 meses.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#alterarPasswordModal">
+                                    <i class="bi bi-pencil me-1"></i>Alterar
+                                </button>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <!-- Autenticação de Dois Fatores -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-success-subtle">
+                                        <i class="bi bi-shield-check text-success"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Autenticação de Dois Fatores</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Adicione uma camada extra de segurança à sua conta.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switch2FA">
+                                    <label class="form-check-label" for="switch2FA">
+                                        <span class="badge bg-secondary">Desativado</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <!-- Sessões Ativas -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-info-subtle">
+                                        <i class="bi bi-devices text-info"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Sessões Ativas</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Gerir dispositivos com sessão iniciada. 1 dispositivo ativo.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="bi bi-list-ul me-1"></i>Ver
+                                </button>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Notificações -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="mb-0 fw-semibold">
+                                <i class="bi bi-bell text-primary me-2"></i>Notificações
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <!-- Email Notificações -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-primary-subtle">
+                                        <i class="bi bi-envelope text-primary"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Notificações por Email</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Receber atualizações sobre anúncios e mensagens.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchEmailNotif" checked>
+                                    <label class="form-check-label" for="switchEmailNotif">
+                                        <span class="badge bg-success">Ativo</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <!-- Notificações de Novos Anúncios -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-warning-subtle">
+                                        <i class="bi bi-bookmark-star text-warning"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Novos Anúncios</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Alertas quando houver anúncios que correspondam às suas preferências.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchNovosAnuncios" checked>
+                                    <label class="form-check-label" for="switchNovosAnuncios">
+                                        <span class="badge bg-success">Ativo</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <!-- Notificações de Preço -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-success-subtle">
+                                        <i class="bi bi-graph-down text-success"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Alertas de Redução de Preço</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Notificações quando veículos favoritos baixarem de preço.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchPreco">
+                                    <label class="form-check-label" for="switchPreco">
+                                        <span class="badge bg-secondary">Desativado</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <!-- Newsletter -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-info-subtle">
+                                        <i class="bi bi-newspaper text-info"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Newsletter</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Receber dicas, novidades e ofertas especiais.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchNewsletter" checked>
+                                    <label class="form-check-label" for="switchNewsletter">
+                                        <span class="badge bg-success">Ativo</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacidade -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="mb-0 fw-semibold">
+                                <i class="bi bi-eye-slash text-primary me-2"></i>Privacidade
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <!-- Perfil Público -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-primary-subtle">
+                                        <i class="bi bi-person-badge text-primary"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Perfil Público</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Permitir que outros utilizadores vejam o seu perfil.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchPerfilPublico" checked>
+                                    <label class="form-check-label" for="switchPerfilPublico">
+                                        <span class="badge bg-success">Público</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <!-- Mostrar Email -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-warning-subtle">
+                                        <i class="bi bi-at text-warning"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Mostrar Email Publicamente</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Exibir o seu email nos anúncios publicados.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchMostrarEmail">
+                                    <label class="form-check-label" for="switchMostrarEmail">
+                                        <span class="badge bg-secondary">Oculto</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zona de Perigo -->
+                    <div class="card shadow-sm border-danger mb-4">
+                        <div class="card-header bg-danger-subtle border-bottom border-danger py-3">
+                            <h5 class="mb-0 fw-semibold text-danger">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>Zona de Perigo
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <!-- Desativar Conta -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-warning-subtle">
+                                        <i class="bi bi-pause-circle text-warning"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Desativar Conta</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            A sua conta será temporariamente desativada. Pode reativá-la a qualquer momento.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-warning">
+                                    <i class="bi bi-pause me-1"></i>Desativar
+                                </button>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <!-- Eliminar Conta -->
+                            <div class="definicao-item">
+                                <div class="definicao-info">
+                                    <div class="definicao-icon bg-danger-subtle">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </div>
+                                    <div class="definicao-content">
+                                        <h6 class="definicao-title">Eliminar Conta</h6>
+                                        <p class="definicao-description text-muted mb-0">
+                                            Eliminar permanentemente a sua conta e todos os dados. Esta ação é irreversível.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#eliminarContaModal">
+                                    <i class="bi bi-trash me-1"></i>Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botão de Guardar Alterações -->
+                    <div class="text-end">
+                        <button class="btn btn-lg btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>Guardar Alterações
+                        </button>
                     </div>
                 </div>
             </div>
@@ -150,3 +932,424 @@
     </div>
 </div>
 
+<!-- Modal: Destacar Anúncio -->
+<div class="modal fade" id="destacarModal" tabindex="-1" aria-labelledby="destacarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white border-0">
+                <h5 class="modal-title fw-bold" id="destacarModalLabel">
+                    <i class="bi bi-star-fill me-2"></i>Destacar Anúncio
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="destacar-icon mb-3">
+                        <i class="bi bi-rocket-takeoff" style="font-size: 3.5rem; color: #fbbf24;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Aumente a visibilidade do seu anúncio!</h5>
+                    <p class="text-muted mb-0">
+                        Destaque o seu veículo e coloque-o no topo das listagens para obter mais visualizações e contactos.
+                    </p>
+                </div>
+
+                <div class="destacar-features mb-4">
+                    <div class="feature-item d-flex align-items-center mb-3">
+                        <div class="feature-icon-circle me-3 flex-shrink-0">
+                            <i class="bi bi-arrow-up-circle-fill text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 fw-semibold">Posição de Topo</h6>
+                            <p class="text-muted small mb-0">O seu anúncio aparece no topo dos resultados de pesquisa</p>
+                        </div>
+                    </div>
+                    <div class="feature-item d-flex align-items-center mb-3">
+                        <div class="feature-icon-circle me-3 flex-shrink-0">
+                            <i class="bi bi-eye-fill text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 fw-semibold">Mais Visualizações</h6>
+                            <p class="text-muted small mb-0">Até 5x mais visualizações comparado com anúncios normais</p>
+                        </div>
+                    </div>
+                    <div class="feature-item d-flex align-items-center mb-3">
+                        <div class="feature-icon-circle me-3 flex-shrink-0">
+                            <i class="bi bi-badge-vr-fill text-success"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 fw-semibold">Badge Especial</h6>
+                            <p class="text-muted small mb-0">O seu anúncio recebe um badge "Em Destaque" visível</p>
+                        </div>
+                    </div>
+                    <div class="feature-item d-flex align-items-center">
+                        <div class="feature-icon-circle me-3 flex-shrink-0">
+                            <i class="bi bi-lightning-charge-fill text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 fw-semibold">Venda Mais Rápida</h6>
+                            <p class="text-muted small mb-0">Anúncios destacados vendem 3x mais rápido</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="destacar-pricing card bg-light border-warning border-2 mb-4">
+                    <div class="card-body text-center p-4">
+                        <div class="d-flex justify-content-center align-items-baseline mb-3">
+                            <span class="display-4 fw-bold text-warning">1,99€</span>
+                            <span class="text-muted ms-2">/ 7 dias</span>
+                        </div>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-info-circle me-1"></i>Renovação automática desativada por padrão
+                        </p>
+                    </div>
+                </div>
+
+                <div class="alert alert-info d-flex align-items-center mb-0" role="alert">
+                    <i class="bi bi-lightbulb-fill me-2 flex-shrink-0"></i>
+                    <div class="small">
+                        <strong>Dica:</strong> Os melhores resultados são obtidos em anúncios com fotos de qualidade e descrições completas.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-warning text-white" id="btnConfirmarDestaque">
+                    <i class="bi bi-star-fill me-2"></i>Destacar por 9,99€
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Sistema de Tabs do Perfil
+        document.addEventListener('DOMContentLoaded', function () {
+            // Selecionar todos os itens de navegação
+            const navItems = document.querySelectorAll('.perfil-nav-item');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            // Função para ativar uma tab
+            function activateTab(targetId) {
+                // Remover classe active de todos os itens
+                navItems.forEach(item => item.classList.remove('active'));
+                tabPanes.forEach(pane => {
+                    pane.classList.remove('show', 'active');
+                });
+
+                // Adicionar classe active ao item clicado
+                const clickedItem = document.querySelector(`[href="${targetId}"]`);
+                if (clickedItem) {
+                    clickedItem.classList.add('active');
+                }
+
+                // Mostrar o conteúdo correspondente
+                const targetPane = document.querySelector(targetId);
+                if (targetPane) {
+                    targetPane.classList.add('show', 'active');
+                }
+            }
+
+            // Adicionar event listeners aos itens de navegação
+            navItems.forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    activateTab(targetId);
+
+                    // Scroll suave para o topo do conteúdo (opcional)
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Sistema de Filtros de Anúncios
+            const filterButtons = document.querySelectorAll('.anuncios-filter-btn');
+            const anuncioCards = document.querySelectorAll('.anuncio-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Remover classe active de todos os botões
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+
+                    // Adicionar classe active ao botão clicado
+                    this.classList.add('active');
+
+                    // Obter o filtro selecionado
+                    const filter = this.getAttribute('data-filter');
+
+                    // Filtrar os anúncios
+                    anuncioCards.forEach(card => {
+                        const status = card.getAttribute('data-status');
+
+                        if (filter === 'todos') {
+                            card.style.display = '';
+                        } else if (filter === 'ativos' && status === 'ativo') {
+                            card.style.display = '';
+                        } else if (filter === 'pendentes' && status === 'pendente') {
+                            card.style.display = '';
+                        } else if (filter === 'vendidos' && status === 'vendido') {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Sistema de Favoritos
+            const favoritoHeartBtns = document.querySelectorAll('.favorito-heart-btn');
+            const favoritoRemoveBtns = document.querySelectorAll('.favorito-remove-btn');
+
+            // Função para remover favorito
+            function removeFavorito(card) {
+                // Animação de saída
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(-20px)';
+
+                setTimeout(() => {
+                    card.remove();
+
+                    // Verificar se ainda existem favoritos
+                    const remainingFavoritos = document.querySelectorAll('.favorito-card');
+                    if (remainingFavoritos.length === 0) {
+                        document.querySelector('.favoritos-grid').classList.add('d-none');
+                        document.querySelector('.favoritos-empty').classList.remove('d-none');
+                    }
+
+                    // Atualizar contador
+                    const favoritoCount = document.querySelector('.favoritos-stats .stat-value');
+                    if (favoritoCount) {
+                        favoritoCount.textContent = remainingFavoritos.length;
+                    }
+                }, 300);
+            }
+
+            // Event listeners para botões de coração
+            favoritoHeartBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const card = this.closest('.favorito-card');
+                    if (confirm('Deseja remover este anúncio dos favoritos?')) {
+                        removeFavorito(card);
+                    }
+                });
+            });
+
+            // Event listeners para botões de remover
+            favoritoRemoveBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const card = this.closest('.favorito-card');
+                    if (confirm('Deseja remover este anúncio dos favoritos?')) {
+                        removeFavorito(card);
+                    }
+                });
+            });
+
+            // Sistema de Ordenação de Favoritos
+            const sortButtons = document.querySelectorAll('.favoritos-sort-bar .btn-group .btn');
+
+            sortButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // Remover active de todos
+                    sortButtons.forEach(b => b.classList.remove('active'));
+                    // Adicionar active ao clicado
+                    this.classList.add('active');
+
+                    // Aqui você pode implementar a lógica de ordenação
+                    // Por exemplo, reorganizar os cards baseado no critério selecionado
+                    console.log('Ordenar por:', this.textContent.trim());
+                });
+            });
+
+            // Sistema de Switches de Definições
+            const switches = document.querySelectorAll('.form-check-input[type="checkbox"]');
+
+            switches.forEach(switchElement => {
+                switchElement.addEventListener('change', function () {
+                    const label = this.nextElementSibling;
+                    const badge = label.querySelector('.badge');
+
+                    if (badge) {
+                        if (this.checked) {
+                            // Estado Ativo
+                            badge.classList.remove('bg-secondary');
+                            badge.classList.add('bg-success');
+                            badge.textContent = this.id === 'switchPerfilPublico' ? 'Público' : 'Ativo';
+                        } else {
+                            // Estado Desativado
+                            badge.classList.remove('bg-success', 'bg-primary');
+                            badge.classList.add('bg-secondary');
+                            badge.textContent = this.id === 'switchPerfilPublico' ? 'Privado' :
+                                              this.id === 'switchMostrarEmail' ? 'Oculto' : 'Desativado';
+                        }
+                    }
+
+                    // Aqui você pode adicionar lógica para salvar a preferência
+                    console.log(`${this.id}: ${this.checked ? 'Ativo' : 'Desativado'}`);
+                });
+            });
+
+            // Botão Guardar Alterações
+            const btnGuardarDefinicoes = document.querySelector('#definicoes .btn-primary');
+
+            if (btnGuardarDefinicoes) {
+                btnGuardarDefinicoes.addEventListener('click', function () {
+                    // Coletar todos os valores dos switches
+                    const preferencias = {};
+
+                    switches.forEach(sw => {
+                        preferencias[sw.id] = sw.checked;
+                    });
+
+                    console.log('Guardar preferências:', preferencias);
+
+                    // Mostrar feedback visual
+                    const btnText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Guardado!';
+                    this.classList.add('btn-success');
+                    this.classList.remove('btn-primary');
+
+                    setTimeout(() => {
+                        this.innerHTML = btnText;
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-primary');
+                    }, 2000);
+
+                    // Aqui você implementaria a chamada AJAX para o backend
+                });
+            }
+
+            // ===== Sistema de Destacar Anúncios =====
+            const btnConfirmarDestaque = document.getElementById('btnConfirmarDestaque');
+            const btnRenovarDestaque = document.querySelectorAll('.btn-renovar-destaque');
+            const destacarModal = document.getElementById('destacarModal');
+            let anuncioAtual = null;
+
+            // Capturar qual anúncio está sendo destacado
+            document.querySelectorAll('.btn-destacar').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    anuncioAtual = this.closest('.anuncio-card');
+                });
+            });
+
+            // Confirmar destaque
+            if (btnConfirmarDestaque) {
+                btnConfirmarDestaque.addEventListener('click', function() {
+                    if (!anuncioAtual) return;
+
+                    // Feedback visual no botão
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>A processar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        // Transformar anúncio em destacado
+                        anuncioAtual.classList.add('anuncio-destacado');
+                        anuncioAtual.classList.add('border-warning');
+                        anuncioAtual.setAttribute('data-destacado', 'true');
+
+                        // Adicionar badge de destaque
+                        const cardBody = anuncioAtual.querySelector('.card-body');
+                        if (!cardBody.querySelector('.anuncio-destacado-badge')) {
+                            const badge = document.createElement('div');
+                            badge.className = 'anuncio-destacado-badge';
+                            badge.innerHTML = '<i class="bi bi-star-fill me-1"></i>Em Destaque';
+                            cardBody.insertBefore(badge, cardBody.firstChild);
+                        }
+
+                        // Adicionar informação de destaque na meta
+                        const anuncioMeta = anuncioAtual.querySelector('.anuncio-meta');
+                        const dataExpiracao = new Date();
+                        dataExpiracao.setDate(dataExpiracao.getDate() + 7);
+                        const dataFormatada = dataExpiracao.toLocaleDateString('pt-PT');
+
+                        const metaDestaque = document.createElement('span');
+                        metaDestaque.className = 'anuncio-meta-item text-warning';
+                        metaDestaque.innerHTML = `<i class="bi bi-star-fill me-1"></i>Destaque até ${dataFormatada}`;
+                        anuncioMeta.appendChild(metaDestaque);
+
+                        // Trocar botão "Destacar" por "Renovar"
+                        const actions = anuncioAtual.querySelector('.anuncio-actions');
+                        const btnDestacar = actions.querySelector('.btn-destacar');
+                        if (btnDestacar) {
+                            btnDestacar.className = 'btn btn-sm btn-success btn-renovar-destaque w-100';
+                            btnDestacar.title = 'Renovar Destaque';
+                            btnDestacar.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>Renovar';
+                            btnDestacar.removeAttribute('data-bs-toggle');
+                            btnDestacar.removeAttribute('data-bs-target');
+                        }
+
+                        // Feedback de sucesso
+                        this.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Destacado!';
+                        this.classList.remove('btn-warning');
+                        this.classList.add('btn-success');
+
+                        setTimeout(() => {
+                            // Fechar modal
+                            const modalInstance = bootstrap.Modal.getInstance(destacarModal);
+                            if (modalInstance) {
+                                modalInstance.hide();
+                            }
+
+                            // Resetar botão
+                            this.innerHTML = btnOriginalText;
+                            this.classList.remove('btn-success');
+                            this.classList.add('btn-warning');
+                            this.disabled = false;
+
+                            // Scroll suave até o anúncio
+                            anuncioAtual.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                            // Notificação de sucesso
+                            alert('✨ Anúncio destacado com sucesso! O seu veículo irá aparecer no topo das listagens durante 7 dias.');
+                        }, 1500);
+
+                        // Aqui você implementaria a chamada AJAX para o backend
+                        console.log('Destacar anúncio:', anuncioAtual.getAttribute('data-id'));
+                    }, 1500);
+                });
+            }
+
+            // Botões de renovar destaque
+            btnRenovarDestaque.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (confirm('Renovar destaque por mais 7 dias?\n\nCusto: 9,99€')) {
+                        const btnOriginalText = this.innerHTML;
+                        this.disabled = true;
+                        this.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Renovado';
+
+                            // Atualizar data de expiração no anúncio
+                            const anuncioCard = this.closest('.anuncio-card');
+                            const metaDestaque = anuncioCard.querySelector('.anuncio-meta-item.text-warning');
+                            if (metaDestaque && metaDestaque.textContent.includes('Destaque até')) {
+                                const novaData = new Date();
+                                novaData.setDate(novaData.getDate() + 7);
+                                metaDestaque.innerHTML = `<i class="bi bi-star-fill me-1"></i>Destaque até ${novaData.toLocaleDateString('pt-PT')}`;
+                            }
+
+                            setTimeout(() => {
+                                this.innerHTML = btnOriginalText;
+                                this.disabled = false;
+                                alert('✨ Destaque renovado com sucesso!');
+                            }, 1500);
+
+                            // Aqui você implementaria a chamada AJAX para o backend
+                            console.log('Renovar destaque do anúncio');
+                        }, 1500);
+                    }
+                });
+            });
+        });
+    </script>
+}
