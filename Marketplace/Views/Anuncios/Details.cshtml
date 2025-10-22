@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "Detalhes do Anúncio";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Coluna Principal: Imagens e Detalhes -->
+        <div class="col-lg-8">
+            <!-- Título e Preço -->
+            <div class="mb-4">
+                <h1 class="h2">BMW Série 3 320d Pack M</h1>
+                <div class="d-flex align-items-center justify-content-between">
+                    <h2 class="text-primary fw-bold mb-0">28.500 €</h2>
+                    <button class="btn btn-light btn-favorite fs-5" title="Adicionar aos Favoritos">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Galeria de Imagens (Carrossel) -->
+            <div id="galleryCarousel" class="carousel slide shadow-lg rounded-3 overflow-hidden mb-4" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#galleryCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#galleryCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#galleryCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="~/imagens/bmwSerie1.jpg" class="d-block w-100" alt="Frente do carro">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://placehold.co/800x600/343a40/e9ecef?text=Interior" class="d-block w-100" alt="Interior do carro">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://placehold.co/800x600/343a40/e9ecef?text=Traseira" class="d-block w-100" alt="Traseira do carro">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#galleryCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#galleryCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <!-- Detalhes Rápidos -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body anuncio-details-grid-details-page">
+                    <span><i class="bi bi-calendar3"></i> 2019</span>
+                    <span><i class="bi bi-speedometer2"></i> 98.000 km</span>
+                    <span><i class="bi bi-fuel-pump-fill"></i> Diesel</span>
+                    <span><i class="bi bi-gear-fill"></i> Manual</span>
+                    <span><i class="bi bi-palette-fill"></i> Cinzento</span>
+                    <span><i class="bi bi-person-check-fill"></i> Particular</span>
+                </div>
+            </div>
+
+
+            <!-- Descrição e Especificações -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4>Descrição</h4>
+                </div>
+                <div class="card-body">
+                    <p>Carro nacional em excelente estado, com todas as revisões na marca. Pack M completo, interior e exterior. Viatura muito estimada e com um consumo médio de 5L/100km. Não fumador.</p>
+                    <p>Equipado com GPS profissional, bancos desportivos em alcântara, jantes de 18 polegadas, faróis LED e sensores de estacionamento à frente e atrás.</p>
+                </div>
+                <div class="card-header border-top">
+                    <h4>Especificações</h4>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"><span>Marca:</span> <strong>BMW</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Modelo:</span> <strong>Série 3</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Potência:</span> <strong>190 cv</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Cilindrada:</span> <strong>1995 cm3</strong></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Coluna Lateral: Vendedor e Contacto -->
+        <div class="col-lg-4">
+            <div class="seller-card card shadow-sm sticky-top">
+                <div class="card-body text-center">
+                    <img src="https://placehold.co/100x100/0d6efd/ffffff?text=User" class="rounded-circle mb-3" alt="Foto do Vendedor">
+                    <h5 class="card-title mb-1">Pedro Costa</h5>
+                    <p class="text-muted">Membro desde 2021</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary btn-lg"><i class="bi bi-telephone-fill me-2"></i>Ligar</button>
+                        <button class="btn btn-outline-primary btn-lg"><i class="bi bi-chat-dots-fill me-2"></i>Enviar Mensagem</button>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="#" class="link-secondary">Ver todos os anúncios deste vendedor</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

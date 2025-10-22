@@ -1,125 +1,588 @@
-/* ========================================= */
-/* === 1. AJUSTES BASE E STICKY FOOTER === */
-/* ========================================= */
+/* -------------------------------------------------------------------------- */
+/* Estilos Gerais e Reset                          */
+/* -------------------------------------------------------------------------- */
+
+/* :root define variáveis CSS globais para serem usadas em todo o site. */
+/* Facilita a manutenção, pois as cores e fontes principais podem ser mudadas num só lugar. */
+:root {
+    --bs-primary: #0d6efd; /* Cor primária (azul do Bootstrap) */
+    --bs-dark: #212529; /* Cor escura para fundos, texto, etc. */
+    --bs-light: #f8f9fa; /* Cor clara para fundos */
+    --bs-font-sans-serif: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* Fonte principal do site */
+}
 
 html {
-    position: relative;
-    min-height: 100%;
+    font-size: 16px; /* Define o tamanho base da fonte para o site */
 }
 
 body {
-    /* Garante espaço para o rodapé (70px) */
-    margin-bottom: 70px;
+    font-family: var(--bs-font-sans-serif); /* Aplica a fonte principal definida nas variáveis */
+    background-color: #f8f9fa; /* Cor de fundo geral */
+    color: #333; /* Cor do texto principal */
+    padding-top: 70px; /* Adiciona um espaçamento no topo do body para não ficar por baixo do navbar fixo */
 }
+
+/* Garante que o conteúdo principal ocupe pelo menos a altura da janela, descontando o cabeçalho e o rodapé */
+.main-content {
+    min-height: calc(100vh - 70px - 200px); /* Viewport Height - Altura do Navbar - Altura aproximada do Footer */
+}
+
+/* Classe genérica para secções, garantindo espaçamento vertical consistente */
+.page-section {
+    padding: 5rem 0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Tipografia                                  */
+/* -------------------------------------------------------------------------- */
+
+/* Estilos para todos os títulos */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700; /* Títulos a negrito */
+    color: var(--bs-dark); /* Cor escura para os títulos */
+}
+
+/* Estilo para os títulos das secções */
+.section-title {
+    text-align: center; /* Título centrado */
+    margin-bottom: 4rem; /* Espaçamento inferior */
+    font-weight: 700;
+    color: #343a40;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Botões                                    */
+/* -------------------------------------------------------------------------- */
+
+.btn {
+    border-radius: 0.5rem; /* Bordas arredondadas */
+    font-weight: 500; /* Peso da fonte */
+    padding: 0.6rem 1.25rem; /* Espaçamento interno */
+    transition: all 0.2s ease-in-out; /* Animação suave para hover */
+}
+
+.btn-primary {
+    background-color: var(--bs-primary); /* Cor de fundo do botão primário */
+    border-color: var(--bs-primary); /* Cor da borda */
+}
+
+    /* Efeito ao passar o rato por cima do botão */
+    .btn-primary:hover {
+        opacity: 0.9; /* Ligeira transparência */
+        transform: translateY(-2px); /* Move o botão ligeiramente para cima */
+    }
+
+/* -------------------------------------------------------------------------- */
+/* Navbar                                   */
+/* -------------------------------------------------------------------------- */
+
+.navbar {
+    transition: background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out; /* Animação suave para a mudança de cor e sombra */
+    padding: 0.8rem 1rem; /* Espaçamento interno */
+}
+
+/* Estado padrão da navbar para todas as páginas (exceto a home no topo) */
+.navbar {
+    background-color: var(--bs-dark) !important; /* Fundo escuro */
+}
+
+/* Navbar específica para a home page, ANTES do scroll */
+body.home-page .navbar:not(.scrolled) {
+    background-color: transparent !important; /* Fundo transparente */
+}
+
+/* Navbar em QUALQUER página, DEPOIS do scroll */
+.navbar.scrolled {
+    background-color: var(--bs-dark) !important; /* Fundo volta a ser escuro */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Adiciona uma sombra para dar profundidade */
+}
+
+.navbar-brand {
+    font-size: 1.5rem; /* Tamanho da fonte do logo/nome do site */
+    font-weight: 700; /* Fonte a negrito */
+}
+
+.nav-link {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Estilos da Página Inicial (Home)                     */
+/* -------------------------------------------------------------------------- */
+
+/* Secção principal com a imagem de fundo */
+.hero-section {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/imagens/subPRETO.jpg'); /* Imagem de fundo com um overlay escuro */
+    background-size: cover; /* A imagem cobre toda a área */
+    background-position: center; /* A imagem fica centrada */
+    background-attachment: fixed; /* Efeito parallax: a imagem fica fixa durante o scroll */
+    height: 85vh; /* Altura aumentada para conter a pesquisa */
+    min-height: 650px; /* Altura mínima aumentada */
+    display: flex; /* Alinhamento do conteúdo com flexbox */
+    align-items: center; /* Alinha verticalmente ao centro */
+    justify-content: center; /* Alinha horizontalmente ao centro */
+    color: white;
+    text-align: center;
+    padding: 2rem 0; /* Adiciona padding vertical */
+}
+
+/* Espaçamento entre o título e a caixa de pesquisa */
+.hero-content {
+    margin-bottom: 3rem;
+}
+
+
+.hero-section h1 {
+    font-size: clamp(3.5rem, 7vw, 5rem); /* Tamanho da fonte responsivo (mínimo, preferido, máximo) */
+    font-weight: 800; /* Fonte extra-negrito */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Sombra no texto para melhor legibilidade */
+    color: white;
+}
+
+/* O contentor do formulário de pesquisa */
+.search-form-container {
+    background: rgba(255, 255, 255, 0.95); /* Fundo branco ligeiramente transparente */
+    border: 1px solid #dee2e6; /* Borda cinzenta clara */
+    padding: 2rem; /* Espaçamento interno */
+    border-radius: 1.5rem; /* Bordas muito arredondadas */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra para dar efeito de elevação */
+}
+
+    /* Estilos para os campos do formulário de pesquisa */
+    .search-form-container .form-control,
+    .search-form-container .form-select {
+        background-color: #f8f9fa; /* Fundo ligeiramente cinzento */
+        color: #333;
+        border: 1px solid #ced4da; /* Borda */
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.25rem;
+    }
+
+        /* Cor do texto de placeholder */
+        .search-form-container .form-control::placeholder {
+            color: #6c757d;
+        }
+
+/* Estilos dos cartões de categoria */
+.categoria-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease-in-out; /* Animação suave */
+    height: 100%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.04); /* Sombra subtil */
+}
+
+    /* Efeito ao passar o rato por cima do cartão */
+    .categoria-card:hover {
+        border-color: var(--bs-primary); /* Borda fica azul */
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1); /* Sombra aumenta */
+        transform: translateY(-5px); /* Cartão sobe ligeiramente */
+    }
+
+    .categoria-card .icon {
+        font-size: 3rem; /* Tamanho do ícone/emoji */
+        margin-bottom: 1rem;
+        color: var(--bs-primary);
+    }
+
+    .categoria-card h5 {
+        font-weight: 600;
+        color: #343a40;
+    }
+
+/* Secção "Como funciona" */
+.feature-section {
+    background-color: #ffffff;
+}
+
+/* Ícones da secção "Como funciona" */
+.feature-icon {
+    font-size: 2.5rem;
+    width: 5rem;
+    height: 5rem;
+    line-height: 5rem;
+    text-align: center;
+    border-radius: 50%; /* Círculo perfeito */
+    background-color: #e7f1ff; /* Fundo azul claro */
+    color: var(--bs-primary); /* Ícone azul */
+    margin: 0 auto 1.5rem; /* Centrado e com margem inferior */
+}
+
+/* Secção "Call to Action" (Chamada para Ação) */
+.cta-section {
+    background-color: var(--bs-dark);
+    color: white;
+    text-align: center;
+}
+
+    .cta-section h2, .cta-section h3 {
+        font-weight: 700;
+        color: white;
+    }
+
+/* Secção de Estatísticas */
+.stats-section {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/imagens/subPRETO.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Efeito parallax: a imagem fica fixa durante o scroll */
+    color: white;
+}
+
+.stat-item h2.stat-number, .stat-item h2 {
+    font-size: clamp(2.5rem, 5vw, 3.5rem); /* Tamanho do número responsivo */
+    font-weight: 800;
+    color: white; /* Garante que o número é branco */
+    margin-bottom: 0.5rem;
+}
+
+.stat-item p.stat-label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8); /* Branco com um pouco de transparência para contraste */
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* Footer                                   */
+/* -------------------------------------------------------------------------- */
 
 .footer {
-    /* Fixa o rodapé no fundo do documento */
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    /* Altura consistente com a margin-bottom do body */
-    height: 70px;
-    line-height: 70px; /* Centraliza verticalmente o texto */
-    background-color: #f8f9fa;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+    font-size: 0.9rem; /* Fonte ligeiramente mais pequena */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Linha de separação para o footer */
 }
 
-
-/* ========================================= */
-/* === 2. PALETA DE CORES PERSONALIZADA (CORRETO) === */
-/* ========================================= */
-
-:root {
-    /* COR PRIMÁRIA: Verde-Azulado (#008080) -> Usado para a MARCA, texto, links, e elementos padrão. */
-    --bs-primary: #008080;
-    --bs-primary-rgb: 0, 128, 128;
-    /* NOVA COR DE DESTAQUE/AÇÃO: Laranja Coral (#FF7F50) -> Usado APENAS para botões de Login e Pesquisa. */
-    --bs-action-color: #FF7F50;
-    --bs-action-rgb: 255, 127, 80;
-    /* COR SECUNDÁRIA: Cinza Padrão (Manter ou ajustar) */
-    /* --bs-secondary: #6c757d; */
-    /* COR DE PERIGO/VENDA: Vermelho (Para o botão Vender/Remover) */
-    --bs-danger: #D9534F;
-}
-
-
-/* ========================================= */
-/* === 3. ESTILOS DE ELEMENTOS ESPECÍFICOS E SOBREPOSIÇÃO === */
-/* ========================================= */
-
-/* --- 3.1. BOTÃO DE AÇÃO (LOGIN, PESQUISAR) --- */
-/* Cria uma nova classe btn-action baseada no Laranja Coral */
-.btn-action {
-    color: #fff; /* Texto branco */
-    background-color: var(--bs-action-color);
-    border-color: var(--bs-action-color);
-}
-
-    .btn-action:hover {
-        color: #fff;
-        background-color: #FF6347; /* Tom um pouco mais escuro para o hover */
-        border-color: #FF6347;
+    .footer a.text-white-50:hover {
+        color: #fff !important; /* Link fica branco ao passar o rato */
+        text-decoration: underline; /* Adiciona sublinhado */
     }
 
 
-/* --- 3.2. HERO SECTION: CAIXA DE DESTAQUE --- */
-.hero-box {
-    /* Fundo usa a cor primária (Verde-Azulado) */
-    background-color: var(--bs-primary) !important;
-    color: white;
-    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3) !important;
-    /* Borda usa a cor de AÇÃO (Laranja) para contraste */
-    border: 3px solid var(--bs-action-color);
-}
+/* -------------------------------------------------------------------------- */
+/* Estilos da Página de Listagem de Anúncios        */
+/* -------------------------------------------------------------------------- */
 
-    .hero-box h1 {
-        font-weight: 900 !important;
-    }
-
-/* --- 3.3. OUTROS ESTILOS (Mantidos) --- */
-.filter-card {
+/* Sidebar de filtros */
+.filters-sidebar {
+    background-color: #ffffff;
+    border-radius: 1rem;
     border: 1px solid #dee2e6;
+}
+
+/* Cartão de anúncio individual */
+.anuncio-card {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden; /* Garante que a imagem arredondada não ultrapasse o cartão */
+    transition: all 0.2s ease-in-out;
+}
+
+    .anuncio-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    }
+
+    .anuncio-card img {
+        object-fit: cover; /* A imagem cobre a área sem se distorcer */
+        height: 100%;
+    }
+
+    .anuncio-card .card-price {
+        font-size: 1.75rem;
+    }
+
+    .anuncio-card .card-title {
+        font-weight: 600;
+    }
+
+/* Grelha para os detalhes rápidos do anúncio (ano, km, etc.) */
+.anuncio-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+    .anuncio-details-grid span {
+        display: flex;
+        align-items: center;
+    }
+
+    .anuncio-details-grid .bi {
+        margin-right: 0.5rem; /* Espaço entre o ícone e o texto */
+        color: var(--bs-primary);
+    }
+
+
+/* Estilos da Página de Detalhes do Anúncio         */
+/* -------------------------------------------------------------------------- */
+/* Cartão de informações do vendedor */
+.seller-card {
+    border: none;
+    border-radius: 1rem;
+}
+
+.seller-card .card-body {
+    padding: 2rem;
+}
+
+/* Para tornar o cartão do vendedor "fixo" ao fazer scroll em ecrãs grandes */
+@media (min-width: 992px) {
+    .seller-card.sticky-top {
+        top: 100px; /* Distância do topo da página */
+    }
+}
+
+
+/* Grelha de detalhes rápidos na página de detalhes */
+.anuncio-details-grid-details-page {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.5rem;
+    font-size: 1rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+    .anuncio-details-grid-details-page span {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .anuncio-details-grid-details-page .bi {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--bs-primary);
+    }
+
+
+/* Ajustes no carrossel de imagens */
+.carousel-item img {
+    height: 500px; /* Altura fixa para as imagens da galeria */
+    object-fit: cover;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Estilos da Página de Criação/Edição de Anúncio   */
+/* -------------------------------------------------------------------------- */
+
+.create-form-container.card {
+    border: none;
+    border-radius: 1rem;
+}
+
+.form-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Estilos para a gestão de imagens na página de edição */
+.edit-image-thumb {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* Forçar um rácio de 1:1 */
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+    .edit-image-thumb img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .edit-image-thumb .btn-delete-img {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+    }
+
+
+/* -------------------------------------------------------------------------- */
+/* Estilos da Página de Confirmação de Remoção      */
+/* -------------------------------------------------------------------------- */
+
+.delete-container.card {
+    border: 1px solid var(--bs-danger);
+    border-radius: 1rem;
+}
+
+.anuncio-summary-delete {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+
+/* Estilos para a gestão de imagens na página de edição */
+.edit-image-thumb {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* Forçar um rácio de 1:1 */
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+    .edit-image-thumb img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .edit-image-thumb .btn-delete-img {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+    }
+
+.anuncio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Adicionado para fixar o tamanho da imagem do anúncio */
+.anuncio-card .card-img-top {
+    height: 200px; /* Define uma altura fixa para todas as imagens */
+    object-fit: cover; /* Garante que a imagem cobre a área sem distorcer */
+    width: 100%;
+}
+
+.anuncio-card .card-body {
+    padding: 1rem;
+}
+
+
+/* =================================================================
+   Estilos das Páginas de Autenticação (Login/Registar)
+================================================================= */
+.auth-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 150px); /* Ajustar altura para preencher a tela */
+    padding: 2rem 0;
+}
+
+    .auth-container .card {
+        width: 100%;
+        max-width: 450px;
+        border: none;
+        border-radius: var(--border-radius);
+    }
+
+
+/* =================================================================
+   Estilos da Página de Perfil do Utilizador
+================================================================= */
+.perfil-nav .list-group-item.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: dimgrey; /* CORREÇÃO: Garante que o texto fica branco no item ativo */
+}
+
+.perfil-nav .list-group-item-action:hover {
+    color: var(--primary-color);
+}
+
+/* NOVO ESTILO ADICIONADO PARA CORRIGIR AS IMAGENS NO PERFIL */
+.managed-ad-item img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    flex-shrink: 0; /* Impede que a imagem encolha */
+}
+
+
+/* ============================================= */
+/* ESTILOS DO PAINEL DE ADMINISTRAÇÃO      */
+/* ============================================= */
+.admin-sidebar .list-group-item.active {
+    background-color: var(--dark-color);
+    border-color: var(--dark-color);
+    color: gray;
+}
+
+    .admin-sidebar .list-group-item.active i {
+        color: var(--primary-color);
+    }
+
+.admin-sidebar .list-group-item-action:hover, .admin-sidebar .list-group-item-action:focus {
     background-color: #f8f9fa;
 }
 
-.sell-cta-box {
-    background-color: #f0f0f0 !important;
-    /* Linha lateral de PERIGO (VERMELHO) */
-    border-left: 10px solid var(--bs-danger);
+.card-body .display-4 {
+    font-size: 2.5rem;
+    font-weight: 700;
 }
 
-/* Efeito Hover nos Cards */
-.card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+/* Estilos para os emblemas (badges) com cores suaves para melhor leitura */
+.badge.bg-primary-soft {
+    color: var(--primary-color);
+    background-color: rgba(13, 110, 253, 0.1);
 }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    }
-
-/* --- 3.3. ESTILOS PARA PAGINAÇÃO ATIVA --- */
-/* Muda o fundo do item de página ativo (o número atual) para Laranja */
-.pagination .page-item.active .page-link {
-    background-color: var(--bs-action-color) !important;
-    border-color: var(--bs-action-color) !important;
-    color: white !important;
+.badge.bg-info-soft {
+    color: #0dcaf0;
+    background-color: rgba(13, 202, 240, 0.1);
 }
 
-/* Opcional: Altera a cor do texto das setas (Anterior/Próxima) para a cor primária (Verde-Azul) */
-.pagination .page-link {
-    color: var(--bs-primary);
+.badge.bg-success-soft {
+    color: #198754;
+    background-color: rgba(25, 135, 84, 0.1);
 }
 
-    .pagination .page-link:hover {
-        color: white;
-        background-color: var(--bs-primary);
-        border-color: var(--bs-primary);
-    }
-/* --- 4. ESTILOS PARA O CTA DE VENDAS --- */
-.sell-cta-box {
-    /* Fundo mais neutro para que o botão btn-danger se destaque */
-    background-color: #f0f0f0 !important;
-    /* Linha lateral da cor PERIGO (DANGER) */
-    border-left: 10px solid var(--bs-danger);
+.badge.bg-danger-soft {
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
 }
+
+.badge.bg-secondary-soft {
+    color: #6c757d;
+    background-color: rgba(108, 117, 125, 0.1);
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.align-middle {
+    vertical-align: middle;
+}
+

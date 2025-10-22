@@ -1,0 +1,152 @@
+﻿@{
+    ViewData["Title"] = "Meu Perfil";
+}
+
+<div class="container mt-5 pt-5">
+    <div class="row">
+        <!-- Barra Lateral de Navegação do Perfil -->
+        <div class="col-lg-3">
+            <div class="perfil-nav card shadow-sm">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="https://placehold.co/100x100/0d6efd/white?text=User" class="rounded-circle" alt="Foto de Perfil">
+                        <h5 class="mt-3 mb-0">Nome do Utilizador</h5>
+                        <small class="text-muted">Comprador & Vendedor</small>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="#dados-pessoais" class="list-group-item list-group-item-action active" data-bs-toggle="tab"><i class="bi bi-person-fill me-2"></i>Dados Pessoais</a>
+                        <a href="#meus-anuncios" class="list-group-item list-group-item-action" data-bs-toggle="tab"><i class="bi bi-card-list me-2"></i>Meus Anúncios</a>
+                        <a href="#favoritos" class="list-group-item list-group-item-action" data-bs-toggle="tab"><i class="bi bi-heart-fill me-2"></i>Anúncios Favoritos</a>
+                        <a href="#definicoes" class="list-group-item list-group-item-action" data-bs-toggle="tab"><i class="bi bi-gear-fill me-2"></i>Definições</a>
+                        <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action text-danger"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo do Perfil -->
+        <div class="col-lg-9">
+            <div class="tab-content">
+                <!-- Aba: Dados Pessoais -->
+                <div class="tab-pane fade show active" id="dados-pessoais">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h4>Os Meus Dados</h4>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Nome:</strong> Nome Completo do Utilizador</p>
+                            <p><strong>Email:</strong> email@exemplo.com</p>
+                            <p><strong>Contacto Telefónico:</strong> 912 345 678</p>
+                            <p><strong>Morada:</strong> Rua Exemplo, 123, 5000-000 Vila Real</p>
+                            <a asp-action="Edit" class="btn btn-primary mt-3">Editar Perfil</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba: Meus Anúncios (para Vendedores) -->
+                <div class="tab-pane fade" id="meus-anuncios">
+                    <div class="card shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4>Meus Anúncios</h4>
+                            <a asp-controller="Anuncios" asp-action="Create" class="btn btn-success"><i class="bi bi-plus-circle me-1"></i> Criar Novo Anúncio</a>
+                        </div>
+                        <div class="card-body">
+                            <!-- Exemplo de anúncio gerido 1 -->
+                            <div class="managed-ad-item d-flex align-items-center mb-3">
+                                <img src="~/imagens/bmwSerie1.jpg" alt="[Imagem de um BMW Série 1]">
+                                <div class="ms-3 flex-grow-1">
+                                    <h6 class="mb-0 d-inline-block">BMW Série 1 116d</h6>
+                                    <span class="badge bg-success ms-2">Ativo</span>
+                                    <small class="text-muted d-block">Publicado a 20/10/2025</small>
+                                </div>
+                                <div class="ms-auto">
+                                    <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary me-2">Editar</a>
+                                    <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger">Apagar</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Exemplo de anúncio gerido 2 -->
+                            <div class="managed-ad-item d-flex align-items-center mb-3">
+                                <img src="~/imagens/mercedezClassA.jpg" alt="[Imagem de um Mercedes Classe A]">
+                                <div class="ms-3 flex-grow-1">
+                                    <h6 class="mb-0 d-inline-block">Mercedes-Benz Classe A</h6>
+                                    <span class="badge bg-warning text-dark ms-2">Pendente</span>
+                                    <small class="text-muted d-block">Publicado a 15/10/2025</small>
+                                </div>
+                                <div class="ms-auto">
+                                    <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary me-2">Editar</a>
+                                    <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger">Apagar</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Exemplo de anúncio gerido 3 -->
+                            <div class="managed-ad-item d-flex align-items-center">
+                                <img src="~/imagens/audiA3.jpg" alt="[Imagem de um Audi A3]">
+                                <div class="ms-3 flex-grow-1">
+                                    <h6 class="mb-0 d-inline-block">Audi A3 Sportback</h6>
+                                    <span class="badge bg-secondary ms-2">Vendido</span>
+                                    <small class="text-muted d-block">Publicado a 12/10/2025</small>
+                                </div>
+                                <div class="ms-auto">
+                                    <!-- Para anúncios vendidos, os botões podem estar desativados -->
+                                    <a href="#" class="btn btn-sm btn-outline-primary me-2 disabled">Editar</a>
+                                    <a href="#" class="btn btn-sm btn-outline-danger disabled">Apagar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba: Anúncios Favoritos (para Compradores) -->
+                <div class="tab-pane fade" id="favoritos">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h4>Meus Favoritos</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Exemplo de anúncio favorito 1 -->
+                            <div class="managed-ad-item d-flex align-items-center mb-3">
+                                <img src="~/imagens/audiA3.jpg" alt="[Imagem de um Audi A3]">
+                                <div class="ms-3 flex-grow-1">
+                                    <h6 class="mb-0">Audi A3 Sportback</h6>
+                                    <small class="text-muted">Adicionado a 18/10/2025</small>
+                                </div>
+                                <div class="ms-auto">
+                                    <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary me-2">Ver Anúncio</a>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Exemplo de anúncio favorito 2 -->
+                            <div class="managed-ad-item d-flex align-items-center">
+                                <img src="~/imagens/bmwSerie1.jpg" alt="[Imagem de um BMW Série 1]">
+                                <div class="ms-3 flex-grow-1">
+                                    <h6 class="mb-0">BMW Série 1 116d</h6>
+                                    <small class="text-muted">Adicionado a 17/10/2025</small>
+                                </div>
+                                <div class="ms-auto">
+                                    <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary me-2">Ver Anúncio</a>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba: Definições -->
+                <div class="tab-pane fade" id="definicoes">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h4>Definições da Conta</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>Aqui pode alterar as suas preferências de notificação, gerir a sua password e outras definições de segurança.</p>
+                            <a asp-action="Edit" class="btn btn-secondary mt-3">Alterar Password</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

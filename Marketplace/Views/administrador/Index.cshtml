@@ -1,0 +1,320 @@
+﻿@{
+    ViewData["Title"] = "Painel de Administração";
+}
+
+<div class="container mt-5 pt-5">
+    <div class="row">
+        <!-- Coluna da Esquerda: Menu de Navegação Lateral -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Painel de Gestão</h5>
+                </div>
+                <div class="list-group list-group-flush admin-sidebar">
+                    <a href="#" class="list-group-item list-group-item-action active" data-target="#dashboard-content">
+                        <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-target="#validar-vendedores-content">
+                        <i class="bi bi-person-check-fill me-2"></i>Validar Vendedores
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-target="#gerir-utilizadores-content">
+                        <i class="bi bi-people-fill me-2"></i>Gerir Utilizadores
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-target="#moderar-anuncios-content">
+                        <i class="bi bi-megaphone-fill me-2"></i>Moderar Anúncios
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-target="#gerir-denuncias-content">
+                        <i class="bi bi-flag-fill me-2"></i>Gerir Denúncias
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-target="#estatisticas-content">
+                        <i class="bi bi-graph-up-arrow me-2"></i>Estatísticas
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-target="#historico-acoes-content">
+                        <i class="bi bi-clock-history me-2"></i>Histórico de Ações
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna da Direita: Conteúdo Principal Dinâmico -->
+        <div class="col-md-9">
+
+            <!-- Secção Dashboard -->
+            <div id="dashboard-content" class="admin-content-section">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="mb-4">Dashboard</h3>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card text-center h-100">
+                                    <div class="card-body">
+                                        <div class="display-4 text-primary">1,254</div>
+                                        <h6 class="card-subtitle text-muted mt-2">Utilizadores Ativos</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card text-center h-100">
+                                    <div class="card-body">
+                                        <div class="display-4 text-success">832</div>
+                                        <h6 class="card-subtitle text-muted mt-2">Anúncios Ativos</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card text-center h-100">
+                                    <div class="card-body">
+                                        <div class="display-4 text-warning">12</div>
+                                        <h6 class="card-subtitle text-muted mt-2">Vendedores a Validar</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secção Validar Vendedores -->
+            <div id="validar-vendedores-content" class="admin-content-section" style="display: none;">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="mb-4">Validar Vendedores Pendentes</h3>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>NIF</th>
+                                        <th>Data de Registo</th>
+                                        <th class="text-end">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Ana Sofia Pereira</td>
+                                        <td>ana.sofia@email.com</td>
+                                        <td>212345678</td>
+                                        <td>20/10/2025</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-success">Aprovar</button>
+                                            <button class="btn btn-sm btn-danger">Rejeitar</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Carlos Manuel Antunes</td>
+                                        <td>carlos.antunes@email.com</td>
+                                        <td>298765432</td>
+                                        <td>19/10/2025</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-success">Aprovar</button>
+                                            <button class="btn btn-sm btn-danger">Rejeitar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secção Gerir Utilizadores -->
+            <div id="gerir-utilizadores-content" class="admin-content-section" style="display: none;">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="mb-4">Gerir Utilizadores</h3>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Tipo de Conta</th>
+                                        <th>Estado</th>
+                                        <th class="text-end">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Beatriz Costa</td>
+                                        <td><span class="badge bg-info-soft">Comprador</span></td>
+                                        <td><span class="badge bg-success-soft">Ativo</span></td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-secondary">Ver Perfil</button>
+                                            <button class="btn btn-sm btn-outline-danger">Bloquear</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rui Santos (Stand Veloz)</td>
+                                        <td><span class="badge bg-primary-soft">Vendedor</span></td>
+                                        <td><span class="badge bg-danger-soft">Bloqueado</span></td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-secondary">Ver Perfil</button>
+                                            <button class="btn btn-sm btn-outline-success">Desbloquear</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secção Moderar Anúncios -->
+            <div id="moderar-anuncios-content" class="admin-content-section" style="display: none;">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="mb-4">Moderar Anúncios</h3>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Anúncio</th>
+                                        <th>Vendedor</th>
+                                        <th>Motivo do Alerta</th>
+                                        <th class="text-end">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>BMW Série 1 116d</td>
+                                        <td>Stand Veloz</td>
+                                        <td>Preço irrealista</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-info">Ver Anúncio</button>
+                                            <button class="btn btn-sm btn-outline-warning">Pausar</button>
+                                            <button class="btn btn-sm btn-outline-danger">Remover</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secção Gerir Denúncias -->
+            <div id="gerir-denuncias-content" class="admin-content-section" style="display: none;">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="mb-4">Gerir Denúncias</h3>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tipo</th>
+                                        <th>Motivo</th>
+                                        <th>Estado</th>
+                                        <th class="text-end">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#D1024</td>
+                                        <td>Utilizador</td>
+                                        <td>Comportamento abusivo</td>
+                                        <td><span class="badge bg-danger-soft">Aberta</span></td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-primary">Analisar</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#D1023</td>
+                                        <td>Anúncio</td>
+                                        <td>Fotografias falsas</td>
+                                        <td><span class="badge bg-secondary-soft">Fechada</span></td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-secondary">Ver Detalhes</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secção Estatísticas -->
+            <div id="estatisticas-content" class="admin-content-section" style="display: none;">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="mb-4">Estatísticas do Site</h3>
+                        <p class="text-muted">Esta secção irá conter gráficos e relatórios detalhados sobre a performance do site.</p>
+                        <div class="text-center p-5 border rounded bg-light">
+                            <i class="bi bi-bar-chart-line-fill fs-1 text-primary"></i>
+                            <p class="mt-2">Gráficos de vendas, utilizadores e anúncios em breve.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secção Histórico de Ações -->
+            <div id="historico-acoes-content" class="admin-content-section" style="display: none;">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="mb-4">Histórico de Ações Administrativas</h3>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Administrador</th>
+                                        <th>Ação</th>
+                                        <th>Detalhes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>21/10/2025 15:30</td>
+                                        <td>admin@marketplace.com</td>
+                                        <td>Bloqueou Utilizador</td>
+                                        <td>Utilizador "Rui Santos" bloqueado por fraude.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>21/10/2025 11:15</td>
+                                        <td>admin@marketplace.com</td>
+                                        <td>Removeu Anúncio</td>
+                                        <td>Anúncio #A5543 removido por conteúdo impróprio.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Script para controlar a navegação por abas no painel de administração
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarLinks = document.querySelectorAll('.admin-sidebar .list-group-item-action');
+            const contentSections = document.querySelectorAll('.admin-content-section');
+
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // Esconde todas as outras secções
+                    contentSections.forEach(section => {
+                        section.style.display = 'none';
+                    });
+
+                    // Mostra a secção correspondente ao link clicado
+                    const targetId = this.getAttribute('data-target');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        targetSection.style.display = 'block';
+                    }
+
+                    // Atualiza o item ativo no menu
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+}
+

@@ -4,19 +4,16 @@ using Marketplace.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Marketplace.Migrations
+namespace Marketplace.Migrations.Marketplace
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251015185556_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(MarketplaceContext))]
+    partial class MarketplaceContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,7 +58,6 @@ namespace Marketplace.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Preco")
-                        .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<int?>("Quilometragem")
@@ -92,7 +88,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("Anuncios");
+                    b.ToTable("Anuncio");
                 });
 
             modelBuilder.Entity("Marketplace.Models.AnuncioFav", b =>
@@ -119,7 +115,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("AnunciosFavoritos");
+                    b.ToTable("AnuncioFav");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Categoria", b =>
@@ -137,7 +133,7 @@ namespace Marketplace.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("Categoria");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Combustivel", b =>
@@ -155,7 +151,7 @@ namespace Marketplace.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Combustiveis");
+                    b.ToTable("Combustivel");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Compra", b =>
@@ -185,7 +181,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("Compras");
+                    b.ToTable("Compra");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Contactos", b =>
@@ -231,7 +227,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("ContactosCompradores");
+                    b.ToTable("ContactosComprador");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Conversa", b =>
@@ -264,7 +260,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("Conversas");
+                    b.ToTable("Conversa");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Denuncia", b =>
@@ -292,14 +288,14 @@ namespace Marketplace.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<string>("Estado")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("TipoDenuncia")
+                    b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(21)
                         .HasColumnType("nvarchar(21)");
+
+                    b.Property<string>("Estado")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
@@ -309,7 +305,7 @@ namespace Marketplace.Migrations
 
                     b.ToTable("Denuncia");
 
-                    b.HasDiscriminator<string>("TipoDenuncia").HasValue("Denuncia");
+                    b.HasDiscriminator().HasValue("Denuncia");
 
                     b.UseTphMappingStrategy();
                 });
@@ -329,7 +325,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("FiltrosFavoritos");
+                    b.ToTable("FiltrosFav");
                 });
 
             modelBuilder.Entity("Marketplace.Models.HistoricoAcao", b =>
@@ -346,6 +342,11 @@ namespace Marketplace.Migrations
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
                     b.Property<string>("Motivo")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -361,7 +362,7 @@ namespace Marketplace.Migrations
 
                     b.ToTable("HistoricoAcao");
 
-                    b.HasDiscriminator<string>("TipoAcao").HasValue("HistoricoAcao");
+                    b.HasDiscriminator().HasValue("HistoricoAcao");
 
                     b.UseTphMappingStrategy();
                 });
@@ -386,7 +387,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("AnuncioId");
 
-                    b.ToTable("Imagens");
+                    b.ToTable("Imagem");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Marca", b =>
@@ -404,7 +405,7 @@ namespace Marketplace.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Marcas");
+                    b.ToTable("Marca");
                 });
 
             modelBuilder.Entity("Marketplace.Models.MarcasFav", b =>
@@ -427,7 +428,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("MarcaId");
 
-                    b.ToTable("MarcasFavoritas");
+                    b.ToTable("MarcasFav");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Mensagens", b =>
@@ -468,7 +469,7 @@ namespace Marketplace.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("MarcaId")
+                    b.Property<int>("MarcaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Nome")
@@ -476,11 +477,16 @@ namespace Marketplace.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("TipoId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MarcaId");
 
-                    b.ToTable("Modelos");
+                    b.HasIndex("TipoId");
+
+                    b.ToTable("Modelo");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Morada", b =>
@@ -508,7 +514,7 @@ namespace Marketplace.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Moradas");
+                    b.ToTable("Morada");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Notificacoes", b =>
@@ -611,7 +617,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("Reservas");
+                    b.ToTable("Reserva");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Tipo", b =>
@@ -629,7 +635,7 @@ namespace Marketplace.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tipos");
+                    b.ToTable("Tipo");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Utilizador", b =>
@@ -714,7 +720,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("Visitas");
+                    b.ToTable("Visita");
                 });
 
             modelBuilder.Entity("Marketplace.Models.DenunciaAnuncio", b =>
@@ -818,7 +824,7 @@ namespace Marketplace.Migrations
                         .HasForeignKey("CombustivelId");
 
                     b.HasOne("Marketplace.Models.Marca", "Marca")
-                        .WithMany("Anuncios")
+                        .WithMany()
                         .HasForeignKey("MarcaId");
 
                     b.HasOne("Marketplace.Models.Modelo", "Modelo")
@@ -826,7 +832,7 @@ namespace Marketplace.Migrations
                         .HasForeignKey("ModeloId");
 
                     b.HasOne("Marketplace.Models.Tipo", "Tipo")
-                        .WithMany("Anuncios")
+                        .WithMany()
                         .HasForeignKey("TipoId");
 
                     b.HasOne("Marketplace.Models.Vendedor", "Vendedor")
@@ -859,7 +865,7 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Comprador", "Comprador")
                         .WithMany("AnunciosFavoritos")
                         .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Anuncio");
@@ -872,13 +878,13 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Anuncio", "Anuncio")
                         .WithMany("Compras")
                         .HasForeignKey("AnuncioId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Marketplace.Models.Comprador", "Comprador")
                         .WithMany("Compras")
                         .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Anuncio");
@@ -913,19 +919,19 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Anuncio", "Anuncio")
                         .WithMany("Conversas")
                         .HasForeignKey("AnuncioId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Marketplace.Models.Comprador", "Comprador")
                         .WithMany("Conversas")
                         .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Marketplace.Models.Vendedor", "Vendedor")
                         .WithMany("Conversas")
                         .HasForeignKey("VendedorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Anuncio");
@@ -944,7 +950,7 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Comprador", "Comprador")
                         .WithMany("Denuncias")
                         .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Administrador");
@@ -968,7 +974,7 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Administrador", "Administrador")
                         .WithMany("HistoricoAcoes")
                         .HasForeignKey("AdministradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Administrador");
@@ -988,7 +994,7 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Comprador", "Comprador")
                         .WithMany("MarcasFavoritas")
                         .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Marketplace.Models.Marca", "Marca")
@@ -1017,9 +1023,19 @@ namespace Marketplace.Migrations
                 {
                     b.HasOne("Marketplace.Models.Marca", "Marca")
                         .WithMany("Modelos")
-                        .HasForeignKey("MarcaId");
+                        .HasForeignKey("MarcaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.Tipo", "Tipo")
+                        .WithMany("Modelos")
+                        .HasForeignKey("TipoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Marca");
+
+                    b.Navigation("Tipo");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Notificacoes", b =>
@@ -1031,7 +1047,7 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Comprador", "Comprador")
                         .WithMany("Notificacoes")
                         .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Marketplace.Models.FiltrosFav", "FiltrosFav")
@@ -1073,13 +1089,13 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Anuncio", "Anuncio")
                         .WithMany("Reservas")
                         .HasForeignKey("AnuncioId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Marketplace.Models.Comprador", "Comprador")
                         .WithMany("Reservas")
                         .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Anuncio");
@@ -1100,8 +1116,7 @@ namespace Marketplace.Migrations
                 {
                     b.HasOne("Marketplace.Models.Reserva", "Reserva")
                         .WithMany("Visitas")
-                        .HasForeignKey("ReservaId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("ReservaId");
 
                     b.HasOne("Marketplace.Models.Vendedor", "Vendedor")
                         .WithMany("Visitas")
@@ -1119,7 +1134,7 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Anuncio", "Anuncio")
                         .WithMany("Denuncias")
                         .HasForeignKey("AnuncioId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Marketplace.Models.Vendedor", "Vendedor")
@@ -1136,7 +1151,7 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Utilizador", "UtilizadorAlvo")
                         .WithMany("DenunciasRecebidas")
                         .HasForeignKey("UtilizadorAlvoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("UtilizadorAlvo");
@@ -1147,7 +1162,7 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Anuncio", "Anuncio")
                         .WithMany("AcoesAnuncio")
                         .HasForeignKey("AnuncioId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Anuncio");
@@ -1158,7 +1173,7 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Utilizador", "Utilizador")
                         .WithMany("AcoesUser")
                         .HasForeignKey("UtilizadorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Utilizador");
@@ -1206,8 +1221,6 @@ namespace Marketplace.Migrations
 
             modelBuilder.Entity("Marketplace.Models.Marca", b =>
                 {
-                    b.Navigation("Anuncios");
-
                     b.Navigation("Modelos");
                 });
 
@@ -1238,7 +1251,7 @@ namespace Marketplace.Migrations
 
             modelBuilder.Entity("Marketplace.Models.Tipo", b =>
                 {
-                    b.Navigation("Anuncios");
+                    b.Navigation("Modelos");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Utilizador", b =>

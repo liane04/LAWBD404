@@ -1,7 +1,10 @@
-using Marketplace.Data;
+﻿using Marketplace.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<MarketplaceContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MarketplaceContext") ?? throw new InvalidOperationException("Connection string 'MarketplaceContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
