@@ -1793,3 +1793,913 @@ body.home-page .navbar:not(.scrolled) {
     vertical-align: middle;
 }
 
+/* ========================================================================== */
+/* PÁGINA DE PERFIL MELHORADA - DRIVEDEAL                                    */
+/* ========================================================================== */
+
+/* -------------------------------------------------------------------------- */
+/* Banner de Cabeçalho do Perfil                                             */
+/* -------------------------------------------------------------------------- */
+
+.perfil-header-banner {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    padding: 2rem 0 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.perfil-header-content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.perfil-avatar-wrapper {
+    position: relative;
+}
+
+.perfil-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid white;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    object-fit: cover;
+}
+
+.btn-edit-avatar {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: 3px solid white;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-edit-avatar:hover {
+    background: var(--primary-dark);
+    transform: scale(1.1);
+}
+
+.perfil-header-info {
+    flex: 1;
+    color: white;
+}
+
+.perfil-nome {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: white;
+}
+
+.perfil-username {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+}
+
+.perfil-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.perfil-badges .badge {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 20px;
+}
+
+.badge-comprador {
+    background: #28a745;
+    color: white;
+}
+
+.badge-vendedor {
+    background: #007bff;
+    color: white;
+}
+
+.badge-verificado {
+    background: #ffc107;
+    color: #000;
+}
+
+.perfil-stats {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.perfil-stats .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+}
+
+.perfil-stats .stat-item i {
+    font-size: 1.1rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Container do Perfil                                                       */
+/* -------------------------------------------------------------------------- */
+
+.perfil-container {
+    padding-bottom: 3rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Cards de Estatísticas                                                     */
+/* -------------------------------------------------------------------------- */
+
+.stats-cards-row {
+    margin-bottom: 1.5rem;
+}
+
+.stats-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.stats-icon-anuncios {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+}
+
+.stats-icon-favoritos {
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+}
+
+.stats-icon-vendas {
+    background: linear-gradient(135deg, #28a745, #32cd32);
+}
+
+.stats-icon-avaliacoes {
+    background: linear-gradient(135deg, #ffc107, #ffb300);
+}
+
+.stats-info {
+    flex: 1;
+}
+
+.stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+    line-height: 1;
+}
+
+.stats-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+    margin-top: 0.25rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Menu de Navegação do Perfil                                               */
+/* -------------------------------------------------------------------------- */
+
+.perfil-nav {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.perfil-menu .list-group-item {
+    border: none;
+    padding: 1rem 1.25rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+}
+
+.perfil-menu .list-group-item i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.perfil-menu .list-group-item span {
+    flex: 1;
+}
+
+.perfil-menu .list-group-item.active {
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    font-weight: 600;
+}
+
+.perfil-menu .list-group-item:not(.active):hover {
+    background: rgba(37, 99, 235, 0.05);
+    color: var(--primary-color);
+    padding-left: 1.5rem;
+}
+
+.perfil-menu .divider {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 0.5rem 0;
+}
+
+.badge-notification {
+    background: #dc3545;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Cards de Perfil (Dados Pessoais, Definições)                             */
+/* -------------------------------------------------------------------------- */
+
+.perfil-card {
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+}
+
+.perfil-card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-bottom: none;
+}
+
+.perfil-card-header h4,
+.perfil-card-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: white;
+}
+
+.info-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.info-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.info-content {
+    flex: 1;
+}
+
+.info-content label {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.info-content p {
+    font-size: 1.05rem;
+    color: #000;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Cards de Gestão de Anúncios                                               */
+/* -------------------------------------------------------------------------- */
+
+.anuncio-manage-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.anuncio-manage-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+.anuncio-manage-card.anuncio-vendido {
+    opacity: 0.7;
+}
+
+.anuncio-manage-img {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
+    overflow: hidden;
+    background: #f0f0f0;
+    flex-shrink: 0;
+}
+
+.anuncio-manage-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+    display: block;
+}
+
+.anuncio-manage-card:hover .anuncio-manage-img img {
+    transform: scale(1.05);
+}
+
+.badge-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.badge-ativo {
+    background: #28a745;
+    color: white;
+}
+
+.badge-pendente {
+    background: #ffc107;
+    color: #000;
+}
+
+.badge-vendido {
+    background: #6c757d;
+    color: white;
+}
+
+.anuncio-manage-body {
+    padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.anuncio-manage-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 0.75rem;
+}
+
+.anuncio-manage-details {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.anuncio-manage-details span {
+    font-size: 0.85rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.anuncio-manage-details i {
+    color: var(--primary-color);
+}
+
+.anuncio-manage-price {
+    margin-bottom: 1rem;
+}
+
+.anuncio-manage-price strong {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.anuncio-manage-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Cards de Favoritos                                                        */
+/* -------------------------------------------------------------------------- */
+
+.favorito-card {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.favorito-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+.btn-favorito {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-favorito.active {
+    color: #dc3545;
+}
+
+.btn-favorito:hover {
+    transform: scale(1.1);
+    background: white;
+}
+
+.favorito-img {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    min-height: 180px;
+    max-height: 180px;
+    overflow: hidden;
+    background: #f0f0f0;
+    flex-shrink: 0;
+}
+
+.favorito-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+    display: block;
+}
+
+.favorito-card:hover .favorito-img img {
+    transform: scale(1.05);
+}
+
+.badge-preco {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(37, 99, 235, 0.95);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.favorito-body {
+    padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.favorito-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 0.75rem;
+}
+
+.favorito-specs {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.favorito-specs span {
+    font-size: 0.85rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.favorito-specs i {
+    color: var(--primary-color);
+}
+
+.favorito-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Lista de Mensagens                                                        */
+/* -------------------------------------------------------------------------- */
+
+.mensagens-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mensagem-item {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.mensagem-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-color);
+}
+
+.mensagem-item.nao-lida {
+    background: linear-gradient(to right, rgba(37, 99, 235, 0.03), white);
+    border-left: 4px solid var(--primary-color);
+}
+
+.mensagem-avatar {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.mensagem-content {
+    flex: 1;
+}
+
+.mensagem-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.mensagem-nome {
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+}
+
+.mensagem-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-nova {
+    background: var(--primary-color);
+    color: white;
+}
+
+.mensagem-data {
+    color: #999;
+    font-size: 0.85rem;
+    margin-left: auto;
+}
+
+.mensagem-assunto {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.mensagem-preview {
+    color: #666;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.mensagem-actions {
+    display: flex;
+    align-items: flex-start;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Timeline do Histórico                                                     */
+/* -------------------------------------------------------------------------- */
+
+.historico-timeline {
+    position: relative;
+    padding-left: 2.5rem;
+}
+
+.historico-timeline::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--primary-color), #e0e0e0);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -2.5rem;
+    top: 5px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 3px solid white;
+}
+
+.timeline-marker-success {
+    background: #28a745;
+}
+
+.timeline-marker-info {
+    background: #007bff;
+}
+
+.timeline-marker-warning {
+    background: #ffc107;
+}
+
+.timeline-marker-danger {
+    background: #dc3545;
+}
+
+.timeline-marker-primary {
+    background: var(--primary-color);
+}
+
+.timeline-content {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateX(5px);
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.timeline-header h6 {
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+}
+
+.timeline-header small {
+    color: #999;
+    font-size: 0.85rem;
+}
+
+.timeline-content p {
+    margin: 0;
+    color: #666;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Definições da Conta                                                       */
+/* -------------------------------------------------------------------------- */
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.75rem 0;
+}
+
+.settings-info {
+    flex: 1;
+}
+
+.settings-info h6 {
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 0.25rem;
+}
+
+.settings-info p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Responsividade                                                            */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 992px) {
+    .perfil-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .perfil-stats {
+        justify-content: center;
+    }
+
+    .perfil-badges {
+        justify-content: center;
+    }
+
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .perfil-header-banner {
+        padding: 1.5rem 0 1rem;
+    }
+
+    .perfil-nome {
+        font-size: 1.5rem;
+    }
+
+    .perfil-avatar {
+        width: 120px;
+        height: 120px;
+    }
+
+    .stats-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem;
+    }
+
+    .stats-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .stats-number {
+        font-size: 1.75rem;
+    }
+
+    .anuncio-manage-img {
+        height: 180px;
+        min-height: 180px;
+        max-height: 180px;
+    }
+
+    .favorito-img {
+        height: 160px;
+        min-height: 160px;
+        max-height: 160px;
+    }
+
+    .anuncio-manage-actions,
+    .favorito-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .anuncio-manage-actions .btn,
+    .favorito-footer .btn {
+        width: 100%;
+    }
+
+    .mensagem-item {
+        flex-direction: column;
+    }
+
+    .mensagem-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .settings-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .timeline-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}
+

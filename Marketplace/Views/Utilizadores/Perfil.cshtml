@@ -2,23 +2,123 @@
     ViewData["Title"] = "Meu Perfil";
 }
 
-<div class="container mt-5 pt-5">
+<div class="perfil-header-banner">
+    <div class="container">
+        <div class="perfil-header-content">
+            <div class="perfil-avatar-wrapper">
+                <img src="https://placehold.co/150x150/2563eb/white?text=User" class="perfil-avatar" alt="Foto de Perfil">
+                <button class="btn-edit-avatar" title="Alterar foto">
+                    <i class="bi bi-camera-fill"></i>
+                </button>
+            </div>
+            <div class="perfil-header-info">
+                <h1 class="perfil-nome">Nome Completo do Utilizador</h1>
+                <p class="perfil-username">&#64;nomedeutilizador</p>
+                <div class="perfil-badges">
+                    <span class="badge badge-comprador"><i class="bi bi-cart-check-fill me-1"></i>Comprador</span>
+                    <span class="badge badge-vendedor"><i class="bi bi-shop me-1"></i>Vendedor</span>
+                    <span class="badge badge-verificado"><i class="bi bi-patch-check-fill me-1"></i>Verificado</span>
+                </div>
+                <div class="perfil-stats mt-3">
+                    <div class="stat-item">
+                        <i class="bi bi-calendar3"></i>
+                        <span>Membro desde Out 2024</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>Vila Real, Portugal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container perfil-container">
+    <!-- Cards de Estatísticas -->
+    <div class="row g-3 mb-4 stats-cards-row">
+        <div class="col-md-3 col-sm-6">
+            <div class="stats-card">
+                <div class="stats-icon stats-icon-anuncios">
+                    <i class="bi bi-megaphone-fill"></i>
+                </div>
+                <div class="stats-info">
+                    <h3 class="stats-number">12</h3>
+                    <p class="stats-label">Anúncios Ativos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stats-card">
+                <div class="stats-icon stats-icon-favoritos">
+                    <i class="bi bi-heart-fill"></i>
+                </div>
+                <div class="stats-info">
+                    <h3 class="stats-number">24</h3>
+                    <p class="stats-label">Favoritos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stats-card">
+                <div class="stats-icon stats-icon-vendas">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+                <div class="stats-info">
+                    <h3 class="stats-number">8</h3>
+                    <p class="stats-label">Vendas Realizadas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stats-card">
+                <div class="stats-icon stats-icon-avaliacoes">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <div class="stats-info">
+                    <h3 class="stats-number">4.8</h3>
+                    <p class="stats-label">Avaliação Média</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <!-- Barra Lateral de Navegação do Perfil -->
-        <div class="col-lg-3">
+        <div class="col-lg-3 mb-4">
             <div class="perfil-nav card shadow-sm">
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <img src="https://placehold.co/100x100/0d6efd/white?text=User" class="rounded-circle" alt="Foto de Perfil">
-                        <h5 class="mt-3 mb-0">Nome do Utilizador</h5>
-                        <small class="text-muted">Comprador & Vendedor</small>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        <a href="#dados-pessoais" class="list-group-item list-group-item-action active" data-bs-toggle="tab"><i class="bi bi-person-fill me-2"></i>Dados Pessoais</a>
-                        <a href="#meus-anuncios" class="list-group-item list-group-item-action" data-bs-toggle="tab"><i class="bi bi-card-list me-2"></i>Meus Anúncios</a>
-                        <a href="#favoritos" class="list-group-item list-group-item-action" data-bs-toggle="tab"><i class="bi bi-heart-fill me-2"></i>Anúncios Favoritos</a>
-                        <a href="#definicoes" class="list-group-item list-group-item-action" data-bs-toggle="tab"><i class="bi bi-gear-fill me-2"></i>Definições</a>
-                        <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action text-danger"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush perfil-menu">
+                        <a href="#dados-pessoais" class="list-group-item list-group-item-action active" data-bs-toggle="tab">
+                            <i class="bi bi-person-fill"></i>
+                            <span>Dados Pessoais</span>
+                        </a>
+                        <a href="#meus-anuncios" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                            <i class="bi bi-card-list"></i>
+                            <span>Meus Anúncios</span>
+                        </a>
+                        <a href="#favoritos" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                            <i class="bi bi-heart-fill"></i>
+                            <span>Favoritos</span>
+                        </a>
+                        <a href="#mensagens" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                            <i class="bi bi-chat-dots-fill"></i>
+                            <span>Mensagens</span>
+                            <span class="badge badge-notification">3</span>
+                        </a>
+                        <a href="#historico" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Histórico</span>
+                        </a>
+                        <a href="#definicoes" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                            <i class="bi bi-gear-fill"></i>
+                            <span>Definições</span>
+                        </a>
+                        <div class="divider"></div>
+                        <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action text-danger">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Sair</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -29,68 +129,234 @@
             <div class="tab-content">
                 <!-- Aba: Dados Pessoais -->
                 <div class="tab-pane fade show active" id="dados-pessoais">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h4>Os Meus Dados</h4>
+                    <div class="card perfil-card shadow-sm">
+                        <div class="card-header perfil-card-header">
+                            <h4><i class="bi bi-person-badge me-2"></i>Os Meus Dados</h4>
                         </div>
                         <div class="card-body">
-                            <p><strong>Nome:</strong> Nome Completo do Utilizador</p>
-                            <p><strong>Email:</strong> email@exemplo.com</p>
-                            <p><strong>Contacto Telefónico:</strong> 912 345 678</p>
-                            <p><strong>Morada:</strong> Rua Exemplo, 123, 5000-000 Vila Real</p>
-                            <a asp-action="Edit" class="btn btn-primary mt-3">Editar Perfil</a>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <label>Nome Completo</label>
+                                            <p>Nome Completo do Utilizador</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="bi bi-at"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <label>Username</label>
+                                            <p>nomedeutilizador</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="bi bi-envelope-fill"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <label>Email</label>
+                                            <p>email@exemplo.com</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="bi bi-telephone-fill"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <label>Contacto Telefónico</label>
+                                            <p>+351 912 345 678</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <label>Morada</label>
+                                            <p>Rua Exemplo, 123<br>5000-000 Vila Real</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i class="bi bi-credit-card-fill"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <label>NIF</label>
+                                            <p>123 456 789</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 d-flex gap-2">
+                                <a asp-action="Edit" class="btn btn-primary">
+                                    <i class="bi bi-pencil-square me-2"></i>Editar Perfil
+                                </a>
+                                <button class="btn btn-outline-secondary" onclick="window.print()">
+                                    <i class="bi bi-printer me-2"></i>Imprimir
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Aba: Meus Anúncios (para Vendedores) -->
                 <div class="tab-pane fade" id="meus-anuncios">
-                    <div class="card shadow-sm">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h4>Meus Anúncios</h4>
-                            <a asp-controller="Anuncios" asp-action="Create" class="btn btn-success"><i class="bi bi-plus-circle me-1"></i> Criar Novo Anúncio</a>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0"><i class="bi bi-megaphone-fill me-2"></i>Meus Anúncios</h4>
+                        <a asp-controller="Anuncios" asp-action="Create" class="btn btn-success">
+                            <i class="bi bi-plus-circle me-1"></i>Criar Novo Anúncio
+                        </a>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Anúncio Card 1 -->
+                        <div class="col-md-6">
+                            <div class="anuncio-manage-card">
+                                <div class="anuncio-manage-img">
+                                    <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1">
+                                    <span class="badge badge-status badge-ativo">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                    </span>
+                                </div>
+                                <div class="anuncio-manage-body">
+                                    <h5 class="anuncio-manage-title">BMW Série 1 116d</h5>
+                                    <div class="anuncio-manage-details">
+                                        <span><i class="bi bi-calendar3"></i> 20/10/2025</span>
+                                        <span><i class="bi bi-eye-fill"></i> 245 visualizações</span>
+                                        <span><i class="bi bi-heart-fill"></i> 12 favoritos</span>
+                                    </div>
+                                    <div class="anuncio-manage-price">
+                                        <strong>€ 18.500</strong>
+                                    </div>
+                                    <div class="anuncio-manage-actions">
+                                        <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                        <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminacao('BMW Série 1 116d')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <!-- Exemplo de anúncio gerido 1 -->
-                            <div class="managed-ad-item d-flex align-items-center mb-3">
-                                <img src="~/imagens/bmwSerie1.jpg" alt="[Imagem de um BMW Série 1]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0 d-inline-block">BMW Série 1 116d</h6>
-                                    <span class="badge bg-success ms-2">Ativo</span>
-                                    <small class="text-muted d-block">Publicado a 20/10/2025</small>
+
+                        <!-- Anúncio Card 2 -->
+                        <div class="col-md-6">
+                            <div class="anuncio-manage-card">
+                                <div class="anuncio-manage-img">
+                                    <img src="~/imagens/mercedezClassA.jpg" alt="Mercedes Classe A">
+                                    <span class="badge badge-status badge-pendente">
+                                        <i class="bi bi-clock-fill me-1"></i>Pendente
+                                    </span>
                                 </div>
-                                <div class="ms-auto">
-                                    <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary me-2">Editar</a>
-                                    <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger">Apagar</a>
+                                <div class="anuncio-manage-body">
+                                    <h5 class="anuncio-manage-title">Mercedes-Benz Classe A</h5>
+                                    <div class="anuncio-manage-details">
+                                        <span><i class="bi bi-calendar3"></i> 15/10/2025</span>
+                                        <span><i class="bi bi-eye-fill"></i> 89 visualizações</span>
+                                        <span><i class="bi bi-heart-fill"></i> 7 favoritos</span>
+                                    </div>
+                                    <div class="anuncio-manage-price">
+                                        <strong>€ 22.900</strong>
+                                    </div>
+                                    <div class="anuncio-manage-actions">
+                                        <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                        <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminacao('Mercedes-Benz Classe A')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <hr>
-                            <!-- Exemplo de anúncio gerido 2 -->
-                            <div class="managed-ad-item d-flex align-items-center mb-3">
-                                <img src="~/imagens/mercedezClassA.jpg" alt="[Imagem de um Mercedes Classe A]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0 d-inline-block">Mercedes-Benz Classe A</h6>
-                                    <span class="badge bg-warning text-dark ms-2">Pendente</span>
-                                    <small class="text-muted d-block">Publicado a 15/10/2025</small>
+                        </div>
+
+                        <!-- Anúncio Card 3 -->
+                        <div class="col-md-6">
+                            <div class="anuncio-manage-card anuncio-vendido">
+                                <div class="anuncio-manage-img">
+                                    <img src="~/imagens/audiA3.jpg" alt="Audi A3">
+                                    <span class="badge badge-status badge-vendido">
+                                        <i class="bi bi-check2-all me-1"></i>Vendido
+                                    </span>
                                 </div>
-                                <div class="ms-auto">
-                                    <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary me-2">Editar</a>
-                                    <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger">Apagar</a>
+                                <div class="anuncio-manage-body">
+                                    <h5 class="anuncio-manage-title">Audi A3 Sportback</h5>
+                                    <div class="anuncio-manage-details">
+                                        <span><i class="bi bi-calendar3"></i> 12/10/2025</span>
+                                        <span><i class="bi bi-eye-fill"></i> 432 visualizações</span>
+                                        <span><i class="bi bi-heart-fill"></i> 23 favoritos</span>
+                                    </div>
+                                    <div class="anuncio-manage-price">
+                                        <strong>€ 16.200</strong>
+                                        <span class="badge bg-success ms-2">Vendido</span>
+                                    </div>
+                                    <div class="anuncio-manage-actions">
+                                        <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                        <button class="btn btn-sm btn-secondary" disabled>
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <hr>
-                            <!-- Exemplo de anúncio gerido 3 -->
-                            <div class="managed-ad-item d-flex align-items-center">
-                                <img src="~/imagens/audiA3.jpg" alt="[Imagem de um Audi A3]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0 d-inline-block">Audi A3 Sportback</h6>
-                                    <span class="badge bg-secondary ms-2">Vendido</span>
-                                    <small class="text-muted d-block">Publicado a 12/10/2025</small>
+                        </div>
+
+                        <!-- Anúncio Card 4 - Mais um exemplo -->
+                        <div class="col-md-6">
+                            <div class="anuncio-manage-card">
+                                <div class="anuncio-manage-img">
+                                    <img src="https://placehold.co/400x250/2563eb/white?text=Volkswagen+Golf" alt="VW Golf">
+                                    <span class="badge badge-status badge-ativo">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                    </span>
                                 </div>
-                                <div class="ms-auto">
-                                    <!-- Para anúncios vendidos, os botões podem estar desativados -->
-                                    <a href="#" class="btn btn-sm btn-outline-primary me-2 disabled">Editar</a>
-                                    <a href="#" class="btn btn-sm btn-outline-danger disabled">Apagar</a>
+                                <div class="anuncio-manage-body">
+                                    <h5 class="anuncio-manage-title">Volkswagen Golf GTI</h5>
+                                    <div class="anuncio-manage-details">
+                                        <span><i class="bi bi-calendar3"></i> 18/10/2025</span>
+                                        <span><i class="bi bi-eye-fill"></i> 178 visualizações</span>
+                                        <span><i class="bi bi-heart-fill"></i> 15 favoritos</span>
+                                    </div>
+                                    <div class="anuncio-manage-price">
+                                        <strong>€ 24.750</strong>
+                                    </div>
+                                    <div class="anuncio-manage-actions">
+                                        <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                        <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminacao('Volkswagen Golf GTI')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -99,35 +365,251 @@
 
                 <!-- Aba: Anúncios Favoritos (para Compradores) -->
                 <div class="tab-pane fade" id="favoritos">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h4>Meus Favoritos</h4>
-                        </div>
-                        <div class="card-body">
-                            <!-- Exemplo de anúncio favorito 1 -->
-                            <div class="managed-ad-item d-flex align-items-center mb-3">
-                                <img src="~/imagens/audiA3.jpg" alt="[Imagem de um Audi A3]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0">Audi A3 Sportback</h6>
-                                    <small class="text-muted">Adicionado a 18/10/2025</small>
+                    <h4 class="mb-4"><i class="bi bi-heart-fill me-2"></i>Meus Favoritos</h4>
+
+                    <div class="row g-3">
+                        <!-- Favorito Card 1 -->
+                        <div class="col-md-6">
+                            <div class="favorito-card">
+                                <button class="btn-favorito active" onclick="removerFavorito(this)" title="Remover dos favoritos">
+                                    <i class="bi bi-heart-fill"></i>
+                                </button>
+                                <div class="favorito-img">
+                                    <img src="~/imagens/audiA3.jpg" alt="Audi A3">
+                                    <span class="badge badge-preco">€ 16.200</span>
                                 </div>
-                                <div class="ms-auto">
-                                    <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary me-2">Ver Anúncio</a>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                <div class="favorito-body">
+                                    <h5 class="favorito-title">Audi A3 Sportback</h5>
+                                    <div class="favorito-specs">
+                                        <span><i class="bi bi-calendar3"></i> 2019</span>
+                                        <span><i class="bi bi-speedometer2"></i> 85.000 km</span>
+                                        <span><i class="bi bi-fuel-pump"></i> Diesel</span>
+                                    </div>
+                                    <div class="favorito-footer">
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock"></i> Adicionado há 4 dias
+                                        </small>
+                                        <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-primary">
+                                            Ver Detalhes <i class="bi bi-arrow-right ms-1"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                            <hr>
-                            <!-- Exemplo de anúncio favorito 2 -->
-                            <div class="managed-ad-item d-flex align-items-center">
-                                <img src="~/imagens/bmwSerie1.jpg" alt="[Imagem de um BMW Série 1]">
-                                <div class="ms-3 flex-grow-1">
-                                    <h6 class="mb-0">BMW Série 1 116d</h6>
-                                    <small class="text-muted">Adicionado a 17/10/2025</small>
+                        </div>
+
+                        <!-- Favorito Card 2 -->
+                        <div class="col-md-6">
+                            <div class="favorito-card">
+                                <button class="btn-favorito active" onclick="removerFavorito(this)" title="Remover dos favoritos">
+                                    <i class="bi bi-heart-fill"></i>
+                                </button>
+                                <div class="favorito-img">
+                                    <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1">
+                                    <span class="badge badge-preco">€ 18.500</span>
                                 </div>
-                                <div class="ms-auto">
-                                    <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary me-2">Ver Anúncio</a>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                <div class="favorito-body">
+                                    <h5 class="favorito-title">BMW Série 1 116d</h5>
+                                    <div class="favorito-specs">
+                                        <span><i class="bi bi-calendar3"></i> 2020</span>
+                                        <span><i class="bi bi-speedometer2"></i> 62.000 km</span>
+                                        <span><i class="bi bi-fuel-pump"></i> Diesel</span>
+                                    </div>
+                                    <div class="favorito-footer">
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock"></i> Adicionado há 5 dias
+                                        </small>
+                                        <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-primary">
+                                            Ver Detalhes <i class="bi bi-arrow-right ms-1"></i>
+                                        </a>
+                                    </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Favorito Card 3 -->
+                        <div class="col-md-6">
+                            <div class="favorito-card">
+                                <button class="btn-favorito active" onclick="removerFavorito(this)" title="Remover dos favoritos">
+                                    <i class="bi bi-heart-fill"></i>
+                                </button>
+                                <div class="favorito-img">
+                                    <img src="https://placehold.co/400x250/2563eb/white?text=Seat+Leon" alt="Seat Leon">
+                                    <span class="badge badge-preco">€ 14.900</span>
+                                </div>
+                                <div class="favorito-body">
+                                    <h5 class="favorito-title">Seat Leon FR</h5>
+                                    <div class="favorito-specs">
+                                        <span><i class="bi bi-calendar3"></i> 2018</span>
+                                        <span><i class="bi bi-speedometer2"></i> 95.000 km</span>
+                                        <span><i class="bi bi-fuel-pump"></i> Gasolina</span>
+                                    </div>
+                                    <div class="favorito-footer">
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock"></i> Adicionado há 1 semana
+                                        </small>
+                                        <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-primary">
+                                            Ver Detalhes <i class="bi bi-arrow-right ms-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba: Mensagens -->
+                <div class="tab-pane fade" id="mensagens">
+                    <h4 class="mb-4"><i class="bi bi-chat-dots-fill me-2"></i>Minhas Mensagens</h4>
+
+                    <div class="mensagens-list">
+                        <!-- Mensagem 1 - Não lida -->
+                        <div class="mensagem-item nao-lida">
+                            <img src="https://placehold.co/50x50/666/white?text=JS" alt="João Silva" class="mensagem-avatar">
+                            <div class="mensagem-content">
+                                <div class="mensagem-header">
+                                    <h6 class="mensagem-nome">João Silva</h6>
+                                    <span class="mensagem-badge badge-nova">Nova</span>
+                                    <small class="mensagem-data">Há 2 horas</small>
+                                </div>
+                                <p class="mensagem-assunto">Interesse no BMW Série 1</p>
+                                <p class="mensagem-preview">Olá, ainda tem o BMW disponível? Gostaria de agendar uma visita para...</p>
+                            </div>
+                            <div class="mensagem-actions">
+                                <button class="btn btn-sm btn-primary">
+                                    <i class="bi bi-reply-fill"></i> Responder
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mensagem 2 - Não lida -->
+                        <div class="mensagem-item nao-lida">
+                            <img src="https://placehold.co/50x50/2563eb/white?text=MC" alt="Maria Costa" class="mensagem-avatar">
+                            <div class="mensagem-content">
+                                <div class="mensagem-header">
+                                    <h6 class="mensagem-nome">Maria Costa</h6>
+                                    <span class="mensagem-badge badge-nova">Nova</span>
+                                    <small class="mensagem-data">Há 5 horas</small>
+                                </div>
+                                <p class="mensagem-assunto">Proposta para Mercedes Classe A</p>
+                                <p class="mensagem-preview">Boa tarde, tenho interesse no Mercedes. Aceita 21.000€?</p>
+                            </div>
+                            <div class="mensagem-actions">
+                                <button class="btn btn-sm btn-primary">
+                                    <i class="bi bi-reply-fill"></i> Responder
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mensagem 3 - Lida -->
+                        <div class="mensagem-item">
+                            <img src="https://placehold.co/50x50/333/white?text=PS" alt="Paulo Santos" class="mensagem-avatar">
+                            <div class="mensagem-content">
+                                <div class="mensagem-header">
+                                    <h6 class="mensagem-nome">Paulo Santos</h6>
+                                    <small class="mensagem-data">Ontem</small>
+                                </div>
+                                <p class="mensagem-assunto">Obrigado pela venda do Audi A3</p>
+                                <p class="mensagem-preview">Muito obrigado pela venda. Excelente negócio!</p>
+                            </div>
+                            <div class="mensagem-actions">
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-archive"></i> Arquivar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mensagem 4 - Lida -->
+                        <div class="mensagem-item">
+                            <img src="https://placehold.co/50x50/555/white?text=AL" alt="Ana Lima" class="mensagem-avatar">
+                            <div class="mensagem-content">
+                                <div class="mensagem-header">
+                                    <h6 class="mensagem-nome">Ana Lima</h6>
+                                    <small class="mensagem-data">Há 3 dias</small>
+                                </div>
+                                <p class="mensagem-assunto">Dúvida sobre o Golf GTI</p>
+                                <p class="mensagem-preview">O carro tem livro de revisões completo?</p>
+                            </div>
+                            <div class="mensagem-actions">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Ver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba: Histórico -->
+                <div class="tab-pane fade" id="historico">
+                    <h4 class="mb-4"><i class="bi bi-clock-history me-2"></i>Histórico de Atividade</h4>
+
+                    <div class="historico-timeline">
+                        <!-- Item Timeline 1 -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker timeline-marker-success">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h6>Anúncio Vendido</h6>
+                                    <small>Há 1 semana</small>
+                                </div>
+                                <p>O seu anúncio <strong>Audi A3 Sportback</strong> foi vendido com sucesso por <strong>€16.200</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Item Timeline 2 -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker timeline-marker-info">
+                                <i class="bi bi-plus-circle-fill"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h6>Novo Anúncio Publicado</h6>
+                                    <small>Há 2 semanas</small>
+                                </div>
+                                <p>Publicou o anúncio <strong>BMW Série 1 116d</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Item Timeline 3 -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker timeline-marker-warning">
+                                <i class="bi bi-pencil-fill"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h6>Perfil Atualizado</h6>
+                                    <small>Há 3 semanas</small>
+                                </div>
+                                <p>Atualizou as informações do seu perfil</p>
+                            </div>
+                        </div>
+
+                        <!-- Item Timeline 4 -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker timeline-marker-danger">
+                                <i class="bi bi-trash-fill"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h6>Anúncio Removido</h6>
+                                    <small>Há 1 mês</small>
+                                </div>
+                                <p>Removeu o anúncio <strong>Renault Clio</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Item Timeline 5 -->
+                        <div class="timeline-item">
+                            <div class="timeline-marker timeline-marker-primary">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <h6>Nova Avaliação Recebida</h6>
+                                    <small>Há 1 mês</small>
+                                </div>
+                                <p>Recebeu uma avaliação de <strong>5 estrelas</strong> de Paulo Santos</p>
                             </div>
                         </div>
                     </div>
@@ -135,13 +617,133 @@
 
                 <!-- Aba: Definições -->
                 <div class="tab-pane fade" id="definicoes">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h4>Definições da Conta</h4>
+                    <h4 class="mb-4"><i class="bi bi-gear-fill me-2"></i>Definições da Conta</h4>
+
+                    <div class="row g-4">
+                        <!-- Card: Segurança -->
+                        <div class="col-12">
+                            <div class="card perfil-card shadow-sm">
+                                <div class="card-header perfil-card-header">
+                                    <h5><i class="bi bi-shield-lock me-2"></i>Segurança</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="settings-item">
+                                        <div class="settings-info">
+                                            <h6>Alterar Password</h6>
+                                            <p class="text-muted">Atualize a sua password regularmente para manter a conta segura</p>
+                                        </div>
+                                        <button class="btn btn-outline-primary" onclick="alert('Funcionalidade em desenvolvimento')">
+                                            <i class="bi bi-key-fill me-2"></i>Alterar
+                                        </button>
+                                    </div>
+                                    <hr>
+                                    <div class="settings-item">
+                                        <div class="settings-info">
+                                            <h6>Autenticação de Dois Fatores (2FA)</h6>
+                                            <p class="text-muted">Adicione uma camada extra de segurança à sua conta</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="switch2FA">
+                                            <label class="form-check-label" for="switch2FA">Desativado</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <p>Aqui pode alterar as suas preferências de notificação, gerir a sua password e outras definições de segurança.</p>
-                            <a asp-action="Edit" class="btn btn-secondary mt-3">Alterar Password</a>
+
+                        <!-- Card: Notificações -->
+                        <div class="col-12">
+                            <div class="card perfil-card shadow-sm">
+                                <div class="card-header perfil-card-header">
+                                    <h5><i class="bi bi-bell me-2"></i>Notificações</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="settings-item">
+                                        <div class="settings-info">
+                                            <h6>Notificações por Email</h6>
+                                            <p class="text-muted">Receba atualizações sobre os seus anúncios e mensagens</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="switchEmail" checked>
+                                            <label class="form-check-label" for="switchEmail">Ativado</label>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="settings-item">
+                                        <div class="settings-info">
+                                            <h6>Notificações de Novas Mensagens</h6>
+                                            <p class="text-muted">Seja notificado quando receber uma nova mensagem</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="switchMensagens" checked>
+                                            <label class="form-check-label" for="switchMensagens">Ativado</label>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="settings-item">
+                                        <div class="settings-info">
+                                            <h6>Notificações de Ofertas</h6>
+                                            <p class="text-muted">Receba alertas sobre propostas nos seus anúncios</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="switchOfertas" checked>
+                                            <label class="form-check-label" for="switchOfertas">Ativado</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card: Privacidade -->
+                        <div class="col-12">
+                            <div class="card perfil-card shadow-sm">
+                                <div class="card-header perfil-card-header">
+                                    <h5><i class="bi bi-eye me-2"></i>Privacidade</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="settings-item">
+                                        <div class="settings-info">
+                                            <h6>Mostrar Email Publicamente</h6>
+                                            <p class="text-muted">Permitir que outros utilizadores vejam o seu email</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="switchEmailPublico">
+                                            <label class="form-check-label" for="switchEmailPublico">Desativado</label>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="settings-item">
+                                        <div class="settings-info">
+                                            <h6>Mostrar Número de Telefone</h6>
+                                            <p class="text-muted">Exibir o seu contacto nos anúncios</p>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="switchTelefone" checked>
+                                            <label class="form-check-label" for="switchTelefone">Ativado</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card: Conta -->
+                        <div class="col-12">
+                            <div class="card perfil-card shadow-sm border-danger">
+                                <div class="card-header perfil-card-header bg-danger text-white">
+                                    <h5><i class="bi bi-exclamation-triangle me-2"></i>Zona de Perigo</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="settings-item">
+                                        <div class="settings-info">
+                                            <h6>Eliminar Conta</h6>
+                                            <p class="text-muted">Esta ação é permanente e não pode ser revertida</p>
+                                        </div>
+                                        <button class="btn btn-danger" onclick="confirmarEliminacaoConta()">
+                                            <i class="bi bi-trash-fill me-2"></i>Eliminar Conta
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -149,4 +751,51 @@
         </div>
     </div>
 </div>
+
+<!-- Script para funcionalidades interativas -->
+<script>
+    // Função para confirmar eliminação de anúncio
+    function confirmarEliminacao(nomeAnuncio) {
+        if (confirm('Tem a certeza que deseja eliminar o anúncio "' + nomeAnuncio + '"?\n\nEsta ação não pode ser revertida.')) {
+            alert('Anúncio "' + nomeAnuncio + '" eliminado com sucesso!');
+            // Aqui seria feito o pedido AJAX para eliminar
+        }
+    }
+
+    // Função para remover favorito
+    function removerFavorito(btn) {
+        const card = btn.closest('.favorito-card');
+        const titulo = card.querySelector('.favorito-title').textContent;
+
+        if (confirm('Remover "' + titulo + '" dos favoritos?')) {
+            card.style.transform = 'scale(0.8)';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.closest('.col-md-6').remove();
+            }, 300);
+        }
+    }
+
+    // Função para confirmar eliminação de conta
+    function confirmarEliminacaoConta() {
+        if (confirm('⚠️ ATENÇÃO! Esta ação é PERMANENTE!\n\nTem a certeza absoluta que deseja eliminar a sua conta?\n\nTodos os seus anúncios, mensagens e dados serão perdidos para sempre.')) {
+            if (confirm('Esta é a sua última oportunidade para cancelar.\n\nConfirma a eliminação da conta?')) {
+                alert('Pedido de eliminação de conta registado. Receberá um email de confirmação.');
+                // Aqui seria feito o pedido para eliminar a conta
+            }
+        }
+    }
+
+    // Toggle dos switches de notificações
+    document.querySelectorAll('.form-check-input').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const label = this.nextElementSibling;
+            if (this.checked) {
+                label.textContent = 'Ativado';
+            } else {
+                label.textContent = 'Desativado';
+            }
+        });
+    });
+</script>
 
