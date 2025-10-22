@@ -1,226 +1,667 @@
-﻿<!-- Views/Anuncios/Index.cshtml -->
 @{
     ViewData["Title"] = "Comprar Carros";
 }
 
-<div class="container-fluid mt-5 pt-5">
-    <div class="row">
+<!-- Hero Section com título -->
+<section class="page-header-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="page-header-title mb-2">
+                    <i class="bi bi-car-front-fill me-3"></i>Explorar Veículos
+                </h1>
+                <p class="page-header-subtitle text-muted mb-0">
+                    Encontre o carro perfeito para si entre milhares de anúncios
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <button class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#mobileFilters">
+                    <i class="bi bi-funnel me-2"></i>Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container-fluid py-4">
+    <div class="row g-4">
         <!-- Coluna de Filtros -->
-        <div class="col-lg-3">
-            <div class="filter-sidebar p-4 shadow-sm rounded">
-                <h4 class="mb-4 border-bottom pb-2">Filtros</h4>
-                <form>
+        <div class="col-lg-3" id="filtersColumn">
+            <div class="filters-sidebar sticky-top" style="top: 90px;" id="mobileFilters">
+                <div class="filters-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-sliders me-2"></i>Filtros de Pesquisa
+                    </h5>
+                    <button class="btn btn-sm btn-link text-danger" onclick="resetFilters()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Limpar
+                    </button>
+                </div>
+
+                <form id="filtrosForm">
                     <!-- Filtro de Marca -->
-                    <div class="mb-3">
-                        <label for="marca" class="form-label">Marca</label>
+                    <div class="filter-group">
+                        <label for="marca" class="filter-label">
+                            <i class="bi bi-bookmark-fill me-2"></i>Marca
+                        </label>
                         <select id="marca" class="form-select">
-                            <option selected>Todas</option>
-                            <option>BMW</option>
-                            <option>Mercedes-Benz</option>
-                            <option>Audi</option>
-                            <option>Toyota</option>
+                            <option value="" selected>Todas as Marcas</option>
+                            <option value="bmw">BMW</option>
+                            <option value="mercedes">Mercedes-Benz</option>
+                            <option value="audi">Audi</option>
+                            <option value="volkswagen">Volkswagen</option>
+                            <option value="toyota">Toyota</option>
+                            <option value="ford">Ford</option>
                         </select>
                     </div>
 
                     <!-- Filtro de Modelo -->
-                    <div class="mb-3">
-                        <label for="modelo" class="form-label">Modelo</label>
+                    <div class="filter-group">
+                        <label for="modelo" class="filter-label">
+                            <i class="bi bi-tags-fill me-2"></i>Modelo
+                        </label>
                         <select id="modelo" class="form-select">
-                            <option selected>Todos</option>
-                            <option>Série 1</option>
-                            <option>Classe A</option>
-                            <option>A3</option>
+                            <option value="" selected>Todos os Modelos</option>
+                            <option value="serie1">Série 1</option>
+                            <option value="classeA">Classe A</option>
+                            <option value="a3">A3</option>
                         </select>
                     </div>
 
                     <!-- Filtro de Preço -->
-                    <div class="mb-3">
-                        <label for="preco" class="form-label">Preço (até)</label>
-                        <input type="range" class="form-range" min="0" max="100000" step="1000" id="preco" oninput="this.nextElementSibling.value = this.value + ' €'">
-                        <output class="form-text">50000 €</output>
+                    <div class="filter-group">
+                        <label for="preco" class="filter-label">
+                            <i class="bi bi-currency-euro me-2"></i>Preço Máximo
+                        </label>
+                        <div class="price-range-container">
+                            <input type="range" class="form-range" min="0" max="100000" step="1000" id="preco" value="50000" oninput="updatePriceLabel(this.value)">
+                            <div class="d-flex justify-content-between mt-2">
+                                <span class="text-muted small">0 €</span>
+                                <span class="price-value fw-bold text-primary" id="precoValue">50.000 €</span>
+                                <span class="text-muted small">100k €</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Filtro de Ano -->
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="ano-min" class="form-label">Ano Mínimo</label>
-                            <input type="number" id="ano-min" class="form-control" placeholder="Ex: 2015">
-                        </div>
-                        <div class="col">
-                            <label for="ano-max" class="form-label">Ano Máximo</label>
-                            <input type="number" id="ano-max" class="form-control" placeholder="Ex: 2023">
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="bi bi-calendar-range me-2"></i>Ano
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" id="ano-min" class="form-control" placeholder="Min" min="1960" max="2025">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" id="ano-max" class="form-control" placeholder="Max" min="1960" max="2025">
+                            </div>
                         </div>
                     </div>
 
                     <!-- Filtro de Quilometragem -->
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="km-min" class="form-label">Km Mínimos</label>
-                            <input type="number" id="km-min" class="form-control" placeholder="Ex: 10000">
-                        </div>
-                        <div class="col">
-                            <label for="km-max" class="form-label">Km Máximos</label>
-                            <input type="number" id="km-max" class="form-control" placeholder="Ex: 150000">
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="bi bi-speedometer2 me-2"></i>Quilometragem (km)
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" id="km-min" class="form-control" placeholder="Mín" step="1000">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" id="km-max" class="form-control" placeholder="Máx" step="1000">
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Filtro de Categoria (Tipo de Carroçaria) -->
-                    <div class="mb-3">
-                        <label for="categoria" class="form-label">Categoria</label>
+                    <!-- Filtro de Categoria -->
+                    <div class="filter-group">
+                        <label for="categoria" class="filter-label">
+                            <i class="bi bi-grid-3x3-gap me-2"></i>Categoria
+                        </label>
                         <select id="categoria" class="form-select">
-                            <option selected>Todas</option>
-                            <option>SUV</option>
-                            <option>Sedan</option>
-                            <option>Hatchback</option>
-                            <option>Carrinha</option>
-                            <option>Desportivo</option>
+                            <option value="" selected>Todas</option>
+                            <option value="suv">SUV</option>
+                            <option value="sedan">Sedan</option>
+                            <option value="hatchback">Hatchback</option>
+                            <option value="carrinha">Carrinha</option>
+                            <option value="desportivo">Desportivo</option>
+                            <option value="citadino">Citadino</option>
                         </select>
                     </div>
 
                     <!-- Filtro de Combustível -->
-                    <div class="mb-3">
-                        <label for="combustivel" class="form-label">Combustível</label>
-                        <select id="combustivel" class="form-select">
-                            <option selected>Todos</option>
-                            <option>Gasolina</option>
-                            <option>Diesel</option>
-                            <option>Elétrico</option>
-                            <option>Híbrido</option>
-                        </select>
+                    <div class="filter-group">
+                        <label for="combustivel" class="filter-label">
+                            <i class="bi bi-fuel-pump me-2"></i>Combustível
+                        </label>
+                        <div class="btn-group-vertical w-100" role="group">
+                            <input type="radio" class="btn-check" name="combustivel" id="comb-todos" value="" checked>
+                            <label class="btn btn-outline-secondary" for="comb-todos">Todos</label>
+
+                            <input type="radio" class="btn-check" name="combustivel" id="comb-gasolina" value="gasolina">
+                            <label class="btn btn-outline-secondary" for="comb-gasolina">Gasolina</label>
+
+                            <input type="radio" class="btn-check" name="combustivel" id="comb-diesel" value="diesel">
+                            <label class="btn btn-outline-secondary" for="comb-diesel">Diesel</label>
+
+                            <input type="radio" class="btn-check" name="combustivel" id="comb-eletrico" value="eletrico">
+                            <label class="btn btn-outline-secondary" for="comb-eletrico">Elétrico</label>
+
+                            <input type="radio" class="btn-check" name="combustivel" id="comb-hibrido" value="hibrido">
+                            <label class="btn btn-outline-secondary" for="comb-hibrido">Híbrido</label>
+                        </div>
                     </div>
 
-                    <!-- Filtro de Tipo (Novo/Usado) -->
-                    <div class="mb-3">
-                        <label for="tipo" class="form-label">Condição</label>
-                        <select id="tipo" class="form-select">
-                            <option selected>Todas</option>
-                            <option>Novo</option>
-                            <option>Usado</option>
-                        </select>
-                    </div>
-
-                    <!-- Filtro de Caixa de Velocidades -->
-                    <div class="mb-3">
-                        <label for="caixa" class="form-label">Caixa de Velocidades</label>
+                    <!-- Filtro de Caixa -->
+                    <div class="filter-group">
+                        <label for="caixa" class="filter-label">
+                            <i class="bi bi-gear-fill me-2"></i>Transmissão
+                        </label>
                         <select id="caixa" class="form-select">
-                            <option selected>Todas</option>
-                            <option>Manual</option>
-                            <option>Automática</option>
+                            <option value="" selected>Todas</option>
+                            <option value="manual">Manual</option>
+                            <option value="automatica">Automática</option>
                         </select>
                     </div>
 
-                    <!-- Filtro de Cor -->
-                    <div class="mb-3">
-                        <label for="cor" class="form-label">Cor</label>
-                        <input type="text" id="cor" class="form-control" placeholder="Ex: Preto">
+                    <!-- Filtro de Localização -->
+                    <div class="filter-group">
+                        <label for="localizacao" class="filter-label">
+                            <i class="bi bi-geo-alt-fill me-2"></i>Localização
+                        </label>
+                        <input type="text" id="localizacao" class="form-control" placeholder="Cidade ou distrito">
                     </div>
 
-                    <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+                    <!-- Botão Aplicar -->
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-search me-2"></i>Aplicar Filtros
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="saveFilters()">
+                            <i class="bi bi-bookmark-heart me-2"></i>Guardar Pesquisa
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- Coluna de Anúncios -->
-        <div class="col-lg-9">
-            <!-- Barra de Ordenação e Contagem -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <span class="text-muted">A mostrar 1-3 de 3 resultados</span>
-                <div class="d-flex align-items-center">
-                    <label for="ordenar" class="form-label me-2 mb-0">Ordenar por:</label>
-                    <select id="ordenar" class="form-select w-auto">
-                        <option selected>Relevância</option>
-                        <option>Preço (Mais baixo)</option>
-                        <option>Preço (Mais alto)</option>
-                        <option>Mais Recentes</option>
-                    </select>
+        <div class="col-lg-9" id="listingsColumn">
+            <!-- Barra de Ações e Ordenação -->
+            <div class="results-toolbar">
+                <div class="results-info">
+                    <h6 class="mb-0">
+                        <span class="results-count">3 Veículos</span>
+                        <span class="text-muted small">encontrados</span>
+                    </h6>
+                </div>
+                <div class="results-actions">
+                    <div class="view-toggle me-3">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary active" title="Vista de grelha">
+                                <i class="bi bi-grid-3x3-gap"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" title="Vista de lista">
+                                <i class="bi bi-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="sort-dropdown">
+                        <select id="ordenar" class="form-select form-select-sm">
+                            <option value="relevancia" selected>Relevância</option>
+                            <option value="preco-asc">Preço: Menor para Maior</option>
+                            <option value="preco-desc">Preço: Maior para Menor</option>
+                            <option value="ano-desc">Ano: Mais Recente</option>
+                            <option value="km-asc">Quilometragem: Menor</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
             <!-- Lista de Anúncios -->
-            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-                <!-- Exemplo de Anúncio 1 -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mt-2">
+                <!-- Anúncio 1 -->
                 <div class="col">
                     <div class="card anuncio-card h-100">
-                        <a asp-controller="Anuncios" asp-action="Details">
-                            <img src="~/imagens/bmwSerie1.jpg" class="card-img-top" alt="[Imagem de um BMW Série 1]">
-                        </a>
+                        <div class="card-img-wrapper">
+                            <a asp-controller="Anuncios" asp-action="Details">
+                                <img src="~/imagens/bmwSerie1.jpg" class="card-img-top" alt="BMW Série 1 116d">
+                            </a>
+                            <span class="badge-destaque">
+                                <i class="bi bi-star-fill me-1"></i>Destaque
+                            </span>
+                            <button class="btn-favorito" onclick="toggleFavorito(this)">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
                         <div class="card-body d-flex flex-column">
+                            <div class="card-header-info mb-2">
+                                <span class="badge bg-secondary">Usado</span>
+                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Lisboa</span>
+                            </div>
                             <h5 class="card-title">BMW Série 1 116d</h5>
-                            <h6 class="card-subtitle mb-2 text-primary fw-bold">18.500 €</h6>
-                            <p class="card-text text-muted small flex-grow-1">Um carro desportivo e eficiente, perfeito para a cidade e viagens.</p>
-                            <div class="anuncio-details">
-                                <span class="badge bg-light text-dark">2018</span>
-                                <span class="badge bg-light text-dark">110.000 km</span>
-                                <span class="badge bg-light text-dark">Diesel</span>
+                            <div class="card-price">18.500 €</div>
+                            <p class="card-text text-muted small flex-grow-1">
+                                Um carro desportivo e eficiente, perfeito para a cidade e viagens longas.
+                            </p>
+                            <div class="anuncio-details-grid mt-auto">
+                                <span><i class="bi bi-calendar3"></i> 2018</span>
+                                <span><i class="bi bi-speedometer2"></i> 110k km</span>
+                                <span><i class="bi bi-fuel-pump"></i> Diesel</span>
+                                <span><i class="bi bi-gear"></i> Manual</span>
                             </div>
                         </div>
-                        <div class="card-footer bg-white border-0 pb-3">
-                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-outline-primary w-100">Ver Detalhes</a>
-                            <button class="btn-favorito"><i class="bi bi-heart"></i></button>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
+                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                </a>
+                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(1, 'BMW Série 1 116d', '~/imagens/bmwSerie1.jpg', '18.500 €', '2018', '110000', 'Diesel', 'Manual', '116', '1995', this)" data-anuncio-id="1">
+                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Exemplo de Anúncio 2 -->
+                <!-- Anúncio 2 -->
                 <div class="col">
                     <div class="card anuncio-card h-100">
-                        <a asp-controller="Anuncios" asp-action="Details">
-                            <img src="~/imagens/audiA3.jpg" class="card-img-top" alt="[Imagem de um Audi A3]">
-                        </a>
+                        <div class="card-img-wrapper">
+                            <a asp-controller="Anuncios" asp-action="Details">
+                                <img src="~/imagens/audiA3.jpg" class="card-img-top" alt="Audi A3 Sportback">
+                            </a>
+                            <button class="btn-favorito active" onclick="toggleFavorito(this)">
+                                <i class="bi bi-heart-fill"></i>
+                            </button>
+                        </div>
                         <div class="card-body d-flex flex-column">
+                            <div class="card-header-info mb-2">
+                                <span class="badge bg-secondary">Usado</span>
+                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Porto</span>
+                            </div>
                             <h5 class="card-title">Audi A3 Sportback</h5>
-                            <h6 class="card-subtitle mb-2 text-primary fw-bold">22.000 €</h6>
-                            <p class="card-text text-muted small flex-grow-1">Conforto, tecnologia e um design elegante. O parceiro ideal para o dia a dia.</p>
-                            <div class="anuncio-details">
-                                <span class="badge bg-light text-dark">2019</span>
-                                <span class="badge bg-light text-dark">85.000 km</span>
-                                <span class="badge bg-light text-dark">Gasolina</span>
+                            <div class="card-price">22.000 €</div>
+                            <p class="card-text text-muted small flex-grow-1">
+                                Conforto, tecnologia e design elegante. O parceiro ideal para o dia a dia.
+                            </p>
+                            <div class="anuncio-details-grid mt-auto">
+                                <span><i class="bi bi-calendar3"></i> 2019</span>
+                                <span><i class="bi bi-speedometer2"></i> 85k km</span>
+                                <span><i class="bi bi-fuel-pump"></i> Gasolina</span>
+                                <span><i class="bi bi-gear"></i> Automática</span>
                             </div>
                         </div>
-                        <div class="card-footer bg-white border-0 pb-3">
-                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-outline-primary w-100">Ver Detalhes</a>
-                            <button class="btn-favorito active"><i class="bi bi-heart-fill"></i></button>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
+                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                </a>
+                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(2, 'Audi A3 Sportback', '~/imagens/audiA3.jpg', '22.000 €', '2019', '85000', 'Gasolina', 'Automática', '150', '1984', this)" data-anuncio-id="2">
+                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Exemplo de Anúncio 3 -->
+                <!-- Anúncio 3 -->
                 <div class="col">
                     <div class="card anuncio-card h-100">
-                        <a asp-controller="Anuncios" asp-action="Details">
-                            <img src="~/imagens/mercedezClassA.jpg" class="card-img-top" alt="[Imagem de um Mercedes Classe A]">
-                        </a>
+                        <div class="card-img-wrapper">
+                            <a asp-controller="Anuncios" asp-action="Details">
+                                <img src="~/imagens/mercedezClassA.jpg" class="card-img-top" alt="Mercedes-Benz Classe A">
+                            </a>
+                            <span class="badge-novo">
+                                <i class="bi bi-lightning-charge-fill me-1"></i>Novo
+                            </span>
+                            <button class="btn-favorito" onclick="toggleFavorito(this)">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
                         <div class="card-body d-flex flex-column">
+                            <div class="card-header-info mb-2">
+                                <span class="badge bg-success">Certificado</span>
+                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Braga</span>
+                            </div>
                             <h5 class="card-title">Mercedes-Benz Classe A</h5>
-                            <h6 class="card-subtitle mb-2 text-primary fw-bold">25.750 €</h6>
-                            <p class="card-text text-muted small flex-grow-1">Luxo e performance num formato compacto. Inclui pack AMG.</p>
-                            <div class="anuncio-details">
-                                <span class="badge bg-light text-dark">2020</span>
-                                <span class="badge bg-light text-dark">60.000 km</span>
-                                <span class="badge bg-light text-dark">Híbrido</span>
+                            <div class="card-price">25.750 €</div>
+                            <p class="card-text text-muted small flex-grow-1">
+                                Luxo e performance num formato compacto. Inclui pack AMG Line.
+                            </p>
+                            <div class="anuncio-details-grid mt-auto">
+                                <span><i class="bi bi-calendar3"></i> 2020</span>
+                                <span><i class="bi bi-speedometer2"></i> 60k km</span>
+                                <span><i class="bi bi-fuel-pump"></i> Híbrido</span>
+                                <span><i class="bi bi-gear"></i> Automática</span>
                             </div>
                         </div>
-                        <div class="card-footer bg-white border-0 pb-3">
-                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-outline-primary w-100">Ver Detalhes</a>
-                            <button class="btn-favorito"><i class="bi bi-heart"></i></button>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
+                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                </a>
+                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(3, 'Mercedes-Benz Classe A', '~/imagens/mercedezClassA.jpg', '25.750 €', '2020', '60000', 'Híbrido', 'Automática', '163', '1332', this)" data-anuncio-id="3">
+                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Paginação -->
-            <nav aria-label="Navegação de página" class="mt-5 d-flex justify-content-center">
-                <ul class="pagination">
-                    <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+            <nav aria-label="Navegação de página" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
                     <li class="page-item active"><a class="page-link" href="#">1</a></li>
                     <li class="page-item"><a class="page-link" href="#">2</a></li>
                     <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Próximo</a></li>
+                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
     </div>
 </div>
 
+<!-- Floating Comparison Bar -->
+<div id="comparisonBar" class="comparison-bar">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="comparison-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-arrow-left-right me-2"></i>
+                    <span>Comparar Veículos</span>
+                    <span class="badge bg-primary ms-2" id="compareCount">0</span>
+                </h6>
+            </div>
+            <div class="comparison-items d-flex gap-3 flex-grow-1 mx-4" id="comparisonItems">
+                <!-- Items will be added dynamically -->
+            </div>
+            <div class="comparison-actions d-flex gap-2">
+                <button class="btn btn-light btn-sm" onclick="clearComparison()">
+                    <i class="bi bi-trash"></i> Limpar
+                </button>
+                <a href="/Anuncios/Compare" class="btn btn-primary btn-sm" id="btnCompare" disabled>
+                    <i class="bi bi-eye me-1"></i>Comparar (<span id="compareCountBtn">0</span>)
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updatePriceLabel(value) {
+            const formatted = new Intl.NumberFormat('pt-PT').format(value);
+            document.getElementById('precoValue').textContent = formatted + ' €';
+        }
+
+        function resetFilters() {
+            document.getElementById('filtrosForm').reset();
+            updatePriceLabel(50000);
+        }
+
+        function toggleFavorito(btn) {
+            const icon = btn.querySelector('i');
+            if (icon.classList.contains('bi-heart')) {
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+                btn.classList.add('active');
+            } else {
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+                btn.classList.remove('active');
+            }
+        }
+
+        function saveFilters() {
+            alert('Pesquisa guardada com sucesso! Receberá notificações quando surgirem novos anúncios que correspondam aos seus critérios.');
+        }
+
+        // ========== COMPARISON FUNCTIONALITY ==========
+
+        const MAX_COMPARE = 3;
+
+        // Load comparison from localStorage
+        function loadComparison() {
+            const stored = localStorage.getItem('compareVehicles');
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        // Save comparison to localStorage
+        function saveComparison(items) {
+            localStorage.setItem('compareVehicles', JSON.stringify(items));
+            // Also save as URL parameter for navigation
+            const ids = items.map(item => item.id).join(',');
+            localStorage.setItem('compareIds', ids);
+        }
+
+        // Add vehicle to comparison
+        function addToCompare(id, titulo, imagem, preco, ano, km, combustivel, caixa, potencia, cilindrada, button) {
+            let compareList = loadComparison();
+
+            // Check if already in comparison
+            const alreadyExists = compareList.some(item => item.id === id);
+
+            if (alreadyExists) {
+                // Remove from comparison
+                compareList = compareList.filter(item => item.id !== id);
+                button.classList.remove('active');
+                button.innerHTML = '<i class="bi bi-arrow-left-right me-2"></i>Comparar';
+            } else {
+                // Check if max reached
+                if (compareList.length >= MAX_COMPARE) {
+                    alert(`Pode comparar no máximo ${MAX_COMPARE} veículos de cada vez. Remova um veículo para adicionar outro.`);
+                    return;
+                }
+
+                // Add to comparison
+                compareList.push({
+                    id: id,
+                    titulo: titulo,
+                    imagem: imagem,
+                    preco: preco,
+                    ano: ano,
+                    km: km,
+                    combustivel: combustivel,
+                    caixa: caixa,
+                    potencia: potencia,
+                    cilindrada: cilindrada
+                });
+                button.classList.add('active');
+                button.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Adicionado';
+            }
+
+            saveComparison(compareList);
+            updateComparisonBar();
+        }
+
+        // Remove from comparison
+        function removeFromComparison(id) {
+            let compareList = loadComparison();
+            compareList = compareList.filter(item => item.id !== id);
+            saveComparison(compareList);
+            updateComparisonBar();
+
+            // Update button state
+            const button = document.querySelector(`[data-anuncio-id="${id}"]`);
+            if (button) {
+                button.classList.remove('active');
+                button.innerHTML = '<i class="bi bi-arrow-left-right me-2"></i>Comparar';
+            }
+        }
+
+        // Clear all comparisons
+        function clearComparison() {
+            if (confirm('Tem a certeza que deseja limpar todos os veículos da comparação?')) {
+                localStorage.removeItem('compareVehicles');
+                localStorage.removeItem('compareIds');
+                updateComparisonBar();
+
+                // Reset all buttons
+                document.querySelectorAll('.btn-compare.active').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.innerHTML = '<i class="bi bi-arrow-left-right me-2"></i>Comparar';
+                });
+            }
+        }
+
+        // Update comparison bar UI
+        function updateComparisonBar() {
+            const compareList = loadComparison();
+            const count = compareList.length;
+            const bar = document.getElementById('comparisonBar');
+            const itemsContainer = document.getElementById('comparisonItems');
+            const compareBtn = document.getElementById('btnCompare');
+
+            // Update counts
+            document.getElementById('compareCount').textContent = count;
+            document.getElementById('compareCountBtn').textContent = count;
+
+            // Show/hide bar and adjust body padding
+            if (count > 0) {
+                bar.classList.add('show');
+                // Small delay to get the correct height after animation
+                setTimeout(() => {
+                    const barHeight = bar.offsetHeight;
+                    document.body.style.paddingBottom = barHeight + 'px';
+                }, 50);
+            } else {
+                bar.classList.remove('show');
+                // Remove padding when bar is hidden
+                document.body.style.paddingBottom = '0';
+            }
+
+            // Enable/disable compare button
+            if (count >= 2) {
+                compareBtn.removeAttribute('disabled');
+                compareBtn.classList.remove('disabled');
+            } else {
+                compareBtn.setAttribute('disabled', 'disabled');
+                compareBtn.classList.add('disabled');
+            }
+
+            // Render items
+            itemsContainer.innerHTML = '';
+            compareList.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'comparison-item';
+
+                // Fix image path - remove ~/ and use absolute path
+                let imagePath = item.imagem;
+                if (imagePath.startsWith('~/')) {
+                    imagePath = imagePath.substring(1); // Remove ~
+                }
+
+                itemEl.innerHTML = `
+                    <button class="btn-remove-compare" onclick="removeFromComparison(${item.id})" title="Remover">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                    <img src="${imagePath}" alt="${item.titulo}" onerror="this.src='https://placehold.co/150x100/e9ecef/64748b?text=Sem+Imagem'">
+                    <div class="comparison-item-info">
+                        <div class="comparison-item-title">${item.titulo}</div>
+                        <div class="comparison-item-price">${item.preco}</div>
+                    </div>
+                `;
+                itemsContainer.appendChild(itemEl);
+            });
+
+            // Add placeholder slots
+            for (let i = count; i < MAX_COMPARE; i++) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'comparison-item-placeholder';
+                placeholder.innerHTML = `
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Adicione ${i === 0 ? 'um veículo' : 'mais'}</span>
+                `;
+                itemsContainer.appendChild(placeholder);
+            }
+        }
+
+        // Initialize comparison on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const compareList = loadComparison();
+
+            // Update button states for items already in comparison
+            compareList.forEach(item => {
+                const button = document.querySelector(`[data-anuncio-id="${item.id}"]`);
+                if (button) {
+                    button.classList.add('active');
+                    button.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Adicionado';
+                }
+            });
+
+            updateComparisonBar();
+
+            // ========== FILTER TOGGLE FUNCTIONALITY ==========
+            const filtersCollapse = document.getElementById('mobileFilters');
+            const filtersColumn = document.getElementById('filtersColumn');
+            const listingsColumn = document.getElementById('listingsColumn');
+
+            if (filtersCollapse && filtersColumn && listingsColumn) {
+                // Only apply on larger screens (lg breakpoint and up)
+                function handleFilterToggle() {
+                    if (window.innerWidth >= 992) { // Bootstrap lg breakpoint
+                        const filtersButton = document.querySelector('[data-bs-target="#mobileFilters"]');
+                        const isCollapsed = filtersCollapse.classList.contains('show');
+
+                        if (!isCollapsed) {
+                            // Filters are hidden
+                            filtersColumn.style.display = 'none';
+                            listingsColumn.classList.remove('col-lg-9');
+                            listingsColumn.classList.add('col-lg-12');
+                            listingsColumn.style.maxWidth = '1400px';
+                            listingsColumn.style.margin = '0 auto';
+                        } else {
+                            // Filters are shown
+                            filtersColumn.style.display = 'block';
+                            listingsColumn.classList.remove('col-lg-12');
+                            listingsColumn.classList.add('col-lg-9');
+                            listingsColumn.style.maxWidth = '';
+                            listingsColumn.style.margin = '';
+                        }
+                    }
+                }
+
+                filtersCollapse.addEventListener('hidden.bs.collapse', function () {
+                    if (window.innerWidth >= 992) {
+                        filtersColumn.style.display = 'none';
+                        listingsColumn.classList.remove('col-lg-9');
+                        listingsColumn.classList.add('col-lg-12');
+                        listingsColumn.style.maxWidth = '1400px';
+                        listingsColumn.style.margin = '0 auto';
+                    }
+                });
+
+                filtersCollapse.addEventListener('shown.bs.collapse', function () {
+                    if (window.innerWidth >= 992) {
+                        filtersColumn.style.display = 'block';
+                        listingsColumn.classList.remove('col-lg-12');
+                        listingsColumn.classList.add('col-lg-9');
+                        listingsColumn.style.maxWidth = '';
+                        listingsColumn.style.margin = '';
+                    }
+                });
+
+                // Reset layout on window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth < 992) {
+                        // Mobile view - reset all custom styles
+                        filtersColumn.style.display = '';
+                        listingsColumn.style.maxWidth = '';
+                        listingsColumn.style.margin = '';
+                    }
+                });
+            }
+        });
+    </script>
+}
