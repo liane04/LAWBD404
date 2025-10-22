@@ -1,0 +1,266 @@
+@{
+    ViewData["Title"] = "Comparar Veículos";
+}
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="bg-light border-bottom">
+    <div class="container">
+        <ol class="breadcrumb py-3 mb-0">
+            <li class="breadcrumb-item"><a href="/"><i class="bi bi-house-door-fill me-1"></i>Início</a></li>
+            <li class="breadcrumb-item"><a href="/Anuncios">Anúncios</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Comparar Veículos</li>
+        </ol>
+    </div>
+</nav>
+
+<div class="container my-5">
+    <!-- Header -->
+    <div class="comparison-page-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h2 mb-2">
+                    <i class="bi bi-arrow-left-right me-2 text-primary"></i>
+                    Comparação de Veículos
+                </h1>
+                <p class="text-muted mb-0">Compare até 3 veículos lado a lado</p>
+            </div>
+            <div>
+                <a href="/Anuncios" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Voltar aos Anúncios
+                </a>
+                <button class="btn btn-danger ms-2" onclick="clearComparisonAndRedirect()">
+                    <i class="bi bi-trash me-2"></i>Limpar Comparação
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Content Container -->
+    <div id="comparisonContent">
+        <!-- Will be filled by JavaScript -->
+    </div>
+
+    <!-- No Comparison Message -->
+    <div id="noComparisonMessage" class="text-center py-5" style="display: none;">
+        <i class="bi bi-arrow-left-right display-1 text-muted mb-3"></i>
+        <h3 class="text-muted mb-3">Nenhum veículo para comparar</h3>
+        <p class="text-muted mb-4">Adicione pelo menos 2 veículos para começar a comparação</p>
+        <a href="/Anuncios" class="btn btn-primary btn-lg">
+            <i class="bi bi-car-front me-2"></i>Ver Anúncios
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Load comparison data from localStorage
+        function loadComparisonData() {
+            const stored = localStorage.getItem('compareVehicles');
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        // Clear comparison and redirect
+        function clearComparisonAndRedirect() {
+            if (confirm('Tem a certeza que deseja limpar a comparação?')) {
+                localStorage.removeItem('compareVehicles');
+                localStorage.removeItem('compareIds');
+                window.location.href = '/Anuncios';
+            }
+        }
+
+        // Remove single vehicle from comparison
+        function removeFromComparisonPage(id) {
+            let compareList = loadComparisonData();
+            compareList = compareList.filter(item => item.id !== id);
+            localStorage.setItem('compareVehicles', JSON.stringify(compareList));
+
+            if (compareList.length < 2) {
+                window.location.reload();
+            } else {
+                renderComparison();
+            }
+        }
+
+        // Render comparison table
+        function renderComparison() {
+            const vehicles = loadComparisonData();
+            const container = document.getElementById('comparisonContent');
+            const noDataMessage = document.getElementById('noComparisonMessage');
+
+            if (vehicles.length < 2) {
+                container.style.display = 'none';
+                noDataMessage.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'block';
+            noDataMessage.style.display = 'none';
+
+            // Build comparison table
+            let html = `
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th class="comparison-label-col sticky-col">Característica</th>
+                                ${vehicles.map((v, idx) => `
+                                    <th class="comparison-vehicle-col">
+                                        <div class="comparison-vehicle-header">
+                                            <button class="btn-remove-vehicle" onclick="removeFromComparisonPage(${v.id})" title="Remover">
+                                                <i class="bi bi-x-circle-fill"></i>
+                                            </button>
+                                            <img src="${v.imagem}" alt="${v.titulo}" class="comparison-vehicle-img">
+                                            <h5 class="mt-3">${v.titulo}</h5>
+                                        </div>
+                                    </th>
+                                `).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Preço -->
+                            <tr class="comparison-section-header">
+                                <td colspan="${vehicles.length + 1}">
+                                    <i class="bi bi-currency-euro me-2"></i>Informações Básicas
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-tag-fill me-2 text-primary"></i>Preço
+                                </td>
+                                ${vehicles.map(v => `
+                                    <td class="text-center">
+                                        <span class="comparison-price">${v.preco}</span>
+                                    </td>
+                                `).join('')}
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-calendar3 me-2 text-primary"></i>Ano
+                                </td>
+                                ${vehicles.map(v => `<td class="text-center">${v.ano}</td>`).join('')}
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-speedometer2 me-2 text-primary"></i>Quilometragem
+                                </td>
+                                ${vehicles.map(v => `<td class="text-center">${parseInt(v.km).toLocaleString('pt-PT')} km</td>`).join('')}
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-fuel-pump-fill me-2 text-primary"></i>Combustível
+                                </td>
+                                ${vehicles.map(v => `<td class="text-center">${v.combustivel}</td>`).join('')}
+                            </tr>
+
+                            <!-- Especificações Técnicas -->
+                            <tr class="comparison-section-header">
+                                <td colspan="${vehicles.length + 1}">
+                                    <i class="bi bi-gear-wide-connected me-2"></i>Especificações Técnicas
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-gear-fill me-2 text-primary"></i>Transmissão
+                                </td>
+                                ${vehicles.map(v => `<td class="text-center">${v.caixa}</td>`).join('')}
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-lightning-charge-fill me-2 text-primary"></i>Potência
+                                </td>
+                                ${vehicles.map(v => `<td class="text-center">${v.potencia} cv</td>`).join('')}
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-speedometer me-2 text-primary"></i>Cilindrada
+                                </td>
+                                ${vehicles.map(v => `<td class="text-center">${v.cilindrada} cm³</td>`).join('')}
+                            </tr>
+
+                            <!-- Extras (Mockup) -->
+                            <tr class="comparison-section-header">
+                                <td colspan="${vehicles.length + 1}">
+                                    <i class="bi bi-star-fill me-2"></i>Extras e Equipamentos
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-wifi me-2 text-primary"></i>Sistema Navegação GPS
+                                </td>
+                                ${vehicles.map((v, idx) => `
+                                    <td class="text-center">
+                                        ${idx < 2 ? '<i class="bi bi-check-circle-fill text-success fs-4"></i>' : '<i class="bi bi-x-circle-fill text-danger fs-4"></i>'}
+                                    </td>
+                                `).join('')}
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-camera-video-fill me-2 text-primary"></i>Câmara Traseira
+                                </td>
+                                ${vehicles.map((v, idx) => `
+                                    <td class="text-center">
+                                        ${idx !== 0 ? '<i class="bi bi-check-circle-fill text-success fs-4"></i>' : '<i class="bi bi-x-circle-fill text-danger fs-4"></i>'}
+                                    </td>
+                                `).join('')}
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-thermometer-half me-2 text-primary"></i>Ar Condicionado Automático
+                                </td>
+                                ${vehicles.map(() => `
+                                    <td class="text-center">
+                                        <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                                    </td>
+                                `).join('')}
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-shield-fill-check me-2 text-primary"></i>Sensores de Estacionamento
+                                </td>
+                                ${vehicles.map((v, idx) => `
+                                    <td class="text-center">
+                                        ${idx !== 1 ? '<i class="bi bi-check-circle-fill text-success fs-4"></i>' : '<i class="bi bi-x-circle-fill text-danger fs-4"></i>'}
+                                    </td>
+                                `).join('')}
+                            </tr>
+                            <tr>
+                                <td class="comparison-label-col sticky-col">
+                                    <i class="bi bi-sun-fill me-2 text-primary"></i>Faróis LED
+                                </td>
+                                ${vehicles.map((v, idx) => `
+                                    <td class="text-center">
+                                        ${idx > 0 ? '<i class="bi bi-check-circle-fill text-success fs-4"></i>' : '<i class="bi bi-x-circle-fill text-danger fs-4"></i>'}
+                                    </td>
+                                `).join('')}
+                            </tr>
+
+                            <!-- Actions -->
+                            <tr class="comparison-actions-row">
+                                <td class="comparison-label-col sticky-col"></td>
+                                ${vehicles.map(v => `
+                                    <td class="text-center">
+                                        <div class="d-grid gap-2 p-3">
+                                            <a href="/Anuncios/Details" class="btn btn-primary">
+                                                <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                            </a>
+                                            <button class="btn btn-outline-danger" onclick="removeFromComparisonPage(${v.id})">
+                                                <i class="bi bi-trash me-2"></i>Remover
+                                            </button>
+                                        </div>
+                                    </td>
+                                `).join('')}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderComparison();
+        });
+    </script>
+}

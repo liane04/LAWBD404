@@ -26,13 +26,25 @@
                         </select>
                     </div>
                     <div class="col-md">
-                        <input type="number" name="precoMax" class="form-control form-control-lg" placeholder="Preço Máximo (€)" aria-label="Preço Máximo">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-currency-euro text-muted"></i>
+                            </span>
+                            <input type="number" name="precoMax" class="form-control" placeholder="Preço Máximo" aria-label="Preço Máximo">
+                        </div>
                     </div>
                     <div class="col-md">
-                        <input type="text" name="localizacao" class="form-control form-control-lg" placeholder="Localização (ex: Lisboa)" aria-label="Localização">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-geo-alt text-muted"></i>
+                            </span>
+                            <input type="text" name="localizacao" class="form-control" placeholder="Localização" aria-label="Localização">
+                        </div>
                     </div>
                     <div class="col-md-auto">
-                        <button type="submit" class="btn btn-primary btn-lg w-100">Procurar</button>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 px-4">
+                            <i class="bi bi-search me-2"></i>Procurar
+                        </button>
                     </div>
                 </div>
             </form>
@@ -48,7 +60,9 @@
             <div class="col-6 col-md-4 col-lg">
                 <a href="#" class="text-decoration-none">
                     <div class="categoria-card">
-                        <div class="icon">🚙</div>
+                        <div class="icon">
+                            <i class="bi bi-truck-front fs-1"></i>
+                        </div>
                         <h5 class="mb-0">SUV</h5>
                     </div>
                 </a>
@@ -56,7 +70,9 @@
             <div class="col-6 col-md-4 col-lg">
                 <a href="#" class="text-decoration-none">
                     <div class="categoria-card">
-                        <div class="icon">🚗</div>
+                        <div class="icon">
+                            <i class="bi bi-car-front-fill fs-1"></i>
+                        </div>
                         <h5 class="mb-0">Sedan</h5>
                     </div>
                 </a>
@@ -64,7 +80,9 @@
             <div class="col-6 col-md-4 col-lg">
                 <a href="#" class="text-decoration-none">
                     <div class="categoria-card">
-                        <div class="icon">🏎️</div>
+                        <div class="icon">
+                            <i class="bi bi-speedometer fs-1"></i>
+                        </div>
                         <h5 class="mb-0">Desportivo</h5>
                     </div>
                 </a>
@@ -72,7 +90,9 @@
             <div class="col-6 col-md-4 col-lg">
                 <a href="#" class="text-decoration-none">
                     <div class="categoria-card">
-                        <div class="icon">🚐</div>
+                        <div class="icon">
+                            <i class="bi bi-minecart-loaded fs-1"></i>
+                        </div>
                         <h5 class="mb-0">Carrinha</h5>
                     </div>
                 </a>
@@ -80,7 +100,9 @@
             <div class="col-6 col-md-4 col-lg">
                 <a href="#" class="text-decoration-none">
                     <div class="categoria-card">
-                        <div class="icon">🚘</div>
+                        <div class="icon">
+                            <i class="bi bi-car-front fs-1"></i>
+                        </div>
                         <h5 class="mb-0">Citadino</h5>
                     </div>
                 </a>
@@ -95,17 +117,23 @@
         <h2 class="section-title">Como Funciona</h2>
         <div class="row text-center g-4">
             <div class="col-md-4">
-                <div class="feature-icon">🔎</div>
+                <div class="feature-icon">
+                    <i class="bi bi-search"></i>
+                </div>
                 <h3>Pesquise</h3>
                 <p class="text-muted">Utilize os nossos filtros avançados para encontrar exatamente o que procura, por marca, preço, localização e muito mais.</p>
             </div>
             <div class="col-md-4">
-                <div class="feature-icon">⚖️</div>
+                <div class="feature-icon">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
                 <h3>Compare</h3>
                 <p class="text-muted">Analise as várias opções lado a lado. Veja fotos, especificações e contacte os vendedores para tirar dúvidas.</p>
             </div>
             <div class="col-md-4">
-                <div class="feature-icon">🤝</div>
+                <div class="feature-icon">
+                    <i class="bi bi-handshake"></i>
+                </div>
                 <h3>Feche Negócio</h3>
                 <p class="text-muted">Contacte diretamente o vendedor para agendar uma visita e fazer a sua proposta. Simples, rápido e seguro.</p>
             </div>
@@ -119,18 +147,27 @@
         <div class="row">
             <div class="col-md-4 mb-4 mb-md-0">
                 <div class="stat-item">
+                    <div class="stat-icon-wrapper mb-3">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
                     <h2 class="stat-number">10,000+</h2>
                     <p class="stat-label">Utilizadores Ativos</p>
                 </div>
             </div>
             <div class="col-md-4 mb-4 mb-md-0">
                 <div class="stat-item">
+                    <div class="stat-icon-wrapper mb-3">
+                        <i class="bi bi-megaphone-fill"></i>
+                    </div>
                     <h2 class="stat-number">25,000+</h2>
                     <p class="stat-label">Anúncios Publicados</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stat-item">
+                    <div class="stat-icon-wrapper mb-3">
+                        <i class="bi bi-patch-check-fill"></i>
+                    </div>
                     <h2 class="stat-number">500+</h2>
                     <p class="stat-label">Vendedores Verificados</p>
                 </div>
@@ -144,7 +181,9 @@
     <div class="container">
         <h2 class="mb-3">Pronto para começar?</h2>
         <p class="lead mb-4">Milhares de anúncios esperam por si. Encontre o seu carro de sonho hoje mesmo.</p>
-        <a href="#" class="btn btn-primary btn-lg">Ver todos os anúncios</a>
+        <a href="#" class="btn btn-primary btn-lg">
+            <i class="bi bi-grid-3x3-gap-fill me-2"></i>Ver todos os anúncios
+        </a>
     </div>
 </section>
 
