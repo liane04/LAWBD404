@@ -20,10 +20,10 @@
                         </div>
                         <h5 class="mb-2 fw-bold">João Duarte Silva</h5>
                         <div class="perfil-user-badges mb-2">
-                            <span class="perfil-badge perfil-badge-comprador">
+                            <span class="perfil-badge perfil-badge-comprador" data-mockup-user-type="comprador">
                                 <i class="bi bi-person-check-fill"></i> Comprador
                             </span>
-                            <span class="perfil-badge perfil-badge-vendedor">
+                            <span class="perfil-badge perfil-badge-vendedor" data-mockup-user-type="vendedor">
                                 <i class="bi bi-shop"></i> Vendedor
                             </span>
                         </div>
@@ -36,22 +36,22 @@
 
                     <!-- Menu de Navegação -->
                     <div class="perfil-nav-menu">
-                        <a href="#dados-pessoais" class="perfil-nav-item active" data-bs-toggle="tab">
+                        <a href="#dados-pessoais" class="perfil-nav-item active" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
                             <i class="bi bi-person-fill"></i>
                             <span>Dados Pessoais</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
                         </a>
-                        <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab">
+                        <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
                             <i class="bi bi-card-list"></i>
                             <span>Meus Anúncios</span>
                             <span class="badge bg-primary rounded-pill ms-auto">3</span>
                         </a>
-                        <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab">
+                        <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador">
                             <i class="bi bi-heart-fill"></i>
                             <span>Anúncios Favoritos</span>
                             <span class="badge bg-danger rounded-pill ms-auto">2</span>
                         </a>
-                        <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab">
+                        <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
                             <i class="bi bi-gear-fill"></i>
                             <span>Definições</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
@@ -1350,6 +1350,8 @@
                     }
                 });
             });
+
+            // O sistema de toggle de utilizador agora está no _Layout.cshtml e funciona globalmente
         });
     </script>
 }

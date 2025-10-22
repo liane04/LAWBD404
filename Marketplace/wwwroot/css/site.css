@@ -674,6 +674,109 @@ body.home-page .navbar:not(.scrolled) {
     }
 
 /* -------------------------------------------------------------------------- */
+/* MOCKUP NAVBAR - Alternar Tipo de Utilizador (Remover em Produção)        */
+/* -------------------------------------------------------------------------- */
+
+.mockup-navbar {
+    height: 46px;
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+    animation: mockupPulse 3s ease-in-out infinite;
+}
+
+@keyframes mockupPulse {
+    0%, 100% {
+        border-bottom-color: #fbbf24;
+    }
+    50% {
+        border-bottom-color: #f59e0b;
+    }
+}
+
+.mockup-navbar .btn-group-sm .btn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    font-weight: 600;
+    border-width: 1.5px;
+    transition: all 0.3s ease;
+}
+
+.mockup-navbar .btn-check:checked + .btn {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.mockup-navbar .btn-outline-light:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.mockup-navbar .btn-outline-info:hover {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+
+.mockup-navbar .btn-outline-success:hover {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.mockup-navbar .btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+/* Esconder elementos baseado no mockup mode por padrão */
+[data-mockup-user-type] {
+    display: none;
+}
+
+/* Mostrar quando o tipo corresponder ao modo ativo do body */
+body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"],
+body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"],
+body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"],
+body[data-mockup-mode="admin"] [data-mockup-user-type="admin"] {
+    display: inline-block !important;
+}
+
+/* Para elementos block específicos */
+body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"].d-block,
+body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"].d-block,
+body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"].d-block,
+body[data-mockup-mode="admin"] [data-mockup-user-type="admin"].d-block {
+    display: block !important;
+}
+
+/* Para elementos inline/flex */
+body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"].d-flex,
+body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"].d-flex,
+body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"].d-flex,
+body[data-mockup-mode="admin"] [data-mockup-user-type="admin"].d-flex {
+    display: flex !important;
+}
+
+/* Para dropdowns */
+body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"].dropdown,
+body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"].dropdown,
+body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"].dropdown,
+body[data-mockup-mode="admin"] [data-mockup-user-type="admin"].dropdown {
+    display: inline-block !important;
+}
+
+/* Para botões */
+body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"].btn,
+body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"].btn,
+body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"].btn,
+body[data-mockup-mode="admin"] [data-mockup-user-type="admin"].btn {
+    display: inline-block !important;
+}
+
+/* Suporte para múltiplos tipos */
+body[data-mockup-mode="vendedor"] [data-mockup-user-type-alt*="vendedor"],
+body[data-mockup-mode="admin"] [data-mockup-user-type-alt*="admin"] {
+    display: block !important;
+}
+
+/* -------------------------------------------------------------------------- */
 /* Perfil do Utilizador                                                      */
 /* -------------------------------------------------------------------------- */
 
