@@ -332,9 +332,6 @@
                         <!-- Anúncio 2 - Pendente (Destacado) -->
                         <div class="anuncio-card anuncio-destacado card shadow-sm border-warning mb-3" data-status="pendente" data-destacado="true">
                             <div class="card-body p-3">
-                                <div class="anuncio-destacado-badge">
-                                    <i class="bi bi-star-fill me-1"></i>Em Destaque
-                                </div>
                                 <div class="row g-3 align-items-center">
                                     <div class="col-auto">
                                         <div class="anuncio-thumbnail">
@@ -1255,15 +1252,6 @@
                         anuncioAtual.classList.add('anuncio-destacado');
                         anuncioAtual.classList.add('border-warning');
                         anuncioAtual.setAttribute('data-destacado', 'true');
-
-                        // Adicionar badge de destaque
-                        const cardBody = anuncioAtual.querySelector('.card-body');
-                        if (!cardBody.querySelector('.anuncio-destacado-badge')) {
-                            const badge = document.createElement('div');
-                            badge.className = 'anuncio-destacado-badge';
-                            badge.innerHTML = '<i class="bi bi-star-fill me-1"></i>Em Destaque';
-                            cardBody.insertBefore(badge, cardBody.firstChild);
-                        }
 
                         // Adicionar informação de destaque na meta
                         const anuncioMeta = anuncioAtual.querySelector('.anuncio-meta');
