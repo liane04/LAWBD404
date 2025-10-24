@@ -3118,3 +3118,435 @@ body[data-mockup-mode="admin"] [data-mockup-user-type-alt*="admin"] {
     vertical-align: middle;
 }
 
+/* -------------------------------------------------------------------------- */
+/* P�gina de Login - Layout Moderno com Split Screen                        */
+/* -------------------------------------------------------------------------- */
+
+/* Body Authentication */
+.auth-body {
+    padding-top: 0;
+    overflow-x: hidden;
+}
+
+.auth-main {
+    min-height: calc(100vh - 80px - 60px);
+}
+
+/* Header Minimalista */
+.auth-header {
+    background: var(--white);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.auth-logo {
+    display: inline-block;
+    transition: var(--transition);
+}
+
+    .auth-logo:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+
+/* Footer Minimalista */
+.auth-footer {
+    background: var(--white);
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
+/* Container Principal da P�gina de Login */
+.login-page {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    align-items: stretch;
+}
+
+    .login-page .container-fluid {
+        padding: 0;
+        width: 100%;
+    }
+
+    .login-page .row {
+        min-height: calc(100vh - 140px);
+        margin: 0;
+    }
+
+/* Painel Esquerdo - Brand & Image */
+.login-left-panel {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    position: relative;
+    overflow: hidden;
+    min-height: 100%;
+}
+
+.login-brand-section {
+    width: 100%;
+    min-height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 2.5rem;
+}
+
+.login-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.95) 0%, rgba(30, 64, 175, 0.95) 100%);
+    z-index: 1;
+}
+
+.login-content-wrapper {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.login-brand-content {
+    color: var(--white);
+}
+
+.login-brand-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-brand-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* Features List */
+.login-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.login-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.login-feature-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+    .login-feature-icon i {
+        font-size: 1.5rem;
+        color: var(--white);
+    }
+
+.login-feature-item:hover .login-feature-icon {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px);
+}
+
+.login-feature-text h5 {
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.login-feature-text p {
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 0;
+    font-size: 0.875rem;
+}
+
+/* Imagem do Carro */
+.login-car-image {
+    margin-top: 2rem;
+    text-align: center;
+    animation: float 6s ease-in-out infinite;
+}
+
+    .login-car-image img {
+        max-width: 90%;
+        height: auto;
+        filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3));
+    }
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* Painel Direito - Formul�rio */
+.login-right-panel {
+    background: var(--white);
+    padding: 3rem 2rem;
+}
+
+.login-form-container {
+    width: 100%;
+    max-width: 480px;
+}
+
+/* Header do Formul�rio */
+.login-form-header .login-icon {
+    display: inline-block;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+    .login-form-header .login-icon i {
+        font-size: 2rem;
+        color: var(--white);
+    }
+
+.login-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+}
+
+.login-description {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+/* Formul�rio */
+.login-form .form-label {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+    .login-form .form-label i {
+        font-size: 1rem;
+    }
+
+.login-input {
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+    transition: var(--transition);
+    background: var(--bg-light);
+}
+
+    .login-input:focus {
+        border-color: var(--primary-color);
+        background: var(--white);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+
+    .login-input::placeholder {
+        color: #94a3b8;
+    }
+
+/* Toggle Password */
+#togglePassword {
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1rem;
+}
+
+    #togglePassword:hover i {
+        color: var(--primary-color) !important;
+    }
+
+/* Links */
+.login-link {
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+    .login-link:hover {
+        color: var(--primary-dark) !important;
+        text-decoration: underline;
+    }
+
+/* Bot�o de Login */
+.login-btn {
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+    .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    }
+
+    .login-btn:active {
+        transform: translateY(0);
+    }
+
+/* Divider */
+.login-divider {
+    position: relative;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+    .login-divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--border-color);
+        z-index: 1;
+    }
+
+    .login-divider span {
+        position: relative;
+        z-index: 2;
+        background: var(--white);
+        padding: 0 1.5rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+/* Bot�es Social */
+.login-social-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    border: 2px solid var(--border-color);
+    background: var(--white);
+    transition: var(--transition);
+}
+
+    .login-social-btn:hover {
+        background: var(--bg-light);
+        border-color: var(--text-muted);
+        transform: translateY(-2px);
+    }
+
+    .login-social-btn i {
+        font-size: 1.1rem;
+    }
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .login-page {
+        min-height: auto;
+    }
+
+    .login-page .row {
+        min-height: auto;
+    }
+
+    .login-right-panel {
+        min-height: calc(100vh - 140px);
+        padding: 3rem 2rem;
+    }
+
+    .login-brand-title {
+        font-size: 2rem;
+    }
+
+    .login-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .login-right-panel {
+        padding: 2rem 1.5rem;
+    }
+
+    .login-form-container {
+        max-width: 100%;
+    }
+
+    .login-title {
+        font-size: 1.35rem;
+    }
+
+    .login-form-header .login-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+        .login-form-header .login-icon i {
+            font-size: 1.75rem;
+        }
+
+    .login-social-btn {
+        font-size: 0.85rem;
+        padding: 0.65rem 0.75rem;
+    }
+
+        .login-social-btn i {
+            font-size: 1rem;
+        }
+}
+
+/* Anima��es de Entrada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-form-container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.login-brand-content {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.login-car-image {
+    animation: fadeInUp 1s ease-out, float 6s ease-in-out 1s infinite;
+}

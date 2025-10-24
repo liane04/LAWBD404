@@ -1,40 +1,206 @@
-﻿@{
+@{
     ViewData["Title"] = "Entrar";
+    Layout = "~/Views/Shared/_LayoutAuth.cshtml";
 }
 
-<div class="auth-container">
-    <div class="card shadow-lg">
-        <div class="card-body p-5">
-            <h2 class="card-title text-center mb-4">Bem-vindo de Volta!</h2>
-            <form>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="password" class="form-label">Palavra-passe</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">
-                            Lembrar-me
-                        </label>
+<div class="login-page">
+    <div class="container-fluid">
+        <div class="row g-0">
+            <!-- Painel Esquerdo - Imagem e Informação -->
+            <div class="col-lg-6 d-none d-lg-flex login-left-panel">
+                <div class="login-brand-section">
+                    <div class="login-overlay"></div>
+                    <div class="login-content-wrapper">
+                        <div class="login-brand-content">
+                            <h1 class="login-brand-title">
+                                Encontre o Seu Próximo Veículo
+                            </h1>
+                            <p class="login-brand-subtitle">
+                                Milhares de veículos usados. Vendedores verificados. Negócios seguros.
+                            </p>
+                            <div class="login-features mt-5">
+                                <div class="login-feature-item">
+                                    <div class="login-feature-icon">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                    <div class="login-feature-text">
+                                        <h5>100% Seguro</h5>
+                                        <p>Todas as transações protegidas</p>
+                                    </div>
+                                </div>
+                                <div class="login-feature-item">
+                                    <div class="login-feature-icon">
+                                        <i class="bi bi-car-front"></i>
+                                    </div>
+                                    <div class="login-feature-text">
+                                        <h5>Veículos Verificados</h5>
+                                        <p>Histórico completo disponível</p>
+                                    </div>
+                                </div>
+                                <div class="login-feature-item">
+                                    <div class="login-feature-icon">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+                                    <div class="login-feature-text">
+                                        <h5>Comunidade Ativa</h5>
+                                        <p>Milhares de utilizadores satisfeitos</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="login-car-image">
+                            <img src="~/imagens/mercedes.png" alt="Mercedes-Benz" class="img-fluid">
+                        </div>
                     </div>
-                    <a href="#">Esqueceu-se da palavra-passe?</a>
                 </div>
+            </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+            <!-- Painel Direito - Formulário de Login -->
+            <div class="col-lg-6 d-flex align-items-center justify-content-center login-right-panel">
+                <div class="login-form-container">
+                    <div class="login-form-header text-center mb-4">
+                        <div class="login-icon mb-3">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <h2 class="login-title mb-2">Bem-vindo de volta!</h2>
+                        <p class="login-description text-muted">
+                            Entre na sua conta para continuar
+                        </p>
+                    </div>
+
+                    <form class="login-form" autocomplete="on">
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-semibold">
+                                <i class="bi bi-envelope me-2 text-primary"></i>Email
+                            </label>
+                            <input type="email"
+                                   class="form-control form-control-lg login-input"
+                                   id="email"
+                                   name="email"
+                                   inputmode="email"
+                                   autocomplete="username"
+                                   placeholder="seuemail@exemplo.com"
+                                   required>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-semibold">
+                                <i class="bi bi-lock me-2 text-primary"></i>Palavra-passe
+                            </label>
+                            <div class="position-relative">
+                                <input type="password"
+                                       class="form-control form-control-lg login-input"
+                                       id="password"
+                                       name="password"
+                                       autocomplete="current-password"
+                                       placeholder="••••••••"
+                                       required>
+                                <button type="button"
+                                        class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted"
+                                        id="togglePassword"
+                                        style="text-decoration: none;">
+                                    <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Opções -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">
+                                    Lembrar-me
+                                </label>
+                            </div>
+                            <a href="#" class="login-link text-primary">
+                                Esqueceu-se da palavra-passe?
+                            </a>
+                        </div>
+
+                        <!-- Botão de Login -->
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg login-btn">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+                            </button>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="login-divider">
+                            <span>ou</span>
+                        </div>
+
+                        <!-- Login Social -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-secondary w-100 login-social-btn">
+                                    <i class="bi bi-google me-2"></i>Google
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-secondary w-100 login-social-btn">
+                                    <i class="bi bi-facebook me-2"></i>Facebook
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Registar -->
+                        <div class="text-center mt-3">
+                            <p class="mb-0 text-muted">
+                                Ainda não tem uma conta?
+                                <a asp-controller="Utilizadores" asp-action="Registar" class="login-link fw-semibold text-primary">
+                                    Crie uma aqui
+                                </a>
+                            </p>
+                        </div>
+                    </form>
                 </div>
-            </form>
-            <div class="mt-4 text-center">
-                <p class="mb-0">Ainda não tem uma conta? <a asp-controller="Utilizadores" asp-action="Registar">Crie uma aqui</a></p>
             </div>
         </div>
     </div>
+    
 </div>
+
+@section Scripts {
+    <script>
+        // Toggle Password Visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePasswordIcon');
+
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function() {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+
+                    toggleIcon.classList.toggle('bi-eye');
+                    toggleIcon.classList.toggle('bi-eye-slash');
+                });
+            }
+
+            // Form Submit Handler (mock)
+            const loginForm = document.querySelector('.login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const submitBtn = this.querySelector('.login-btn');
+                    const originalText = submitBtn.innerHTML;
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A entrar...';
+
+                    // Simular login (remover quando integrar com backend)
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        window.location.href = '@Url.Action("Index", "Home")';
+                    }, 1500);
+                });
+            }
+        });
+    </script>
+}
 
