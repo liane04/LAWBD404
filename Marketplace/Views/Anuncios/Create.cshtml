@@ -2,91 +2,373 @@
     ViewData["Title"] = "Criar Novo Anúncio";
 }
 
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-10 col-xl-8">
-            <div class="create-form-container card shadow-lg">
-                <div class="card-body p-4 p-md-5">
-                    <h2 class="card-title text-center mb-4">Criar Novo Anúncio</h2>
-                    <p class="text-center text-muted mb-5">Preencha os detalhes abaixo para colocar o seu carro à venda.</p>
+<div class="container my-5 py-4">
+    <!-- Progress Steps -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+            <div class="create-anuncio-steps">
+                <div class="step-item active" data-step="1">
+                    <div class="step-circle">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <div class="step-label">Informações</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item" data-step="2">
+                    <div class="step-circle">
+                        <i class="bi bi-car-front"></i>
+                    </div>
+                    <div class="step-label">Detalhes</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item" data-step="3">
+                    <div class="step-circle">
+                        <i class="bi bi-images"></i>
+                    </div>
+                    <div class="step-label">Fotos</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item" data-step="4">
+                    <div class="step-circle">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="step-label">Revisão</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <form>
-                        <!-- Secção de Informação Principal -->
-                        <h4 class="form-section-title">Informação Principal</h4>
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="titulo" class="form-label">Título do Anúncio</label>
-                                <input type="text" class="form-control" id="titulo" placeholder="Ex: BMW Série 3 320d Pack M">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="preco" class="form-label">Preço</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">€</span>
-                                    <input type="number" class="form-control" id="preco" placeholder="28500">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+            <form id="createAnuncioForm" class="create-anuncio-form">
+                        <!-- Step 1: Informação Principal -->
+                        <div class="form-step active" data-step="1">
+                            <div class="card shadow-sm border-0 mb-4">
+                                <div class="card-header bg-primary text-white py-3">
+                                    <h4 class="mb-0">
+                                        <i class="bi bi-info-circle me-2"></i>Informação Principal
+                                    </h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label for="titulo" class="form-label fw-semibold">
+                                                <i class="bi bi-pencil text-primary me-2"></i>Título do Anúncio
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control form-control-lg" id="titulo"
+                                                   placeholder="Ex: BMW Série 3 320d Pack M" required>
+                                            <div class="form-text">
+                                                <i class="bi bi-lightbulb text-warning me-1"></i>
+                                                Use um título claro e atrativo com marca, modelo e versão
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="preco" class="form-label fw-semibold">
+                                                <i class="bi bi-currency-euro text-primary me-2"></i>Preço
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group input-group-lg">
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-currency-euro"></i>
+                                                </span>
+                                                <input type="number" class="form-control" id="preco"
+                                                       placeholder="28500" required>
+                                            </div>
+                                            <div class="form-text">Preço de venda do veículo</div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="negociavel" class="form-label fw-semibold">
+                                                <i class="bi bi-chat-dots text-primary me-2"></i>Negociável?
+                                            </label>
+                                            <select id="negociavel" class="form-select form-select-lg">
+                                                <option value="sim">Sim, aceito propostas</option>
+                                                <option value="nao">Não, preço fixo</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="descricao" class="form-label fw-semibold">
+                                                <i class="bi bi-file-text text-primary me-2"></i>Descrição
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <textarea class="form-control" id="descricao" rows="5" required
+                                                placeholder="Descreva os pontos fortes do seu carro, estado geral, extras incluídos, histórico de manutenção, etc."></textarea>
+                                            <div class="form-text">
+                                                <span id="charCount">0</span>/500 caracteres
+                                                <i class="bi bi-info-circle ms-2"></i>
+                                                Uma boa descrição aumenta as suas hipóteses de venda
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="descricao" class="form-label">Descrição</label>
-                            <textarea class="form-control" id="descricao" rows="4" placeholder="Descreva os pontos fortes do seu carro, o estado geral, extras, etc."></textarea>
+                        <!-- Step 2: Detalhes do Veículo -->
+                        <div class="form-step" data-step="2">
+                            <div class="card shadow-sm border-0 mb-4">
+                                <div class="card-header bg-primary text-white py-3">
+                                    <h4 class="mb-0">
+                                        <i class="bi bi-car-front me-2"></i>Detalhes do Veículo
+                                    </h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="marca" class="form-label fw-semibold">
+                                                <i class="bi bi-award text-primary me-2"></i>Marca
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select id="marca" class="form-select form-select-lg" required>
+                                                <option value="" selected disabled>Selecione a marca...</option>
+                                                <option value="audi">Audi</option>
+                                                <option value="bmw">BMW</option>
+                                                <option value="mercedes">Mercedes-Benz</option>
+                                                <option value="vw">Volkswagen</option>
+                                                <option value="renault">Renault</option>
+                                                <option value="peugeot">Peugeot</option>
+                                                <option value="citroen">Citroën</option>
+                                                <option value="ford">Ford</option>
+                                                <option value="opel">Opel</option>
+                                                <option value="toyota">Toyota</option>
+                                                <option value="nissan">Nissan</option>
+                                                <option value="hyundai">Hyundai</option>
+                                                <option value="kia">Kia</option>
+                                                <option value="seat">Seat</option>
+                                                <option value="skoda">Skoda</option>
+                                                <option value="volvo">Volvo</option>
+                                                <option value="outro">Outra</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="modelo" class="form-label fw-semibold">
+                                                <i class="bi bi-tag text-primary me-2"></i>Modelo
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control form-control-lg" id="modelo"
+                                                   placeholder="Ex: Série 3" required>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="ano" class="form-label fw-semibold">
+                                                <i class="bi bi-calendar-event text-primary me-2"></i>Ano de Registo
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="number" class="form-control form-control-lg" id="ano"
+                                                   placeholder="2019" min="1980" max="2025" required>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="kms" class="form-label fw-semibold">
+                                                <i class="bi bi-speedometer2 text-primary me-2"></i>Quilómetros
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="number" class="form-control form-control-lg" id="kms"
+                                                   placeholder="98000" required>
+                                            <div class="form-text">Em quilómetros (km)</div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="potencia" class="form-label fw-semibold">
+                                                <i class="bi bi-lightning-charge text-primary me-2"></i>Potência (cv)
+                                            </label>
+                                            <input type="number" class="form-control form-control-lg" id="potencia"
+                                                   placeholder="190">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="combustivel" class="form-label fw-semibold">
+                                                <i class="bi bi-fuel-pump text-primary me-2"></i>Combustível
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select id="combustivel" class="form-select form-select-lg" required>
+                                                <option value="" selected disabled>Selecione...</option>
+                                                <option value="diesel">Diesel</option>
+                                                <option value="gasolina">Gasolina</option>
+                                                <option value="eletrico">Elétrico</option>
+                                                <option value="hibrido">Híbrido (Gasolina)</option>
+                                                <option value="hibrido_diesel">Híbrido (Diesel)</option>
+                                                <option value="gas">GPL/GNV</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="transmissao" class="form-label fw-semibold">
+                                                <i class="bi bi-gear text-primary me-2"></i>Transmissão
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select id="transmissao" class="form-select form-select-lg" required>
+                                                <option value="" selected disabled>Selecione...</option>
+                                                <option value="manual">Manual</option>
+                                                <option value="automatica">Automática</option>
+                                                <option value="semiautomatica">Semi-automática</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="portas" class="form-label fw-semibold">
+                                                <i class="bi bi-door-open text-primary me-2"></i>Número de Portas
+                                            </label>
+                                            <select id="portas" class="form-select form-select-lg">
+                                                <option value="">Selecione...</option>
+                                                <option value="2">2/3 portas</option>
+                                                <option value="4">4/5 portas</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="lugares" class="form-label fw-semibold">
+                                                <i class="bi bi-people text-primary me-2"></i>Lugares
+                                            </label>
+                                            <input type="number" class="form-control form-control-lg" id="lugares"
+                                                   placeholder="5" min="2" max="9">
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="cor" class="form-label fw-semibold">
+                                                <i class="bi bi-palette text-primary me-2"></i>Cor
+                                            </label>
+                                            <input type="text" class="form-control form-control-lg" id="cor"
+                                                   placeholder="Ex: Preto">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold">
+                                                <i class="bi bi-star text-primary me-2"></i>Extras e Equipamento
+                                            </label>
+                                            <div class="extras-grid">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="extra1">
+                                                    <label class="form-check-label" for="extra1">Ar Condicionado</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="extra2">
+                                                    <label class="form-check-label" for="extra2">GPS</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="extra3">
+                                                    <label class="form-check-label" for="extra3">Bancos em Pele</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="extra4">
+                                                    <label class="form-check-label" for="extra4">Jantes de Liga Leve</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="extra5">
+                                                    <label class="form-check-label" for="extra5">Sensores de Estacionamento</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="extra6">
+                                                    <label class="form-check-label" for="extra6">Câmara de Marcha Atrás</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="extra7">
+                                                    <label class="form-check-label" for="extra7">Bluetooth</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="extra8">
+                                                    <label class="form-check-label" for="extra8">Cruise Control</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Secção de Detalhes do Veículo -->
-                        <h4 class="form-section-title">Detalhes do Veículo</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="marca" class="form-label">Marca</label>
-                                <select id="marca" class="form-select">
-                                    <option selected disabled>Selecione a marca...</option>
-                                    <option>BMW</option>
-                                    <option>Audi</option>
-                                    <option>Mercedes-Benz</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="modelo" class="form-label">Modelo</label>
-                                <input type="text" class="form-control" id="modelo" placeholder="Ex: Série 3">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="ano" class="form-label">Ano de Registo</label>
-                                <input type="number" class="form-control" id="ano" placeholder="2019">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="kms" class="form-label">Quilometragem (km)</label>
-                                <input type="number" class="form-control" id="kms" placeholder="98000">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="combustivel" class="form-label">Combustível</label>
-                                <select id="combustivel" class="form-select">
-                                    <option selected disabled>Selecione...</option>
-                                    <option>Diesel</option>
-                                    <option>Gasolina</option>
-                                    <option>Elétrico</option>
-                                    <option>Híbrido</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="transmissao" class="form-label">Transmissão</label>
-                                <select id="transmissao" class="form-select">
-                                    <option selected disabled>Selecione...</option>
-                                    <option>Manual</option>
-                                    <option>Automática</option>
-                                </select>
+                        <!-- Step 3: Fotografias -->
+                        <div class="form-step" data-step="3">
+                            <div class="card shadow-sm border-0 mb-4">
+                                <div class="card-header bg-primary text-white py-3">
+                                    <h4 class="mb-0">
+                                        <i class="bi bi-images me-2"></i>Fotografias
+                                    </h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        <strong>Dica:</strong> Anúncios com mais fotos vendem 3x mais rápido!
+                                        Tire fotos de todos os ângulos, interior, e detalhes importantes.
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="imagens" class="form-label fw-semibold">
+                                            <i class="bi bi-cloud-upload text-primary me-2"></i>Carregar Fotografias
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="upload-zone" id="uploadZone">
+                                            <input class="form-control d-none" type="file" id="imagens"
+                                                   multiple accept="image/*">
+                                            <div class="upload-placeholder">
+                                                <i class="bi bi-cloud-arrow-up"></i>
+                                                <h5>Arraste as fotos aqui</h5>
+                                                <p>ou clique para selecionar</p>
+                                                <button type="button" class="btn btn-primary mt-2"
+                                                        onclick="document.getElementById('imagens').click()">
+                                                    <i class="bi bi-folder2-open me-2"></i>Escolher Ficheiros
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-text">
+                                            <i class="bi bi-check-circle text-success me-1"></i>
+                                            Formatos aceites: JPG, PNG. Tamanho máximo: 5MB por foto. Máximo: 10 fotos.
+                                        </div>
+                                    </div>
+
+                                    <div id="imagePreview" class="image-preview-grid"></div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Secção de Imagens -->
-                        <h4 class="form-section-title">Fotografias</h4>
-                        <div class="mb-4">
-                            <label for="imagens" class="form-label">Carregar Imagens</label>
-                            <input class="form-control" type="file" id="imagens" multiple>
-                            <div class="form-text">Pode selecionar várias imagens. A primeira será a imagem principal.</div>
+                        <!-- Step 4: Revisão -->
+                        <div class="form-step" data-step="4">
+                            <div class="card shadow-sm border-0 mb-4">
+                                <div class="card-header bg-success text-white py-3">
+                                    <h4 class="mb-0">
+                                        <i class="bi bi-check-circle me-2"></i>Revisão e Publicação
+                                    </h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="alert alert-success">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        <strong>Quase lá!</strong> Reveja os dados do seu anúncio antes de publicar.
+                                    </div>
+
+                                    <div id="reviewContent" class="review-content">
+                                        <!-- Conteúdo será preenchido dinamicamente -->
+                                    </div>
+
+                                    <div class="form-check mt-4">
+                                        <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                        <label class="form-check-label" for="termsCheck">
+                                            Aceito os <a href="#" target="_blank">Termos e Condições</a>
+                                            e confirmo que as informações fornecidas são verdadeiras.
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Botão de Submissão -->
-                        <div class="d-grid mt-5">
-                            <button type="submit" class="btn btn-primary btn-lg">Publicar Anúncio</button>
+                        <!-- Botões de Navegação -->
+                        <div class="form-navigation mt-4">
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary btn-lg px-5"
+                                        id="prevBtn" onclick="changeStep(-1)">
+                                    <i class="bi bi-arrow-left me-2"></i>Anterior
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg px-5"
+                                        id="nextBtn" onclick="changeStep(1)">
+                                    Seguinte<i class="bi bi-arrow-right ms-2"></i>
+                                </button>
+                                <button type="submit" class="btn btn-success btn-lg px-5 d-none"
+                                        id="submitBtn">
+                                    <i class="bi bi-check-circle me-2"></i>Publicar Anúncio
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -94,3 +376,165 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        // Navegação entre steps
+        function changeStep(direction) {
+            const newStep = currentStep + direction;
+
+            if (newStep < 1 || newStep > totalSteps) return;
+
+            // Validar step atual antes de avançar
+            if (direction > 0 && !validateCurrentStep()) {
+                return;
+            }
+
+            // Esconder step atual
+            document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.remove('active');
+            document.querySelector(`.step-item[data-step="${currentStep}"]`).classList.remove('active');
+
+            // Mostrar novo step
+            currentStep = newStep;
+            document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+            document.querySelector(`.step-item[data-step="${currentStep}"]`).classList.add('active');
+
+            // Atualizar botões
+            updateButtons();
+
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Se for o último step, mostrar resumo
+            if (currentStep === 4) {
+                showReview();
+            }
+        }
+
+        function validateCurrentStep() {
+            const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+            const inputs = currentStepElement.querySelectorAll('[required]');
+
+            for (let input of inputs) {
+                if (!input.value) {
+                    input.focus();
+                    input.classList.add('is-invalid');
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                    return false;
+                }
+                input.classList.remove('is-invalid');
+            }
+            return true;
+        }
+
+        function updateButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
+            nextBtn.style.display = currentStep === totalSteps ? 'none' : 'block';
+            submitBtn.classList.toggle('d-none', currentStep !== totalSteps);
+        }
+
+        function showReview() {
+            const reviewContent = document.getElementById('reviewContent');
+            const titulo = document.getElementById('titulo').value;
+            const preco = document.getElementById('preco').value;
+            const marca = document.getElementById('marca').value;
+            const modelo = document.getElementById('modelo').value;
+            const ano = document.getElementById('ano').value;
+            const kms = document.getElementById('kms').value;
+
+            reviewContent.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-12">
+                        <h5 class="fw-bold">${titulo}</h5>
+                        <h3 class="text-primary">${preco}€</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Marca:</strong> ${marca}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Modelo:</strong> ${modelo}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Ano:</strong> ${ano}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Quilómetros:</strong> ${kms} km
+                    </div>
+                </div>
+            `;
+        }
+
+        // Contador de caracteres
+        const descricao = document.getElementById('descricao');
+        const charCount = document.getElementById('charCount');
+
+        descricao.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+
+        // Upload de imagens
+        const uploadZone = document.getElementById('uploadZone');
+        const imageInput = document.getElementById('imagens');
+        const imagePreview = document.getElementById('imagePreview');
+
+        uploadZone.addEventListener('click', () => imageInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            imageInput.files = e.dataTransfer.files;
+            handleFiles(e.dataTransfer.files);
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            imagePreview.innerHTML = '';
+
+            for (let i = 0; i < files.length && i < 10; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'image-preview-item';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button type="button" class="btn-remove" onclick="removeImage(this)">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                        ${i === 0 ? '<span class="badge bg-primary">Principal</span>' : ''}
+                    `;
+                    imagePreview.appendChild(div);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage(btn) {
+            btn.closest('.image-preview-item').remove();
+        }
+
+        // Inicializar
+        updateButtons();
+    </script>
+}
