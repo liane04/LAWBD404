@@ -58,7 +58,8 @@
     </div>
     <!-- ===== FIM MOCKUP NAVBAR ===== -->
 
-    <header class="fixed-top" style="top: 50px;">
+
+    <header class="fixed-top" style="top: 46px;">
         <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
@@ -108,18 +109,18 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownComprador">
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">
                                             <i class="bi bi-heart me-2"></i>Favoritos
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">
                                             <i class="bi bi-clock-history me-2"></i>Histórico
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Mensagens" asp-action="Index">
-                                            <i class="bi bi-clock-history me-2"></i>Mensagens
+                                            <i class="bi bi-chat-dots me-2"></i>Mensagens
                                         </a>
                                     </li>
                                     <li>
@@ -149,23 +150,23 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownVendedor">
                                 <li>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">
                                         <i class="bi bi-card-list me-2"></i>Os Meus Anúncios
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">
                                         <i class="bi bi-graph-up me-2"></i>Estatísticas
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil">
                                         <i class="bi bi-heart me-2"></i>Favoritos
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" asp-controller="Mensagens" asp-action="Index">
-                                        <i class="bi bi-clock-history me-2"></i>Mensagens
+                                        <i class="bi bi-chat-dots me-2"></i>Mensagens
                                     </a>
                                 </li>
                                 <li>
@@ -408,13 +409,18 @@
                 const mock = document.querySelector('.mockup-navbar');
                 const header = document.querySelector('header');
                 const main = document.querySelector('.main-content');
-                const mockH = mock ? mock.offsetHeight : 0; // ~50px
+                const isHomePage = document.body.classList.contains('home-page');
+
+                const mockH = mock ? mock.offsetHeight : 0; // ~46-50px
                 const headerH = header ? header.offsetHeight : 0; // altura da navbar
+
                 if (main) {
-                    main.style.paddingTop = (mockH + headerH) + 'px'; // sem folga extra
-                } else {
-                    // fallback mínimo no body
-                    document.body.style.paddingTop = (mockH + headerH) + 'px';
+                    // Para homepage, não adiciona padding porque a hero image deve encostar ao header
+                    if (isHomePage) {
+                        main.style.paddingTop = '0px';
+                    } else {
+                        main.style.paddingTop = (mockH + headerH) + 'px';
+                    }
                 }
             }
 
