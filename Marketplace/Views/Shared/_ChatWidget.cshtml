@@ -1,0 +1,247 @@
+@* Frontend-only floating chat widget (mockup) *@
+<style>
+  .chat-widget-button {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #2563eb;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+    z-index: 1080;
+  }
+
+  .chat-widget-panel {
+    position: fixed;
+    right: 24px;
+    bottom: 90px;
+    width: 360px;
+    height: 480px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 120px);
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    z-index: 1080;
+    border: 1px solid #e5e7eb;
+  }
+
+  .chat-widget-panel.open { display: flex; }
+
+  .chat-header {
+    background: #1e293b;
+    color: #fff;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .chat-header .title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+
+  .chat-body {
+    padding: 12px;
+    background: #f8fafc;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .chat-footer {
+    padding: 10px;
+    border-top: 1px solid #e5e7eb;
+    background: #fff;
+  }
+
+  .msg {
+    display: inline-block;
+    max-width: 78%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    margin: 6px 0;
+    line-height: 1.35;
+    font-size: 0.95rem;
+  }
+  .msg.bot { background: #eef2ff; color: #111827; border: 1px solid #e5e7eb; }
+  .msg.user { background: #2563eb; color: #fff; margin-left: auto; }
+
+  .bubble { display: flex; }
+  .bubble.bot { justify-content: flex-start; }
+  .bubble.user { justify-content: flex-end; }
+
+  .chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .chip { background: #e2e8f0; color: #0f172a; border: none; border-radius: 999px; padding: 6px 10px; font-size: 0.85rem; cursor: pointer; }
+  .chip:hover { background: #cbd5e1; }
+
+  .typing { display: inline-flex; gap: 4px; align-items: center; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #9ca3af; animation: blink 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: .2s; }
+  .dot:nth-child(3) { animation-delay: .4s; }
+  @@keyframes blink { 0%, 80%, 100% { opacity: .2 } 40% { opacity: 1 } }
+
+  @@media (max-width: 576px) {
+    .chat-widget-panel { width: calc(100vw - 16px); right: 8px; bottom: 84px; height: 60vh; }
+  }
+</style>
+
+<button id="chatWidgetToggle" type="button" class="chat-widget-button" aria-label="Abrir chat de ajuda">
+  <i class="bi bi-chat-dots-fill fs-5"></i>
+  <span class="visually-hidden">Chat</span>
+  <span id="chatWidgetBadge" class="position-absolute translate-middle p-1 bg-danger border border-light rounded-circle" style="top: 6px; right: 6px; display:none;"></span>
+  
+</button>
+
+<div id="chatWidgetPanel" class="chat-widget-panel shadow-lg">
+  <div class="chat-header">
+    <div class="title">
+      <i class="bi bi-robot"></i>
+      <span>Assistente 404</span>
+    </div>
+    <div>
+      <button id="chatMinimize" class="btn btn-sm btn-outline-light" title="Minimizar"><i class="bi bi-dash"></i></button>
+      <button id="chatClose" class="btn btn-sm btn-outline-light ms-1" title="Fechar"><i class="bi bi-x-lg"></i></button>
+    </div>
+  </div>
+  <div id="chatBody" class="chat-body">
+    <div class="bubble bot">
+      <div class="msg bot">
+        Olá! Sou o assistente 404. Posso ajudar com dúvidas sobre registo, publicar anúncios, reservas, mensagens ou denúncias. Em que posso ajudar?
+        <div class="chip-row mt-2">
+          <button class="chip" data-quick="Como me registo?">Registo</button>
+          <button class="chip" data-quick="Como criar um anúncio?">Criar anúncio</button>
+          <button class="chip" data-quick="Como faço uma reserva?">Reservas</button>
+          <button class="chip" data-quick="Onde vejo mensagens?">Mensagens</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chat-footer">
+    <div class="input-group">
+      <input id="chatInput" type="text" class="form-control" placeholder="Escreva a sua mensagem..." aria-label="Mensagem para o assistente">
+      <button id="chatSend" class="btn btn-primary" type="button"><i class="bi bi-send-fill"></i></button>
+    </div>
+    <div class="mt-2 small text-muted">Este é um protótipo (sem backend).</div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const toggle = document.getElementById('chatWidgetToggle');
+    const panel = document.getElementById('chatWidgetPanel');
+    const body = document.getElementById('chatBody');
+    const input = document.getElementById('chatInput');
+    const send = document.getElementById('chatSend');
+    const closeBtn = document.getElementById('chatClose');
+    const minBtn = document.getElementById('chatMinimize');
+    const badge = document.getElementById('chatWidgetBadge');
+
+    function openPanel() {
+      panel.classList.add('open');
+      badge && (badge.style.display = 'none');
+      setTimeout(() => input && input.focus(), 50);
+    }
+    function closePanel() { panel.classList.remove('open'); }
+    function minimizePanel() { panel.classList.toggle('open'); }
+
+    toggle && toggle.addEventListener('click', openPanel);
+    closeBtn && closeBtn.addEventListener('click', closePanel);
+    minBtn && minBtn.addEventListener('click', minimizePanel);
+
+    function appendMessage(role, html) {
+      const wrap = document.createElement('div');
+      wrap.className = 'bubble ' + (role === 'user' ? 'user' : 'bot');
+      const msg = document.createElement('div');
+      msg.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+      msg.innerHTML = html;
+      wrap.appendChild(msg);
+      body.appendChild(wrap);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function showTyping() {
+      const wrap = document.createElement('div');
+      wrap.className = 'bubble bot typing-row';
+      const msg = document.createElement('div');
+      msg.className = 'msg bot';
+      msg.innerHTML = '<span class="typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+      wrap.appendChild(msg);
+      body.appendChild(wrap);
+      body.scrollTop = body.scrollHeight;
+      return wrap;
+    }
+
+    function sanitize(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function replyFor(text) {
+      const t = text.toLowerCase();
+      if (t.includes('regist') || t.includes('criar conta')) {
+        return 'Para criar conta, clique em "Entrar/Registar" e preencha os dados. Pode começar aqui: <a href="/Utilizadores/Registar" class="link-primary">Registar</a>.';
+      }
+      if (t.includes('anúncio') || t.includes('anuncio') || t.includes('publicar')) {
+        return 'Para publicar, vá a <a href="/Anuncios/Create" class="link-primary">Criar Anúncio</a> e preencha os campos do veículo.';
+      }
+      if (t.includes('reserva')) {
+        return 'As reservas permitem agendar visita/test-drive. Procure um anúncio e use o botão "Reservar" (quando disponível).';
+      }
+      if (t.includes('mensagem')) {
+        return 'As mensagens ficam no seu painel. Após contactar um vendedor, aceda ao seu perfil para acompanhar as conversas.';
+      }
+      if (t.includes('denúnc') || t.includes('denunc')) {
+        return 'Para denúncias, use o botão "Denunciar" no anúncio ou contacte suporte indicando o motivo e evidências.';
+      }
+      if (t.includes('privacidade') || t.includes('termos')) {
+        return 'Pode consultar os documentos em <a href="/Home/Privacy" class="link-primary">Política de Privacidade</a> e Termos (em breve).';
+      }
+      if (t.includes('faq') || t.includes('ajuda')) {
+        return 'Aceda à nossa página de FAQ (brevemente) para respostas rápidas. Posso ajudar com registo, anúncios, reservas, mensagens e denúncias.';
+      }
+      return 'Obrigado! Registei a sua questão. Por agora sou um protótipo; em breve terei respostas mais completas e pesquisa por FAQ.';
+    }
+
+    function handleSend(text) {
+      const trimmed = (text || '').trim();
+      if (!trimmed) return;
+      appendMessage('user', sanitize(trimmed));
+      input.value = '';
+      const typingRow = showTyping();
+      setTimeout(() => {
+        typingRow.remove();
+        appendMessage('bot', replyFor(trimmed));
+      }, 700);
+    }
+
+    send && send.addEventListener('click', () => handleSend(input.value));
+    input && input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSend(input.value);
+      }
+    });
+
+    // Quick chips
+    document.addEventListener('click', (e) => {
+      const chip = e.target.closest('.chip');
+      if (chip && chip.dataset.quick) {
+        handleSend(chip.dataset.quick);
+      }
+    });
+
+    // Small attention badge after load (if panel closed)
+    setTimeout(() => { if (!panel.classList.contains('open') && badge) badge.style.display = 'inline-block'; }, 1500);
+  })();
+</script>

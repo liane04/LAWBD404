@@ -4028,3 +4028,523 @@ body[data-mockup-mode="admin"] [data-mockup-user-type-alt*="admin"] {
     }
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* Login & Authentication Pages - Professional Design                       */
+/* -------------------------------------------------------------------------- */
+
+.login-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.login-card {
+    background: var(--bg-white);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    transition: var(--transition);
+}
+
+.login-card:hover {
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+}
+
+.login-visual-side {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-visual-side::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 15s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+.login-visual-content {
+    position: relative;
+    z-index: 1;
+}
+
+.login-features .feature-item {
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.login-features .feature-item:hover {
+    transform: translateX(5px);
+}
+
+.login-form-side {
+    background: var(--bg-white);
+}
+
+.login-form-side .form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 0.85rem 1.25rem;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.login-form-side .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.1);
+}
+
+.login-form-side .form-control::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+.login-form-side .form-label {
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.password-input-wrapper {
+    position: relative;
+}
+
+.password-input-wrapper .btn-link {
+    padding: 0.5rem;
+    border: none;
+}
+
+.password-input-wrapper .btn-link:hover {
+    color: var(--primary-color) !important;
+}
+
+.divider-text {
+    position: relative;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.divider-text::before,
+.divider-text::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 42%;
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+.divider-text::before {
+    left: 0;
+}
+
+.divider-text::after {
+    right: 0;
+}
+
+.divider-text span {
+    background-color: var(--bg-white);
+    padding: 0 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Responsive adjustments for login page */
+@media (max-width: 991.98px) {
+    .login-card {
+        margin: 1rem;
+    }
+    
+    .login-form-side {
+        padding: 2rem !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .login-section {
+        padding: 1rem 0;
+    }
+    
+    .login-card {
+        margin: 0.5rem;
+        border-radius: 1rem;
+    }
+    
+    .login-form-side {
+        padding: 1.5rem !important;
+    }
+    
+    .login-form-side .form-control {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.25rem;
+        font-size: 1rem;
+    }
+}
+
+/* Form validation styles */
+.was-validated .form-control:valid {
+    border-color: #28a745;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.25rem) center;
+    background-size: calc(0.75em + 0.5rem) calc(0.75em + 0.5rem);
+}
+
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.25rem) center;
+    background-size: calc(0.75em + 0.5rem) calc(0.75em + 0.5rem);
+}
+
+/* Animation for form elements */
+.form-control,
+.btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-control:focus {
+    transform: translateY(-2px);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* User Type Selection Cards */
+.user-type-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.user-type-card {
+    position: relative;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    transition: var(--transition);
+    cursor: pointer;
+    background: var(--bg-white);
+}
+
+.user-type-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    transform: translateY(-2px);
+}
+
+.user-type-card.selected {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.1) 100%);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.user-type-card .form-check-input {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+}
+
+.user-type-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.user-type-label i {
+    color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.user-type-card:hover .user-type-label i {
+    transform: scale(1.1);
+}
+
+.user-type-card.selected .user-type-label i {
+    color: var(--primary-dark);
+}
+
+/* Responsive adjustments for user type cards */
+@media (max-width: 575.98px) {
+    .user-type-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .user-type-card {
+        padding: 1.25rem;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Global Responsive Enhancements                                            */
+/* -------------------------------------------------------------------------- */
+
+/* Extra small devices (phones, less than 576px) */
+@media (max-width: 575.98px) {
+    body {
+        padding-top: 110px;
+    }
+    
+    .navbar-brand img {
+        height: 35px;
+    }
+    
+    .main-content {
+        padding: 0.5rem 0;
+    }
+    
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.875rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    body {
+        padding-top: 110px;
+    }
+    
+    .navbar-brand img {
+        height: 40px;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    body {
+        padding-top: 110px;
+    }
+    
+    .hero-section {
+        min-height: 70vh;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    body {
+        padding-top: 110px;
+    }
+}
+
+/* Ensure images are always responsive */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive tables */
+@media (max-width: 767.98px) {
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Responsive text alignment */
+@media (max-width: 575.98px) {
+    .text-sm-center {
+        text-align: center !important;
+    }
+}
+
+/* Fix for navbar toggler on mobile */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background: var(--navbar-bg);
+        padding: 1rem;
+        margin-top: 1rem;
+        border-radius: var(--border-radius);
+    }
+    
+    .navbar-nav {
+        align-items: flex-start;
+    }
+    
+    .nav-link {
+        padding: 0.75rem 1rem !important;
+        width: 100%;
+    }
+}
+
+/* Responsive spacing utilities */
+@media (max-width: 575.98px) {
+    .py-5 {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+    
+    .my-5 {
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+    }
+}
+
+/* Ensure footer is responsive */
+.footer {
+    margin-top: auto;
+}
+
+@media (max-width: 767.98px) {
+    .footer .row > div {
+        margin-bottom: 2rem;
+    }
+    
+    .footer h6 {
+        font-size: 1rem;
+    }
+}
+
+/* Responsive form controls */
+@media (max-width: 575.98px) {
+    .form-control-lg {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+}
+
+/* Responsive modal */
+@media (max-width: 575.98px) {
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-content {
+        border-radius: 1rem;
+    }
+}
+
+/* Touch-friendly click targets */
+@media (hover: none) and (pointer: coarse) {
+    .btn,
+    .nav-link,
+    .dropdown-item {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+    .login-section,
+    .hero-section {
+        min-height: auto;
+        padding: 1rem 0;
+    }
+    
+    .login-card {
+        margin: 0.5rem 0;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar,
+    .footer,
+    .mockup-navbar,
+    .btn {
+        display: none !important;
+    }
+    
+    body {
+        padding-top: 0;
+        background: white;
+    }
+    
+    .main-content {
+        min-height: auto;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+    /* Add dark mode styles if needed in the future */
+}

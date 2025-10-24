@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(dir:*)",
-      "Read(//c/Users/bruno/Desktop/utad/a_1_semestre_3_ano/Laboratotio_web_bd/Fase1/**)"
+      "Read(//c/Users/bruno/Desktop/utad/a_1_semestre_3_ano/Laboratotio_web_bd/Fase1/**)",
+      "Read(//c/Users/bruno/Desktop/utad/a_1_semestre_3_ano/Laboratotio_web_bd/**)",
+      "Bash(dotnet build:*)"
     ],
     "deny": [],
     "ask": []

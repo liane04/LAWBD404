@@ -52,146 +52,696 @@
 
             <!-- Secção Dashboard (Conteúdo alterado) -->
             <div id="dashboard-content" class="admin-content-section">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Bem-vindo, Administrador!</h3>
-                        <p class="lead">Selecione uma opção no menu à esquerda para começar a gerir a plataforma.</p>
+                <!-- Cabeçalho da Dashboard -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="mb-1 fw-bold">
+                            <i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard Administrativa
+                        </h3>
+                        <p class="text-muted mb-0">Visão geral do Marketplace DriveDeal</p>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted d-block">Última atualização</small>
+                        <strong class="text-primary">24/10/2025 14:30</strong>
+                    </div>
+                </div>
 
-                        <!-- Estatísticas Movidas para o Dashboard -->
-                        <div class="row mt-4 mb-4">
-                            <div class="col-md-4">
-                                <div class="card shadow-sm dashboard-stat-card stat-primary">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-title fs-6 mb-0">Utilizadores Ativos</h5>
-                                            <div class="display-6 fw-bold">1,254</div>
-                                        </div>
-                                        <i class="bi bi-people-fill fs-2 text-primary opacity-25"></i>
+                <!-- Métricas Principais - Linha 1 -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 h-100 dashboard-stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="stat-icon bg-primary-subtle text-primary rounded-3 p-3">
+                                        <i class="bi bi-cart-check-fill fs-4"></i>
                                     </div>
+                                    <span class="badge bg-success-subtle text-success">
+                                        <i class="bi bi-arrow-up"></i> 12%
+                                    </span>
                                 </div>
+                                <h6 class="text-muted mb-1 fw-normal">Compradores</h6>
+                                <h3 class="mb-0 fw-bold">847</h3>
+                                <small class="text-muted">+94 este mês</small>
                             </div>
-                            <div class="col-md-4">
-                                <div class="card shadow-sm dashboard-stat-card stat-success">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-title fs-6 mb-0">Anúncios Ativos</h5>
-                                            <div class="display-6 fw-bold">832</div>
-                                        </div>
-                                        <i class="bi bi-megaphone-fill fs-2 text-success opacity-25"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 h-100 dashboard-stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="stat-icon bg-info-subtle text-info rounded-3 p-3">
+                                        <i class="bi bi-shop-window fs-4"></i>
                                     </div>
+                                    <span class="badge bg-success-subtle text-success">
+                                        <i class="bi bi-arrow-up"></i> 8%
+                                    </span>
                                 </div>
+                                <h6 class="text-muted mb-1 fw-normal">Vendedores</h6>
+                                <h3 class="mb-0 fw-bold">407</h3>
+                                <small class="text-muted">+31 este mês</small>
                             </div>
-                            <div class="col-md-4">
-                                <div class="card shadow-sm dashboard-stat-card stat-warning">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-title fs-6 mb-0">A Validar</h5>
-                                            <div class="display-6 fw-bold">12</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 h-100 dashboard-stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="stat-icon bg-success-subtle text-success rounded-3 p-3">
+                                        <i class="bi bi-megaphone-fill fs-4"></i>
+                                    </div>
+                                    <span class="badge bg-success-subtle text-success">
+                                        <i class="bi bi-arrow-up"></i> 15%
+                                    </span>
+                                </div>
+                                <h6 class="text-muted mb-1 fw-normal">Anúncios Ativos</h6>
+                                <h3 class="mb-0 fw-bold">832</h3>
+                                <small class="text-muted">+112 este mês</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 h-100 dashboard-stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="stat-icon bg-warning-subtle text-warning rounded-3 p-3">
+                                        <i class="bi bi-currency-euro fs-4"></i>
+                                    </div>
+                                    <span class="badge bg-success-subtle text-success">
+                                        <i class="bi bi-arrow-up"></i> 23%
+                                    </span>
+                                </div>
+                                <h6 class="text-muted mb-1 fw-normal">Vendas no Mês</h6>
+                                <h3 class="mb-0 fw-bold">156</h3>
+                                <small class="text-muted">Volume: 2,8M€</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alertas e Pendências - Linha 2 -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-person-check-fill fs-4 text-warning"></i>
                                         </div>
-                                        <i class="bi bi-person-check-fill fs-2 text-warning opacity-25"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1">Vendedores a Validar</h6>
+                                        <h4 class="mb-0 fw-bold text-warning">12</h4>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-danger border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-flag-fill fs-4 text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1">Denúncias Abertas</h6>
+                                        <h4 class="mb-0 fw-bold text-danger">7</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-primary border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-clipboard-check-fill fs-4 text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1">Anúncios Pendentes</h6>
+                                        <h4 class="mb-0 fw-bold text-primary">5</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-secondary border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-star-fill fs-4 text-secondary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1">Destaques Ativos</h6>
+                                        <h4 class="mb-0 fw-bold text-secondary">43</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <hr class="my-4">
-                        <p>Aqui pode validar novos vendedores, moderar anúncios, gerir denúncias e consultar o estado geral do Marketplace 404.</p>
+                <!-- Ações Rápidas e Atividade Recente -->
+                <div class="row g-3 mb-4">
+                    <!-- Ações Rápidas -->
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-lightning-charge-fill text-primary me-2"></i>Ações Rápidas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <a href="#" class="btn btn-outline-primary text-start" data-target="#validar-vendedores-content">
+                                        <i class="bi bi-person-check-fill me-2"></i>Validar Vendedores
+                                        <span class="badge bg-warning float-end">12</span>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-danger text-start" data-target="#gerir-denuncias-content">
+                                        <i class="bi bi-flag-fill me-2"></i>Gerir Denúncias
+                                        <span class="badge bg-danger float-end">7</span>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-info text-start" data-target="#moderar-anuncios-content">
+                                        <i class="bi bi-clipboard-check-fill me-2"></i>Moderar Anúncios
+                                        <span class="badge bg-primary float-end">5</span>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-secondary text-start" data-target="#gerir-utilizadores-content">
+                                        <i class="bi bi-people-fill me-2"></i>Gerir Utilizadores
+                                    </a>
+                                    <a href="#" class="btn btn-outline-success text-start" data-target="#estatisticas-content">
+                                        <i class="bi bi-graph-up-arrow me-2"></i>Ver Estatísticas
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Atividade Recente -->
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-clock-history text-primary me-2"></i>Atividade Recente
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="activity-feed">
+                                    <div class="activity-item border-start border-primary border-3 ps-3 pb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-person-plus-fill text-primary"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Novo vendedor registado</strong></p>
+                                                <small class="text-muted">João Pereira aguarda aprovação</small>
+                                            </div>
+                                            <small class="text-muted">Há 15 min</small>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item border-start border-danger border-3 ps-3 pb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-danger bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-flag-fill text-danger"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Nova denúncia recebida</strong></p>
+                                                <small class="text-muted">Anúncio #A5543 denunciado por conteúdo enganador</small>
+                                            </div>
+                                            <small class="text-muted">Há 1h</small>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item border-start border-success border-3 ps-3 pb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-success bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-check-circle-fill text-success"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Anúncio aprovado</strong></p>
+                                                <small class="text-muted">VW Golf 1.6 TDI de Miguel Costa</small>
+                                            </div>
+                                            <small class="text-muted">Há 2h</small>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item border-start border-warning border-3 ps-3 pb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-warning bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-currency-euro text-warning"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Nova compra realizada</strong></p>
+                                                <small class="text-muted">BMW Série 1 vendido por 15.900€</small>
+                                            </div>
+                                            <small class="text-muted">Há 3h</small>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item border-start border-secondary border-3 ps-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-secondary bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-lock-fill text-secondary"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Utilizador bloqueado</strong></p>
+                                                <small class="text-muted">Bruno Vieira bloqueado por comportamento fraudulento</small>
+                                            </div>
+                                            <small class="text-muted">Há 5h</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="#" class="btn btn-sm btn-outline-primary" data-target="#historico-acoes-content">
+                                        Ver Histórico Completo <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Marcas e Categorias Mais Procuradas -->
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-trophy-fill text-warning me-2"></i>Top 5 Marcas Mais Vendidas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">BMW</span>
+                                        <span class="badge bg-primary-subtle text-primary">42 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">Mercedes-Benz</span>
+                                        <span class="badge bg-primary-subtle text-primary">38 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">Audi</span>
+                                        <span class="badge bg-primary-subtle text-primary">35 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 83%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">Volkswagen</span>
+                                        <span class="badge bg-primary-subtle text-primary">29 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 69%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-0">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">Peugeot</span>
+                                        <span class="badge bg-primary-subtle text-primary">24 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 57%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-graph-up text-success me-2"></i>Estatísticas Gerais
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="text-center p-3 bg-light rounded">
+                                            <i class="bi bi-eye-fill fs-3 text-primary mb-2"></i>
+                                            <h4 class="mb-0 fw-bold">127K</h4>
+                                            <small class="text-muted">Visualizações no Mês</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center p-3 bg-light rounded">
+                                            <i class="bi bi-heart-fill fs-3 text-danger mb-2"></i>
+                                            <h4 class="mb-0 fw-bold">3.4K</h4>
+                                            <small class="text-muted">Anúncios Favoritados</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center p-3 bg-light rounded">
+                                            <i class="bi bi-calendar-check-fill fs-3 text-info mb-2"></i>
+                                            <h4 class="mb-0 fw-bold">542</h4>
+                                            <small class="text-muted">Reservas Ativas</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center p-3 bg-light rounded">
+                                            <i class="bi bi-chat-dots-fill fs-3 text-warning mb-2"></i>
+                                            <h4 class="mb-0 fw-bold">1.8K</h4>
+                                            <small class="text-muted">Mensagens Trocadas</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- ======================= Conteúdo: Validar Vendedores ======================= -->
             <div id="validar-vendedores-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Validar Vendedores</h3>
-                        <p class="text-muted">Abaixo estão os pedidos de registo de vendedor que aguardam a sua aprovação.</p>
+                <!-- Cabeçalho -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="mb-1 fw-bold">
+                            <i class="bi bi-person-check-fill text-primary me-2"></i>Validar Vendedores
+                        </h3>
+                        <p class="text-muted mb-0">Aprovar ou rejeitar pedidos de registo de vendedores</p>
+                    </div>
+                </div>
 
-                        <!-- Tabela de Vendedores Pendentes -->
+                <!-- Estatísticas de Validação -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-warning border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-warning bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-hourglass-split fs-4 text-warning"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Pendentes</h6>
+                                        <h4 class="mb-0 fw-bold text-warning">12</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-success border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Aprovados (mês)</h6>
+                                        <h4 class="mb-0 fw-bold text-success">31</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-danger border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-danger bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-x-circle-fill fs-4 text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Rejeitados (mês)</h6>
+                                        <h4 class="mb-0 fw-bold text-danger">5</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-primary border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-clock-history fs-4 text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Tempo Médio</h6>
+                                        <h4 class="mb-0 fw-bold text-primary">2.3h</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros e Pesquisa -->
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body p-3">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="searchVendedor" placeholder="Pesquisar por nome, email ou NIF...">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="btn-group" role="group">
+                                    <input type="radio" class="btn-check" name="filterEstadoVendedor" id="filterTodos" checked>
+                                    <label class="btn btn-outline-secondary" for="filterTodos">
+                                        <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-secondary ms-1">17</span>
+                                    </label>
+
+                                    <input type="radio" class="btn-check" name="filterEstadoVendedor" id="filterPendentes">
+                                    <label class="btn btn-outline-warning" for="filterPendentes">
+                                        <i class="bi bi-hourglass-split me-1"></i>Pendentes <span class="badge bg-warning ms-1">12</span>
+                                    </label>
+
+                                    <input type="radio" class="btn-check" name="filterEstadoVendedor" id="filterAprovados">
+                                    <label class="btn btn-outline-success" for="filterAprovados">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Aprovados <span class="badge bg-success ms-1">4</span>
+                                    </label>
+
+                                    <input type="radio" class="btn-check" name="filterEstadoVendedor" id="filterRejeitados">
+                                    <label class="btn btn-outline-danger" for="filterRejeitados">
+                                        <i class="bi bi-x-circle-fill me-1"></i>Rejeitados <span class="badge bg-danger ms-1">1</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Vendedores -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th scope="col">Utilizador</th>
+                                        <th scope="col" class="ps-4">Vendedor</th>
                                         <th scope="col">Data de Pedido</th>
-                                        <th scope="col">NIF (para validação)</th>
+                                        <th scope="col">Contacto</th>
+                                        <th scope="col">NIF</th>
                                         <th scope="col">Estado</th>
-                                        <th scope="col" class="text-end">Ações</th>
+                                        <th scope="col" class="text-end pe-4">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Exemplo de Vendedor 1: Pendente -->
-                                    <tr>
-                                        <td>
+                                    <!-- Vendedor 1: Pendente -->
+                                    <tr class="vendedor-row" data-estado="pendente">
+                                        <td class="ps-4">
                                             <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=JP" alt="Avatar" class="rounded-circle me-3">
+                                                <img src="https://placehold.co/48x48/2563eb/ffffff?text=JP" alt="Avatar" class="rounded-circle me-3">
                                                 <div>
                                                     <div class="fw-bold">João Pereira</div>
-                                                    <div class="small text-muted">joao.pereira@email.com</div>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-envelope me-1"></i>joao.pereira@email.com
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>22/10/2025</td>
                                         <td>
-                                            <span class="font-monospace">211345678</span>
-                                            <!-- Botão de copiar (estático) -->
-                                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="alert('NIF copiado! (funcionalidade a implementar)')"><i class="bi bi-clipboard"></i></button>
+                                            <div>22/10/2025</div>
+                                            <small class="text-muted">há 2 horas</small>
                                         </td>
                                         <td>
-                                            <span class="badge bg-warning-soft text-dark">Pendente</span>
+                                            <div><i class="bi bi-telephone me-1"></i>+351 912 345 678</div>
                                         </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-success"><i class="bi bi-check-circle me-1"></i> Aprovar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Rejeitar</button>
-                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#validarVendedorModal"><i class="bi bi-eye me-1"></i> Ver</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Exemplo de Vendedor 2: Pendente -->
-                                    <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/FFF3E0/FFA000?text=MS" alt="Avatar" class="rounded-circle me-3">
+                                                <span class="font-monospace fw-bold">211345678</span>
+                                                <button class="btn btn-sm btn-link p-0 ms-2 copy-nif-btn" data-nif="211345678" title="Copiar NIF">
+                                                    <i class="bi bi-clipboard"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-hourglass-split me-1"></i>Pendente
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#aprovarVendedorModal" data-vendedor="João Pereira">
+                                                    <i class="bi bi-check-circle me-1"></i>Aprovar
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejeitarVendedorModal" data-vendedor="João Pereira">
+                                                    <i class="bi bi-x-circle me-1"></i>Rejeitar
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detalhesVendedorModal" data-vendedor="João Pereira">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Vendedor 2: Pendente -->
+                                    <tr class="vendedor-row" data-estado="pendente">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/48x48/fbbf24/ffffff?text=MS" alt="Avatar" class="rounded-circle me-3">
                                                 <div>
                                                     <div class="fw-bold">Maria Santos</div>
-                                                    <div class="small text-muted">msantos@email.com</div>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-envelope me-1"></i>msantos@email.com
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>21/10/2025</td>
                                         <td>
-                                            <span class="font-monospace">255678123</span>
-                                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="alert('NIF copiado! (funcionalidade a implementar)')"><i class="bi bi-clipboard"></i></button>
+                                            <div>21/10/2025</div>
+                                            <small class="text-muted">há 1 dia</small>
                                         </td>
                                         <td>
-                                            <span class="badge bg-warning-soft text-dark">Pendente</span>
+                                            <div><i class="bi bi-telephone me-1"></i>+351 925 678 901</div>
                                         </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-success"><i class="bi bi-check-circle me-1"></i> Aprovar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Rejeitar</button>
-                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#validarVendedorModal"><i class="bi bi-eye me-1"></i> Ver</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Exemplo de Vendedor 3: Rejeitado -->
-                                    <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/F0F3F5/6C757D?text=RG" alt="Avatar" class="rounded-circle me-3">
+                                                <span class="font-monospace fw-bold">255678123</span>
+                                                <button class="btn btn-sm btn-link p-0 ms-2 copy-nif-btn" data-nif="255678123" title="Copiar NIF">
+                                                    <i class="bi bi-clipboard"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-hourglass-split me-1"></i>Pendente
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#aprovarVendedorModal" data-vendedor="Maria Santos">
+                                                    <i class="bi bi-check-circle me-1"></i>Aprovar
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejeitarVendedorModal" data-vendedor="Maria Santos">
+                                                    <i class="bi bi-x-circle me-1"></i>Rejeitar
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detalhesVendedorModal" data-vendedor="Maria Santos">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Vendedor 3: Aprovado -->
+                                    <tr class="vendedor-row" data-estado="aprovado">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/48x48/10b981/ffffff?text=AC" alt="Avatar" class="rounded-circle me-3">
                                                 <div>
-                                                    <div class="fw-bold">Rui Gonçalves</div>
-                                                    <div class="small text-muted">rui.g@email.com</div>
+                                                    <div class="fw-bold">Ana Costa</div>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-envelope me-1"></i>ana.costa@email.com
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>20/10/2025</td>
                                         <td>
-                                            <span class="font-monospace">123123123</span>
-                                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="alert('NIF copiado! (funcionalidade a implementar)')"><i class="bi bi-clipboard"></i></button>
+                                            <div>20/10/2025</div>
+                                            <small class="text-muted">há 4 dias</small>
                                         </td>
                                         <td>
-                                            <span class="badge bg-danger-soft">Rejeitado</span>
+                                            <div><i class="bi bi-telephone me-1"></i>+351 932 456 789</div>
                                         </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary" disabled>Ações</button>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="font-monospace fw-bold">298765432</span>
+                                                <button class="btn btn-sm btn-link p-0 ms-2 copy-nif-btn" data-nif="298765432" title="Copiar NIF">
+                                                    <i class="bi bi-clipboard"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Aprovado
+                                            </span>
+                                            <div class="small text-muted mt-1">por admin@marketplace.com</div>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#detalhesVendedorModal" data-vendedor="Ana Costa">
+                                                <i class="bi bi-eye me-1"></i>Ver Detalhes
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Vendedor 4: Rejeitado -->
+                                    <tr class="vendedor-row" data-estado="rejeitado">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/48x48/6c757d/ffffff?text=RG" alt="Avatar" class="rounded-circle me-3">
+                                                <div>
+                                                    <div class="fw-bold">Rui Gonçalves</div>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-envelope me-1"></i>rui.g@email.com
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>19/10/2025</div>
+                                            <small class="text-muted">há 5 dias</small>
+                                        </td>
+                                        <td>
+                                            <div><i class="bi bi-telephone me-1"></i>+351 918 234 567</div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="font-monospace fw-bold">123123123</span>
+                                                <button class="btn btn-sm btn-link p-0 ms-2 copy-nif-btn" data-nif="123123123" title="Copiar NIF">
+                                                    <i class="bi bi-clipboard"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle-fill me-1"></i>Rejeitado
+                                            </span>
+                                            <div class="small text-muted mt-1">NIF inválido</div>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#detalhesVendedorModal" data-vendedor="Rui Gonçalves">
+                                                <i class="bi bi-eye me-1"></i>Ver Detalhes
+                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -199,197 +749,759 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Paginação -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted">
+                        A mostrar 1-4 de 17 vendedores
+                    </div>
+                    <nav>
+                        <ul class="pagination mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
             <!-- ======================= Conteúdo: Gerir Utilizadores ======================= -->
             <div id="gerir-utilizadores-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="mb-0">Gerir Utilizadores</h3>
-                            <!-- Botão para abrir o modal -->
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criarUtilizadorModal">
-                                <i class="bi bi-plus-circle me-1"></i> Criar Novo ADMINISTRADOR
-                            </button>
-                        </div>
+                <!-- Cabeçalho -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="mb-1 fw-bold">
+                            <i class="bi bi-people-fill text-primary me-2"></i>Gerir Utilizadores
+                        </h3>
+                        <p class="text-muted mb-0">Administrar compradores, vendedores e administradores da plataforma</p>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adicionarUtilizadorModal">
+                        <i class="bi bi-plus-circle me-1"></i>Adicionar Novo Utilizador
+                    </button>
+                </div>
 
-                        <!-- Tabela de Utilizadores -->
+                <!-- Estatísticas de Utilizadores -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-primary border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-cart-check-fill fs-4 text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Compradores</h6>
+                                        <h4 class="mb-0 fw-bold text-primary">847</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-info border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-info bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-shop-window fs-4 text-info"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Vendedores</h6>
+                                        <h4 class="mb-0 fw-bold text-info">407</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-secondary border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-shield-fill-check fs-4 text-secondary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Administradores</h6>
+                                        <h4 class="mb-0 fw-bold text-secondary">5</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-danger border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-danger bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-lock-fill fs-4 text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Bloqueados</h6>
+                                        <h4 class="mb-0 fw-bold text-danger">12</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros e Pesquisa -->
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body p-3">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="searchUtilizador" placeholder="Pesquisar por nome, email...">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="filterTipoUtilizador">
+                                    <option value="">Todos os Tipos</option>
+                                    <option value="comprador">Compradores</option>
+                                    <option value="vendedor">Vendedores</option>
+                                    <option value="admin">Administradores</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="filterEstadoUtilizador">
+                                    <option value="">Todos os Estados</option>
+                                    <option value="ativo">Ativos</option>
+                                    <option value="bloqueado">Bloqueados</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Utilizadores -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th scope="col">Nome</th>
-                                        <th scope="col">Email</th>
+                                        <th scope="col" class="ps-4">Utilizador</th>
                                         <th scope="col">Tipo de Conta</th>
+                                        <th scope="col">Data de Registo</th>
                                         <th scope="col">Estado</th>
-                                        <th scope="col" class="text-end">Ações</th>
+                                        <th scope="col" class="text-end pe-4">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Exemplo de Utilizador 1 -->
-                                    <tr>
-                                        <td>
+                                    <!-- Utilizador 1: Comprador Ativo -->
+                                    <tr class="utilizador-row" data-tipo="comprador" data-estado="ativo">
+                                        <td class="ps-4">
                                             <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS" alt="Avatar" class="rounded-circle me-3">
+                                                <img src="https://placehold.co/48x48/2563eb/ffffff?text=AS" alt="Avatar" class="rounded-circle me-3">
                                                 <div>
                                                     <div class="fw-bold">Ana Silva</div>
-                                                    <div class="small text-muted">as.silva@email.com</div>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-envelope me-1"></i>as.silva@email.com
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>as.silva@email.com</td>
                                         <td>
-                                            <span class="badge bg-primary-soft">Comprador</span>
+                                            <span class="badge bg-primary">
+                                                <i class="bi bi-cart-check me-1"></i>Comprador
+                                            </span>
                                         </td>
                                         <td>
-                                            <span class="badge bg-success-soft">Ativo</span>
+                                            <div>15/09/2025</div>
+                                            <small class="text-muted">há 1 mês</small>
                                         </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i> Editar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-lock me-1"></i> Bloquear</button>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editarUtilizadorModal" data-user="Ana Silva">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bloquearUtilizadorModal" data-user="Ana Silva">
+                                                    <i class="bi bi-lock"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
-                                    <!-- Exemplo de Utilizador 2 -->
-                                    <tr>
-                                        <td>
+
+                                    <!-- Utilizador 2: Vendedor Bloqueado -->
+                                    <tr class="utilizador-row" data-tipo="vendedor" data-estado="bloqueado">
+                                        <td class="ps-4">
                                             <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/F0F3F5/6C757D?text=BV" alt="Avatar" class="rounded-circle me-3">
+                                                <img src="https://placehold.co/48x48/6c757d/ffffff?text=BV" alt="Avatar" class="rounded-circle me-3">
                                                 <div>
                                                     <div class="fw-bold">Bruno Vieira</div>
-                                                    <div class="small text-muted">bruno.v@email.com</div>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-envelope me-1"></i>bruno.v@email.com
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>bruno.v@email.com</td>
                                         <td>
-                                            <span class="badge bg-info-soft">Vendedor</span>
+                                            <span class="badge bg-info">
+                                                <i class="bi bi-shop-window me-1"></i>Vendedor
+                                            </span>
                                         </td>
                                         <td>
-                                            <span class="badge bg-danger-soft">Bloqueado</span>
+                                            <div>08/08/2025</div>
+                                            <small class="text-muted">há 2 meses</small>
                                         </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i> Editar</button>
-                                            <button class="btn btn-sm btn-outline-success"><i class="bi bi-unlock me-1"></i> Desbloquear</button>
+                                        <td>
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-lock-fill me-1"></i>Bloqueado
+                                            </span>
+                                            <div class="small text-danger mt-1">Fraude detetada</div>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editarUtilizadorModal" data-user="Bruno Vieira">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#desbloquearUtilizadorModal" data-user="Bruno Vieira">
+                                                    <i class="bi bi-unlock"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
-                                    <!-- Exemplo de Utilizador 3 -->
-                                    <tr>
-                                        <td>
+
+                                    <!-- Utilizador 3: Comprador + Vendedor -->
+                                    <tr class="utilizador-row" data-tipo="comprador vendedor" data-estado="ativo">
+                                        <td class="ps-4">
                                             <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/FFF3E0/FFA000?text=CR" alt="Avatar" class="rounded-circle me-3">
+                                                <img src="https://placehold.co/48x48/fbbf24/ffffff?text=CR" alt="Avatar" class="rounded-circle me-3">
                                                 <div>
                                                     <div class="fw-bold">Carla Ribeiro</div>
-                                                    <div class="small text-muted">c.ribeiro@email.com</div>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-envelope me-1"></i>c.ribeiro@email.com
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>c.ribeiro@email.com</td>
                                         <td>
-                                            <span class="badge bg-primary-soft">Comprador</span>
-                                            <span class="badge bg-info-soft">Vendedor</span>
+                                            <span class="badge bg-primary">
+                                                <i class="bi bi-cart-check me-1"></i>Comprador
+                                            </span>
+                                            <span class="badge bg-info">
+                                                <i class="bi bi-shop-window me-1"></i>Vendedor
+                                            </span>
                                         </td>
                                         <td>
-                                            <span class="badge bg-success-soft">Ativo</span>
+                                            <div>12/07/2025</div>
+                                            <small class="text-muted">há 3 meses</small>
                                         </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i> Editar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-lock me-1"></i> Bloquear</button>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editarUtilizadorModal" data-user="Carla Ribeiro">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bloquearUtilizadorModal" data-user="Carla Ribeiro">
+                                                    <i class="bi bi-lock"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Utilizador 4: Administrador -->
+                                    <tr class="utilizador-row" data-tipo="admin" data-estado="ativo">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/48x48/dc2626/ffffff?text=PB" alt="Avatar" class="rounded-circle me-3">
+                                                <div>
+                                                    <div class="fw-bold">Pedro Braz</div>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-envelope me-1"></i>pedro.braz@admin.com
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-shield-fill-check me-1"></i>Administrador
+                                            </span>
+                                            <div class="small text-muted mt-1">Nível: Completo</div>
+                                        </td>
+                                        <td>
+                                            <div>01/01/2025</div>
+                                            <small class="text-muted">há 9 meses</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editarUtilizadorModal" data-user="Pedro Braz">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" disabled title="Não pode bloquear administradores">
+                                                    <i class="bi bi-lock"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Utilizador 5: Comprador Ativo -->
+                                    <tr class="utilizador-row" data-tipo="comprador" data-estado="ativo">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://placehold.co/48x48/10b981/ffffff?text=MF" alt="Avatar" class="rounded-circle me-3">
+                                                <div>
+                                                    <div class="fw-bold">Miguel Ferreira</div>
+                                                    <div class="small text-muted">
+                                                        <i class="bi bi-envelope me-1"></i>m.ferreira@email.com
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">
+                                                <i class="bi bi-cart-check me-1"></i>Comprador
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div>20/10/2025</div>
+                                            <small class="text-muted">há 4 dias</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editarUtilizadorModal" data-user="Miguel Ferreira">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bloquearUtilizadorModal" data-user="Miguel Ferreira">
+                                                    <i class="bi bi-lock"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                </div>
+
+                <!-- Paginação -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted">
+                        A mostrar 1-5 de 1,259 utilizadores
+                    </div>
+                    <nav>
+                        <ul class="pagination mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">252</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
 
             <!-- ======================= Conteúdo: Moderar Anúncios ======================= -->
             <div id="moderar-anuncios-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Moderar Anúncios</h3>
+                <!-- Cabeçalho -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="mb-1 fw-bold">
+                            <i class="bi bi-megaphone-fill text-primary me-2"></i>Moderar Anúncios
+                        </h3>
+                        <p class="text-muted mb-0">Aprovar, pausar ou remover anúncios da plataforma</p>
+                    </div>
+                </div>
 
-                        <!-- Tabela de Anúncios -->
+                <!-- Estatísticas de Moderação -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-warning border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-warning bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-hourglass-split fs-4 text-warning"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Pendentes Aprovação</h6>
+                                        <h4 class="mb-0 fw-bold text-warning">5</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-success border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Ativos</h6>
+                                        <h4 class="mb-0 fw-bold text-success">832</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-danger border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-danger bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Com Denúncias</h6>
+                                        <h4 class="mb-0 fw-bold text-danger">3</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-secondary border-4">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle p-2">
+                                            <i class="bi bi-pause-circle-fill fs-4 text-secondary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 small">Pausados/Removidos</h6>
+                                        <h4 class="mb-0 fw-bold text-secondary">47</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros e Pesquisa -->
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body p-3">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="searchAnuncio" placeholder="Pesquisar por título, vendedor...">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="filterEstadoAnuncio">
+                                    <option value="">Todos os Estados</option>
+                                    <option value="pendente">Pendentes de Aprovação</option>
+                                    <option value="ativo">Ativos</option>
+                                    <option value="pausado">Pausados</option>
+                                    <option value="removido">Removidos</option>
+                                    <option value="denuncia">Com Denúncias</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="filterOrdenacao">
+                                    <option value="recente">Mais Recentes</option>
+                                    <option value="antigo">Mais Antigos</option>
+                                    <option value="denuncias">Mais Denúncias</option>
+                                    <option value="preco_desc">Maior Preço</option>
+                                    <option value="preco_asc">Menor Preço</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Anúncios -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th scope="col" style="width: 120px;">Anúncio</th>
-                                        <th scope="col">Título</th>
+                                        <th scope="col" class="ps-4" style="width: 140px;">Imagem</th>
+                                        <th scope="col">Anúncio</th>
+                                        <th scope="col">Preço</th>
+                                        <th scope="col">Data</th>
                                         <th scope="col">Estado</th>
-                                        <th scope="col">Notas</th>
-                                        <th scope="col" class="text-end">Ações</th>
+                                        <th scope="col" class="text-end pe-4">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Exemplo de Anúncio 1 -->
-                                    <tr>
-                                        <td>
-                                            <img src="~/imagens/bmwSerie1.jpg" alt="[Imagem de um BMW Série 1]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
+                                    <!-- Anúncio 1: Pendente de Aprovação -->
+                                    <tr class="anuncio-row" data-estado="pendente" data-denuncias="0">
+                                        <td class="ps-4">
+                                            <img src="https://placehold.co/120x80/fbbf24/ffffff?text=VW+Golf" alt="VW Golf" class="rounded" style="width: 120px; height: 80px; object-fit: cover;">
                                         </td>
                                         <td>
-                                            <div class="fw-bold">BMW Série 1 116d</div>
-                                            <div class="small text-muted">Vendedor: Ana Silva</div>
-                                        </td>
-                                        <td><span class="badge bg-success-soft">Ativo</span></td>
-                                        <td class="small">--</td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pause-circle me-1"></i> Pausar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i> Remover</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Exemplo de Anúncio 2 -->
-                                    <tr>
-                                        <td>
-                                            <img src="https://placehold.co/100x60/F0F3F5/6C757D?text=Audi+A3" alt="[Imagem de um Audi A3]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
+                                            <div class="fw-bold">VW Golf 1.6 TDI Confortline</div>
+                                            <div class="small text-muted mt-1">
+                                                <i class="bi bi-person me-1"></i>Miguel Costa
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-calendar3 me-1"></i>2018
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-speedometer2 me-1"></i>85.000 km
+                                            </div>
                                         </td>
                                         <td>
-                                            <div class="fw-bold">Audi A3 2.0 TDI (Fotos Falsas)</div>
-                                            <div class="small text-muted">Vendedor: Bruno Vieira</div>
-                                        </td>
-                                        <td><span class="badge bg-danger-soft">Removido</span></td>
-                                        <td class="small">Anúncio removido por violar termos (fotos).</td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary" disabled>Pausar</button>
-                                            <button class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-counterclockwise me-1"></i> Restaurar</button>
-                                        </td>
-                                    </tr>
-                                    <!-- NOVO Exemplo de Anúncio 3 -->
-                                    <tr>
-                                        <td>
-                                            <img src="https://placehold.co/100x60/FFF3E0/FFA000?text=VW+Golf" alt="[Imagem de um VW Golf]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
+                                            <div class="fw-bold text-primary">12.500 €</div>
                                         </td>
                                         <td>
-                                            <div class="fw-bold">VW Golf 1.6 TDI</div>
-                                            <div class="small text-muted">Vendedor: Miguel Costa</div>
+                                            <div>23/10/2025</div>
+                                            <small class="text-muted">há 1 dia</small>
                                         </td>
-                                        <td><span class="badge bg-warning-soft text-dark">Pendente de Revisão</span></td>
-                                        <td class="small">Anúncio novo, aguarda primeira aprovação.</td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-success"><i class="bi bi-check-circle me-1"></i> Aprovar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Rejeitar</button>
+                                        <td>
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-hourglass-split me-1"></i>Pendente
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#aprovarAnuncioModal" data-anuncio="VW Golf 1.6 TDI">
+                                                    <i class="bi bi-check-circle"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#removerAnuncioModal" data-anuncio="VW Golf 1.6 TDI">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detalhesAnuncioModal" data-anuncio="VW Golf 1.6 TDI">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
 
-                                    <!-- NOVO Exemplo de Anúncio 4 -->
-                                    <tr>
-                                        <td>
-                                            <img src="https://placehold.co/100x60/EBF4FF/1E63FF?text=Peugeot+208" alt="[Imagem de um Peugeot 208]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
+                                    <!-- Anúncio 2: Ativo -->
+                                    <tr class="anuncio-row" data-estado="ativo" data-denuncias="0">
+                                        <td class="ps-4">
+                                            <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1" class="rounded" style="width: 120px; height: 80px; object-fit: cover;">
                                         </td>
                                         <td>
-                                            <div class="fw-bold">Peugeot 208 Elétrico</div>
-                                            <div class="small text-muted">Vendedor: Carla Ribeiro</div>
+                                            <div class="fw-bold">BMW Série 1 116d Advantage</div>
+                                            <div class="small text-muted mt-1">
+                                                <i class="bi bi-person me-1"></i>Ana Silva
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-calendar3 me-1"></i>2020
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-speedometer2 me-1"></i>45.000 km
+                                            </div>
                                         </td>
-                                        <td><span class="badge bg-success-soft">Ativo</span></td>
-                                        <td class="small text-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i> 1 Denúncia Recebida</td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-warning"><i class="bi bi-eye me-1"></i> Ver Denúncia</button>
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pause-circle me-1"></i> Pausar</button>
+                                        <td>
+                                            <div class="fw-bold text-primary">18.900 €</div>
+                                        </td>
+                                        <td>
+                                            <div>15/10/2025</div>
+                                            <small class="text-muted">há 9 dias</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#pausarAnuncioModal" data-anuncio="BMW Série 1 116d">
+                                                    <i class="bi bi-pause-circle"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#removerAnuncioModal" data-anuncio="BMW Série 1 116d">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detalhesAnuncioModal" data-anuncio="BMW Série 1 116d">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Anúncio 3: Com Denúncia -->
+                                    <tr class="anuncio-row table-warning" data-estado="denuncia" data-denuncias="1">
+                                        <td class="ps-4">
+                                            <img src="https://placehold.co/120x80/2563eb/ffffff?text=Peugeot+208" alt="Peugeot 208" class="rounded" style="width: 120px; height: 80px; object-fit: cover;">
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">Peugeot 208 Elétrico GT</div>
+                                            <div class="small text-muted mt-1">
+                                                <i class="bi bi-person me-1"></i>Carla Ribeiro
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-calendar3 me-1"></i>2022
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-speedometer2 me-1"></i>12.000 km
+                                            </div>
+                                            <div class="small text-danger mt-1 fw-semibold">
+                                                <i class="bi bi-exclamation-triangle-fill me-1"></i>1 Denúncia: "Preço suspeito"
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-primary">28.500 €</div>
+                                        </td>
+                                        <td>
+                                            <div>10/10/2025</div>
+                                            <small class="text-muted">há 2 semanas</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-flag-fill me-1"></i>Denunciado
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-warning" onclick="alert('Ver secção de Denúncias')">
+                                                    <i class="bi bi-flag-fill"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#pausarAnuncioModal" data-anuncio="Peugeot 208">
+                                                    <i class="bi bi-pause-circle"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#removerAnuncioModal" data-anuncio="Peugeot 208">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Anúncio 4: Pausado -->
+                                    <tr class="anuncio-row" data-estado="pausado" data-denuncias="0">
+                                        <td class="ps-4">
+                                            <img src="https://placehold.co/120x80/10b981/ffffff?text=Renault+Clio" alt="Renault Clio" class="rounded" style="width: 120px; height: 80px; object-fit: cover;">
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">Renault Clio 1.5 dCi Dynamique</div>
+                                            <div class="small text-muted mt-1">
+                                                <i class="bi bi-person me-1"></i>João Santos
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-calendar3 me-1"></i>2017
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-speedometer2 me-1"></i>120.000 km
+                                            </div>
+                                            <div class="small text-warning mt-1">
+                                                <i class="bi bi-info-circle me-1"></i>Pausado por falta de documentação
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-primary">8.200 €</div>
+                                        </td>
+                                        <td>
+                                            <div>05/10/2025</div>
+                                            <small class="text-muted">há 3 semanas</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-pause-circle-fill me-1"></i>Pausado
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#aprovarAnuncioModal" data-anuncio="Renault Clio">
+                                                    <i class="bi bi-play-circle"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#removerAnuncioModal" data-anuncio="Renault Clio">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detalhesAnuncioModal" data-anuncio="Renault Clio">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Anúncio 5: Removido -->
+                                    <tr class="anuncio-row table-danger" data-estado="removido" data-denuncias="0">
+                                        <td class="ps-4">
+                                            <img src="https://placehold.co/120x80/6c757d/ffffff?text=Audi+A3" alt="Audi A3" class="rounded" style="width: 120px; height: 80px; object-fit: cover;">
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-decoration-line-through">Audi A3 2.0 TDI Quattro</div>
+                                            <div class="small text-muted mt-1">
+                                                <i class="bi bi-person me-1"></i>Bruno Vieira
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-calendar3 me-1"></i>2019
+                                                <span class="mx-2">•</span>
+                                                <i class="bi bi-speedometer2 me-1"></i>75.000 km
+                                            </div>
+                                            <div class="small text-danger mt-1 fw-semibold">
+                                                <i class="bi bi-x-circle me-1"></i>Removido: Fotografias enganadoras
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-muted text-decoration-line-through">22.300 €</div>
+                                        </td>
+                                        <td>
+                                            <div>28/09/2025</div>
+                                            <small class="text-muted">há 1 mês</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-trash-fill me-1"></i>Removido
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#restaurarAnuncioModal" data-anuncio="Audi A3">
+                                                <i class="bi bi-arrow-counterclockwise me-1"></i>Restaurar
+                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                </div>
+
+                <!-- Paginação -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted">
+                        A mostrar 1-5 de 887 anúncios
+                    </div>
+                    <nav>
+                        <ul class="pagination mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">178</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
 
@@ -518,39 +1630,1014 @@
     </div>
 </div>
 
+<!-- ========================= MODAIS ========================= -->
+
+<!-- Modal: Detalhes do Vendedor -->
+<div class="modal fade" id="detalhesVendedorModal" tabindex="-1" aria-labelledby="detalhesVendedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold" id="detalhesVendedorModalLabel">
+                    <i class="bi bi-person-vcard me-2"></i>Detalhes do Vendedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Informações Pessoais -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://placehold.co/80x80/2563eb/ffffff?text=JP" alt="Avatar" class="rounded-circle me-3">
+                        <div>
+                            <h5 class="mb-1 fw-bold">João Pereira</h5>
+                            <p class="text-muted mb-0">joao.pereira@email.com</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Dados Pessoais -->
+                    <div class="col-md-6">
+                        <h6 class="text-primary fw-bold mb-3">
+                            <i class="bi bi-person-fill me-2"></i>Dados Pessoais
+                        </h6>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Nome Completo</label>
+                            <div class="fw-semibold">João Manuel Pereira</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Username</label>
+                            <div class="fw-semibold">joao.pereira</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">NIF</label>
+                            <div class="fw-semibold font-monospace">211345678</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Data de Registo</label>
+                            <div class="fw-semibold">22/10/2025 às 12:30</div>
+                        </div>
+                    </div>
+
+                    <!-- Contactos -->
+                    <div class="col-md-6">
+                        <h6 class="text-primary fw-bold mb-3">
+                            <i class="bi bi-telephone-fill me-2"></i>Contactos
+                        </h6>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Email</label>
+                            <div class="fw-semibold">joao.pereira@email.com</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Telemóvel</label>
+                            <div class="fw-semibold">+351 912 345 678</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Telefone Alternativo</label>
+                            <div class="text-muted">Não definido</div>
+                        </div>
+                    </div>
+
+                    <!-- Morada -->
+                    <div class="col-12">
+                        <h6 class="text-primary fw-bold mb-3">
+                            <i class="bi bi-geo-alt-fill me-2"></i>Morada
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="text-muted small d-block mb-1">Rua</label>
+                                <div class="fw-semibold">Rua da República, nº 45, 3º Dto.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="text-muted small d-block mb-1">Código Postal</label>
+                                <div class="fw-semibold">4710-229</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block mb-1">Localidade</label>
+                                <div class="fw-semibold">Braga</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block mb-1">País</label>
+                                <div class="fw-semibold">Portugal</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verificações RF 37 -->
+                    <div class="col-12">
+                        <h6 class="text-primary fw-bold mb-3">
+                            <i class="bi bi-shield-check me-2"></i>Verificações de Validação
+                        </h6>
+                        <div class="list-group">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-envelope-check me-2"></i>Email Verificado</span>
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle-fill"></i> Sim
+                                </span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-phone-vibrate me-2"></i>Telemóvel Verificado</span>
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle-fill"></i> Sim
+                                </span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-file-earmark-text me-2"></i>NIF Validado</span>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-hourglass-split"></i> A verificar
+                                </span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-files me-2"></i>Registo Duplicado</span>
+                                <span class="badge bg-success">
+                                    <i class="bi bi-x-circle-fill"></i> Não
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Fechar
+                </button>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejeitarVendedorModal">
+                    <i class="bi bi-x-circle me-1"></i>Rejeitar Vendedor
+                </button>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#aprovarVendedorModal">
+                    <i class="bi bi-check-circle me-1"></i>Aprovar Vendedor
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Aprovar Vendedor -->
+<div class="modal fade" id="aprovarVendedorModal" tabindex="-1" aria-labelledby="aprovarVendedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white border-0">
+                <h5 class="modal-title fw-bold" id="aprovarVendedorModalLabel">
+                    <i class="bi bi-check-circle-fill me-2"></i>Aprovar Vendedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-check-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Confirmar Aprovação de Vendedor</h5>
+                    <p class="text-muted mb-0">
+                        Tem a certeza que pretende aprovar o registo de <strong class="text-dark">João Pereira</strong> como vendedor na plataforma?
+                    </p>
+                </div>
+
+                <div class="alert alert-info d-flex align-items-start" role="alert">
+                    <i class="bi bi-info-circle-fill flex-shrink-0 me-2 mt-1"></i>
+                    <div class="small">
+                        Ao aprovar, o vendedor receberá um email de confirmação e poderá iniciar a publicação de anúncios na plataforma.
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="confirmacaoAprovacao" required>
+                    <label class="form-check-label" for="confirmacaoAprovacao">
+                        Confirmo que verifiquei todos os dados do vendedor (NIF, email, telefone)
+                    </label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notasAprovacao" class="form-label">Notas (opcional)</label>
+                    <textarea class="form-control" id="notasAprovacao" rows="2" placeholder="Adicione notas sobre a aprovação..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-success" id="btnConfirmarAprovacao">
+                    <i class="bi bi-check-circle me-1"></i>Confirmar Aprovação
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Rejeitar Vendedor -->
+<div class="modal fade" id="rejeitarVendedorModal" tabindex="-1" aria-labelledby="rejeitarVendedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white border-0">
+                <h5 class="modal-title fw-bold" id="rejeitarVendedorModalLabel">
+                    <i class="bi bi-x-circle-fill me-2"></i>Rejeitar Vendedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-x-fill text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Rejeitar Registo de Vendedor</h5>
+                    <p class="text-muted mb-0">
+                        Tem a certeza que pretende rejeitar o registo de <strong class="text-dark">João Pereira</strong>?
+                    </p>
+                </div>
+
+                <div class="alert alert-warning d-flex align-items-start" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 mt-1"></i>
+                    <div class="small">
+                        Esta ação é <strong>irreversível</strong>. O utilizador receberá um email com o motivo da rejeição.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="motivoRejeicao" class="form-label">
+                        Motivo da Rejeição <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select" id="motivoRejeicao" required>
+                        <option value="" selected>Selecione um motivo...</option>
+                        <option value="nif_invalido">NIF Inválido ou Duplicado</option>
+                        <option value="dados_incorretos">Dados Pessoais Incorretos</option>
+                        <option value="email_invalido">Email Inválido ou Não Verificado</option>
+                        <option value="telefone_invalido">Telefone Inválido</option>
+                        <option value="reputacao">Problemas de Reputação</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="detalhesRejeicao" class="form-label">
+                        Detalhes Adicionais <span class="text-danger">*</span>
+                    </label>
+                    <textarea class="form-control" id="detalhesRejeicao" rows="3" placeholder="Descreva o motivo da rejeição. Esta mensagem será enviada ao utilizador..." required></textarea>
+                    <div class="form-text">Mínimo 20 caracteres</div>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmacaoRejeicao" required>
+                    <label class="form-check-label" for="confirmacaoRejeicao">
+                        Confirmo que esta rejeição é justificada e final
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-arrow-left me-1"></i>Voltar
+                </button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarRejeicao">
+                    <i class="bi bi-x-circle me-1"></i>Confirmar Rejeição
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= MODAIS GERIR UTILIZADORES ========================= -->
+
+<!-- Modal: Adicionar Novo Utilizador -->
+<div class="modal fade" id="adicionarUtilizadorModal" tabindex="-1" aria-labelledby="adicionarUtilizadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold" id="adicionarUtilizadorModalLabel">
+                    <i class="bi bi-person-plus-fill me-2"></i>Adicionar Novo Utilizador
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="formAdicionarUtilizador">
+                    <div class="row g-3">
+                        <!-- Dados Pessoais -->
+                        <div class="col-12">
+                            <h6 class="text-primary fw-bold mb-3">
+                                <i class="bi bi-person-fill me-2"></i>Dados Pessoais
+                            </h6>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoNome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="novoNome" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoUsername" class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="novoUsername" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="novoEmail" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoTelefone" class="form-label">Telefone <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="novoTelefone" placeholder="+351 912 345 678" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoPassword" class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="novoPassword" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoPasswordConfirm" class="form-label">Confirmar Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="novoPasswordConfirm" required>
+                        </div>
+
+                        <!-- Tipo de Utilizador -->
+                        <div class="col-12 mt-4">
+                            <h6 class="text-primary fw-bold mb-3">
+                                <i class="bi bi-person-badge-fill me-2"></i>Tipo de Utilizador
+                            </h6>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="tipoComprador" value="comprador">
+                                <label class="form-check-label" for="tipoComprador">
+                                    <i class="bi bi-cart-check me-1"></i>Comprador
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="tipoVendedor" value="vendedor">
+                                <label class="form-check-label" for="tipoVendedor">
+                                    <i class="bi bi-shop-window me-1"></i>Vendedor
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="tipoAdmin" value="admin">
+                                <label class="form-check-label" for="tipoAdmin">
+                                    <i class="bi bi-shield-fill-check me-1"></i>Administrador
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Permissões de Administrador (RF 27, RF 35) -->
+                        <div class="col-12 mt-3" id="adminPermissoesSection" style="display: none;">
+                            <div class="alert alert-warning">
+                                <h6 class="alert-heading fw-bold">
+                                    <i class="bi bi-shield-exclamation me-2"></i>Permissões de Administrador
+                                </h6>
+                                <p class="mb-3 small">Selecione o nível de acesso para este administrador:</p>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="nivelAcesso" id="nivelCompleto" value="completo" checked>
+                                    <label class="form-check-label" for="nivelCompleto">
+                                        <strong>Completo</strong> - Acesso total a todas as funcionalidades
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="nivelAcesso" id="nivelModeracao" value="moderacao">
+                                    <label class="form-check-label" for="nivelModeracao">
+                                        <strong>Moderação</strong> - Gerir anúncios e denúncias apenas
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="nivelAcesso" id="nivelUtilizadores" value="utilizadores">
+                                    <label class="form-check-label" for="nivelUtilizadores">
+                                        <strong>Gestão de Utilizadores</strong> - Validar e gerir utilizadores apenas
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="nivelAcesso" id="nivelLeitura" value="leitura">
+                                    <label class="form-check-label" for="nivelLeitura">
+                                        <strong>Leitura</strong> - Visualizar estatísticas e relatórios apenas
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnAdicionarUtilizador">
+                    <i class="bi bi-check-circle me-1"></i>Adicionar Utilizador
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Editar Utilizador -->
+<div class="modal fade" id="editarUtilizadorModal" tabindex="-1" aria-labelledby="editarUtilizadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold" id="editarUtilizadorModalLabel">
+                    <i class="bi bi-pencil-fill me-2"></i>Editar Utilizador
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" value="Ana Silva">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" value="ana.silva">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="as.silva@email.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" value="+351 912 345 678">
+                    </div>
+                    <div class="col-12 mt-4">
+                        <h6 class="text-primary fw-bold mb-3">Tipo de Conta</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="editTipoComprador" checked>
+                            <label class="form-check-label" for="editTipoComprador">
+                                <i class="bi bi-cart-check me-1"></i>Comprador
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="editTipoVendedor">
+                            <label class="form-check-label" for="editTipoVendedor">
+                                <i class="bi bi-shop-window me-1"></i>Vendedor
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnSalvarEdicao">
+                    <i class="bi bi-check-circle me-1"></i>Guardar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Bloquear Utilizador (RF 28, RF 33) -->
+<div class="modal fade" id="bloquearUtilizadorModal" tabindex="-1" aria-labelledby="bloquearUtilizadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white border-0">
+                <h5 class="modal-title fw-bold" id="bloquearUtilizadorModalLabel">
+                    <i class="bi bi-lock-fill me-2"></i>Bloquear Utilizador
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-lock text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Bloquear Acesso ao Utilizador</h5>
+                    <p class="text-muted mb-0">
+                        Tem a certeza que pretende bloquear <strong class="text-dark">Ana Silva</strong>?
+                    </p>
+                </div>
+
+                <div class="alert alert-danger d-flex align-items-start" role="alert">
+                    <i class="bi bi-exclamation-octagon-fill flex-shrink-0 me-2 mt-1"></i>
+                    <div class="small">
+                        O utilizador não poderá aceder à plataforma até ser desbloqueado.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="motivoBloqueio" class="form-label">
+                        Motivo do Bloqueio <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select" id="motivoBloqueio" required>
+                        <option value="" selected>Selecione um motivo...</option>
+                        <option value="fraude">Atividade Fraudulenta</option>
+                        <option value="spam">Spam ou Abuso</option>
+                        <option value="violacao_termos">Violação de Termos de Uso</option>
+                        <option value="anuncios_falsos">Anúncios Enganadores</option>
+                        <option value="comportamento_inadequado">Comportamento Inadequado</option>
+                        <option value="pagamento_pendente">Pagamentos Pendentes</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="detalhesBloqueio" class="form-label">
+                        Detalhes do Bloqueio <span class="text-danger">*</span>
+                    </label>
+                    <textarea class="form-control" id="detalhesBloqueio" rows="3" placeholder="Descreva o motivo do bloqueio. Esta informação ficará registada no histórico..." required></textarea>
+                    <div class="form-text">Mínimo 20 caracteres (RF 28, RF 33)</div>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmacaoBloqueio" required>
+                    <label class="form-check-label" for="confirmacaoBloqueio">
+                        Confirmo que este bloqueio é justificado
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-arrow-left me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarBloqueio">
+                    <i class="bi bi-lock-fill me-1"></i>Confirmar Bloqueio
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Desbloquear Utilizador -->
+<div class="modal fade" id="desbloquearUtilizadorModal" tabindex="-1" aria-labelledby="desbloquearUtilizadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white border-0">
+                <h5 class="modal-title fw-bold" id="desbloquearUtilizadorModalLabel">
+                    <i class="bi bi-unlock-fill me-2"></i>Desbloquear Utilizador
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-check text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Restaurar Acesso do Utilizador</h5>
+                    <p class="text-muted mb-0">
+                        Tem a certeza que pretende desbloquear <strong class="text-dark">Bruno Vieira</strong>?
+                    </p>
+                </div>
+
+                <div class="alert alert-info d-flex align-items-start" role="alert">
+                    <i class="bi bi-info-circle-fill flex-shrink-0 me-2 mt-1"></i>
+                    <div class="small">
+                        <strong>Bloqueado por:</strong> Fraude detetada<br>
+                        <strong>Data:</strong> 08/08/2025<br>
+                        <strong>Admin:</strong> admin@marketplace.com
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notasDesbloqueio" class="form-label">Notas do Desbloqueio (opcional)</label>
+                    <textarea class="form-control" id="notasDesbloqueio" rows="2" placeholder="Adicione notas sobre o desbloqueio..."></textarea>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmacaoDesbloqueio" required>
+                    <label class="form-check-label" for="confirmacaoDesbloqueio">
+                        Confirmo que pretendo restaurar o acesso deste utilizador
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-success" id="btnConfirmarDesbloqueio">
+                    <i class="bi bi-unlock-fill me-1"></i>Desbloquear Utilizador
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         // Script para controlar a navegação por abas no painel de administração
         document.addEventListener('DOMContentLoaded', function () {
             const sidebarLinks = document.querySelectorAll('.admin-sidebar .list-group-item-action');
             const contentSections = document.querySelectorAll('.admin-content-section');
+            const quickActionLinks = document.querySelectorAll('.btn[data-target]');
 
+            // Função para alternar entre secções
+            function switchSection(targetId) {
+                // Esconde todas as secções
+                contentSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+
+                // Mostra a secção correspondente
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                }
+
+                // Atualiza o item ativo no menu lateral
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                const matchingSidebarLink = Array.from(sidebarLinks).find(
+                    link => link.getAttribute('data-target') === targetId
+                );
+                if (matchingSidebarLink) {
+                    matchingSidebarLink.classList.add('active');
+                }
+
+                // Scroll suave para o topo
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+
+            // Event listeners para links do menu lateral
             sidebarLinks.forEach(link => {
                 link.addEventListener('click', function (event) {
                     event.preventDefault();
-
-                    // Esconde todas as outras secções
-                    contentSections.forEach(section => {
-                        section.style.display = 'none';
-                    });
-
-                    // Mostra a secção correspondente ao link clicado
                     const targetId = this.getAttribute('data-target');
-                    const targetSection = document.querySelector(targetId);
-                    if (targetSection) {
-                        targetSection.style.display = 'block';
-                    }
-
-                    // Atualiza o item ativo no menu
-                    sidebarLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
+                    switchSection(targetId);
                 });
             });
- 
 
-             // Gráfico 1: Novos Registos (Gráfico de Barras)
-           
-            // --- FIM DO CÓDIGO DOS GRÁFICOS ---
+            // Event listeners para botões de Ações Rápidas
+            quickActionLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    switchSection(targetId);
+                });
+            });
+
+            // ==================== VALIDAR VENDEDORES ====================
+
+            // Filtrar vendedores por estado
+            const filterEstadoButtons = document.querySelectorAll('input[name="filterEstadoVendedor"]');
+            const vendedorRows = document.querySelectorAll('.vendedor-row');
+
+            filterEstadoButtons.forEach(button => {
+                button.addEventListener('change', function() {
+                    const filterId = this.id;
+                    let filterValue = '';
+
+                    if (filterId === 'filterPendentes') filterValue = 'pendente';
+                    else if (filterId === 'filterAprovados') filterValue = 'aprovado';
+                    else if (filterId === 'filterRejeitados') filterValue = 'rejeitado';
+
+                    vendedorRows.forEach(row => {
+                        if (filterId === 'filterTodos' || row.dataset.estado === filterValue) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Pesquisar vendedores
+            const searchVendedor = document.getElementById('searchVendedor');
+            if (searchVendedor) {
+                searchVendedor.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+
+                    vendedorRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Copiar NIF
+            const copyNifButtons = document.querySelectorAll('.copy-nif-btn');
+            copyNifButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const nif = this.dataset.nif;
+                    navigator.clipboard.writeText(nif).then(() => {
+                        const icon = this.querySelector('i');
+                        const originalClass = icon.className;
+                        icon.className = 'bi bi-check2';
+                        this.classList.add('text-success');
+
+                        setTimeout(() => {
+                            icon.className = originalClass;
+                            this.classList.remove('text-success');
+                        }, 2000);
+                    }).catch(err => {
+                        alert('Erro ao copiar NIF');
+                    });
+                });
+            });
+
+            // Aprovar Vendedor
+            const btnConfirmarAprovacao = document.getElementById('btnConfirmarAprovacao');
+            if (btnConfirmarAprovacao) {
+                btnConfirmarAprovacao.addEventListener('click', function() {
+                    const confirmacao = document.getElementById('confirmacaoAprovacao');
+
+                    if (!confirmacao.checked) {
+                        alert('Por favor, confirme que verificou todos os dados do vendedor.');
+                        return;
+                    }
+
+                    const notas = document.getElementById('notasAprovacao').value;
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A processar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Aprovado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('aprovarVendedorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Vendedor aprovado com sucesso!\nO vendedor receberá um email de confirmação.');
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            confirmacao.checked = false;
+                            document.getElementById('notasAprovacao').value = '';
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Rejeitar Vendedor
+            const btnConfirmarRejeicao = document.getElementById('btnConfirmarRejeicao');
+            if (btnConfirmarRejeicao) {
+                btnConfirmarRejeicao.addEventListener('click', function() {
+                    const motivo = document.getElementById('motivoRejeicao').value;
+                    const detalhes = document.getElementById('detalhesRejeicao').value;
+                    const confirmacao = document.getElementById('confirmacaoRejeicao');
+
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para a rejeição.');
+                        return;
+                    }
+
+                    if (detalhes.length < 20) {
+                        alert('Por favor, forneça detalhes adicionais (mínimo 20 caracteres).');
+                        return;
+                    }
+
+                    if (!confirmacao.checked) {
+                        alert('Por favor, confirme que esta rejeição é justificada.');
+                        return;
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A processar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-x-circle-fill me-1"></i>Rejeitado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('rejeitarVendedorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✗ Vendedor rejeitado.\nO vendedor receberá um email com o motivo da rejeição.');
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('motivoRejeicao').value = '';
+                            document.getElementById('detalhesRejeicao').value = '';
+                            confirmacao.checked = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // ==================== GERIR UTILIZADORES ====================
+
+            // Mostrar/Esconder permissões de administrador
+            const tipoAdminCheckbox = document.getElementById('tipoAdmin');
+            const adminPermissoesSection = document.getElementById('adminPermissoesSection');
+
+            if (tipoAdminCheckbox) {
+                tipoAdminCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        adminPermissoesSection.style.display = 'block';
+                    } else {
+                        adminPermissoesSection.style.display = 'none';
+                    }
+                });
+            }
+
+            // Filtrar utilizadores por tipo
+            const filterTipoUtilizador = document.getElementById('filterTipoUtilizador');
+            const filterEstadoUtilizador = document.getElementById('filterEstadoUtilizador');
+            const searchUtilizador = document.getElementById('searchUtilizador');
+            const utilizadorRows = document.querySelectorAll('.utilizador-row');
+
+            function filtrarUtilizadores() {
+                const tipoSelecionado = filterTipoUtilizador ? filterTipoUtilizador.value : '';
+                const estadoSelecionado = filterEstadoUtilizador ? filterEstadoUtilizador.value : '';
+                const searchTerm = searchUtilizador ? searchUtilizador.value.toLowerCase() : '';
+
+                utilizadorRows.forEach(row => {
+                    const tipos = row.dataset.tipo;
+                    const estado = row.dataset.estado;
+                    const text = row.textContent.toLowerCase();
+
+                    let mostrar = true;
+
+                    // Filtro de tipo
+                    if (tipoSelecionado && !tipos.includes(tipoSelecionado)) {
+                        mostrar = false;
+                    }
+
+                    // Filtro de estado
+                    if (estadoSelecionado && estado !== estadoSelecionado) {
+                        mostrar = false;
+                    }
+
+                    // Filtro de pesquisa
+                    if (searchTerm && !text.includes(searchTerm)) {
+                        mostrar = false;
+                    }
+
+                    row.style.display = mostrar ? '' : 'none';
+                });
+            }
+
+            if (filterTipoUtilizador) {
+                filterTipoUtilizador.addEventListener('change', filtrarUtilizadores);
+            }
+
+            if (filterEstadoUtilizador) {
+                filterEstadoUtilizador.addEventListener('change', filtrarUtilizadores);
+            }
+
+            if (searchUtilizador) {
+                searchUtilizador.addEventListener('input', filtrarUtilizadores);
+            }
+
+            // Adicionar Utilizador
+            const btnAdicionarUtilizador = document.getElementById('btnAdicionarUtilizador');
+            if (btnAdicionarUtilizador) {
+                btnAdicionarUtilizador.addEventListener('click', function() {
+                    const nome = document.getElementById('novoNome').value;
+                    const username = document.getElementById('novoUsername').value;
+                    const email = document.getElementById('novoEmail').value;
+                    const telefone = document.getElementById('novoTelefone').value;
+                    const password = document.getElementById('novoPassword').value;
+                    const passwordConfirm = document.getElementById('novoPasswordConfirm').value;
+
+                    const tipoComprador = document.getElementById('tipoComprador').checked;
+                    const tipoVendedor = document.getElementById('tipoVendedor').checked;
+                    const tipoAdmin = document.getElementById('tipoAdmin').checked;
+
+                    // Validações
+                    if (!nome || !username || !email || !telefone || !password) {
+                        alert('Por favor, preencha todos os campos obrigatórios.');
+                        return;
+                    }
+
+                    if (password !== passwordConfirm) {
+                        alert('As passwords não coincidem.');
+                        return;
+                    }
+
+                    if (!tipoComprador && !tipoVendedor && !tipoAdmin) {
+                        alert('Por favor, selecione pelo menos um tipo de utilizador.');
+                        return;
+                    }
+
+                    let nivelAcesso = '';
+                    if (tipoAdmin) {
+                        const nivelSelecionado = document.querySelector('input[name="nivelAcesso"]:checked');
+                        nivelAcesso = nivelSelecionado ? nivelSelecionado.value : 'completo';
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A criar...';
+
+                    // Simular criação
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Criado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('adicionarUtilizadorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Utilizador adicionado com sucesso!\nNome: ' + nome + '\nEmail: ' + email);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('formAdicionarUtilizador').reset();
+                            adminPermissoesSection.style.display = 'none';
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Salvar Edição
+            const btnSalvarEdicao = document.getElementById('btnSalvarEdicao');
+            if (btnSalvarEdicao) {
+                btnSalvarEdicao.addEventListener('click', function() {
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A guardar...';
+
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Guardado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('editarUtilizadorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Alterações guardadas com sucesso!');
+
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Bloquear Utilizador (RF 28, RF 33)
+            const btnConfirmarBloqueio = document.getElementById('btnConfirmarBloqueio');
+            if (btnConfirmarBloqueio) {
+                btnConfirmarBloqueio.addEventListener('click', function() {
+                    const motivo = document.getElementById('motivoBloqueio').value;
+                    const detalhes = document.getElementById('detalhesBloqueio').value;
+                    const confirmacao = document.getElementById('confirmacaoBloqueio');
+
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para o bloqueio.');
+                        return;
+                    }
+
+                    if (detalhes.length < 20) {
+                        alert('Por favor, forneça detalhes do bloqueio (mínimo 20 caracteres).');
+                        return;
+                    }
+
+                    if (!confirmacao.checked) {
+                        alert('Por favor, confirme que este bloqueio é justificado.');
+                        return;
+                    }
+
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A bloquear...';
+
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-lock-fill me-1"></i>Bloqueado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('bloquearUtilizadorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Utilizador bloqueado com sucesso!\nMotivo: ' + motivo + '\nO bloqueio foi registado no histórico.');
+
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('motivoBloqueio').value = '';
+                            document.getElementById('detalhesBloqueio').value = '';
+                            confirmacao.checked = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Desbloquear Utilizador
+            const btnConfirmarDesbloqueio = document.getElementById('btnConfirmarDesbloqueio');
+            if (btnConfirmarDesbloqueio) {
+                btnConfirmarDesbloqueio.addEventListener('click', function() {
+                    const confirmacao = document.getElementById('confirmacaoDesbloqueio');
+
+                    if (!confirmacao.checked) {
+                        alert('Por favor, confirme que pretende desbloquear este utilizador.');
+                        return;
+                    }
+
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A desbloquear...';
+
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-unlock-fill me-1"></i>Desbloqueado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('desbloquearUtilizadorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Utilizador desbloqueado com sucesso!\nO utilizador pode agora aceder à plataforma.');
+
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('notasDesbloqueio').value = '';
+                            confirmacao.checked = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
         });
     </script>
 }
