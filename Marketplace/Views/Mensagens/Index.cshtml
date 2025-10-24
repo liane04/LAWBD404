@@ -123,26 +123,41 @@
 
         <!-- Coluna da Lista de Conversas -->
         <div class="chat-sidebar">
-            <div class="chat-sidebar-header p-3 border-bottom d-flex justify-content-between align-items-center">
-                <h4 class="mb-0"><i class="bi bi-chat-dots-fill me-2"></i>Mensagens</h4>
-                <a href="/" class="btn btn-sm btn-outline-secondary rounded-circle p-1 lh-1" title="Voltar ao site">
-                    <i class="bi bi-x-lg"></i>
-                </a>
-            </div>
-            <div class="p-3 border-bottom">
-                <input type="search" class="form-control" placeholder="Pesquisar conversas...">
+            <div class="chat-sidebar-header p-3 border-bottom">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h4 class="mb-0"><i class="bi bi-chat-dots-fill me-2"></i>Mensagens</h4>
+                    <a href="/" class="btn btn-sm btn-outline-secondary rounded-circle p-1 lh-1" title="Voltar ao site">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+                <div class="btn-group btn-group-sm w-100" role="group" aria-label="Filtro de conversas">
+                    <input type="radio" class="btn-check" name="msgFilter" id="filterTodos" value="todos" checked>
+                    <label class="btn btn-outline-secondary" for="filterTodos">Todos <span class="badge bg-secondary ms-1" id="countTodos">0</span></label>
+                    <input type="radio" class="btn-check" name="msgFilter" id="filterVender" value="vender">
+                    <label class="btn btn-outline-primary" for="filterVender"><i class="bi bi-shop me-1"></i>A vender <span class="badge bg-primary ms-1" id="countVender">0</span></label>
+                    <input type="radio" class="btn-check" name="msgFilter" id="filterComprar" value="comprar">
+                    <label class="btn btn-outline-primary" for="filterComprar"><i class="bi bi-cart-check me-1"></i>A comprar <span class="badge bg-primary ms-1" id="countComprar">0</span></label>
+                </div>
+                <div class="mt-2">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="search" id="chatSearch" class="form-control" placeholder="Procurar por nome ou anúncio...">
+                    </div>
+                </div>
             </div>
             <div class="list-group list-group-flush chat-list-container" id="chatList">
                 <!-- Exemplo de Conversa 1 (Ativa) - Ana (Vendedora) pergunta ao Comprador (Você) -->
                 <a href="#" class="list-group-item list-group-item-action active py-3 chat-item" aria-current="true"
-                   data-name="Ana Silva (Vendedora)"
+                   data-name="Ana Silva"
                    data-avatar="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS"
-                   data-negotiating="BMW Série 1 116d">
+                   data-negotiating="BMW Série 1 116d"
+                   data-type="comprar"
+                   data-search="ana silva bmw serie 1 116d comprar">
                     <div class="d-flex align-items-center">
                         <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS" alt="Avatar" class="rounded-circle me-3">
                         <div class="w-100">
                             <div class="d-flex justify-content-between">
-                                <h6 class="mb-1 fw-bold">Ana Silva (Vendedora)</h6>
+                                <h6 class="mb-1 fw-bold">Ana Silva <span class="badge bg-success-subtle text-success ms-1">A comprar</span></h6>
                                 <small class="text-primary fw-bold">Agora</small>
                             </div>
                             <span class="small d-block text-truncate text-primary">Perfeito. Amanhã às 18h funciona para mim...</span>
@@ -152,14 +167,16 @@
                 </a>
                 <!-- Exemplo de Conversa 2 - Bruno (Comprador) pergunta ao Vendedor (Você) -->
                 <a href="#" class="list-group-item list-group-item-action py-3 chat-item"
-                   data-name="Bruno Vieira (Comprador)"
+                   data-name="Bruno Vieira"
                    data-avatar="https://placehold.co/40x40/F0F3F5/6C757D?text=BV"
-                   data-negotiating="Audi A3 Sportback">
+                   data-negotiating="Audi A3 Sportback"
+                   data-type="vender"
+                   data-search="bruno vieira audi a3 sportback vender">
                     <div class="d-flex align-items-center">
                         <img src="https://placehold.co/40x40/F0F3F5/6C757D?text=BV" alt="Avatar" class="rounded-circle me-3">
                         <div class="w-100">
                             <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">Bruno Vieira (Comprador)</h6>
+                                <h6 class="mb-1">Bruno Vieira <span class="badge bg-primary-subtle text-primary ms-1">A vender</span></h6>
                                 <small class="text-muted">1h</small>
                             </div>
                             <span class="small d-block text-truncate">Qual é o mínimo que aceita pelo Audi?</span>
@@ -171,12 +188,14 @@
                 <a href="#" class="list-group-item list-group-item-action py-3 text-muted chat-item"
                    data-name="Carla Ribeiro"
                    data-avatar="https://placehold.co/40x40/E8F5E9/4CAF50?text=CR"
-                   data-negotiating="Mercedes Classe A">
+                   data-negotiating="Mercedes Classe A"
+                   data-type="vender"
+                   data-search="carla ribeiro mercedes classe a vender">
                     <div class="d-flex align-items-center">
                         <img src="https://placehold.co/40x40/E8F5E9/4CAF50?text=CR" alt="Avatar" class="rounded-circle me-3">
                         <div class="w-100">
                             <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">Carla Ribeiro</h6>
+                                <h6 class="mb-1">Carla Ribeiro <span class="badge bg-primary-subtle text-primary ms-1">A vender</span></h6>
                                 <small>Ontem</small>
                             </div>
                             <span class="small d-block text-truncate">Obrigada!</span>
@@ -187,12 +206,14 @@
                 <a href="#" class="list-group-item list-group-item-action py-3 text-muted chat-item"
                    data-name="João Pereira"
                    data-avatar="https://placehold.co/40x40/ffccbc/ff5722?text=JP"
-                   data-negotiating="VW Golf 1.6 TDI">
+                   data-negotiating="VW Golf 1.6 TDI"
+                   data-type="comprar"
+                   data-search="joao pereira vw golf 1.6 tdi comprar">
                     <div class="d-flex align-items-center">
                         <img src="https://placehold.co/40x40/ffccbc/ff5722?text=JP" alt="Avatar" class="rounded-circle me-3">
                         <div class="w-100">
                             <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">João Pereira</h6>
+                                <h6 class="mb-1">João Pereira <span class="badge bg-success-subtle text-success ms-1">A comprar</span></h6>
                                 <small>2 dias</small>
                             </div>
                             <span class="small d-block text-truncate">Combinado então.</span>
@@ -256,8 +277,8 @@
             <!-- Caixa de Envio de Mensagem -->
             <div class="chat-footer p-3 border-top">
                 <div class="input-group">
-                    <input type="text" class="form-control form-control-lg" placeholder="Escreva a sua mensagem..." aria-label="Escreva a sua mensagem">
-                    <button class="btn btn-primary btn-lg" type="button" title="Enviar Mensagem">
+                    <input id="chatInputBox" type="text" class="form-control form-control-lg" placeholder="Escreva a sua mensagem..." aria-label="Escreva a sua mensagem">
+                    <button id="chatSendBtn" class="btn btn-primary btn-lg" type="button" title="Enviar Mensagem">
                         <i class="bi bi-send-fill"></i>
                     </button>
                 </div>
@@ -273,6 +294,15 @@
     <!-- Script para tornar a lista de chat interativa -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Ajustar o espaçamento do topo para encostar ao header (sem folga extra)
+            try {
+                const main = window.parent?.document?.querySelector?.('.main-content') || document.querySelector('.main-content');
+                const mock = window.parent?.document?.querySelector?.('.mockup-navbar') || document.querySelector('.mockup-navbar');
+                const header = window.parent?.document?.querySelector?.('header') || document.querySelector('header');
+                const mockH = mock ? mock.offsetHeight : 0;
+                const headerH = header ? header.offsetHeight : 0;
+                if (main) main.style.paddingTop = (mockH + headerH) + 'px';
+            } catch (e) { /* no-op */ }
             const chatList = document.getElementById('chatList');
             const chatHeader = document.getElementById('chatHeader');
             const chatAvatar = document.getElementById('chatAvatar');
@@ -303,9 +333,11 @@
                 const name = chatItem.dataset.name;
                 const avatar = chatItem.dataset.avatar;
                 const negotiating = chatItem.dataset.negotiating;
+                const type = (chatItem.dataset.type || '').toLowerCase();
 
                 chatAvatar.src = avatar;
-                chatName.textContent = name;
+                const roleBadge = type === 'vender' ? ' (Vendedor)' : (type === 'comprar' ? ' (Comprador)' : '');
+                chatName.textContent = name + roleBadge;
                 chatNegotiating.textContent = `A negociar: ${negotiating}`;
 
                 // Simula o carregamento de novas mensagens (limpa e adiciona placeholders)
@@ -340,6 +372,81 @@
                  }, 500); // Simula um pequeno atraso de carregamento
 
 
+            });
+
+            // ===== Filtro por tipo e pesquisa =====
+            const filterRadios = document.querySelectorAll('input[name="msgFilter"]');
+            const searchInput = document.getElementById('chatSearch');
+            const countTodos = document.getElementById('countTodos');
+            const countVender = document.getElementById('countVender');
+            const countComprar = document.getElementById('countComprar');
+
+            function normalize(s){ return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, ''); }
+
+            function updateCounts() {
+                let t = { todos: 0, vender: 0, comprar: 0 };
+                chatList.querySelectorAll('.chat-item').forEach(item => {
+                    const type = (item.dataset.type || '').toLowerCase();
+                    t.todos++;
+                    if (type === 'vender') t.vender++; else if (type === 'comprar') t.comprar++;
+                });
+                if (countTodos) countTodos.textContent = t.todos;
+                if (countVender) countVender.textContent = t.vender;
+                if (countComprar) countComprar.textContent = t.comprar;
+            }
+
+            function applyFilters() {
+                const selected = document.querySelector('input[name="msgFilter"]:checked')?.value || 'todos';
+                const q = normalize(searchInput?.value || '');
+                chatList.querySelectorAll('.chat-item').forEach(item => {
+                    const type = (item.dataset.type || '').toLowerCase();
+                    const searchable = normalize(item.dataset.search || item.textContent);
+                    const typeMatch = selected === 'todos' || type === selected;
+                    const textMatch = q.length < 2 || searchable.includes(q);
+                    item.style.display = (typeMatch && textMatch) ? '' : 'none';
+                });
+            }
+
+            filterRadios.forEach(r => r.addEventListener('change', applyFilters));
+            if (searchInput) searchInput.addEventListener('input', applyFilters);
+            updateCounts();
+            applyFilters();
+
+            // ===== Enviar nova mensagem (frontend) =====
+            const inputBox = document.getElementById('chatInputBox');
+            const sendBtn = document.getElementById('chatSendBtn');
+
+            function currentTime() {
+                const d = new Date();
+                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            function appendUserMessage(text) {
+                if (!text) return;
+                const wrap = document.createElement('div');
+                wrap.className = 'd-flex justify-content-end mb-3';
+                const bubble = document.createElement('div');
+                bubble.className = 'message sent';
+                bubble.innerHTML = `${text}<div class="message-time">${currentTime()}</div>`;
+                wrap.appendChild(bubble);
+                chatBody.appendChild(wrap);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+
+            function sendMessage() {
+                const val = (inputBox?.value || '').trim();
+                if (!val) return;
+                appendUserMessage(val.replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+                inputBox.value = '';
+                inputBox.focus();
+            }
+
+            if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+            if (inputBox) inputBox.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
             });
         });
     </script>
