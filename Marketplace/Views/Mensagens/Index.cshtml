@@ -1,0 +1,349 @@
+﻿@{
+    // ViewData["Title"] = "Minhas Mensagens";
+    // Layout = null; // Para remover header/footer nesta página específica (descomentar quando dinâmico)
+}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minhas Mensagens - Marketplace 404</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- O nosso CSS personalizado -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        /* Estilos específicos para a página de chat full-screen */
+        body {
+            overflow: hidden; /* Evita scroll na página principal */
+            background-color: #f8f9fa; /* Cor de fundo geral */
+        }
+
+        .chat-page-container {
+            height: 100vh; /* Altura total da janela */
+            padding-top: 0 !important; /* Remove padding do layout */
+            margin-top: 0 !important; /* Remove margin do layout */
+            display: flex; /* Usa flexbox para layout */
+        }
+
+        .chat-sidebar {
+            width: 320px; /* Largura fixa para a barra lateral */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff; /* Fundo branco */
+            border-right: 1px solid #dee2e6;
+            flex-shrink: 0; /* Impede que encolha */
+        }
+
+        .chat-list-container {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .chat-conversation-area {
+            flex-grow: 1; /* Ocupa o restante espaço */
+            height: 100vh;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff; /* Fundo branco para a área de conversa */
+        }
+
+        .chat-body {
+            overflow-y: auto;
+            background-color: #f1f3f6; /* Cor de fundo da área de mensagens */
+            flex-grow: 1; /* Faz esta área ocupar o espaço restante */
+        }
+
+        .chat-footer {
+            background-color: #fff; /* Fundo branco para a caixa de texto */
+            border-top: 1px solid #dee2e6;
+        }
+
+        .chat-header {
+            background-color: #fff; /* Fundo branco */
+            border-bottom: 1px solid #dee2e6;
+            flex-shrink: 0; /* Impede que encolha */
+        }
+        /* Ajusta o espaçamento dos links nas listas */
+        .list-group-item-action {
+            padding: 1rem 1.25rem;
+            cursor: pointer; /* Indica que é clicável */
+        }
+
+        .list-group-item.active {
+            z-index: 2; /* Garante que o item ativo fica por cima */
+        }
+        /* Estilos das Mensagens (já definidos no site.css, mas repetidos aqui para contexto se necessário) */
+        .message {
+            padding: 10px 15px;
+            border-radius: 1.25rem;
+            max-width: 75%;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+            .message.sent {
+                background-color: var(--primary-color);
+                color: white;
+                border-bottom-right-radius: 0.25rem;
+                margin-left: auto;
+            }
+
+            .message.received {
+                background-color: #fff;
+                color: #333;
+                border: 1px solid #dee2e6;
+                border-bottom-left-radius: 0.25rem;
+            }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.4);
+            text-align: right;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .message.sent .message-time {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Página de chat em ecrã completo -->
+    <div class="d-flex chat-page-container">
+
+        <!-- Coluna da Lista de Conversas -->
+        <div class="chat-sidebar">
+            <div class="chat-sidebar-header p-3 border-bottom d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-chat-dots-fill me-2"></i>Mensagens</h4>
+                <a href="/" class="btn btn-sm btn-outline-secondary rounded-circle p-1 lh-1" title="Voltar ao site">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+            <div class="p-3 border-bottom">
+                <input type="search" class="form-control" placeholder="Pesquisar conversas...">
+            </div>
+            <div class="list-group list-group-flush chat-list-container" id="chatList">
+                <!-- Exemplo de Conversa 1 (Ativa) - Ana (Vendedora) pergunta ao Comprador (Você) -->
+                <a href="#" class="list-group-item list-group-item-action active py-3 chat-item" aria-current="true"
+                   data-name="Ana Silva (Vendedora)"
+                   data-avatar="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS"
+                   data-negotiating="BMW Série 1 116d">
+                    <div class="d-flex align-items-center">
+                        <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS" alt="Avatar" class="rounded-circle me-3">
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1 fw-bold">Ana Silva (Vendedora)</h6>
+                                <small class="text-primary fw-bold">Agora</small>
+                            </div>
+                            <span class="small d-block text-truncate text-primary">Perfeito. Amanhã às 18h funciona para mim...</span>
+                        </div>
+                        <span class="badge bg-primary rounded-pill ms-2">1</span>
+                    </div>
+                </a>
+                <!-- Exemplo de Conversa 2 - Bruno (Comprador) pergunta ao Vendedor (Você) -->
+                <a href="#" class="list-group-item list-group-item-action py-3 chat-item"
+                   data-name="Bruno Vieira (Comprador)"
+                   data-avatar="https://placehold.co/40x40/F0F3F5/6C757D?text=BV"
+                   data-negotiating="Audi A3 Sportback">
+                    <div class="d-flex align-items-center">
+                        <img src="https://placehold.co/40x40/F0F3F5/6C757D?text=BV" alt="Avatar" class="rounded-circle me-3">
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">Bruno Vieira (Comprador)</h6>
+                                <small class="text-muted">1h</small>
+                            </div>
+                            <span class="small d-block text-truncate">Qual é o mínimo que aceita pelo Audi?</span>
+                        </div>
+                        <span class="badge bg-primary rounded-pill ms-2">2</span>
+                    </div>
+                </a>
+                <!-- Exemplo de Conversa 3 - Outra conversa lida -->
+                <a href="#" class="list-group-item list-group-item-action py-3 text-muted chat-item"
+                   data-name="Carla Ribeiro"
+                   data-avatar="https://placehold.co/40x40/E8F5E9/4CAF50?text=CR"
+                   data-negotiating="Mercedes Classe A">
+                    <div class="d-flex align-items-center">
+                        <img src="https://placehold.co/40x40/E8F5E9/4CAF50?text=CR" alt="Avatar" class="rounded-circle me-3">
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">Carla Ribeiro</h6>
+                                <small>Ontem</small>
+                            </div>
+                            <span class="small d-block text-truncate">Obrigada!</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- Exemplo de Conversa 4 - Outra conversa lida -->
+                <a href="#" class="list-group-item list-group-item-action py-3 text-muted chat-item"
+                   data-name="João Pereira"
+                   data-avatar="https://placehold.co/40x40/ffccbc/ff5722?text=JP"
+                   data-negotiating="VW Golf 1.6 TDI">
+                    <div class="d-flex align-items-center">
+                        <img src="https://placehold.co/40x40/ffccbc/ff5722?text=JP" alt="Avatar" class="rounded-circle me-3">
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">João Pereira</h6>
+                                <small>2 dias</small>
+                            </div>
+                            <span class="small d-block text-truncate">Combinado então.</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Coluna da Conversa Ativa -->
+        <div class="chat-conversation-area">
+            <!-- Cabeçalho da Conversa (será atualizado via JS) -->
+            <div class="chat-header p-3 border-bottom d-flex align-items-center" id="chatHeader">
+                <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS" alt="Avatar" class="rounded-circle me-3" id="chatAvatar">
+                <div>
+                    <h6 class="mb-0" id="chatName">Ana Silva (Vendedora)</h6>
+                    <small class="text-muted" id="chatNegotiating">A negociar: BMW Série 1 116d</small>
+                </div>
+                <a href="#" class="btn btn-sm btn-outline-secondary ms-auto" title="Ver Anúncio">
+                    <i class="bi bi-car-front"></i> Ver Anúncio
+                </a>
+            </div>
+
+            <!-- Corpo das Mensagens (será atualizado via JS) -->
+            <div class="chat-body flex-grow-1 p-3" id="chatBody">
+                <!-- Mensagens da conversa com Ana Silva -->
+                <div class="text-center small text-muted my-2">Hoje</div>
+                <div class="d-flex justify-content-end mb-3">
+                    <div class="message sent">
+                        Olá! O BMW ainda está disponível? Aceita trocas?
+                        <div class="message-time">10:30</div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-start mb-3">
+                    <div class="message received">
+                        Olá! Sim, ainda está disponível. Gostaria de ver o carro? Quanto às trocas, infelizmente não estou interessado neste momento.
+                        <div class="message-time">10:31</div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mb-3">
+                    <div class="message sent">
+                        Gostaria sim! É possível amanhã ao final da tarde? Por volta das 18h?
+                        <div class="message-time">10:32</div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-start mb-3">
+                    <div class="message received">
+                        Perfeito. Amanhã às 18h funciona para mim. Envio-lhe a morada por mensagem privada.
+                        <div class="message-time">10:35</div>
+                    </div>
+                </div>
+                <div class="text-center small text-muted my-2">Ontem</div>
+                <div class="d-flex justify-content-end mb-3">
+                    <div class="message sent">
+                        Ok, obrigado pela rápida resposta!
+                        <div class="message-time">17:45</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caixa de Envio de Mensagem -->
+            <div class="chat-footer p-3 border-top">
+                <div class="input-group">
+                    <input type="text" class="form-control form-control-lg" placeholder="Escreva a sua mensagem..." aria-label="Escreva a sua mensagem">
+                    <button class="btn btn-primary btn-lg" type="button" title="Enviar Mensagem">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Script para tornar a lista de chat interativa -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatList = document.getElementById('chatList');
+            const chatHeader = document.getElementById('chatHeader');
+            const chatAvatar = document.getElementById('chatAvatar');
+            const chatName = document.getElementById('chatName');
+            const chatNegotiating = document.getElementById('chatNegotiating');
+            const chatBody = document.getElementById('chatBody');
+
+            chatList.addEventListener('click', function (event) {
+                // Encontra o link da conversa clicado
+                const chatItem = event.target.closest('.chat-item');
+                if (!chatItem) return; // Sai se não clicou num item de chat
+
+                event.preventDefault(); // Impede a navegação padrão do link
+
+                // Remove a classe 'active' de todos os itens
+                chatList.querySelectorAll('.chat-item').forEach(item => {
+                    item.classList.remove('active');
+                    item.setAttribute('aria-current', 'false'); // Atualiza atributo ARIA
+                    item.classList.add('text-muted'); // Define como não ativo (cinzento)
+                });
+
+                // Adiciona a classe 'active' ao item clicado
+                chatItem.classList.add('active');
+                chatItem.setAttribute('aria-current', 'true'); // Atualiza atributo ARIA
+                chatItem.classList.remove('text-muted'); // Remove o cinzento
+
+                // Atualiza o cabeçalho e corpo da conversa com dados do item clicado
+                const name = chatItem.dataset.name;
+                const avatar = chatItem.dataset.avatar;
+                const negotiating = chatItem.dataset.negotiating;
+
+                chatAvatar.src = avatar;
+                chatName.textContent = name;
+                chatNegotiating.textContent = `A negociar: ${negotiating}`;
+
+                // Simula o carregamento de novas mensagens (limpa e adiciona placeholders)
+                chatBody.innerHTML = `
+                    <div class="text-center p-5 text-muted">
+                        <div class="spinner-border spinner-border-sm text-primary mb-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div>A carregar mensagens com ${name}...</div>
+                    </div>
+                `;
+                // Idealmente, aqui farias um pedido AJAX para buscar as mensagens reais
+                // Para a maquete estática, poderias ter blocos de HTML predefinidos
+                // e mostrá-los/escondê-los, ou simplesmente deixar o "loading".
+                // Exemplo simples: Adiciona uma mensagem de placeholder após um tempo
+                setTimeout(() => {
+                     chatBody.innerHTML = `
+                        <div class="text-center small text-muted my-2">Hoje</div>
+                        <div class="d-flex justify-content-start mb-3">
+                            <div class="message received">
+                                Olá! Esta é uma mensagem de exemplo para ${name}.
+                                <div class="message-time">16:00</div>
+                            </div>
+                        </div>
+                         <div class="d-flex justify-content-end mb-3">
+                            <div class="message sent">
+                                Recebido, obrigado!
+                                <div class="message-time">16:01</div>
+                            </div>
+                        </div>
+                     `;
+                 }, 500); // Simula um pequeno atraso de carregamento
+
+
+            });
+        });
+    </script>
+
+</body>
+</html>
+
