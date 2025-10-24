@@ -1,0 +1,207 @@
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "FAQ";
+}
+
+<div class="container py-5" style="max-width: 1000px;">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold mb-2">Perguntas Frequentes</h1>
+        <p class="text-muted mb-0">Encontre respostas rápidas sobre o funcionamento do 404 Car Marketplace.</p>
+    </div>
+
+    <div class="mb-4">
+        <div class="input-group input-group-lg">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input id="faqSearch" type="text" class="form-control" placeholder="Pesquise por termos como 'registo', 'anúncio', 'reserva'..." />
+        </div>
+        <div class="small text-muted mt-2">Sugestões: registo, criar anúncio, reservas, mensagens, denúncias</div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-4">
+            <div class="list-group shadow-sm" id="faqCategories">
+                <a href="#cat-registo" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                    <i class="bi bi-person-plus me-2 text-primary"></i>Conta e Registo
+                </a>
+                <a href="#cat-anuncios" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-megaphone me-2 text-primary"></i>Anúncios
+                </a>
+                <a href="#cat-reservas" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-calendar-check me-2 text-primary"></i>Reservas
+                </a>
+                <a href="#cat-mensagens" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-chat-dots me-2 text-primary"></i>Mensagens
+                </a>
+                <a href="#cat-denuncias" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-shield-exclamation me-2 text-primary"></i>Segurança e Denúncias
+                </a>
+            </div>
+
+            <div class="card mt-4 border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-2"><i class="bi bi-life-preserver me-1 text-primary"></i>Ainda precisa de ajuda?</h6>
+                    <p class="text-muted mb-3">Fale com o nosso assistente virtual.</p>
+                    <button id="openChatFromFaq" class="btn btn-primary w-100"><i class="bi bi-robot me-1"></i> Abrir Assistente</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+            <div class="tab-content" id="faqContent">
+                <!-- Conta e Registo -->
+                <div class="tab-pane fade show active" id="cat-registo">
+                    <div class="accordion" id="accRegisto">
+                        <div class="accordion-item faq-item" data-tags="registo conta criar cadastro login password">
+                            <h2 class="accordion-header" id="q1h">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q1" aria-expanded="true" aria-controls="q1">
+                                    Como me registo na plataforma?
+                                </button>
+                            </h2>
+                            <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#accRegisto">
+                                <div class="accordion-body">
+                                    Para criar conta, aceda a <a asp-controller="Utilizadores" asp-action="Registar" class="link-primary">Registar</a> e preencha os dados solicitados. Receberá confirmação no e-mail indicado.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item faq-item" data-tags="login entrar recuperar password palavra-passe conta">
+                            <h2 class="accordion-header" id="q2h">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2" aria-controls="q2">
+                                    Esqueci a minha palavra‑passe. O que faço?
+                                </button>
+                            </h2>
+                            <div id="q2" class="accordion-collapse collapse" data-bs-parent="#accRegisto">
+                                <div class="accordion-body">
+                                    Na página de <a asp-controller="Utilizadores" asp-action="Login" class="link-primary">Login</a>, use a opção de recuperação (brevemente). Em alternativa, contacte o suporte.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anúncios -->
+                <div class="tab-pane fade" id="cat-anuncios">
+                    <div class="accordion" id="accAnuncios">
+                        <div class="accordion-item faq-item" data-tags="anuncio anúncio publicar vender carro criar formulário fotos preço">
+                            <h2 class="accordion-header" id="q3h">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q3" aria-controls="q3">
+                                    Como publico um anúncio?
+                                </button>
+                            </h2>
+                            <div id="q3" class="accordion-collapse collapse show" data-bs-parent="#accAnuncios">
+                                <div class="accordion-body">
+                                    Aceda a <a asp-controller="Anuncios" asp-action="Create" class="link-primary">Criar Anúncio</a>, preencha os detalhes do veículo, adicione fotos e submeta para validação.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item faq-item" data-tags="validacao validação verificação tempo publicar revisão">
+                            <h2 class="accordion-header" id="q4h">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q4" aria-controls="q4">
+                                    Quanto tempo demora a validação do anúncio?
+                                </button>
+                            </h2>
+                            <div id="q4" class="accordion-collapse collapse" data-bs-parent="#accAnuncios">
+                                <div class="accordion-body">
+                                    Em regra, a validação ocorre dentro de 24 horas úteis. Receberá notificação quando o anúncio for publicado.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reservas -->
+                <div class="tab-pane fade" id="cat-reservas">
+                    <div class="accordion" id="accReservas">
+                        <div class="accordion-item faq-item" data-tags="reserva test-drive marcar visita calendario agenda">
+                            <h2 class="accordion-header" id="q5h">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q5" aria-controls="q5">
+                                    Como faço uma reserva?
+                                </button>
+                            </h2>
+                            <div id="q5" class="accordion-collapse collapse show" data-bs-parent="#accReservas">
+                                <div class="accordion-body">
+                                    Abra o anúncio desejado e use o botão <em>Reservar</em> (quando disponível) para agendar visita/test‑drive com o vendedor.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item faq-item" data-tags="cancelar reserva reagendar politica políticas">
+                            <h2 class="accordion-header" id="q6h">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q6" aria-controls="q6">
+                                    Posso cancelar ou reagendar uma reserva?
+                                </button>
+                            </h2>
+                            <div id="q6" class="accordion-collapse collapse" data-bs-parent="#accReservas">
+                                <div class="accordion-body">
+                                    Pode cancelar ou sugerir novo horário através da conversa com o vendedor. Respeite as políticas combinadas entre as partes.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensagens -->
+                <div class="tab-pane fade" id="cat-mensagens">
+                    <div class="accordion" id="accMensagens">
+                        <div class="accordion-item faq-item" data-tags="mensagens chat conversas contacto vendedor">
+                            <h2 class="accordion-header" id="q7h">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q7" aria-controls="q7">
+                                    Onde vejo as mensagens com vendedores/compradores?
+                                </button>
+                            </h2>
+                            <div id="q7" class="accordion-collapse collapse show" data-bs-parent="#accMensagens">
+                                <div class="accordion-body">
+                                    Após iniciar contacto num anúncio, a conversa fica disponível no seu painel. Receberá alertas das novas mensagens.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segurança e Denúncias -->
+                <div class="tab-pane fade" id="cat-denuncias">
+                    <div class="accordion" id="accDenuncias">
+                        <div class="accordion-item faq-item" data-tags="denuncia denúncia reportar fraude abuso segurança">
+                            <h2 class="accordion-header" id="q8h">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q8" aria-controls="q8">
+                                    Como faço uma denúncia?
+                                </button>
+                            </h2>
+                            <div id="q8" class="accordion-collapse collapse show" data-bs-parent="#accDenuncias">
+                                <div class="accordion-body">
+                                    Utilize a opção <em>Denunciar</em> presente no anúncio/mensagem e descreva o motivo. A nossa equipa analisará o caso.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const search = document.getElementById('faqSearch');
+            const items = document.querySelectorAll('.faq-item');
+            function norm(s) { return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, ''); }
+            function applyFilter() {
+                const q = norm(search.value);
+                items.forEach(it => {
+                    const txt = norm(it.textContent + ' ' + (it.getAttribute('data-tags') || ''));
+                    it.style.display = q.length < 2 || txt.includes(q) ? '' : 'none';
+                });
+            }
+            if (search) {
+                search.addEventListener('input', applyFilter);
+            }
+
+            const openChatBtn = document.getElementById('openChatFromFaq');
+            if (openChatBtn) {
+                openChatBtn.addEventListener('click', function () {
+                    const t = document.getElementById('chatWidgetToggle');
+                    if (t) t.click();
+                });
+            }
+        })();
+    </script>
+}
+

@@ -234,7 +234,7 @@
                         </a>
                     </p>
                     <p>
-                        <a href="#!" class="text-white-50">
+                        <a asp-controller="Faq" asp-action="Index" class="text-white-50">
                             <i class="bi bi-chevron-right"></i> FAQ
                         </a>
                     </p>
@@ -393,10 +393,23 @@
                 }
             }
 
-            // Ajustar o espaçamento do body quando a mockup navbar está presente
-            if (document.querySelector('.mockup-navbar')) {
-                document.body.style.paddingTop = '46px';
+            // Ajustar o espaçamento do conteúdo para não ficar tapado pelo header fixo
+            function adjustMainOffset() {
+                const mock = document.querySelector('.mockup-navbar');
+                const header = document.querySelector('header');
+                const main = document.querySelector('.main-content');
+                const mockH = mock ? mock.offsetHeight : 0; // ~46px
+                const headerH = header ? header.offsetHeight : 0; // altura da navbar
+                if (main) {
+                    main.style.paddingTop = (mockH + headerH + 16) + 'px'; // +16px de folga
+                } else {
+                    // fallback mínimo no body
+                    document.body.style.paddingTop = (mockH + headerH) + 'px';
+                }
             }
+
+            adjustMainOffset();
+            window.addEventListener('resize', adjustMainOffset);
         });
     </script>
     <!-- ===== FIM MOCKUP MODE SCRIPT ===== -->
