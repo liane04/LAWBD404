@@ -1505,6 +1505,501 @@
                 </div>
             </div>
 
+            <!-- MODAIS - Moderar Anúncios -->
+
+            <!-- Modal: Aprovar Anúncio -->
+            <div class="modal fade" id="aprovarAnuncioModal" tabindex="-1" aria-labelledby="aprovarAnuncioModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success bg-opacity-10">
+                            <h5 class="modal-title text-success fw-bold" id="aprovarAnuncioModalLabel">
+                                <i class="bi bi-check-circle-fill me-2"></i>Aprovar Anúncio
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-success border-0">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-info-circle-fill me-3 fs-5"></i>
+                                    <div>
+                                        <strong>Anúncio:</strong> VW Golf 1.6 TDI Confortline<br>
+                                        <strong>Vendedor:</strong> Miguel Costa<br>
+                                        <strong>Preço:</strong> 12.500 €
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="notasAprovacao" class="form-label">Notas (opcional)</label>
+                                <textarea class="form-control" id="notasAprovacao" rows="3" placeholder="Adicione notas internas sobre esta aprovação..."></textarea>
+                                <div class="form-text">Estas notas serão visíveis apenas para administradores</div>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="notificarVendedorAprovacao">
+                                <label class="form-check-label" for="notificarVendedorAprovacao">
+                                    Notificar o vendedor por email sobre a aprovação
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i>Cancelar
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnConfirmarAprovacaoAnuncio">
+                                <i class="bi bi-check-circle-fill me-1"></i>Aprovar Anúncio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Pausar Anúncio -->
+            <div class="modal fade" id="pausarAnuncioModal" tabindex="-1" aria-labelledby="pausarAnuncioModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning bg-opacity-10">
+                            <h5 class="modal-title text-warning fw-bold" id="pausarAnuncioModalLabel">
+                                <i class="bi bi-pause-circle-fill me-2"></i>Pausar Anúncio
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-warning border-0">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-info-circle-fill me-3 fs-5"></i>
+                                    <div>
+                                        <strong>Anúncio:</strong> BMW Série 1 116d EfficientDynamics<br>
+                                        <strong>Vendedor:</strong> Ana Rodrigues<br>
+                                        O anúncio será pausado temporariamente
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="motivoPausa" class="form-label">
+                                    Motivo da Pausa <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="motivoPausa" required>
+                                    <option value="" selected>Selecione um motivo...</option>
+                                    <option value="informacoes_incompletas">Informações Incompletas</option>
+                                    <option value="fotos_inadequadas">Fotografias Inadequadas</option>
+                                    <option value="preco_suspeito">Preço Suspeito</option>
+                                    <option value="denuncia_pendente">Denúncia em Análise</option>
+                                    <option value="verificacao_adicional">Requer Verificação Adicional</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="detalhesPausa" class="form-label">
+                                    Detalhes <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" id="detalhesPausa" rows="3" required placeholder="Descreva o motivo da pausa..."></textarea>
+                                <div class="form-text">Mínimo 20 caracteres (RF 29)</div>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="notificarVendedorPausa" checked>
+                                <label class="form-check-label" for="notificarVendedorPausa">
+                                    Notificar o vendedor sobre a pausa e o motivo
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i>Cancelar
+                            </button>
+                            <button type="button" class="btn btn-warning" id="btnConfirmarPausa">
+                                <i class="bi bi-pause-circle-fill me-1"></i>Pausar Anúncio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Remover Anúncio -->
+            <div class="modal fade" id="removerAnuncioModal" tabindex="-1" aria-labelledby="removerAnuncioModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger bg-opacity-10">
+                            <h5 class="modal-title text-danger fw-bold" id="removerAnuncioModalLabel">
+                                <i class="bi bi-x-circle-fill me-2"></i>Remover Anúncio
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-danger border-0">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-exclamation-triangle-fill me-3 fs-5"></i>
+                                    <div>
+                                        <strong>Atenção:</strong> Esta ação removerá o anúncio da plataforma.<br>
+                                        <strong>Anúncio:</strong> VW Golf 1.6 TDI Confortline<br>
+                                        <strong>Vendedor:</strong> Miguel Costa<br>
+                                        Esta ação ficará registada no histórico (RF 32)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="motivoRemocao" class="form-label">
+                                    Motivo da Remoção <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="motivoRemocao" required>
+                                    <option value="" selected>Selecione um motivo...</option>
+                                    <option value="informacoes_falsas">Informações Falsas ou Enganadoras</option>
+                                    <option value="fotos_enganadoras">Fotografias Enganadoras</option>
+                                    <option value="veiculo_roubado">Suspeita de Veículo Roubado</option>
+                                    <option value="fraude">Atividade Fraudulenta</option>
+                                    <option value="violacao_termos">Violação Grave dos Termos</option>
+                                    <option value="denuncia_confirmada">Denúncia Confirmada</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="detalhesRemocao" class="form-label">
+                                    Detalhes da Remoção <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" id="detalhesRemocao" rows="4" required placeholder="Descreva detalhadamente o motivo da remoção..."></textarea>
+                                <div class="form-text">Mínimo 30 caracteres - Obrigatório para auditoria (RF 29, RF 32)</div>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="bloquearNovoAnuncioSimilar">
+                                <label class="form-check-label" for="bloquearNovoAnuncioSimilar">
+                                    Bloquear criação de anúncios similares por este vendedor
+                                </label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="notificarVendedorRemocao" checked>
+                                <label class="form-check-label" for="notificarVendedorRemocao">
+                                    Notificar o vendedor sobre a remoção e o motivo
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i>Cancelar
+                            </button>
+                            <button type="button" class="btn btn-danger" id="btnConfirmarRemocao">
+                                <i class="bi bi-trash-fill me-1"></i>Remover Anúncio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Restaurar Anúncio -->
+            <div class="modal fade" id="restaurarAnuncioModal" tabindex="-1" aria-labelledby="restaurarAnuncioModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info bg-opacity-10">
+                            <h5 class="modal-title text-info fw-bold" id="restaurarAnuncioModalLabel">
+                                <i class="bi bi-arrow-counterclockwise me-2"></i>Restaurar Anúncio
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info border-0">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-info-circle-fill me-3 fs-5"></i>
+                                    <div>
+                                        <strong>Anúncio:</strong> Audi A3 2.0 TDI Quattro<br>
+                                        <strong>Vendedor:</strong> Ricardo Mendes<br>
+                                        <strong>Removido em:</strong> 15/10/2025<br>
+                                        <strong>Motivo da remoção:</strong> Fotografias enganadoras
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="justificativaRestauracao" class="form-label">
+                                    Justificativa da Restauração <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" id="justificativaRestauracao" rows="3" required placeholder="Explique por que este anúncio está a ser restaurado..."></textarea>
+                                <div class="form-text">Mínimo 20 caracteres - Necessário para auditoria (RF 32)</div>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="verificacaoCorrecoes" required>
+                                <label class="form-check-label" for="verificacaoCorrecoes">
+                                    <span class="text-danger">*</span> Confirmo que as irregularidades foram corrigidas pelo vendedor
+                                </label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="notificarVendedorRestauracao" checked>
+                                <label class="form-check-label" for="notificarVendedorRestauracao">
+                                    Notificar o vendedor sobre a restauração
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i>Cancelar
+                            </button>
+                            <button type="button" class="btn btn-info" id="btnConfirmarRestauracao">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>Restaurar Anúncio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Detalhes do Anúncio -->
+            <div class="modal fade" id="detalhesAnuncioModal" tabindex="-1" aria-labelledby="detalhesAnuncioModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary bg-opacity-10">
+                            <h5 class="modal-title text-primary fw-bold" id="detalhesAnuncioModalLabel">
+                                <i class="bi bi-eye-fill me-2"></i>Detalhes do Anúncio
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-4">
+                                <!-- Coluna Esquerda: Imagens e Informações Principais -->
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <img src="https://placehold.co/600x400/3b82f6/ffffff?text=BMW+Serie+1" alt="BMW Série 1" class="img-fluid rounded w-100" style="object-fit: cover; height: 300px;">
+                                        <div class="d-flex gap-2 mt-2">
+                                            <img src="https://placehold.co/150x100/3b82f6/ffffff?text=Foto+2" alt="Foto 2" class="img-thumbnail" style="width: 100px; height: 70px; object-fit: cover;">
+                                            <img src="https://placehold.co/150x100/3b82f6/ffffff?text=Foto+3" alt="Foto 3" class="img-thumbnail" style="width: 100px; height: 70px; object-fit: cover;">
+                                            <img src="https://placehold.co/150x100/3b82f6/ffffff?text=Foto+4" alt="Foto 4" class="img-thumbnail" style="width: 100px; height: 70px; object-fit: cover;">
+                                            <img src="https://placehold.co/150x100/3b82f6/ffffff?text=Foto+5" alt="Foto 5" class="img-thumbnail" style="width: 100px; height: 70px; object-fit: cover;">
+                                        </div>
+                                    </div>
+
+                                    <h4 class="fw-bold text-primary mb-1">BMW Série 1 116d EfficientDynamics</h4>
+                                    <h3 class="fw-bold mb-3">15.800 €</h3>
+
+                                    <div class="card bg-light border-0 mb-3">
+                                        <div class="card-body">
+                                            <h6 class="text-primary fw-bold mb-3">
+                                                <i class="bi bi-info-circle-fill me-2"></i>Informações do Vendedor
+                                            </h6>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <small class="text-muted">Nome</small>
+                                                    <p class="mb-0 fw-semibold">Ana Rodrigues</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted">Email</small>
+                                                    <p class="mb-0">ana.rodrigues@email.com</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted">Telefone</small>
+                                                    <p class="mb-0">+351 912 345 678</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted">NIF</small>
+                                                    <p class="mb-0 font-monospace">234567890</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted">Localização</small>
+                                                    <p class="mb-0">Porto</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted">Anúncios Ativos</small>
+                                                    <p class="mb-0">8 anúncios</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body">
+                                            <h6 class="text-primary fw-bold mb-3">
+                                                <i class="bi bi-clock-history me-2"></i>Histórico do Anúncio
+                                            </h6>
+                                            <div class="timeline">
+                                                <div class="d-flex mb-2">
+                                                    <div class="me-3">
+                                                        <span class="badge bg-success">
+                                                            <i class="bi bi-check-circle-fill"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="mb-0 small"><strong>Anúncio ativado</strong></p>
+                                                        <p class="mb-0 text-muted small">15/10/2025 às 14:30</p>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex mb-2">
+                                                    <div class="me-3">
+                                                        <span class="badge bg-primary">
+                                                            <i class="bi bi-plus-circle-fill"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <p class="mb-0 small"><strong>Anúncio criado</strong></p>
+                                                        <p class="mb-0 text-muted small">15/10/2025 às 10:20</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Coluna Direita: Especificações Detalhadas -->
+                                <div class="col-md-6">
+                                    <div class="card bg-light border-0 mb-3">
+                                        <div class="card-body">
+                                            <h6 class="text-primary fw-bold mb-3">
+                                                <i class="bi bi-car-front-fill me-2"></i>Especificações do Veículo
+                                            </h6>
+                                            <div class="row g-3">
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Marca</small>
+                                                    <p class="mb-0 fw-semibold">BMW</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Modelo</small>
+                                                    <p class="mb-0 fw-semibold">Série 1 116d</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Ano</small>
+                                                    <p class="mb-0">2019</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Quilómetros</small>
+                                                    <p class="mb-0">45.000 km</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Combustível</small>
+                                                    <p class="mb-0">Diesel</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Caixa</small>
+                                                    <p class="mb-0">Manual</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Potência</small>
+                                                    <p class="mb-0">116 CV</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Cilindrada</small>
+                                                    <p class="mb-0">1.995 cm³</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Cor</small>
+                                                    <p class="mb-0">Preto Safira</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Portas</small>
+                                                    <p class="mb-0">5 portas</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Lugares</small>
+                                                    <p class="mb-0">5 lugares</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted d-block">Matrícula</small>
+                                                    <p class="mb-0 font-monospace">XX-XX-XX</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card bg-light border-0 mb-3">
+                                        <div class="card-body">
+                                            <h6 class="text-primary fw-bold mb-3">
+                                                <i class="bi bi-gear-fill me-2"></i>Equipamento
+                                            </h6>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                    <small>Ar Condicionado</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                    <small>Computador de Bordo</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                    <small>Direção Assistida</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                    <small>Vidros Elétricos</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                    <small>Sensores de Estacionamento</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                    <small>Bluetooth</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card bg-light border-0 mb-3">
+                                        <div class="card-body">
+                                            <h6 class="text-primary fw-bold mb-3">
+                                                <i class="bi bi-file-text-fill me-2"></i>Descrição
+                                            </h6>
+                                            <p class="mb-0 small">
+                                                BMW Série 1 116d EfficientDynamics em excelente estado de conservação.
+                                                Sempre revisto em oficina da marca com livro de revisões completo.
+                                                Único dono. Aceito retoma. Possibilidade de financiamento.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="card border-warning bg-warning bg-opacity-10">
+                                        <div class="card-body">
+                                            <h6 class="text-warning fw-bold mb-3">
+                                                <i class="bi bi-shield-check me-2"></i>Verificações Administrativas
+                                            </h6>
+                                            <div class="list-group list-group-flush">
+                                                <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 px-0 py-2">
+                                                    <span class="small"><i class="bi bi-image me-2"></i>Fotografias Verificadas</span>
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-check-circle-fill"></i> OK
+                                                    </span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 px-0 py-2">
+                                                    <span class="small"><i class="bi bi-info-circle me-2"></i>Informações Completas</span>
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-check-circle-fill"></i> OK
+                                                    </span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 px-0 py-2">
+                                                    <span class="small"><i class="bi bi-cash me-2"></i>Preço de Mercado</span>
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-check-circle-fill"></i> Normal
+                                                    </span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 px-0 py-2">
+                                                    <span class="small"><i class="bi bi-flag me-2"></i>Denúncias</span>
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-check-circle-fill"></i> 0
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i>Fechar
+                            </button>
+                            <button type="button" class="btn btn-warning">
+                                <i class="bi bi-pause-circle me-1"></i>Pausar
+                            </button>
+                            <button type="button" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i>Remover
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Secção Gerir Denúncias -->
             <div id="gerir-denuncias-content" class="admin-content-section" style="display: none;">
                 <div class="card shadow-sm">
@@ -2634,6 +3129,311 @@
                             this.disabled = false;
                             document.getElementById('notasDesbloqueio').value = '';
                             confirmacao.checked = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // ==================== MODERAR ANÚNCIOS ====================
+
+            // Elementos de filtro e pesquisa
+            const searchAnuncio = document.getElementById('searchAnuncio');
+            const filterEstadoAnuncio = document.getElementById('filterEstadoAnuncio');
+            const filterOrdenacao = document.getElementById('filterOrdenacao');
+            const anuncioRows = document.querySelectorAll('.anuncio-row');
+
+            // Função para filtrar e ordenar anúncios
+            function filtrarAnuncios() {
+                const searchTerm = searchAnuncio ? searchAnuncio.value.toLowerCase() : '';
+                const estadoSelecionado = filterEstadoAnuncio ? filterEstadoAnuncio.value : '';
+
+                let rowsVisiveis = [];
+
+                anuncioRows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    const estado = row.dataset.estado;
+                    const denuncias = parseInt(row.dataset.denuncias);
+
+                    let mostrar = true;
+
+                    // Filtro de pesquisa
+                    if (searchTerm && !text.includes(searchTerm)) {
+                        mostrar = false;
+                    }
+
+                    // Filtro de estado
+                    if (estadoSelecionado) {
+                        if (estadoSelecionado === 'denuncia') {
+                            // Mostrar anúncios com denúncias
+                            if (denuncias === 0) {
+                                mostrar = false;
+                            }
+                        } else if (estado !== estadoSelecionado) {
+                            mostrar = false;
+                        }
+                    }
+
+                    if (mostrar) {
+                        row.style.display = '';
+                        rowsVisiveis.push(row);
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Aplicar ordenação
+                aplicarOrdenacao(rowsVisiveis);
+            }
+
+            // Função para ordenar anúncios
+            function aplicarOrdenacao(rows) {
+                if (!filterOrdenacao || rows.length === 0) return;
+
+                const tbody = rows[0].parentElement;
+                const ordenacao = filterOrdenacao.value;
+
+                // Converter NodeList para array e extrair dados
+                const rowsComDados = Array.from(rows).map(row => {
+                    const precoText = row.querySelector('td:nth-child(3)')?.textContent || '0';
+                    const preco = parseFloat(precoText.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                    const denuncias = parseInt(row.dataset.denuncias) || 0;
+
+                    return { row, preco, denuncias };
+                });
+
+                // Ordenar conforme seleção
+                switch(ordenacao) {
+                    case 'recente':
+                        // Mantém ordem original (mais recentes primeiro)
+                        break;
+                    case 'antigo':
+                        // Inverte a ordem
+                        rowsComDados.reverse();
+                        break;
+                    case 'denuncias':
+                        // Ordena por número de denúncias (descendente)
+                        rowsComDados.sort((a, b) => b.denuncias - a.denuncias);
+                        break;
+                    case 'preco_desc':
+                        // Ordena por preço (descendente)
+                        rowsComDados.sort((a, b) => b.preco - a.preco);
+                        break;
+                    case 'preco_asc':
+                        // Ordena por preço (ascendente)
+                        rowsComDados.sort((a, b) => a.preco - b.preco);
+                        break;
+                }
+
+                // Reordenar os elementos no DOM
+                rowsComDados.forEach(item => {
+                    tbody.appendChild(item.row);
+                });
+            }
+
+            // Event listeners para filtros
+            if (searchAnuncio) {
+                searchAnuncio.addEventListener('input', filtrarAnuncios);
+            }
+
+            if (filterEstadoAnuncio) {
+                filterEstadoAnuncio.addEventListener('change', filtrarAnuncios);
+            }
+
+            if (filterOrdenacao) {
+                filterOrdenacao.addEventListener('change', filtrarAnuncios);
+            }
+
+            // Aprovar Anúncio
+            const btnConfirmarAprovacaoAnuncio = document.getElementById('btnConfirmarAprovacaoAnuncio');
+            if (btnConfirmarAprovacaoAnuncio) {
+                btnConfirmarAprovacaoAnuncio.addEventListener('click', function() {
+                    const notas = document.getElementById('notasAprovacao').value;
+                    const notificar = document.getElementById('notificarVendedorAprovacao').checked;
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A aprovar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Aprovado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('aprovarAnuncioModal'));
+                            if (modal) modal.hide();
+
+                            let mensagem = '✓ Anúncio aprovado com sucesso!';
+                            if (notificar) {
+                                mensagem += '\nO vendedor receberá um email de confirmação.';
+                            }
+                            alert(mensagem);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('notasAprovacao').value = '';
+                            document.getElementById('notificarVendedorAprovacao').checked = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Pausar Anúncio (RF 29)
+            const btnConfirmarPausa = document.getElementById('btnConfirmarPausa');
+            if (btnConfirmarPausa) {
+                btnConfirmarPausa.addEventListener('click', function() {
+                    const motivo = document.getElementById('motivoPausa').value;
+                    const detalhes = document.getElementById('detalhesPausa').value;
+                    const notificar = document.getElementById('notificarVendedorPausa').checked;
+
+                    // Validações (RF 29)
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para a pausa.');
+                        return;
+                    }
+
+                    if (detalhes.length < 20) {
+                        alert('Por favor, forneça detalhes da pausa (mínimo 20 caracteres).');
+                        return;
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A pausar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-pause-circle-fill me-1"></i>Pausado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('pausarAnuncioModal'));
+                            if (modal) modal.hide();
+
+                            let mensagem = '✓ Anúncio pausado com sucesso!\nMotivo: ' + motivo;
+                            if (notificar) {
+                                mensagem += '\nO vendedor será notificado.';
+                            }
+                            mensagem += '\nA ação foi registada no histórico (RF 32).';
+                            alert(mensagem);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('motivoPausa').value = '';
+                            document.getElementById('detalhesPausa').value = '';
+                            document.getElementById('notificarVendedorPausa').checked = true;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Remover Anúncio (RF 29, RF 32)
+            const btnConfirmarRemocao = document.getElementById('btnConfirmarRemocao');
+            if (btnConfirmarRemocao) {
+                btnConfirmarRemocao.addEventListener('click', function() {
+                    const motivo = document.getElementById('motivoRemocao').value;
+                    const detalhes = document.getElementById('detalhesRemocao').value;
+                    const bloquear = document.getElementById('bloquearNovoAnuncioSimilar').checked;
+                    const notificar = document.getElementById('notificarVendedorRemocao').checked;
+
+                    // Validações rigorosas (RF 29, RF 32)
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para a remoção.');
+                        return;
+                    }
+
+                    if (detalhes.length < 30) {
+                        alert('Por favor, forneça detalhes completos da remoção (mínimo 30 caracteres).\nEsta informação é obrigatória para auditoria (RF 32).');
+                        return;
+                    }
+
+                    // Confirmação adicional para ação crítica
+                    if (!confirm('⚠️ ATENÇÃO: Esta ação removerá o anúncio da plataforma.\n\nTem a certeza que deseja continuar?')) {
+                        return;
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A remover...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-trash-fill me-1"></i>Removido!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('removerAnuncioModal'));
+                            if (modal) modal.hide();
+
+                            let mensagem = '✓ Anúncio removido com sucesso!\nMotivo: ' + motivo;
+                            if (bloquear) {
+                                mensagem += '\n⚠️ Anúncios similares deste vendedor serão bloqueados.';
+                            }
+                            if (notificar) {
+                                mensagem += '\nO vendedor receberá notificação com o motivo.';
+                            }
+                            mensagem += '\n\n✓ A remoção foi registada no histórico administrativo (RF 32).';
+                            alert(mensagem);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('motivoRemocao').value = '';
+                            document.getElementById('detalhesRemocao').value = '';
+                            document.getElementById('bloquearNovoAnuncioSimilar').checked = false;
+                            document.getElementById('notificarVendedorRemocao').checked = true;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Restaurar Anúncio (RF 32)
+            const btnConfirmarRestauracao = document.getElementById('btnConfirmarRestauracao');
+            if (btnConfirmarRestauracao) {
+                btnConfirmarRestauracao.addEventListener('click', function() {
+                    const justificativa = document.getElementById('justificativaRestauracao').value;
+                    const verificacao = document.getElementById('verificacaoCorrecoes');
+                    const notificar = document.getElementById('notificarVendedorRestauracao').checked;
+
+                    // Validações
+                    if (justificativa.length < 20) {
+                        alert('Por favor, forneça uma justificativa para a restauração (mínimo 20 caracteres).\nEsta informação é necessária para auditoria (RF 32).');
+                        return;
+                    }
+
+                    if (!verificacao.checked) {
+                        alert('Por favor, confirme que as irregularidades foram corrigidas pelo vendedor.');
+                        return;
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A restaurar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-arrow-counterclockwise me-1"></i>Restaurado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('restaurarAnuncioModal'));
+                            if (modal) modal.hide();
+
+                            let mensagem = '✓ Anúncio restaurado com sucesso!';
+                            if (notificar) {
+                                mensagem += '\nO vendedor será notificado sobre a reativação.';
+                            }
+                            mensagem += '\n\n✓ A restauração foi registada no histórico (RF 32).';
+                            alert(mensagem);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('justificativaRestauracao').value = '';
+                            verificacao.checked = false;
+                            document.getElementById('notificarVendedorRestauracao').checked = true;
                         }, 1500);
                     }, 1000);
                 });

@@ -1,43 +1,120 @@
-﻿@{
-    // ViewData["Title"] = "Minhas Mensagens";
-    // Layout = null; // Para remover header/footer nesta página específica (descomentar quando dinâmico)
+@{
+    ViewData["Title"] = "Minhas Mensagens";
+    Layout = null;
 }
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Minhas Mensagens - Marketplace 404</title>
+    <title>Mensagens - 404 Car Marketplace</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- O nosso CSS personalizado -->
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
-        /* Estilos específicos para a página de chat full-screen */
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #1e293b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --light-bg: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            overflow: hidden; /* Evita scroll na página principal */
-            background-color: #f8f9fa; /* Cor de fundo geral */
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background-color: var(--light-bg);
         }
 
         .chat-page-container {
-            height: 100vh; /* Altura total da janela */
-            padding-top: 0 !important; /* Remove padding do layout */
-            margin-top: 0 !important; /* Remove margin do layout */
-            display: flex; /* Usa flexbox para layout */
+            height: 100vh;
+            display: flex;
         }
 
+        /* ===== SIDEBAR ===== */
         .chat-sidebar {
-            width: 320px; /* Largura fixa para a barra lateral */
+            width: 380px;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background-color: #fff; /* Fundo branco */
-            border-right: 1px solid #dee2e6;
-            flex-shrink: 0; /* Impede que encolha */
+            background: white;
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .chat-sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+        }
+
+        .chat-sidebar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-tab {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .filter-tab:hover {
+            background: var(--light-bg);
+        }
+
+        .filter-tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
         }
 
         .chat-list-container {
@@ -45,240 +122,666 @@
             flex-grow: 1;
         }
 
+        .chat-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .chat-item:hover {
+            background: var(--light-bg);
+        }
+
+        .chat-item.active {
+            background: #eff6ff;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .chat-item-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .online-indicator {
+            width: 12px;
+            height: 12px;
+            background: var(--success-color);
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        .chat-item-name {
+            font-weight: 600;
+            color: var(--secondary-color);
+            font-size: 0.9375rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-item-preview {
+            font-size: 0.875rem;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .chat-item.active .chat-item-preview {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .chat-item-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .chat-item.active .chat-item-time {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .unread-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .type-badge.comprar {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .type-badge.vender {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* ===== CONVERSA ===== */
         .chat-conversation-area {
-            flex-grow: 1; /* Ocupa o restante espaço */
+            flex-grow: 1;
             height: 100vh;
-            padding: 0;
             display: flex;
             flex-direction: column;
-            background-color: #fff; /* Fundo branco para a área de conversa */
-        }
-
-        .chat-body {
-            overflow-y: auto;
-            background-color: #f1f3f6; /* Cor de fundo da área de mensagens */
-            flex-grow: 1; /* Faz esta área ocupar o espaço restante */
-        }
-
-        .chat-footer {
-            background-color: #fff; /* Fundo branco para a caixa de texto */
-            border-top: 1px solid #dee2e6;
+            background: white;
         }
 
         .chat-header {
-            background-color: #fff; /* Fundo branco */
-            border-bottom: 1px solid #dee2e6;
-            flex-shrink: 0; /* Impede que encolha */
-        }
-        /* Ajusta o espaçamento dos links nas listas */
-        .list-group-item-action {
-            padding: 1rem 1.25rem;
-            cursor: pointer; /* Indica que é clicável */
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .list-group-item.active {
-            z-index: 2; /* Garante que o item ativo fica por cima */
+        .chat-header-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
         }
-        /* Estilos das Mensagens (já definidos no site.css, mas repetidos aqui para contexto se necessário) */
+
+        .chat-header-info {
+            flex-grow: 1;
+        }
+
+        .chat-header-name {
+            font-weight: 700;
+            color: var(--secondary-color);
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-header-status {
+            font-size: 0.875rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-online {
+            width: 8px;
+            height: 8px;
+            background: var(--success-color);
+            border-radius: 50%;
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #64748b;
+        }
+
+        .btn-icon:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .chat-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: #f8fafc;
+        }
+
+        .date-divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .date-divider span {
+            background: #e2e8f0;
+            padding: 0.375rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .message-wrapper {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .message-wrapper.sent {
+            justify-content: flex-end;
+        }
+
+        .message-wrapper.received {
+            justify-content: flex-start;
+        }
+
         .message {
-            padding: 10px 15px;
-            border-radius: 1.25rem;
-            max-width: 75%;
-            word-wrap: break-word;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            max-width: 70%;
+            padding: 0.875rem 1.125rem;
+            border-radius: 1.125rem;
+            position: relative;
+            animation: fadeIn 0.3s;
         }
 
-            .message.sent {
-                background-color: var(--primary-color);
-                color: white;
-                border-bottom-right-radius: 0.25rem;
-                margin-left: auto;
-            }
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-            .message.received {
-                background-color: #fff;
-                color: #333;
-                border: 1px solid #dee2e6;
-                border-bottom-left-radius: 0.25rem;
-            }
+        .message.sent {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .message.received {
+            background: white;
+            color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .message-text {
+            word-wrap: break-word;
+            margin-bottom: 0.25rem;
+            line-height: 1.5;
+        }
 
         .message-time {
-            font-size: 0.75rem;
-            color: rgba(0, 0, 0, 0.4);
+            font-size: 0.6875rem;
+            opacity: 0.7;
             text-align: right;
-            margin-top: 5px;
-            display: block;
         }
 
         .message.sent .message-time {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.9);
         }
 
+        .message.received .message-time {
+            color: #94a3b8;
+        }
+
+        /* ===== CAIXA DE ENVIO ===== */
+        .chat-footer {
+            padding: 1.25rem 1.5rem;
+            background: white;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .message-input-container {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .message-input-wrapper {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 0.875rem 3rem 0.875rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            font-size: 0.9375rem;
+            resize: none;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .emoji-btn {
+            position: absolute;
+            right: 1rem;
+            bottom: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: #94a3b8;
+            transition: transform 0.2s;
+        }
+
+        .emoji-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .send-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        .send-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        .chat-list-container::-webkit-scrollbar,
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-list-container::-webkit-scrollbar-track,
+        .chat-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-list-container::-webkit-scrollbar-thumb,
+        .chat-body::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .chat-list-container::-webkit-scrollbar-thumb:hover,
+        .chat-body::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #94a3b8;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            font-size: 0.875rem;
+        }
+
+        /* ===== RESPONSIVO ===== */
+        @@media (max-width: 768px) {
+            .chat-sidebar {
+                width: 100%;
+                position: absolute;
+                z-index: 10;
+            }
+
+            .chat-conversation-area.mobile-hidden {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Página de chat em ecrã completo -->
-    <div class="d-flex chat-page-container">
+    <div class="chat-page-container">
 
-        <!-- Coluna da Lista de Conversas -->
+        <!-- ===== SIDEBAR - LISTA DE CONVERSAS ===== -->
         <div class="chat-sidebar">
-            <div class="chat-sidebar-header p-3 border-bottom">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h4 class="mb-0"><i class="bi bi-chat-dots-fill me-2"></i>Mensagens</h4>
-                    <a href="/" class="btn btn-sm btn-outline-secondary rounded-circle p-1 lh-1" title="Voltar ao site">
+            <!-- Header -->
+            <div class="chat-sidebar-header">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h1 class="chat-sidebar-title mb-0">
+                        <i class="bi bi-chat-dots-fill me-2"></i>Mensagens
+                    </h1>
+                    <a href="/" class="btn-icon" title="Voltar ao site">
                         <i class="bi bi-x-lg"></i>
                     </a>
                 </div>
-                <div class="btn-group btn-group-sm w-100" role="group" aria-label="Filtro de conversas">
-                    <input type="radio" class="btn-check" name="msgFilter" id="filterTodos" value="todos" checked>
-                    <label class="btn btn-outline-secondary" for="filterTodos">Todos <span class="badge bg-secondary ms-1" id="countTodos">0</span></label>
-                    <input type="radio" class="btn-check" name="msgFilter" id="filterVender" value="vender">
-                    <label class="btn btn-outline-primary" for="filterVender"><i class="bi bi-shop me-1"></i>A vender <span class="badge bg-primary ms-1" id="countVender">0</span></label>
-                    <input type="radio" class="btn-check" name="msgFilter" id="filterComprar" value="comprar">
-                    <label class="btn btn-outline-primary" for="filterComprar"><i class="bi bi-cart-check me-1"></i>A comprar <span class="badge bg-primary ms-1" id="countComprar">0</span></label>
+
+                <!-- Filtros -->
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="todos">
+                        Todas <span class="badge bg-white text-primary ms-1" id="countTodos">4</span>
+                    </button>
+                    <button class="filter-tab" data-filter="comprar">
+                        <i class="bi bi-cart-check"></i> A comprar <span class="badge bg-white text-success ms-1" id="countComprar">2</span>
+                    </button>
+                    <button class="filter-tab" data-filter="vender">
+                        <i class="bi bi-shop"></i> A vender <span class="badge bg-white text-success ms-1" id="countVender">2</span>
+                    </button>
                 </div>
-                <div class="mt-2">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="search" id="chatSearch" class="form-control" placeholder="Procurar por nome ou anúncio...">
-                    </div>
+
+                <!-- Pesquisa -->
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="search" id="chatSearch" placeholder="Pesquisar conversas..." />
                 </div>
             </div>
-            <div class="list-group list-group-flush chat-list-container" id="chatList">
-                <!-- Exemplo de Conversa 1 (Ativa) - Ana (Vendedora) pergunta ao Comprador (Você) -->
-                <a href="#" class="list-group-item list-group-item-action active py-3 chat-item" aria-current="true"
+
+            <!-- Lista de Conversas -->
+            <div class="chat-list-container" id="chatList">
+                <!-- Conversa 1 - Ana Silva (Ativa) -->
+                <a href="#" class="chat-item active"
                    data-name="Ana Silva"
-                   data-avatar="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS"
-                   data-negotiating="BMW Série 1 116d"
+                   data-avatar="https://i.pravatar.cc/150?img=5"
+                   data-car="BMW Série 1 116d EfficientDynamics"
                    data-type="comprar"
-                   data-search="ana silva bmw serie 1 116d comprar">
-                    <div class="d-flex align-items-center">
-                        <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS" alt="Avatar" class="rounded-circle me-3">
-                        <div class="w-100">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1 fw-bold">Ana Silva <span class="badge bg-success-subtle text-success ms-1">A comprar</span></h6>
-                                <small class="text-primary fw-bold">Agora</small>
-                            </div>
-                            <span class="small d-block text-truncate text-primary">Perfeito. Amanhã às 18h funciona para mim...</span>
+                   data-online="true"
+                   data-search="ana silva bmw serie 1 comprar">
+                    <div class="d-flex align-items-start gap-3">
+                        <div style="position: relative;">
+                            <img src="https://i.pravatar.cc/150?img=5" alt="Ana Silva" class="chat-item-avatar" />
+                            <span class="online-indicator"></span>
                         </div>
-                        <span class="badge bg-primary rounded-pill ms-2">1</span>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <div>
+                                    <div class="chat-item-name">Ana Silva</div>
+                                    <span class="type-badge comprar">
+                                        <i class="bi bi-cart-check"></i> A comprar
+                                    </span>
+                                </div>
+                                <div class="text-end">
+                                    <div class="chat-item-time">Agora</div>
+                                    <span class="unread-badge mt-1">2</span>
+                                </div>
+                            </div>
+                            <div class="chat-item-preview">Perfeito. Amanhã às 18h funciona para mim...</div>
+                            <div class="small text-muted mt-1">
+                                <i class="bi bi-car-front me-1"></i>BMW Série 1 116d
+                            </div>
+                        </div>
                     </div>
                 </a>
-                <!-- Exemplo de Conversa 2 - Bruno (Comprador) pergunta ao Vendedor (Você) -->
-                <a href="#" class="list-group-item list-group-item-action py-3 chat-item"
+
+                <!-- Conversa 2 - Bruno Vieira -->
+                <a href="#" class="chat-item"
                    data-name="Bruno Vieira"
-                   data-avatar="https://placehold.co/40x40/F0F3F5/6C757D?text=BV"
-                   data-negotiating="Audi A3 Sportback"
+                   data-avatar="https://i.pravatar.cc/150?img=12"
+                   data-car="Audi A3 Sportback 2.0 TDI"
                    data-type="vender"
-                   data-search="bruno vieira audi a3 sportback vender">
-                    <div class="d-flex align-items-center">
-                        <img src="https://placehold.co/40x40/F0F3F5/6C757D?text=BV" alt="Avatar" class="rounded-circle me-3">
-                        <div class="w-100">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">Bruno Vieira <span class="badge bg-primary-subtle text-primary ms-1">A vender</span></h6>
-                                <small class="text-muted">1h</small>
-                            </div>
-                            <span class="small d-block text-truncate">Qual é o mínimo que aceita pelo Audi?</span>
+                   data-online="false"
+                   data-search="bruno vieira audi a3 vender">
+                    <div class="d-flex align-items-start gap-3">
+                        <div style="position: relative;">
+                            <img src="https://i.pravatar.cc/150?img=12" alt="Bruno Vieira" class="chat-item-avatar" />
                         </div>
-                        <span class="badge bg-primary rounded-pill ms-2">2</span>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <div>
+                                    <div class="chat-item-name">Bruno Vieira</div>
+                                    <span class="type-badge vender">
+                                        <i class="bi bi-shop"></i> A vender
+                                    </span>
+                                </div>
+                                <div class="text-end">
+                                    <div class="chat-item-time">2h</div>
+                                    <span class="unread-badge mt-1">1</span>
+                                </div>
+                            </div>
+                            <div class="chat-item-preview">Qual é o mínimo que aceita pelo Audi?</div>
+                            <div class="small text-muted mt-1">
+                                <i class="bi bi-car-front me-1"></i>Audi A3 Sportback
+                            </div>
+                        </div>
                     </div>
                 </a>
-                <!-- Exemplo de Conversa 3 - Outra conversa lida -->
-                <a href="#" class="list-group-item list-group-item-action py-3 text-muted chat-item"
+
+                <!-- Conversa 3 - Carla Ribeiro -->
+                <a href="#" class="chat-item"
                    data-name="Carla Ribeiro"
-                   data-avatar="https://placehold.co/40x40/E8F5E9/4CAF50?text=CR"
-                   data-negotiating="Mercedes Classe A"
+                   data-avatar="https://i.pravatar.cc/150?img=32"
+                   data-car="Mercedes Classe A 180d AMG"
                    data-type="vender"
+                   data-online="true"
                    data-search="carla ribeiro mercedes classe a vender">
-                    <div class="d-flex align-items-center">
-                        <img src="https://placehold.co/40x40/E8F5E9/4CAF50?text=CR" alt="Avatar" class="rounded-circle me-3">
-                        <div class="w-100">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">Carla Ribeiro <span class="badge bg-primary-subtle text-primary ms-1">A vender</span></h6>
-                                <small>Ontem</small>
+                    <div class="d-flex align-items-start gap-3">
+                        <div style="position: relative;">
+                            <img src="https://i.pravatar.cc/150?img=32" alt="Carla Ribeiro" class="chat-item-avatar" />
+                            <span class="online-indicator"></span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <div>
+                                    <div class="chat-item-name">Carla Ribeiro</div>
+                                    <span class="type-badge vender">
+                                        <i class="bi bi-shop"></i> A vender
+                                    </span>
+                                </div>
+                                <div class="text-end">
+                                    <div class="chat-item-time">Ontem</div>
+                                </div>
                             </div>
-                            <span class="small d-block text-truncate">Obrigada!</span>
+                            <div class="chat-item-preview">Obrigada pela visita!</div>
+                            <div class="small text-muted mt-1">
+                                <i class="bi bi-car-front me-1"></i>Mercedes Classe A
+                            </div>
                         </div>
                     </div>
                 </a>
-                <!-- Exemplo de Conversa 4 - Outra conversa lida -->
-                <a href="#" class="list-group-item list-group-item-action py-3 text-muted chat-item"
+
+                <!-- Conversa 4 - João Pereira -->
+                <a href="#" class="chat-item"
                    data-name="João Pereira"
-                   data-avatar="https://placehold.co/40x40/ffccbc/ff5722?text=JP"
-                   data-negotiating="VW Golf 1.6 TDI"
+                   data-avatar="https://i.pravatar.cc/150?img=68"
+                   data-car="VW Golf 1.6 TDI Confortline"
                    data-type="comprar"
-                   data-search="joao pereira vw golf 1.6 tdi comprar">
-                    <div class="d-flex align-items-center">
-                        <img src="https://placehold.co/40x40/ffccbc/ff5722?text=JP" alt="Avatar" class="rounded-circle me-3">
-                        <div class="w-100">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">João Pereira <span class="badge bg-success-subtle text-success ms-1">A comprar</span></h6>
-                                <small>2 dias</small>
+                   data-online="false"
+                   data-search="joao pereira vw golf comprar">
+                    <div class="d-flex align-items-start gap-3">
+                        <div style="position: relative;">
+                            <img src="https://i.pravatar.cc/150?img=68" alt="João Pereira" class="chat-item-avatar" />
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <div>
+                                    <div class="chat-item-name">João Pereira</div>
+                                    <span class="type-badge comprar">
+                                        <i class="bi bi-cart-check"></i> A comprar
+                                    </span>
+                                </div>
+                                <div class="text-end">
+                                    <div class="chat-item-time">3 dias</div>
+                                </div>
                             </div>
-                            <span class="small d-block text-truncate">Combinado então.</span>
+                            <div class="chat-item-preview">Combinado então. Muito obrigado!</div>
+                            <div class="small text-muted mt-1">
+                                <i class="bi bi-car-front me-1"></i>VW Golf 1.6 TDI
+                            </div>
                         </div>
                     </div>
                 </a>
             </div>
         </div>
 
-        <!-- Coluna da Conversa Ativa -->
+        <!-- ===== ÁREA DE CONVERSA ===== -->
         <div class="chat-conversation-area">
-            <!-- Cabeçalho da Conversa (será atualizado via JS) -->
-            <div class="chat-header p-3 border-bottom d-flex align-items-center" id="chatHeader">
-                <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS" alt="Avatar" class="rounded-circle me-3" id="chatAvatar">
-                <div>
-                    <h6 class="mb-0" id="chatName">Ana Silva (Vendedora)</h6>
-                    <small class="text-muted" id="chatNegotiating">A negociar: BMW Série 1 116d</small>
+            <!-- Header da Conversa -->
+            <div class="chat-header" id="chatHeader">
+                <img src="https://i.pravatar.cc/150?img=5" alt="Avatar" class="chat-header-avatar" id="chatAvatar" />
+                <div class="chat-header-info">
+                    <div class="chat-header-name" id="chatName">Ana Silva</div>
+                    <div class="chat-header-status">
+                        <span class="status-online" id="chatStatusIndicator"></span>
+                        <span id="chatStatus">Online</span>
+                        <span class="mx-2">•</span>
+                        <i class="bi bi-car-front me-1"></i>
+                        <span id="chatCar">BMW Série 1 116d</span>
+                    </div>
                 </div>
-                <a href="#" class="btn btn-sm btn-outline-secondary ms-auto" title="Ver Anúncio">
-                    <i class="bi bi-car-front"></i> Ver Anúncio
-                </a>
+                <div class="chat-header-actions">
+                    <button class="btn-icon" title="Ver Anúncio">
+                        <i class="bi bi-car-front"></i>
+                    </button>
+                    <button class="btn-icon" title="Mais Opções">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                </div>
             </div>
 
-            <!-- Corpo das Mensagens (será atualizado via JS) -->
-            <div class="chat-body flex-grow-1 p-3" id="chatBody">
-                <!-- Mensagens da conversa com Ana Silva -->
-                <div class="text-center small text-muted my-2">Hoje</div>
-                <div class="d-flex justify-content-end mb-3">
-                    <div class="message sent">
-                        Olá! O BMW ainda está disponível? Aceita trocas?
+            <!-- Corpo das Mensagens -->
+            <div class="chat-body" id="chatBody">
+                <div class="date-divider">
+                    <span>Hoje</span>
+                </div>
+
+                <!-- Mensagem Enviada -->
+                <div class="message-wrapper sent">
+                    <div class="message">
+                        <div class="message-text">Olá! O BMW ainda está disponível? Aceita trocas?</div>
                         <div class="message-time">10:30</div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-start mb-3">
-                    <div class="message received">
-                        Olá! Sim, ainda está disponível. Gostaria de ver o carro? Quanto às trocas, infelizmente não estou interessado neste momento.
+
+                <!-- Mensagem Recebida -->
+                <div class="message-wrapper received">
+                    <div class="message">
+                        <div class="message-text">Olá! Sim, ainda está disponível. Gostaria de ver o carro? Quanto às trocas, infelizmente não estou interessado neste momento.</div>
                         <div class="message-time">10:31</div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end mb-3">
-                    <div class="message sent">
-                        Gostaria sim! É possível amanhã ao final da tarde? Por volta das 18h?
+
+                <!-- Mensagem Enviada -->
+                <div class="message-wrapper sent">
+                    <div class="message">
+                        <div class="message-text">Gostaria sim! É possível amanhã ao final da tarde? Por volta das 18h?</div>
                         <div class="message-time">10:32</div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-start mb-3">
-                    <div class="message received">
-                        Perfeito. Amanhã às 18h funciona para mim. Envio-lhe a morada por mensagem privada.
+
+                <!-- Mensagem Recebida -->
+                <div class="message-wrapper received">
+                    <div class="message">
+                        <div class="message-text">Perfeito. Amanhã às 18h funciona para mim. Envio-lhe a morada por mensagem.</div>
                         <div class="message-time">10:35</div>
                     </div>
                 </div>
-                <div class="text-center small text-muted my-2">Ontem</div>
-                <div class="d-flex justify-content-end mb-3">
-                    <div class="message sent">
-                        Ok, obrigado pela rápida resposta!
+
+                <div class="date-divider">
+                    <span>Ontem</span>
+                </div>
+
+                <!-- Mensagem Enviada -->
+                <div class="message-wrapper sent">
+                    <div class="message">
+                        <div class="message-text">Ok, muito obrigado pela rápida resposta!</div>
                         <div class="message-time">17:45</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Caixa de Envio de Mensagem -->
-            <div class="chat-footer p-3 border-top">
-                <div class="input-group">
-                    <input id="chatInputBox" type="text" class="form-control form-control-lg" placeholder="Escreva a sua mensagem..." aria-label="Escreva a sua mensagem">
-                    <button id="chatSendBtn" class="btn btn-primary btn-lg" type="button" title="Enviar Mensagem">
+            <!-- Caixa de Envio -->
+            <div class="chat-footer">
+                <div class="message-input-container">
+                    <div class="message-input-wrapper">
+                        <textarea id="chatInputBox" class="message-input" placeholder="Escreva a sua mensagem..." rows="1"></textarea>
+                        <button class="emoji-btn" title="Adicionar emoji">😊</button>
+                    </div>
+                    <button id="chatSendBtn" class="send-btn" title="Enviar">
                         <i class="bi bi-send-fill"></i>
                     </button>
                 </div>
@@ -287,170 +790,188 @@
 
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script para tornar a lista de chat interativa -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Ajustar o espaçamento do topo para encostar ao header (sem folga extra)
-            try {
-                const main = window.parent?.document?.querySelector?.('.main-content') || document.querySelector('.main-content');
-                const mock = window.parent?.document?.querySelector?.('.mockup-navbar') || document.querySelector('.mockup-navbar');
-                const header = window.parent?.document?.querySelector?.('header') || document.querySelector('header');
-                const mockH = mock ? mock.offsetHeight : 0;
-                const headerH = header ? header.offsetHeight : 0;
-                if (main) main.style.paddingTop = (mockH + headerH) + 'px';
-            } catch (e) { /* no-op */ }
+            // Elementos
             const chatList = document.getElementById('chatList');
+            const chatItems = document.querySelectorAll('.chat-item');
             const chatHeader = document.getElementById('chatHeader');
             const chatAvatar = document.getElementById('chatAvatar');
             const chatName = document.getElementById('chatName');
-            const chatNegotiating = document.getElementById('chatNegotiating');
+            const chatStatus = document.getElementById('chatStatus');
+            const chatStatusIndicator = document.getElementById('chatStatusIndicator');
+            const chatCar = document.getElementById('chatCar');
             const chatBody = document.getElementById('chatBody');
+            const chatInputBox = document.getElementById('chatInputBox');
+            const chatSendBtn = document.getElementById('chatSendBtn');
+            const chatSearch = document.getElementById('chatSearch');
+            const filterTabs = document.querySelectorAll('.filter-tab');
 
-            chatList.addEventListener('click', function (event) {
-                // Encontra o link da conversa clicado
-                const chatItem = event.target.closest('.chat-item');
-                if (!chatItem) return; // Sai se não clicou num item de chat
-
-                event.preventDefault(); // Impede a navegação padrão do link
-
-                // Remove a classe 'active' de todos os itens
-                chatList.querySelectorAll('.chat-item').forEach(item => {
-                    item.classList.remove('active');
-                    item.setAttribute('aria-current', 'false'); // Atualiza atributo ARIA
-                    item.classList.add('text-muted'); // Define como não ativo (cinzento)
-                });
-
-                // Adiciona a classe 'active' ao item clicado
-                chatItem.classList.add('active');
-                chatItem.setAttribute('aria-current', 'true'); // Atualiza atributo ARIA
-                chatItem.classList.remove('text-muted'); // Remove o cinzento
-
-                // Atualiza o cabeçalho e corpo da conversa com dados do item clicado
-                const name = chatItem.dataset.name;
-                const avatar = chatItem.dataset.avatar;
-                const negotiating = chatItem.dataset.negotiating;
-                const type = (chatItem.dataset.type || '').toLowerCase();
-
-                chatAvatar.src = avatar;
-                const roleBadge = type === 'vender' ? ' (Vendedor)' : (type === 'comprar' ? ' (Comprador)' : '');
-                chatName.textContent = name + roleBadge;
-                chatNegotiating.textContent = `A negociar: ${negotiating}`;
-
-                // Simula o carregamento de novas mensagens (limpa e adiciona placeholders)
-                chatBody.innerHTML = `
-                    <div class="text-center p-5 text-muted">
-                        <div class="spinner-border spinner-border-sm text-primary mb-2" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div>A carregar mensagens com ${name}...</div>
-                    </div>
-                `;
-                // Idealmente, aqui farias um pedido AJAX para buscar as mensagens reais
-                // Para a maquete estática, poderias ter blocos de HTML predefinidos
-                // e mostrá-los/escondê-los, ou simplesmente deixar o "loading".
-                // Exemplo simples: Adiciona uma mensagem de placeholder após um tempo
-                setTimeout(() => {
-                     chatBody.innerHTML = `
-                        <div class="text-center small text-muted my-2">Hoje</div>
-                        <div class="d-flex justify-content-start mb-3">
-                            <div class="message received">
-                                Olá! Esta é uma mensagem de exemplo para ${name}.
-                                <div class="message-time">16:00</div>
-                            </div>
-                        </div>
-                         <div class="d-flex justify-content-end mb-3">
-                            <div class="message sent">
-                                Recebido, obrigado!
-                                <div class="message-time">16:01</div>
-                            </div>
-                        </div>
-                     `;
-                 }, 500); // Simula um pequeno atraso de carregamento
-
-
+            // Auto-resize textarea
+            chatInputBox.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
             });
 
-            // ===== Filtro por tipo e pesquisa =====
-            const filterRadios = document.querySelectorAll('input[name="msgFilter"]');
-            const searchInput = document.getElementById('chatSearch');
-            const countTodos = document.getElementById('countTodos');
-            const countVender = document.getElementById('countVender');
-            const countComprar = document.getElementById('countComprar');
-
-            function normalize(s){ return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, ''); }
-
-            function updateCounts() {
-                let t = { todos: 0, vender: 0, comprar: 0 };
-                chatList.querySelectorAll('.chat-item').forEach(item => {
-                    const type = (item.dataset.type || '').toLowerCase();
-                    t.todos++;
-                    if (type === 'vender') t.vender++; else if (type === 'comprar') t.comprar++;
-                });
-                if (countTodos) countTodos.textContent = t.todos;
-                if (countVender) countVender.textContent = t.vender;
-                if (countComprar) countComprar.textContent = t.comprar;
-            }
-
-            function applyFilters() {
-                const selected = document.querySelector('input[name="msgFilter"]:checked')?.value || 'todos';
-                const q = normalize(searchInput?.value || '');
-                chatList.querySelectorAll('.chat-item').forEach(item => {
-                    const type = (item.dataset.type || '').toLowerCase();
-                    const searchable = normalize(item.dataset.search || item.textContent);
-                    const typeMatch = selected === 'todos' || type === selected;
-                    const textMatch = q.length < 2 || searchable.includes(q);
-                    item.style.display = (typeMatch && textMatch) ? '' : 'none';
-                });
-            }
-
-            filterRadios.forEach(r => r.addEventListener('change', applyFilters));
-            if (searchInput) searchInput.addEventListener('input', applyFilters);
-            updateCounts();
-            applyFilters();
-
-            // ===== Enviar nova mensagem (frontend) =====
-            const inputBox = document.getElementById('chatInputBox');
-            const sendBtn = document.getElementById('chatSendBtn');
-
-            function currentTime() {
-                const d = new Date();
-                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            }
-
-            function appendUserMessage(text) {
-                if (!text) return;
-                const wrap = document.createElement('div');
-                wrap.className = 'd-flex justify-content-end mb-3';
-                const bubble = document.createElement('div');
-                bubble.className = 'message sent';
-                bubble.innerHTML = `${text}<div class="message-time">${currentTime()}</div>`;
-                wrap.appendChild(bubble);
-                chatBody.appendChild(wrap);
+            // Scroll to bottom
+            function scrollToBottom() {
                 chatBody.scrollTop = chatBody.scrollHeight;
             }
 
+            scrollToBottom();
+
+            // Trocar de conversa
+            chatItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Remove active de todos
+                    chatItems.forEach(i => i.classList.remove('active'));
+
+                    // Adiciona active ao clicado
+                    this.classList.add('active');
+
+                    // Remove badge de não lidas
+                    const badge = this.querySelector('.unread-badge');
+                    if (badge) badge.remove();
+
+                    // Atualiza header
+                    const name = this.dataset.name;
+                    const avatar = this.dataset.avatar;
+                    const car = this.dataset.car;
+                    const online = this.dataset.online === 'true';
+
+                    chatAvatar.src = avatar;
+                    chatName.textContent = name;
+                    chatCar.textContent = car;
+
+                    if (online) {
+                        chatStatusIndicator.style.display = 'block';
+                        chatStatus.textContent = 'Online';
+                    } else {
+                        chatStatusIndicator.style.display = 'none';
+                        chatStatus.textContent = 'Offline';
+                    }
+
+                    // Simula carregamento de mensagens
+                    chatBody.innerHTML = `
+                        <div class="empty-state">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">A carregar...</span>
+                            </div>
+                            <p class="mt-3">A carregar mensagens com ${name}...</p>
+                        </div>
+                    `;
+
+                    setTimeout(() => {
+                        chatBody.innerHTML = `
+                            <div class="date-divider">
+                                <span>Hoje</span>
+                            </div>
+                            <div class="message-wrapper received">
+                                <div class="message">
+                                    <div class="message-text">Olá! Esta é uma conversa com ${name}.</div>
+                                    <div class="message-time">16:00</div>
+                                </div>
+                            </div>
+                            <div class="message-wrapper sent">
+                                <div class="message">
+                                    <div class="message-text">Olá! Obrigado por responder.</div>
+                                    <div class="message-time">16:01</div>
+                                </div>
+                            </div>
+                        `;
+                        scrollToBottom();
+                    }, 500);
+                });
+            });
+
+            // Enviar mensagem
             function sendMessage() {
-                const val = (inputBox?.value || '').trim();
-                if (!val) return;
-                appendUserMessage(val.replace(/</g, '&lt;').replace(/>/g, '&gt;'));
-                inputBox.value = '';
-                inputBox.focus();
+                const text = chatInputBox.value.trim();
+                if (!text) return;
+
+                const time = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+
+                const messageHTML = `
+                    <div class="message-wrapper sent">
+                        <div class="message">
+                            <div class="message-text">${text}</div>
+                            <div class="message-time">${time}</div>
+                        </div>
+                    </div>
+                `;
+
+                chatBody.insertAdjacentHTML('beforeend', messageHTML);
+                chatInputBox.value = '';
+                chatInputBox.style.height = 'auto';
+                scrollToBottom();
+                chatInputBox.focus();
             }
 
-            if (sendBtn) sendBtn.addEventListener('click', sendMessage);
-            if (inputBox) inputBox.addEventListener('keydown', function (e) {
+            chatSendBtn.addEventListener('click', sendMessage);
+
+            chatInputBox.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
                 }
             });
+
+            // Filtros
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active de todos
+                    filterTabs.forEach(t => t.classList.remove('active'));
+
+                    // Adiciona active ao clicado
+                    this.classList.add('active');
+
+                    const filter = this.dataset.filter;
+
+                    chatItems.forEach(item => {
+                        const type = item.dataset.type;
+
+                        if (filter === 'todos' || type === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Pesquisa
+            chatSearch.addEventListener('input', function() {
+                const query = this.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+                chatItems.forEach(item => {
+                    const searchText = item.dataset.search.toLowerCase();
+
+                    if (searchText.includes(query)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            // Atualizar contadores
+            function updateCounts() {
+                const todos = chatItems.length;
+                const comprar = document.querySelectorAll('[data-type="comprar"]').length;
+                const vender = document.querySelectorAll('[data-type="vender"]').length;
+
+                document.getElementById('countTodos').textContent = todos;
+                document.getElementById('countComprar').textContent = comprar;
+                document.getElementById('countVender').textContent = vender;
+            }
+
+            updateCounts();
         });
     </script>
 
 </body>
 </html>
-

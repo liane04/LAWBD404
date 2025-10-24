@@ -58,7 +58,7 @@
     </div>
     <!-- ===== FIM MOCKUP NAVBAR ===== -->
 
-    <header class="fixed-top" style="top: 46px;">
+    <header class="fixed-top" style="top: 50px;">
         <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
@@ -408,10 +408,10 @@
                 const mock = document.querySelector('.mockup-navbar');
                 const header = document.querySelector('header');
                 const main = document.querySelector('.main-content');
-                const mockH = mock ? mock.offsetHeight : 0; // ~46px
+                const mockH = mock ? mock.offsetHeight : 0; // ~50px
                 const headerH = header ? header.offsetHeight : 0; // altura da navbar
                 if (main) {
-                    main.style.paddingTop = (mockH + headerH + 16) + 'px'; // +16px de folga
+                    main.style.paddingTop = (mockH + headerH) + 'px'; // sem folga extra
                 } else {
                     // fallback mínimo no body
                     document.body.style.paddingTop = (mockH + headerH) + 'px';
