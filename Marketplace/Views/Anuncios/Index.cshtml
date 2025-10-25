@@ -190,7 +190,7 @@
             <div class="results-toolbar">
                 <div class="results-info">
                     <h6 class="mb-0">
-                        <span class="results-count">3 Veículos</span>
+                        <span class="results-count">8 Veículos</span>
                         <span class="text-muted small">encontrados</span>
                     </h6>
                 </div>
@@ -341,6 +341,204 @@
                                     <i class="bi bi-eye me-2"></i>Ver Detalhes
                                 </a>
                                 <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(3, 'Mercedes-Benz Classe A', '~/imagens/mercedezClassA.jpg', '25.750 €', '2020', '60000', 'Híbrido', 'Automática', '163', '1332', this)" data-anuncio-id="3">
+                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anúncio 4 -->
+                <div class="col">
+                    <div class="card anuncio-card h-100">
+                        <div class="card-img-wrapper">
+                            <a asp-controller="Anuncios" asp-action="Details">
+                                <img src="~/imagens/audi.png" class="card-img-top" alt="Audi S3 Azul">
+                            </a>
+                            <button class="btn-favorito" onclick="toggleFavorito(this)">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="card-header-info mb-2">
+                                <span class="badge bg-secondary">Usado</span>
+                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Vila Real</span>
+                            </div>
+                            <h5 class="card-title">Audi S3 Quattro</h5>
+                            <div class="card-price">34.500 €</div>
+                            <p class="card-text text-muted small flex-grow-1">Desempenho desportivo com tração integral e excelente condução.</p>
+                            <div class="anuncio-details-grid mt-auto">
+                                <span><i class="bi bi-calendar3"></i> 2018</span>
+                                <span><i class="bi bi-speedometer2"></i> 78k km</span>
+                                <span><i class="bi bi-fuel-pump"></i> Gasolina</span>
+                                <span><i class="bi bi-gear"></i> Automática</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
+                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                </a>
+                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(4, 'Audi S3 Quattro', '~/imagens/audi.png', '34.500 €', '2018', '78000', 'Gasolina', 'Automática', '310', '1984', this)" data-anuncio-id="4">
+                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anúncio 5 -->
+                <div class="col">
+                    <div class="card anuncio-card h-100">
+                        <div class="card-img-wrapper">
+                            <a asp-controller="Anuncios" asp-action="Details">
+                                <img src="~/imagens/audiRed.png" class="card-img-top" alt="Audi R8 Vermelho">
+                            </a>
+                            <span class="badge-destaque">
+                                <i class="bi bi-star-fill me-1"></i>Destaque
+                            </span>
+                            <button class="btn-favorito active" onclick="toggleFavorito(this)">
+                                <i class="bi bi-heart-fill"></i>
+                            </button>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="card-header-info mb-2">
+                                <span class="badge bg-secondary">Usado</span>
+                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Porto</span>
+                            </div>
+                            <h5 class="card-title">Audi R8 V10</h5>
+                            <div class="card-price">149.000 €</div>
+                            <p class="card-text text-muted small flex-grow-1">Superdesportivo icónico com V10 atmosférico e tração quattro.</p>
+                            <div class="anuncio-details-grid mt-auto">
+                                <span><i class="bi bi-calendar3"></i> 2017</span>
+                                <span><i class="bi bi-speedometer2"></i> 42k km</span>
+                                <span><i class="bi bi-fuel-pump"></i> Gasolina</span>
+                                <span><i class="bi bi-gear"></i> Automática</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
+                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                </a>
+                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(5, 'Audi R8 V10', '~/imagens/audiRed.png', '149.000 €', '2017', '42000', 'Gasolina', 'Automática', '540', '5204', this)" data-anuncio-id="5">
+                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anúncio 6 -->
+                <div class="col">
+                    <div class="card anuncio-card h-100">
+                        <div class="card-img-wrapper">
+                            <a asp-controller="Anuncios" asp-action="Details">
+                                <img src="~/imagens/honda.png" class="card-img-top" alt="Honda Civic Cinzento">
+                            </a>
+                            <button class="btn-favorito" onclick="toggleFavorito(this)">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="card-header-info mb-2">
+                                <span class="badge bg-secondary">Usado</span>
+                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Coimbra</span>
+                            </div>
+                            <h5 class="card-title">Honda Civic 1.0 VTEC</h5>
+                            <div class="card-price">19.200 €</div>
+                            <p class="card-text text-muted small flex-grow-1">Fiável e económico, ideal para cidade e viagens.</p>
+                            <div class="anuncio-details-grid mt-auto">
+                                <span><i class="bi bi-calendar3"></i> 2019</span>
+                                <span><i class="bi bi-speedometer2"></i> 60k km</span>
+                                <span><i class="bi bi-fuel-pump"></i> Gasolina</span>
+                                <span><i class="bi bi-gear"></i> Manual</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
+                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                </a>
+                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(6, 'Honda Civic 1.0 VTEC', '~/imagens/honda.png', '19.200 €', '2019', '60000', 'Gasolina', 'Manual', '126', '988', this)" data-anuncio-id="6">
+                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anúncio 7 -->
+                <div class="col">
+                    <div class="card anuncio-card h-100">
+                        <div class="card-img-wrapper">
+                            <a asp-controller="Anuncios" asp-action="Details">
+                                <img src="~/imagens/jeep.png" class="card-img-top" alt="Ford Bronco">
+                            </a>
+                            <button class="btn-favorito" onclick="toggleFavorito(this)">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="card-header-info mb-2">
+                                <span class="badge bg-secondary">Usado</span>
+                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Faro</span>
+                            </div>
+                            <h5 class="card-title">Ford Bronco 2.7 EcoBoost</h5>
+                            <div class="card-price">52.800 €</div>
+                            <p class="card-text text-muted small flex-grow-1">SUV robusto pronto para aventura com 4x4.</p>
+                            <div class="anuncio-details-grid mt-auto">
+                                <span><i class="bi bi-calendar3"></i> 2022</span>
+                                <span><i class="bi bi-speedometer2"></i> 18k km</span>
+                                <span><i class="bi bi-fuel-pump"></i> Gasolina</span>
+                                <span><i class="bi bi-gear"></i> Automática</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
+                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                </a>
+                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(7, 'Ford Bronco 2.7 EcoBoost', '~/imagens/jeep.png', '52.800 €', '2022', '18000', 'Gasolina', 'Automática', '330', '2700', this)" data-anuncio-id="7">
+                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anúncio 8 -->
+                <div class="col">
+                    <div class="card anuncio-card h-100">
+                        <div class="card-img-wrapper">
+                            <a asp-controller="Anuncios" asp-action="Details">
+                                <img src="~/imagens/Jeep_mercedes.png" class="card-img-top" alt="Mercedes G-Class">
+                            </a>
+                            <button class="btn-favorito" onclick="toggleFavorito(this)">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="card-header-info mb-2">
+                                <span class="badge bg-secondary">Usado</span>
+                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Lisboa</span>
+                            </div>
+                            <h5 class="card-title">Mercedes-Benz G 350d</h5>
+                            <div class="card-price">92.000 €</div>
+                            <p class="card-text text-muted small flex-grow-1">Luxo e capacidade off-road num ícone automóvel.</p>
+                            <div class="anuncio-details-grid mt-auto">
+                                <span><i class="bi bi-calendar3"></i> 2020</span>
+                                <span><i class="bi bi-speedometer2"></i> 55k km</span>
+                                <span><i class="bi bi-fuel-pump"></i> Diesel</span>
+                                <span><i class="bi bi-gear"></i> Automática</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
+                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                </a>
+                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(8, 'Mercedes-Benz G 350d', '~/imagens/Jeep_mercedes.png', '92.000 €', '2020', '55000', 'Diesel', 'Automática', '286', '2925', this)" data-anuncio-id="8">
                                     <i class="bi bi-arrow-left-right me-2"></i>Comparar
                                 </button>
                             </div>

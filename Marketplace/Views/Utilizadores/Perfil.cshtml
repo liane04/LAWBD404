@@ -1949,6 +1949,93 @@
                 });
             });
 
+            // Sistema de Filtros para Visitas (Comprador)
+            const visitasFilterButtons = document.querySelectorAll('[data-filter-visitas]');
+            const visitasCards = document.querySelectorAll('[data-status-visita]');
+
+            visitasFilterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    visitasFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter-visitas');
+
+                    visitasCards.forEach(card => {
+                        const status = card.getAttribute('data-status-visita');
+
+                        if (filter === 'todas') {
+                            card.style.display = '';
+                        } else if (filter === 'pendentes' && status === 'pendente') {
+                            card.style.display = '';
+                        } else if (filter === 'confirmadas' && status === 'confirmada') {
+                            card.style.display = '';
+                        } else if (filter === 'concluidas' && status === 'concluida') {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Sistema de Filtros para Reservas (Vendedor)
+            const reservasVendedorFilterButtons = document.querySelectorAll('[data-filter-reservas-vendedor]');
+            const reservasVendedorCards = document.querySelectorAll('[data-status-reserva-vendedor]');
+
+            reservasVendedorFilterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    reservasVendedorFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter-reservas-vendedor');
+
+                    reservasVendedorCards.forEach(card => {
+                        const status = card.getAttribute('data-status-reserva-vendedor');
+
+                        if (filter === 'todas') {
+                            card.style.display = '';
+                        } else if (filter === 'pendentes' && status === 'pendente') {
+                            card.style.display = '';
+                        } else if (filter === 'ativas' && status === 'ativa') {
+                            card.style.display = '';
+                        } else if (filter === 'expiradas' && status === 'expirada') {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Sistema de Filtros para Visitas (Vendedor)
+            const visitasVendedorFilterButtons = document.querySelectorAll('[data-filter-visitas-vendedor]');
+            const visitasVendedorCards = document.querySelectorAll('[data-status-visita-vendedor]');
+
+            visitasVendedorFilterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    visitasVendedorFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter-visitas-vendedor');
+
+                    visitasVendedorCards.forEach(card => {
+                        const status = card.getAttribute('data-status-visita-vendedor');
+
+                        if (filter === 'todas') {
+                            card.style.display = '';
+                        } else if (filter === 'pendentes' && status === 'pendente') {
+                            card.style.display = '';
+                        } else if (filter === 'confirmadas' && status === 'confirmada') {
+                            card.style.display = '';
+                        } else if (filter === 'concluidas' && status === 'concluida') {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
             // O sistema de toggle de utilizador agora está no _Layout.cshtml e funciona globalmente
         });
     </script>
