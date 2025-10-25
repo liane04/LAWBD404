@@ -1146,44 +1146,19 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Selecionar todos os itens de navegação
             const navItems = document.querySelectorAll('.perfil-nav-item');
-            const tabPanes = document.querySelectorAll('.tab-pane');
 
-            // Função para ativar um tab
-            function activateTab(targetId, clickedItem) {
-                // Remover active de todos os navItems
-                navItems.forEach(item => {
-                    item.classList.remove('active');
-                });
-
-                // Remover show e active de todos os tab panes
-                tabPanes.forEach(pane => {
-                    pane.classList.remove('show', 'active');
-                });
-
-                // Adicionar active ao item clicado
-                if (clickedItem) {
-                    clickedItem.classList.add('active');
-                }
-
-                // Mostrar o tab correspondente
-                const targetPane = document.querySelector(targetId);
-                if (targetPane) {
-                    targetPane.classList.add('show', 'active');
-                }
-
-                // Scroll suave para o topo
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            }
-
-            // Adicionar event listeners aos tabs
+            // Inicializar Bootstrap Tabs
             navItems.forEach(item => {
+                // Inicializar o tab do Bootstrap
+                const tab = new bootstrap.Tab(item);
+
+                // Adicionar listener para scroll suave ao trocar de tab
                 item.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    activateTab(targetId, this);
+                    // Scroll suave para o topo do conteúdo
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 });
             });
 
