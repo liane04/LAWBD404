@@ -2002,43 +2002,375 @@
 
             <!-- Secção Gerir Denúncias -->
             <div id="gerir-denuncias-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Gerir Denúncias</h3>
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tipo</th>
-                                        <th>Motivo</th>
-                                        <th>Estado</th>
-                                        <th class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>#D1024</td>
-                                        <td>Utilizador</td>
-                                        <td>Comportamento abusivo</td>
-                                        <td><span class="badge bg-danger-soft">Aberta</span></td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-primary">Analisar</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#D1023</td>
-                                        <td>Anúncio</td>
-                                        <td>Fotografias falsas</td>
-                                        <td><span class="badge bg-secondary-soft">Fechada</span></td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary">Ver Detalhes</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                <!-- Cabeçalho -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="mb-1 fw-bold">
+                            <i class="bi bi-flag-fill text-danger me-2"></i>Gerir Denúncias
+                        </h3>
+                        <p class="text-muted mb-0">Sistema de moderação de conteúdo e utilizadores</p>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted d-block">Última atualização</small>
+                        <strong class="text-danger">24/10/2025 15:45</strong>
+                    </div>
+                </div>
+
+                <!-- Estatísticas de Denúncias -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-danger border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 fw-normal">Pendentes</h6>
+                                        <h3 class="mb-0 fw-bold text-danger">7</h3>
+                                        <small class="text-muted">Requerem atenção</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-eye-fill fs-4 text-warning"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 fw-normal">Em Análise</h6>
+                                        <h3 class="mb-0 fw-bold text-warning">3</h3>
+                                        <small class="text-muted">A verificar</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-success border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 fw-normal">Resolvidas</h6>
+                                        <h3 class="mb-0 fw-bold text-success">45</h3>
+                                        <small class="text-muted">Este mês</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-secondary border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-x-circle-fill fs-4 text-secondary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1 fw-normal">Rejeitadas</h6>
+                                        <h3 class="mb-0 fw-bold text-secondary">12</h3>
+                                        <small class="text-muted">Este mês</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">
+                                    <i class="bi bi-funnel me-1"></i>Estado
+                                </label>
+                                <select class="form-select" id="filtroDenunciaEstado">
+                                    <option value="todas">Todas</option>
+                                    <option value="pendente" selected>Pendentes</option>
+                                    <option value="analise">Em Análise</option>
+                                    <option value="resolvida">Resolvidas</option>
+                                    <option value="rejeitada">Rejeitadas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">
+                                    <i class="bi bi-tag me-1"></i>Tipo
+                                </label>
+                                <select class="form-select" id="filtroDenunciaTipo">
+                                    <option value="todos">Todos</option>
+                                    <option value="anuncio">Anúncios</option>
+                                    <option value="utilizador">Utilizadores</option>
+                                    <option value="mensagem">Mensagens</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>Prioridade
+                                </label>
+                                <select class="form-select" id="filtroDenunciaPrioridade">
+                                    <option value="todas">Todas</option>
+                                    <option value="alta">Alta</option>
+                                    <option value="media">Média</option>
+                                    <option value="baixa">Baixa</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">
+                                    <i class="bi bi-search me-1"></i>Pesquisar
+                                </label>
+                                <input type="text" class="form-control" id="pesquisarDenuncia" placeholder="ID, utilizador...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Denúncias -->
+                <div class="denuncias-list">
+                    <!-- Denúncia 1 - Alta Prioridade -->
+                    <div class="card shadow-sm mb-3 border-danger" data-denuncia-estado="pendente" data-denuncia-tipo="anuncio" data-denuncia-prioridade="alta">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <h5 class="mb-0 fw-bold">#D1024</h5>
+                                                <span class="badge bg-danger">
+                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i>Alta Prioridade
+                                                </span>
+                                                <span class="badge bg-warning text-dark">Pendente</span>
+                                            </div>
+                                            <p class="text-muted mb-1 small">
+                                                <i class="bi bi-megaphone me-1"></i>Tipo: <strong>Anúncio</strong> •
+                                                <i class="bi bi-calendar3 me-1"></i>24/10/2025 10:30
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="denuncia-motivo mb-3">
+                                        <h6 class="fw-semibold mb-1">
+                                            <i class="bi bi-flag-fill text-danger me-2"></i>Motivo: Conteúdo Enganador
+                                        </h6>
+                                        <p class="mb-2 small text-muted">
+                                            "O anúncio apresenta fotografias que não correspondem ao veículo real. Quilometragem adulterada e estado do veículo falsificado."
+                                        </p>
+                                    </div>
+
+                                    <div class="row g-2 mb-2">
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-light rounded">
+                                                <small class="text-muted d-block">Denunciante:</small>
+                                                <p class="mb-0 fw-semibold small">João Silva (#U5432)</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-light rounded">
+                                                <small class="text-muted d-block">Denunciado:</small>
+                                                <p class="mb-0 fw-semibold small">Anúncio #A5543</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 bg-light rounded">
+                                                <small class="text-muted d-block">Vendedor:</small>
+                                                <p class="mb-0 fw-semibold small">Pedro Costa (#U2341)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="card bg-light border-0 h-100">
+                                        <div class="card-body p-3">
+                                            <h6 class="fw-semibold mb-3 small">
+                                                <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Ações Rápidas
+                                            </h6>
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#detalheDenunciaModal">
+                                                    <i class="bi bi-eye-fill me-1"></i>Ver Detalhes
+                                                </button>
+                                                <button class="btn btn-sm btn-success">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>Aprovar Denúncia
+                                                </button>
+                                                <button class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-trash-fill me-1"></i>Remover Anúncio
+                                                </button>
+                                                <button class="btn btn-sm btn-warning">
+                                                    <i class="bi bi-pause-circle-fill me-1"></i>Suspender Vendedor
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-x-circle me-1"></i>Rejeitar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Denúncia 2 - Em Análise -->
+                    <div class="card shadow-sm mb-3 border-warning" data-denuncia-estado="analise" data-denuncia-tipo="utilizador" data-denuncia-prioridade="media">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <h5 class="mb-0 fw-bold">#D1023</h5>
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="bi bi-dash-circle-fill me-1"></i>Média Prioridade
+                                                </span>
+                                                <span class="badge bg-info">Em Análise</span>
+                                            </div>
+                                            <p class="text-muted mb-1 small">
+                                                <i class="bi bi-person me-1"></i>Tipo: <strong>Utilizador</strong> •
+                                                <i class="bi bi-calendar3 me-1"></i>23/10/2025 16:20
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="denuncia-motivo mb-3">
+                                        <h6 class="fw-semibold mb-1">
+                                            <i class="bi bi-flag-fill text-warning me-2"></i>Motivo: Comportamento Abusivo
+                                        </h6>
+                                        <p class="mb-2 small text-muted">
+                                            "Utilizador envia mensagens ofensivas e ameaçadoras através do sistema de chat. Comportamento inadequado e intimidatório."
+                                        </p>
+                                    </div>
+
+                                    <div class="row g-2 mb-2">
+                                        <div class="col-md-6">
+                                            <div class="p-2 bg-light rounded">
+                                                <small class="text-muted d-block">Denunciante:</small>
+                                                <p class="mb-0 fw-semibold small">Maria Fernandes (#U6789)</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-2 bg-light rounded">
+                                                <small class="text-muted d-block">Denunciado:</small>
+                                                <p class="mb-0 fw-semibold small">Carlos Almeida (#U4321)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-info mb-0 small">
+                                        <i class="bi bi-info-circle-fill me-1"></i>
+                                        <strong>Atualização:</strong> Análise iniciada por Admin João às 14:30. Aguarda revisão de mensagens.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="card bg-light border-0 h-100">
+                                        <div class="card-body p-3">
+                                            <h6 class="fw-semibold mb-3 small">
+                                                <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Ações Rápidas
+                                            </h6>
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#detalheDenunciaModal">
+                                                    <i class="bi bi-eye-fill me-1"></i>Ver Detalhes
+                                                </button>
+                                                <button class="btn btn-sm btn-info">
+                                                    <i class="bi bi-chat-dots-fill me-1"></i>Ver Mensagens
+                                                </button>
+                                                <button class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-ban me-1"></i>Banir Utilizador
+                                                </button>
+                                                <button class="btn btn-sm btn-warning">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>Dar Aviso
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-x-circle me-1"></i>Rejeitar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Denúncia 3 - Resolvida -->
+                    <div class="card shadow-sm mb-3 border-success" data-denuncia-estado="resolvida" data-denuncia-tipo="anuncio" data-denuncia-prioridade="baixa">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <h5 class="mb-0 fw-bold">#D1022</h5>
+                                                <span class="badge bg-secondary">
+                                                    <i class="bi bi-info-circle-fill me-1"></i>Baixa Prioridade
+                                                </span>
+                                                <span class="badge bg-success">Resolvida</span>
+                                            </div>
+                                            <p class="text-muted mb-1 small">
+                                                <i class="bi bi-megaphone me-1"></i>Tipo: <strong>Anúncio</strong> •
+                                                <i class="bi bi-calendar3 me-1"></i>22/10/2025 09:15
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="denuncia-motivo mb-3">
+                                        <h6 class="fw-semibold mb-1">
+                                            <i class="bi bi-flag-fill text-success me-2"></i>Motivo: Preço Suspeito
+                                        </h6>
+                                        <p class="mb-2 small text-muted">
+                                            "Preço muito abaixo do mercado. Possível fraude."
+                                        </p>
+                                    </div>
+
+                                    <div class="alert alert-success mb-0 small">
+                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                        <strong>Resolução:</strong> Anúncio verificado. Preço correto - veículo com danos estruturais informados na descrição. Denúncia rejeitada.
+                                        <br><small class="text-muted">Por Admin Maria • 22/10/2025 15:30</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="card bg-light border-0 h-100">
+                                        <div class="card-body p-3">
+                                            <h6 class="fw-semibold mb-3 small">
+                                                <i class="bi bi-clock-history me-1"></i>Histórico
+                                            </h6>
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detalheDenunciaModal">
+                                                    <i class="bi bi-eye-fill me-1"></i>Ver Detalhes
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                    <i class="bi bi-archive me-1"></i>Arquivada
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado Vazio -->
+                <div class="denuncias-empty text-center py-5 d-none">
+                    <div class="mb-4">
+                        <i class="bi bi-shield-check" style="font-size: 4rem; color: #e2e8f0;"></i>
+                    </div>
+                    <h4 class="text-muted mb-2">Nenhuma denúncia encontrada</h4>
+                    <p class="text-muted mb-0">Não existem denúncias com os filtros selecionados</p>
                 </div>
             </div>
 
@@ -2694,6 +3026,237 @@
                 <button type="button" class="btn btn-success" id="btnConfirmarDesbloqueio">
                     <i class="bi bi-unlock-fill me-1"></i>Desbloquear Utilizador
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= MODAL DENÚNCIAS ========================= -->
+
+<!-- Modal: Detalhes da Denúncia -->
+<div class="modal fade" id="detalheDenunciaModal" tabindex="-1" aria-labelledby="detalheDenunciaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-danger bg-opacity-10 border-danger">
+                <h5 class="modal-title text-danger fw-bold" id="detalheDenunciaModalLabel">
+                    <i class="bi bi-flag-fill me-2"></i>Detalhes da Denúncia #D1024
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Informações Principais -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light h-100">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-info-circle-fill text-primary me-2"></i>Informações da Denúncia
+                                </h6>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">ID</small>
+                                        <p class="mb-0 fw-semibold">#D1024</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Data</small>
+                                        <p class="mb-0 fw-semibold">24/10/2025 10:30</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Estado</small>
+                                        <p class="mb-0"><span class="badge bg-warning text-dark">Pendente</span></p>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Prioridade</small>
+                                        <p class="mb-0"><span class="badge bg-danger">Alta</span></p>
+                                    </div>
+                                    <div class="col-12">
+                                        <small class="text-muted d-block">Tipo</small>
+                                        <p class="mb-0 fw-semibold">Anúncio</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light h-100">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-people-fill text-primary me-2"></i>Envolvidos
+                                </h6>
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-1">Denunciante</small>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://placehold.co/40x40/0d6efd/ffffff?text=JS" class="rounded-circle me-2" alt="João Silva">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">João Silva</p>
+                                            <small class="text-muted">#U5432 • joao.silva@exemplo.com</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">Denunciado (Vendedor)</small>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://placehold.co/40x40/dc3545/ffffff?text=PC" class="rounded-circle me-2" alt="Pedro Costa">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">Pedro Costa</p>
+                                            <small class="text-muted">#U2341 • pedro.costa@exemplo.com</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motivo e Descrição -->
+                <div class="card border-0 bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-flag-fill text-danger me-2"></i>Motivo da Denúncia
+                        </h6>
+                        <div class="mb-3">
+                            <span class="badge bg-danger mb-2">Conteúdo Enganador</span>
+                            <p class="mb-0">
+                                "O anúncio apresenta fotografias que não correspondem ao veículo real. Quilometragem adulterada e estado do veículo falsificado. O vendedor afirma que o carro tem 50.000km mas as fotos mostram claramente sinais de maior desgaste. Solicitei visita ao veículo e constatei divergências graves."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Objeto Denunciado -->
+                <div class="card border-0 bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-megaphone-fill text-primary me-2"></i>Anúncio Denunciado
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-auto">
+                                <img src="~/imagens/bmwSerie1.jpg" alt="BMW" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
+                            </div>
+                            <div class="col">
+                                <h6 class="mb-1">BMW Série 3 320d Pack M</h6>
+                                <p class="text-muted mb-2 small">Anúncio #A5543 • Publicado em 20/10/2025</p>
+                                <p class="mb-1"><strong>Preço:</strong> 28.500€</p>
+                                <p class="mb-1"><strong>Quilometragem anunciada:</strong> 50.000 km</p>
+                                <p class="mb-0"><strong>Localização:</strong> Porto</p>
+                            </div>
+                            <div class="col-auto">
+                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye me-1"></i>Ver Anúncio
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evidências -->
+                <div class="card border-0 bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-paperclip text-primary me-2"></i>Evidências Anexadas
+                        </h6>
+                        <div class="row g-2">
+                            <div class="col-auto">
+                                <div class="card border">
+                                    <div class="card-body p-2 text-center" style="width: 100px;">
+                                        <i class="bi bi-file-earmark-image fs-3 text-primary"></i>
+                                        <small class="d-block mt-1">foto1.jpg</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="card border">
+                                    <div class="card-body p-2 text-center" style="width: 100px;">
+                                        <i class="bi bi-file-earmark-image fs-3 text-primary"></i>
+                                        <small class="d-block mt-1">foto2.jpg</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="card border">
+                                    <div class="card-body p-2 text-center" style="width: 100px;">
+                                        <i class="bi bi-file-earmark-pdf fs-3 text-danger"></i>
+                                        <small class="d-block mt-1">prova.pdf</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline de Ações -->
+                <div class="card border-0 bg-light">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-clock-history text-primary me-2"></i>Histórico de Ações
+                        </h6>
+                        <div class="timeline">
+                            <div class="timeline-item mb-3">
+                                <div class="d-flex">
+                                    <div class="timeline-marker bg-danger"></div>
+                                    <div class="timeline-content ms-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">Denúncia Criada</p>
+                                                <small class="text-muted">Por João Silva (#U5432)</small>
+                                            </div>
+                                            <small class="text-muted">24/10/2025 10:30</small>
+                                        </div>
+                                        <p class="mb-0 small text-muted mt-1">Denúncia submetida com 3 evidências anexadas</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item mb-3">
+                                <div class="d-flex">
+                                    <div class="timeline-marker bg-warning"></div>
+                                    <div class="timeline-content ms-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">Prioridade Atribuída</p>
+                                                <small class="text-muted">Sistema automático</small>
+                                            </div>
+                                            <small class="text-muted">24/10/2025 10:31</small>
+                                        </div>
+                                        <p class="mb-0 small text-muted mt-1">Denúncia marcada como alta prioridade devido à gravidade</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="d-flex">
+                                    <div class="timeline-marker bg-info"></div>
+                                    <div class="timeline-content ms-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">Aguarda Análise</p>
+                                                <small class="text-muted">Estado atual</small>
+                                            </div>
+                                            <small class="text-muted">Agora</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Fechar
+                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger">
+                        <i class="bi bi-trash-fill me-1"></i>Remover Anúncio
+                    </button>
+                    <button type="button" class="btn btn-warning">
+                        <i class="bi bi-pause-circle-fill me-1"></i>Suspender Vendedor
+                    </button>
+                    <button type="button" class="btn btn-success">
+                        <i class="bi bi-check-circle-fill me-1"></i>Aprovar Denúncia
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>Rejeitar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -3438,7 +4001,114 @@
                     }, 1000);
                 });
             }
+
+            // ==================== GERIR DENÚNCIAS ====================
+
+            // Sistema de Filtros para Denúncias
+            const filtroDenunciaEstado = document.getElementById('filtroDenunciaEstado');
+            const filtroDenunciaTipo = document.getElementById('filtroDenunciaTipo');
+            const filtroDenunciaPrioridade = document.getElementById('filtroDenunciaPrioridade');
+            const pesquisarDenuncia = document.getElementById('pesquisarDenuncia');
+            const denunciasCards = document.querySelectorAll('[data-denuncia-estado]');
+            const denunciasEmpty = document.querySelector('.denuncias-empty');
+
+            function filtrarDenuncias() {
+                const estadoSelecionado = filtroDenunciaEstado ? filtroDenunciaEstado.value : 'todas';
+                const tipoSelecionado = filtroDenunciaTipo ? filtroDenunciaTipo.value : 'todos';
+                const prioridadeSelecionada = filtroDenunciaPrioridade ? filtroDenunciaPrioridade.value : 'todas';
+                const termoPesquisa = pesquisarDenuncia ? pesquisarDenuncia.value.toLowerCase() : '';
+
+                let denunciasVisiveis = 0;
+
+                denunciasCards.forEach(card => {
+                    const estado = card.getAttribute('data-denuncia-estado');
+                    const tipo = card.getAttribute('data-denuncia-tipo');
+                    const prioridade = card.getAttribute('data-denuncia-prioridade');
+                    const textoCard = card.textContent.toLowerCase();
+
+                    const matchEstado = estadoSelecionado === 'todas' || estado === estadoSelecionado;
+                    const matchTipo = tipoSelecionado === 'todos' || tipo === tipoSelecionado;
+                    const matchPrioridade = prioridadeSelecionada === 'todas' || prioridade === prioridadeSelecionada;
+                    const matchPesquisa = termoPesquisa === '' || textoCard.includes(termoPesquisa);
+
+                    if (matchEstado && matchTipo && matchPrioridade && matchPesquisa) {
+                        card.style.display = '';
+                        denunciasVisiveis++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Mostrar/esconder mensagem de lista vazia
+                if (denunciasEmpty) {
+                    if (denunciasVisiveis === 0) {
+                        denunciasEmpty.classList.remove('d-none');
+                    } else {
+                        denunciasEmpty.classList.add('d-none');
+                    }
+                }
+            }
+
+            // Event listeners para os filtros
+            if (filtroDenunciaEstado) {
+                filtroDenunciaEstado.addEventListener('change', filtrarDenuncias);
+            }
+            if (filtroDenunciaTipo) {
+                filtroDenunciaTipo.addEventListener('change', filtrarDenuncias);
+            }
+            if (filtroDenunciaPrioridade) {
+                filtroDenunciaPrioridade.addEventListener('change', filtrarDenuncias);
+            }
+            if (pesquisarDenuncia) {
+                pesquisarDenuncia.addEventListener('input', filtrarDenuncias);
+            }
+
+            // Aplicar filtro inicial (mostrar pendentes)
+            if (filtroDenunciaEstado) {
+                filtrarDenuncias();
+            }
         });
     </script>
+    <style>
+        /* Estilos para Timeline */
+        .timeline-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px currentColor;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        /* Estilos para Cards de Denúncias */
+        .denuncia-motivo {
+            border-left: 3px solid #dc3545;
+            padding-left: 1rem;
+        }
+
+        /* Hover effects para ações rápidas */
+        .card.bg-light .btn {
+            transition: all 0.2s;
+        }
+
+        .card.bg-light .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Stats cards hover */
+        .border-start {
+            transition: all 0.3s ease;
+        }
+
+        .border-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+        }
+    </style>
 }
 

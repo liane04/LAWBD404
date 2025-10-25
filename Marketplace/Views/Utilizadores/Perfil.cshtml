@@ -615,18 +615,18 @@
                         </div>
                     </div>
 
-                    <!-- Filtros de Status -->
-                    <div class="visitas-filter-tabs mb-4">
-                        <button class="anuncios-filter-btn active" data-filter-visitas-vendedor="todas">
+                    <!-- Filtros de Status - Horizontal -->
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-outline-primary active" data-filter-visitas-vendedor="todas">
                             <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">2</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas-vendedor="pendentes">
+                        <button class="btn btn-outline-warning" data-filter-visitas-vendedor="pendentes">
                             <i class="bi bi-clock-fill me-1"></i>Aguardam Confirmação <span class="badge bg-warning ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas-vendedor="confirmadas">
+                        <button class="btn btn-outline-success" data-filter-visitas-vendedor="confirmadas">
                             <i class="bi bi-check-circle-fill me-1"></i>Confirmadas <span class="badge bg-success ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas-vendedor="concluidas">
+                        <button class="btn btn-outline-secondary" data-filter-visitas-vendedor="concluidas">
                             <i class="bi bi-archive-fill me-1"></i>Concluídas <span class="badge bg-secondary ms-1">0</span>
                         </button>
                     </div>
@@ -674,6 +674,43 @@
                                         <div class="alert alert-warning mb-3 small">
                                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                             <strong>Ação necessária:</strong> Confirme ou proponha uma data alternativa para a visita.
+                                        </div>
+
+                                        <!-- Histórico de Ações -->
+                                        <div class="mb-3">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#historicoVisitaVendedor1" aria-expanded="false">
+                                                <i class="bi bi-clock-history me-1"></i>Ver Histórico de Ações
+                                            </button>
+                                            <div class="collapse mt-2" id="historicoVisitaVendedor1">
+                                                <div class="card card-body p-3 bg-light">
+                                                    <div class="timeline-visita">
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-warning"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Aguarda sua Confirmação</small>
+                                                                        <small class="text-muted">Agora</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Necessita confirmar ou propor nova data</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-info"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Pedido Recebido</small>
+                                                                        <small class="text-muted">26/10/2025 16:35</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Maria Fernandes solicitou visita para 27/10/2025 às 10:00</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="visita-comprador-info mb-3 p-3 bg-light rounded">
@@ -758,6 +795,55 @@
                                         <div class="alert alert-success mb-3 small">
                                             <i class="bi bi-check-circle-fill me-2"></i>
                                             <strong>Visita confirmada.</strong> Prepare toda a documentação do veículo e esteja disponível no local combinado.
+                                        </div>
+
+                                        <!-- Histórico de Ações -->
+                                        <div class="mb-3">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#historicoVisitaVendedor2" aria-expanded="false">
+                                                <i class="bi bi-clock-history me-1"></i>Ver Histórico de Ações
+                                            </button>
+                                            <div class="collapse mt-2" id="historicoVisitaVendedor2">
+                                                <div class="card card-body p-3 bg-light">
+                                                    <div class="timeline-visita">
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-success"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Visita Confirmada</small>
+                                                                        <small class="text-muted">25/10/2025 18:30</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Confirmou a visita para 26/10/2025 às 15:00</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-info"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Pedido Recebido</small>
+                                                                        <small class="text-muted">25/10/2025 14:20</small>
+                                                                    </div>
+                                                                    <small class="text-muted">João Silva solicitou visita</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-primary"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Notificação Enviada</small>
+                                                                        <small class="text-muted">25/10/2025 14:20</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Comprador foi notificado da confirmação</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="visita-comprador-info mb-3 p-3 bg-light rounded">
@@ -1135,18 +1221,18 @@
                         </div>
                     </div>
 
-                    <!-- Filtros de Status -->
-                    <div class="visitas-filter-tabs mb-4">
-                        <button class="anuncios-filter-btn active" data-filter-visitas="todas">
+                    <!-- Filtros de Status - Horizontal -->
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-outline-primary active" data-filter-visitas="todas">
                             <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas="pendentes">
+                        <button class="btn btn-outline-warning" data-filter-visitas="pendentes">
                             <i class="bi bi-clock-fill me-1"></i>Pendentes <span class="badge bg-warning ms-1">0</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas="confirmadas">
+                        <button class="btn btn-outline-success" data-filter-visitas="confirmadas">
                             <i class="bi bi-check-circle-fill me-1"></i>Confirmadas <span class="badge bg-success ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas="concluidas">
+                        <button class="btn btn-outline-secondary" data-filter-visitas="concluidas">
                             <i class="bi bi-archive-fill me-1"></i>Concluídas <span class="badge bg-secondary ms-1">0</span>
                         </button>
                     </div>
@@ -1194,6 +1280,55 @@
                                         <div class="alert alert-success mb-3 small">
                                             <i class="bi bi-check-circle-fill me-2"></i>
                                             <strong>Visita confirmada pelo vendedor.</strong> Compareça no local na data e hora agendadas.
+                                        </div>
+
+                                        <!-- Histórico de Ações -->
+                                        <div class="mb-3">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#historicoVisita1" aria-expanded="false">
+                                                <i class="bi bi-clock-history me-1"></i>Ver Histórico de Ações
+                                            </button>
+                                            <div class="collapse mt-2" id="historicoVisita1">
+                                                <div class="card card-body p-3 bg-light">
+                                                    <div class="timeline-visita">
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-success"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Visita Confirmada</small>
+                                                                        <small class="text-muted">25/10/2025 18:45</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Vendedor confirmou a visita para 26/10/2025 às 15:00</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-info"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Pedido Enviado</small>
+                                                                        <small class="text-muted">25/10/2025 14:20</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Solicitou visita ao veículo</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-primary"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Visita Criada</small>
+                                                                        <small class="text-muted">25/10/2025 14:20</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Pedido de visita registado no sistema</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="visita-vendedor mb-3 p-3 bg-light rounded">
@@ -1955,7 +2090,22 @@
 
             visitasFilterButtons.forEach(button => {
                 button.addEventListener('click', function () {
-                    visitasFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Remove active de todos os botões
+                    visitasFilterButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        // Restaura classes originais
+                        if (btn.getAttribute('data-filter-visitas') === 'todas') {
+                            btn.className = 'btn btn-outline-primary';
+                        } else if (btn.getAttribute('data-filter-visitas') === 'pendentes') {
+                            btn.className = 'btn btn-outline-warning';
+                        } else if (btn.getAttribute('data-filter-visitas') === 'confirmadas') {
+                            btn.className = 'btn btn-outline-success';
+                        } else if (btn.getAttribute('data-filter-visitas') === 'concluidas') {
+                            btn.className = 'btn btn-outline-secondary';
+                        }
+                    });
+
+                    // Adiciona active ao botão clicado
                     this.classList.add('active');
 
                     const filter = this.getAttribute('data-filter-visitas');
@@ -2013,7 +2163,22 @@
 
             visitasVendedorFilterButtons.forEach(button => {
                 button.addEventListener('click', function () {
-                    visitasVendedorFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Remove active de todos os botões
+                    visitasVendedorFilterButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        // Restaura classes originais
+                        if (btn.getAttribute('data-filter-visitas-vendedor') === 'todas') {
+                            btn.className = 'btn btn-outline-primary';
+                        } else if (btn.getAttribute('data-filter-visitas-vendedor') === 'pendentes') {
+                            btn.className = 'btn btn-outline-warning';
+                        } else if (btn.getAttribute('data-filter-visitas-vendedor') === 'confirmadas') {
+                            btn.className = 'btn btn-outline-success';
+                        } else if (btn.getAttribute('data-filter-visitas-vendedor') === 'concluidas') {
+                            btn.className = 'btn btn-outline-secondary';
+                        }
+                    });
+
+                    // Adiciona active ao botão clicado
                     this.classList.add('active');
 
                     const filter = this.getAttribute('data-filter-visitas-vendedor');
