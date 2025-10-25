@@ -725,8 +725,9 @@ body.home-page .navbar:not(.scrolled) {
 }
 
 /* Esconder elementos baseado no mockup mode por padrão */
-[data-mockup-user-type] {
-    display: none;
+[data-mockup-user-type],
+[data-mockup-user-type-alt] {
+    display: none !important;
 }
 
 /* Mostrar quando o tipo corresponder ao modo ativo do body */
@@ -773,6 +774,11 @@ body[data-mockup-mode="admin"] [data-mockup-user-type="admin"].btn {
 body[data-mockup-mode="vendedor"] [data-mockup-user-type-alt*="vendedor"],
 body[data-mockup-mode="admin"] [data-mockup-user-type-alt*="admin"] {
     display: block !important;
+}
+
+/* Esconder barra de mockup em ecrãs pequenos e ajustar header */
+@media (max-width: 767.98px) {
+    header.fixed-top { top: 0 !important; }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -4570,4 +4576,36 @@ img {
 /* Dark mode support (optional) */
 @media (prefers-color-scheme: dark) {
     /* Add dark mode styles if needed in the future */
+}
+
+/* -------------------------------------------------------------- */
+/* Hero CTA Button                                                */
+/* -------------------------------------------------------------- */
+.hero-cta-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: var(--white) !important;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 9999px;
+    padding: 0.9rem 2rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.35);
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: saturate(120%) blur(2px);
+}
+
+.hero-cta-btn:hover {
+    color: var(--white) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.45);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    border-color: rgba(255,255,255,0.35);
+}
+
+.hero-cta-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
 }

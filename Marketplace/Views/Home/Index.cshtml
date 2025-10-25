@@ -41,13 +41,15 @@
                             <input type="text" name="localizacao" class="form-control" placeholder="Localização" aria-label="Localização">
                         </div>
                     </div>
-                    <div class="col-md-auto">
-                        <button type="submit" class="btn btn-primary btn-lg w-100 px-4">
-                            <i class="bi bi-search me-2"></i>Procurar
-                        </button>
-                    </div>
                 </div>
             </form>
+        </div>
+
+        <!-- Botão de Acesso Rápido à Listagem de Anúncios -->
+        <div class="mt-4">
+            <a asp-controller="Anuncios" asp-action="Index" id="btnHeroVerAnuncios" class="btn btn-primary hero-cta-btn btn-lg px-4">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>Ver Anúncios
+            </a>
         </div>
     </div>
 </section>
@@ -110,6 +112,33 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        // Fazer o botão "Ver Anúncios" atuar como submissão dos filtros
+        document.addEventListener('DOMContentLoaded', function () {
+            const btn = document.getElementById('btnHeroVerAnuncios');
+            if (!btn) return;
+
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const baseUrl = '@Url.Action("Index", "Anuncios")';
+                const marcaId = document.querySelector('select[name="marcaId"]').value;
+                const precoMax = document.querySelector('input[name="precoMax"]').value;
+                const localizacao = document.querySelector('input[name="localizacao"]').value;
+
+                const params = new URLSearchParams();
+                if (marcaId) params.set('marcaId', marcaId);
+                if (precoMax) params.set('precoMax', precoMax);
+                if (localizacao) params.set('localizacao', localizacao);
+
+                const url = params.toString() ? `${baseUrl}?${params}` : baseUrl;
+                window.location.href = url;
+            });
+        });
+    </script>
+}
 
 <!-- Secção Como Funciona -->
 <section class="feature-section page-section">
