@@ -4666,17 +4666,23 @@ img {
 /* Botão Hero Melhorado - Ver Anúncios                           */
 /* -------------------------------------------------------------- */
 .hero-cta-btn-enhanced {
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
     color: white !important;
-    border: none;
-    border-radius: 16px;
-    font-weight: 600;
-    box-shadow: 0 10px 40px rgba(37, 99, 235, 0.35), 
-                0 0 0 3px rgba(37, 99, 235, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+    border: none !important;
+    border-radius: 16px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 10px 40px rgba(37, 99, 235, 0.35),
+                0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
     text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .hero-cta-btn-enhanced::before {
@@ -4831,4 +4837,52 @@ img {
 
 .badge:hover .bi-shield-check {
     animation-play-state: paused;
+}
+
+/* Garantir visibilidade do conteúdo do botão */
+.hero-cta-btn-enhanced span,
+.hero-cta-btn-enhanced .btn-text,
+.hero-cta-btn-enhanced strong,
+.hero-cta-btn-enhanced small,
+.hero-cta-btn-enhanced i {
+    color: white !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.hero-cta-btn-enhanced .btn-text strong {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.hero-cta-btn-enhanced .btn-text small {
+    font-size: 0.85rem !important;
+    font-weight: 400 !important;
+    opacity: 0.95 !important;
+    line-height: 1.3 !important;
+}
+
+/* Garantir que o botão funcione dentro da hero-section */
+.hero-section .hero-cta-btn-enhanced {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
+    color: #ffffff !important;
+    position: relative !important;
+    z-index: 100 !important;
+}
+
+.hero-section .hero-cta-btn-enhanced * {
+    color: #ffffff !important;
+}
+
+/* Fix para badges */
+.hero-section .badge.bg-light {
+    background-color: #f8f9fa !important;
+    color: #1e293b !important;
+    z-index: 100 !important;
+}
+
+.hero-section .badge.bg-light i {
+    opacity: 1 !important;
 }
