@@ -40,6 +40,8 @@ namespace Marketplace.Data
         public DbSet<Mensagens> Mensagens { get; set; }
         public DbSet<DenunciaAnuncio> DenunciasAnuncio { get; set; }
         public DbSet<DenunciaUser> DenunciasUser { get; set; }
+        public DbSet<Extra> Extras { get; set; }
+        public DbSet<AnuncioExtra> AnuncioExtras { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -170,6 +172,17 @@ namespace Marketplace.Data
     .WithMany(c => c.AnunciosFavoritos)
     .HasForeignKey(af => af.CompradorId)
     .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento N:N entre Anuncio e Extra através de AnuncioExtra
+            modelBuilder.Entity<AnuncioExtra>()
+                .HasOne(ae => ae.Anuncio)
+                .WithMany(a => a.AnuncioExtras)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AnuncioExtra>()
+                .HasOne(ae => ae.Extra)
+                .WithMany(e => e.AnuncioExtras)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

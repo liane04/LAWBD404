@@ -59,6 +59,7 @@ namespace Marketplace.Models
         public ICollection<Conversa> Conversas { get; set; } = new List<Conversa>();
         public ICollection<DenunciaAnuncio> Denuncias { get; set; } = new List<DenunciaAnuncio>();
         public ICollection<AcaoAnuncio> AcoesAnuncio { get; set; } = new List<AcaoAnuncio>();
+        public ICollection<AnuncioExtra> AnuncioExtras { get; set; } = new List<AnuncioExtra>();
     }
 }
 

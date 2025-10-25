@@ -1148,39 +1148,42 @@
             const navItems = document.querySelectorAll('.perfil-nav-item');
             const tabPanes = document.querySelectorAll('.tab-pane');
 
-            // Função para ativar uma tab
-            function activateTab(targetId) {
-                // Remover classe active de todos os itens
-                navItems.forEach(item => item.classList.remove('active'));
+            // Função para ativar um tab
+            function activateTab(targetId, clickedItem) {
+                // Remover active de todos os navItems
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                // Remover show e active de todos os tab panes
                 tabPanes.forEach(pane => {
                     pane.classList.remove('show', 'active');
                 });
 
-                // Adicionar classe active ao item clicado
-                const clickedItem = document.querySelector(`[href="${targetId}"]`);
+                // Adicionar active ao item clicado
                 if (clickedItem) {
                     clickedItem.classList.add('active');
                 }
 
-                // Mostrar o conteúdo correspondente
+                // Mostrar o tab correspondente
                 const targetPane = document.querySelector(targetId);
                 if (targetPane) {
                     targetPane.classList.add('show', 'active');
                 }
+
+                // Scroll suave para o topo
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
 
-            // Adicionar event listeners aos itens de navegação
+            // Adicionar event listeners aos tabs
             navItems.forEach(item => {
                 item.addEventListener('click', function (e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
-                    activateTab(targetId);
-
-                    // Scroll suave para o topo do conteúdo (opcional)
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
+                    activateTab(targetId, this);
                 });
             });
 
