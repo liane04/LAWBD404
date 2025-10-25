@@ -334,6 +334,15 @@
                         <button class="btn btn-outline-primary btn-lg">
                             <i class="bi bi-chat-dots-fill me-2"></i>Enviar Mensagem
                         </button>
+
+                        <hr class="my-2">
+
+                        <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#reservarModal" data-mockup-user-type="comprador">
+                            <i class="bi bi-bookmark-check-fill me-2"></i>Reservar Veículo
+                        </button>
+                        <button class="btn btn-info btn-lg text-white" data-bs-toggle="modal" data-bs-target="#agendarVisitaModal" data-mockup-user-type="comprador">
+                            <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                        </button>
                     </div>
                 </div>
                 <div class="card-footer text-center bg-light">
@@ -469,6 +478,344 @@
     </section>
 </div>
 
+<!-- Modal: Reservar Veículo -->
+<div class="modal fade" id="reservarModal" tabindex="-1" aria-labelledby="reservarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success bg-opacity-10 border-success">
+                <h5 class="modal-title fw-bold text-success" id="reservarModalLabel">
+                    <i class="bi bi-bookmark-check-fill me-2"></i>Reservar Veículo
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Informações do Veículo -->
+                <div class="alert alert-info border-info d-flex align-items-start mb-4">
+                    <i class="bi bi-info-circle-fill me-3 fs-4 flex-shrink-0"></i>
+                    <div>
+                        <h6 class="alert-heading fw-bold mb-2">Como funciona a reserva?</h6>
+                        <p class="mb-2 small">
+                            Ao reservar este veículo, você garante a prioridade na compra por <strong>48 horas</strong>.
+                            Durante este período, o anúncio ficará marcado como "Reservado" e outros compradores não poderão reservá-lo.
+                        </p>
+                        <p class="mb-0 small">
+                            <strong>Nota:</strong> A reserva é <strong>gratuita</strong> e não implica obrigação de compra.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Resumo do Veículo -->
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-car-front-fill text-primary me-2"></i>Veículo a Reservar
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-auto">
+                                <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 3" class="rounded" style="width: 100px; height: 75px; object-fit: cover;">
+                            </div>
+                            <div class="col">
+                                <h5 class="mb-1">BMW Série 3 320d Pack M</h5>
+                                <p class="text-muted mb-1 small">2019 • 85.000 km • Diesel • Manual</p>
+                                <p class="text-success fw-bold fs-5 mb-0">28.500 €</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário de Reserva -->
+                <form id="formReserva">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-person-fill text-primary me-2"></i>Seus Dados
+                    </h6>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="reservaNome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="reservaNome" value="João Duarte Silva" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reservaEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="reservaEmail" value="joao.silva@exemplo.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reservaTelefone" class="form-label">Telefone <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="reservaTelefone" value="+351 912 345 678" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reservaDataExpiracao" class="form-label">Validade da Reserva</label>
+                            <input type="text" class="form-control" id="reservaDataExpiracao" value="48 horas" readonly>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-chat-text text-primary me-2"></i>Mensagem (Opcional)
+                    </h6>
+                    <div class="mb-4">
+                        <textarea class="form-control" id="reservaMensagem" rows="3" placeholder="Deixe uma mensagem para o vendedor (ex: disponibilidade para visita, questões sobre o veículo...)"></textarea>
+                        <div class="form-text">Esta mensagem será enviada ao vendedor junto com a notificação de reserva.</div>
+                    </div>
+
+                    <!-- Termos e Condições -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="reservaTermos" required>
+                        <label class="form-check-label small" for="reservaTermos">
+                            Li e concordo com os <a href="#" class="text-primary">termos e condições de reserva</a>
+                        </label>
+                    </div>
+
+                    <!-- Timeline da Reserva -->
+                    <div class="alert alert-light border mb-0">
+                        <h6 class="fw-bold mb-3">O que acontece a seguir?</h6>
+                        <div class="d-flex mb-2">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-1-circle-fill"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 small fw-semibold">Confirmação Imediata</h6>
+                                <p class="mb-0 small text-muted">Receberá um email de confirmação com os detalhes da reserva</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-2-circle-fill"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 small fw-semibold">Contacto do Vendedor</h6>
+                                <p class="mb-0 small text-muted">O vendedor irá contactá-lo para agendar uma visita</p>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-3-circle-fill"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 small fw-semibold">Prioridade Garantida</h6>
+                                <p class="mb-0 small text-muted">Tem 48h para decidir sobre a compra com prioridade exclusiva</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-success" id="btnConfirmarReserva">
+                    <i class="bi bi-bookmark-check-fill me-2"></i>Confirmar Reserva
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Agendar Visita -->
+<div class="modal fade" id="agendarVisitaModal" tabindex="-1" aria-labelledby="agendarVisitaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info bg-opacity-10 border-info">
+                <h5 class="modal-title fw-bold text-info" id="agendarVisitaModalLabel">
+                    <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Informações -->
+                <div class="alert alert-info border-info d-flex align-items-start mb-4">
+                    <i class="bi bi-info-circle-fill me-3 fs-4 flex-shrink-0"></i>
+                    <div>
+                        <h6 class="alert-heading fw-bold mb-2">Agende uma visita presencial</h6>
+                        <p class="mb-2 small">
+                            Marque uma data e hora para ver o veículo pessoalmente. O vendedor irá confirmar a disponibilidade e enviará os detalhes do local.
+                        </p>
+                        <p class="mb-0 small">
+                            <strong>Dica:</strong> Aproveite a visita para fazer um test-drive e verificar toda a documentação do veículo.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Resumo do Veículo -->
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-car-front-fill text-primary me-2"></i>Veículo
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-auto">
+                                <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 3" class="rounded" style="width: 100px; height: 75px; object-fit: cover;">
+                            </div>
+                            <div class="col">
+                                <h5 class="mb-1">BMW Série 3 320d Pack M</h5>
+                                <p class="text-muted mb-1 small">2019 • 85.000 km • Diesel • Manual</p>
+                                <p class="text-success fw-bold fs-5 mb-0">28.500 €</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações do Vendedor -->
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-person-badge text-primary me-2"></i>Vendedor
+                        </h6>
+                        <div class="d-flex align-items-center">
+                            <img src="https://placehold.co/60x60/0d6efd/ffffff?text=PC" class="rounded-circle me-3" alt="Pedro Costa">
+                            <div>
+                                <h6 class="mb-1">Pedro Costa</h6>
+                                <p class="text-muted mb-0 small">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>4.5 (28 avaliações) •
+                                    <i class="bi bi-geo-alt-fill text-primary me-1"></i>Porto
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário de Agendamento -->
+                <form id="formAgendarVisita">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-calendar2-week text-primary me-2"></i>Data e Hora Preferencial
+                    </h6>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="visitaData" class="form-label">Data da Visita <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="visitaData" required>
+                            <div class="form-text">Escolha uma data nos próximos 14 dias</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="visitaHora" class="form-label">Hora Preferencial <span class="text-danger">*</span></label>
+                            <select class="form-select" id="visitaHora" required>
+                                <option value="">Selecione...</option>
+                                <option value="09:00">09:00</option>
+                                <option value="10:00">10:00</option>
+                                <option value="11:00">11:00</option>
+                                <option value="12:00">12:00</option>
+                                <option value="14:00">14:00</option>
+                                <option value="15:00">15:00</option>
+                                <option value="16:00">16:00</option>
+                                <option value="17:00">17:00</option>
+                                <option value="18:00">18:00</option>
+                            </select>
+                            <div class="form-text">O vendedor irá confirmar a disponibilidade</div>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-person-fill text-primary me-2"></i>Seus Dados
+                    </h6>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="visitaNome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="visitaNome" value="João Duarte Silva" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="visitaEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="visitaEmail" value="joao.silva@exemplo.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="visitaTelefone" class="form-label">Telefone <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="visitaTelefone" value="+351 912 345 678" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="visitaNumPessoas" class="form-label">Número de Acompanhantes</label>
+                            <select class="form-select" id="visitaNumPessoas">
+                                <option value="0" selected>Apenas eu</option>
+                                <option value="1">1 acompanhante</option>
+                                <option value="2">2 acompanhantes</option>
+                                <option value="3">3+ acompanhantes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Interesses Específicos -->
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-list-check text-primary me-2"></i>Interesses Durante a Visita (Opcional)
+                    </h6>
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkTestDrive" checked>
+                                <label class="form-check-label" for="checkTestDrive">
+                                    <i class="bi bi-speedometer2 me-1"></i>Test Drive
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkDocumentacao" checked>
+                                <label class="form-check-label" for="checkDocumentacao">
+                                    <i class="bi bi-file-earmark-text me-1"></i>Verificar Documentação
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkInspecao">
+                                <label class="form-check-label" for="checkInspecao">
+                                    <i class="bi bi-tools me-1"></i>Inspeção Mecânica
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkFinanciamento">
+                                <label class="form-check-label" for="checkFinanciamento">
+                                    <i class="bi bi-cash-coin me-1"></i>Discutir Financiamento
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-chat-text text-primary me-2"></i>Observações (Opcional)
+                    </h6>
+                    <div class="mb-4">
+                        <textarea class="form-control" id="visitaObservacoes" rows="3" placeholder="Questões específicas, aspetos que gostaria de ver, ou outras observações..."></textarea>
+                    </div>
+
+                    <!-- Confirmação -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="visitaConfirmacao" required>
+                        <label class="form-check-label small" for="visitaConfirmacao">
+                            Compreendo que esta visita está sujeita à confirmação do vendedor
+                        </label>
+                    </div>
+
+                    <!-- Info Adicional -->
+                    <div class="alert alert-light border mb-0">
+                        <h6 class="fw-bold mb-2 small">
+                            <i class="bi bi-shield-check me-1"></i>Dicas de Segurança para a Visita
+                        </h6>
+                        <ul class="mb-0 small text-muted">
+                            <li>Marque a visita num local público e durante o dia</li>
+                            <li>Leve um acompanhante, se possível</li>
+                            <li>Verifique toda a documentação do veículo</li>
+                            <li>Não efetue pagamentos durante a visita</li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-info text-white" id="btnConfirmarVisita">
+                    <i class="bi bi-calendar-check-fill me-2"></i>Confirmar Agendamento
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Gallery Thumbnails Navigation
     function goToSlide(index) {
@@ -509,4 +856,103 @@
             button.classList.remove('active');
         }
     }
+
+    // Mockup: Confirmar Reserva
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnConfirmarReserva = document.getElementById('btnConfirmarReserva');
+        const btnConfirmarVisita = document.getElementById('btnConfirmarVisita');
+        const reservarModal = document.getElementById('reservarModal');
+        const agendarVisitaModal = document.getElementById('agendarVisitaModal');
+
+        // Confirmar Reserva
+        if (btnConfirmarReserva) {
+            btnConfirmarReserva.addEventListener('click', function () {
+                // Validação básica do formulário
+                const form = document.getElementById('formReserva');
+                const termosCheckbox = document.getElementById('reservaTermos');
+
+                if (!termosCheckbox.checked) {
+                    alert('Por favor, aceite os termos e condições para continuar.');
+                    return;
+                }
+
+                // Simular sucesso
+                const modalInstance = bootstrap.Modal.getInstance(reservarModal);
+                modalInstance.hide();
+
+                // Mostrar mensagem de sucesso
+                setTimeout(() => {
+                    mostrarMensagemSucesso(
+                        'Reserva Confirmada!',
+                        'A sua reserva foi efetuada com sucesso. Receberá um email de confirmação em breve. O vendedor irá contactá-lo nas próximas horas.'
+                    );
+                }, 300);
+            });
+        }
+
+        // Confirmar Visita
+        if (btnConfirmarVisita) {
+            btnConfirmarVisita.addEventListener('click', function () {
+                // Validação básica do formulário
+                const visitaData = document.getElementById('visitaData').value;
+                const visitaHora = document.getElementById('visitaHora').value;
+                const visitaConfirmacao = document.getElementById('visitaConfirmacao');
+
+                if (!visitaData || !visitaHora) {
+                    alert('Por favor, preencha a data e hora para a visita.');
+                    return;
+                }
+
+                if (!visitaConfirmacao.checked) {
+                    alert('Por favor, confirme que compreende que a visita está sujeita à confirmação do vendedor.');
+                    return;
+                }
+
+                // Simular sucesso
+                const modalInstance = bootstrap.Modal.getInstance(agendarVisitaModal);
+                modalInstance.hide();
+
+                // Mostrar mensagem de sucesso
+                setTimeout(() => {
+                    const dataFormatada = new Date(visitaData).toLocaleDateString('pt-PT', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    mostrarMensagemSucesso(
+                        'Visita Agendada!',
+                        `O seu pedido de visita para ${dataFormatada} às ${visitaHora} foi enviado. O vendedor irá confirmar a disponibilidade em breve.`
+                    );
+                }, 300);
+            });
+        }
+
+        // Função auxiliar para mostrar mensagens de sucesso
+        function mostrarMensagemSucesso(titulo, mensagem) {
+            // Criar elemento de alerta
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.style.minWidth = '400px';
+            alertDiv.style.maxWidth = '600px';
+            alertDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-3 fs-3"></i>
+                    <div class="flex-grow-1">
+                        <h6 class="alert-heading fw-bold mb-1">${titulo}</h6>
+                        <p class="mb-0 small">${mensagem}</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            // Remover automaticamente após 8 segundos
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 150);
+            }, 8000);
+        }
+    });
 </script>

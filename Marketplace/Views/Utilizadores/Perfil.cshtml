@@ -15,7 +15,8 @@
                                  class="perfil-avatar rounded-circle"
                                  alt="Foto de Perfil">
                             <button class="perfil-avatar-edit btn btn-sm btn-primary rounded-circle position-absolute">
-                                <i class="bi bi-camera-fill"></i>.
+                                <i class="bi bi-camera-fill"></i>
+                            </button>
                         </div>
                         <h5 class="mb-2 fw-bold">João Duarte Silva</h5>
                         <div class="perfil-user-badges mb-2">
@@ -35,22 +36,22 @@
 
                     <!-- Menu de Navegação -->
                     <div class="perfil-nav-menu">
-                        <a href="#dados-pessoais" class="perfil-nav-item active" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
+                        <a href="#dados-pessoais" class="perfil-nav-item active" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
                             <i class="bi bi-person-fill"></i>
                             <span>Dados Pessoais</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
                         </a>
-                        <a href="#meus-anuncios" class="perfil-nav-item" data-mockup-user-type="vendedor">
+                        <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
                             <i class="bi bi-card-list"></i>
                             <span>Meus Anúncios</span>
                             <span class="badge bg-primary rounded-pill ms-auto">3</span>
                         </a>
-                        <a href="#favoritos" class="perfil-nav-item" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
+                        <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
                             <i class="bi bi-heart-fill"></i>
                             <span>Anúncios Favoritos</span>
                             <span class="badge bg-danger rounded-pill ms-auto">2</span>
                         </a>
-                        <a href="#definicoes" class="perfil-nav-item" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
+                        <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
                             <i class="bi bi-gear-fill"></i>
                             <span>Definições</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
@@ -82,9 +83,9 @@
                             </h3>
                             <p class="text-muted mb-0">Gerir as suas informações pessoais e de contacto</p>
                         </div>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editarPerfilModal">
+                        <a asp-action="Edit" class="btn btn-primary">
                             <i class="bi bi-pencil-square me-2"></i>Editar Perfil
-                        </button>
+                        </a>
                     </div>
 
                     <!-- Informações Pessoais -->
@@ -1011,245 +1012,58 @@
     </div>
 </div>
 
-<!-- Modal: Editar Perfil -->
-<div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary bg-opacity-10">
-                <h5 class="modal-title text-primary fw-bold" id="editarPerfilModalLabel">
-                    <i class="bi bi-pencil-square me-2"></i>Editar Perfil
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editarPerfilForm">
-                    <!-- Informação Pessoal -->
-                    <h6 class="text-primary fw-bold mb-3">
-                        <i class="bi bi-person-badge me-2"></i>Informação Pessoal
-                    </h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label for="editNomeCompleto" class="form-label">Nome Completo <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editNomeCompleto" value="João Duarte Silva" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editUsername" class="form-label">Username <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editUsername" value="joao.silva" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editEmail" class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="editEmail" value="joao.silva@exemplo.com" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editDataNascimento" class="form-label">Data de Nascimento</label>
-                            <input type="date" class="form-control" id="editDataNascimento" value="1990-05-15">
-                        </div>
-                    </div>
-
-                    <!-- Contactos -->
-                    <h6 class="text-primary fw-bold mb-3">
-                        <i class="bi bi-telephone me-2"></i>Contactos
-                    </h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label for="editTelemovel" class="form-label">Telemóvel <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" id="editTelemovel" value="+351 912 345 678" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editTelefone" class="form-label">Telefone Fixo</label>
-                            <input type="tel" class="form-control" id="editTelefone" value="+351 259 123 456">
-                        </div>
-                    </div>
-
-                    <!-- Endereço -->
-                    <h6 class="text-primary fw-bold mb-3">
-                        <i class="bi bi-geo-alt me-2"></i>Endereço
-                    </h6>
-                    <div class="row g-3 mb-4">
-                        <div class="col-12">
-                            <label for="editMorada" class="form-label">Morada <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editMorada" value="Rua das Flores, 123" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="editCodigoPostal" class="form-label">Código Postal <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editCodigoPostal" value="5000-123" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="editCidade" class="form-label">Cidade <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editCidade" value="Vila Real" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="editDistrito" class="form-label">Distrito <span class="text-danger">*</span></label>
-                            <select class="form-select" id="editDistrito" required>
-                                <option value="">Selecione...</option>
-                                <option value="Aveiro">Aveiro</option>
-                                <option value="Beja">Beja</option>
-                                <option value="Braga">Braga</option>
-                                <option value="Bragança">Bragança</option>
-                                <option value="Castelo Branco">Castelo Branco</option>
-                                <option value="Coimbra">Coimbra</option>
-                                <option value="Évora">Évora</option>
-                                <option value="Faro">Faro</option>
-                                <option value="Guarda">Guarda</option>
-                                <option value="Leiria">Leiria</option>
-                                <option value="Lisboa">Lisboa</option>
-                                <option value="Portalegre">Portalegre</option>
-                                <option value="Porto">Porto</option>
-                                <option value="Santarém">Santarém</option>
-                                <option value="Setúbal">Setúbal</option>
-                                <option value="Viana do Castelo">Viana do Castelo</option>
-                                <option value="Vila Real" selected>Vila Real</option>
-                                <option value="Viseu">Viseu</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Alterar Password (Opcional) -->
-                    <h6 class="text-primary fw-bold mb-3">
-                        <i class="bi bi-lock me-2"></i>Alterar Password (Opcional)
-                    </h6>
-                    <div class="alert alert-info border-0 mb-3">
-                        <i class="bi bi-info-circle me-2"></i>
-                        <small>Deixe em branco se não pretender alterar a password</small>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="editPasswordAtual" class="form-label">Password Atual</label>
-                            <input type="password" class="form-control" id="editPasswordAtual" placeholder="••••••••">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editPasswordNova" class="form-label">Nova Password</label>
-                            <input type="password" class="form-control" id="editPasswordNova" placeholder="••••••••">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editPasswordConfirmar" class="form-label">Confirmar Nova Password</label>
-                            <input type="password" class="form-control" id="editPasswordConfirmar" placeholder="••••••••">
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i>Cancelar
-                </button>
-                <button type="button" class="btn btn-primary" id="btnGuardarPerfil">
-                    <i class="bi bi-check-circle-fill me-1"></i>Guardar Alterações
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
     <script>
-        // ===== SISTEMA DE TABS DO PERFIL - VERSÃO 3.0 =====
-        // Última atualização: Corrigido problema de cache e sintaxe
+        // Sistema de Tabs do Perfil
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('=== INICIANDO SISTEMA DE TABS ===');
-
+            // Selecionar todos os itens de navegação
             const navItems = document.querySelectorAll('.perfil-nav-item');
             const tabPanes = document.querySelectorAll('.tab-pane');
 
-            console.log('Nav Items encontrados:', navItems.length);
-            console.log('Tab Panes encontrados:', tabPanes.length);
-
-            if (navItems.length === 0) {
-                console.error('ERRO: Nenhum .perfil-nav-item encontrado!');
-                return;
-            }
-
-            if (tabPanes.length === 0) {
-                console.error('ERRO: Nenhum .tab-pane encontrado!');
-                return;
-            }
-
-            // Função para ativar um tab manualmente (sem Bootstrap)
-            function activateTab(targetId, clickedItem) {
-                console.log('>>> Ativando tab:', targetId);
-
-                // 1. Remover active de todos os links de navegação
-                navItems.forEach(function(item) {
-                    item.classList.remove('active');
-                });
-                console.log('  ✓ Classes "active" removidas dos links');
-
-                // 2. Remover show e active de todos os painéis
-                tabPanes.forEach(function(pane) {
+            // Função para ativar uma tab
+            function activateTab(targetId) {
+                // Remover classe active de todos os itens
+                navItems.forEach(item => item.classList.remove('active'));
+                tabPanes.forEach(pane => {
                     pane.classList.remove('show', 'active');
                 });
-                console.log('  ✓ Classes removidas dos painéis');
 
-                // 3. Adicionar active ao link clicado
+                // Adicionar classe active ao item clicado
+                const clickedItem = document.querySelector(`[href="${targetId}"]`);
                 if (clickedItem) {
                     clickedItem.classList.add('active');
-                    console.log('  ✓ Classe "active" adicionada ao link');
                 }
 
-                // 4. Mostrar o painel correspondente
+                // Mostrar o conteúdo correspondente
                 const targetPane = document.querySelector(targetId);
                 if (targetPane) {
-                    targetPane.classList.add('active');
-                    targetPane.classList.add('show');
-                    console.log('  ✓ Classes "active" e "show" adicionadas ao painel:', targetId);
-                    console.log('  ✓ Classes do painel:', targetPane.className);
-                    console.log('  ✓ Display do painel:', window.getComputedStyle(targetPane).display);
-                    console.log('✅ Tab ativado com sucesso:', targetId);
-                } else {
-                    console.error('❌ Painel não encontrado:', targetId);
+                    targetPane.classList.add('show', 'active');
                 }
-
-                // 5. Scroll suave para o topo
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
             }
 
-            // Adicionar event listeners aos links de navegação
-            navItems.forEach(function(item, index) {
-                console.log('Registando listener para item', index, ':', item.getAttribute('href'));
-
+            // Adicionar event listeners aos itens de navegação
+            navItems.forEach(item => {
                 item.addEventListener('click', function (e) {
-                    console.log('🖱️ CLIQUE DETECTADO!');
                     e.preventDefault();
-                    e.stopPropagation();
-
                     const targetId = this.getAttribute('href');
-                    console.log('Target ID:', targetId);
+                    activateTab(targetId);
 
-                    activateTab(targetId, this);
-                }, true);
+                    // Scroll suave para o topo do conteúdo (opcional)
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
             });
-
-            console.log('✅ Event listeners registados com sucesso!');
-
-            // Ativar tab inicial (dados-pessoais por padrão)
-            console.log('Procurando tab inicial...');
-            const initialTab = document.querySelector('.perfil-nav-item.active');
-            if (initialTab) {
-                const initialTargetId = initialTab.getAttribute('href');
-                console.log('Tab inicial encontrado:', initialTargetId);
-                activateTab(initialTargetId, initialTab);
-            } else {
-                console.log('Nenhum tab inicial ativo, ativando primeiro...');
-                if (navItems.length > 0) {
-                    const firstHref = navItems[0].getAttribute('href');
-                    activateTab(firstHref, navItems[0]);
-                }
-            }
-
-            console.log('=== SISTEMA DE TABS INICIADO ===');
 
             // Sistema de Filtros de Anúncios
             const filterButtons = document.querySelectorAll('.anuncios-filter-btn');
             const anuncioCards = document.querySelectorAll('.anuncio-card');
 
-            filterButtons.forEach(function(button) {
+            filterButtons.forEach(button => {
                 button.addEventListener('click', function () {
                     // Remover classe active de todos os botões
-                    filterButtons.forEach(function(btn) {
-                        btn.classList.remove('active');
-                    });
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
 
                     // Adicionar classe active ao botão clicado
                     this.classList.add('active');
@@ -1258,7 +1072,7 @@
                     const filter = this.getAttribute('data-filter');
 
                     // Filtrar os anúncios
-                    anuncioCards.forEach(function(card) {
+                    anuncioCards.forEach(card => {
                         const status = card.getAttribute('data-status');
 
                         if (filter === 'todos') {
@@ -1516,95 +1330,6 @@
                     }
                 });
             });
-
-            // ==================== EDITAR PERFIL ====================
-            const btnGuardarPerfil = document.getElementById('btnGuardarPerfil');
-            if (btnGuardarPerfil) {
-                btnGuardarPerfil.addEventListener('click', function() {
-                    // Obter valores do formulário
-                    const nomeCompleto = document.getElementById('editNomeCompleto').value.trim();
-                    const username = document.getElementById('editUsername').value.trim();
-                    const email = document.getElementById('editEmail').value.trim();
-                    const telemovel = document.getElementById('editTelemovel').value.trim();
-                    const morada = document.getElementById('editMorada').value.trim();
-                    const codigoPostal = document.getElementById('editCodigoPostal').value.trim();
-                    const cidade = document.getElementById('editCidade').value.trim();
-                    const distrito = document.getElementById('editDistrito').value;
-
-                    const passwordAtual = document.getElementById('editPasswordAtual').value;
-                    const passwordNova = document.getElementById('editPasswordNova').value;
-                    const passwordConfirmar = document.getElementById('editPasswordConfirmar').value;
-
-                    // Validações básicas
-                    if (!nomeCompleto || !username || !email || !telemovel || !morada || !codigoPostal || !cidade || !distrito) {
-                        alert('Por favor, preencha todos os campos obrigatórios.');
-                        return;
-                    }
-
-                    // Validar email
-                    const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
-                    if (!emailRegex.test(email)) {
-                        alert('Por favor, insira um email válido.');
-                        return;
-                    }
-
-                    // Validar passwords se foram preenchidas
-                    if (passwordAtual || passwordNova || passwordConfirmar) {
-                        if (!passwordAtual) {
-                            alert('Por favor, insira a password atual para alterar a password.');
-                            return;
-                        }
-                        if (!passwordNova || !passwordConfirmar) {
-                            alert('Por favor, preencha a nova password e a confirmação.');
-                            return;
-                        }
-                        if (passwordNova.length < 6) {
-                            alert('A nova password deve ter pelo menos 6 caracteres.');
-                            return;
-                        }
-                        if (passwordNova !== passwordConfirmar) {
-                            alert('As passwords não coincidem. Por favor, verifique.');
-                            return;
-                        }
-                    }
-
-                    // Feedback visual
-                    const btnOriginalText = this.innerHTML;
-                    this.disabled = true;
-                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A guardar...';
-
-                    // Simular processamento
-                    setTimeout(() => {
-                        this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Guardado!';
-
-                        setTimeout(() => {
-                            // Fechar modal
-                            const modal = bootstrap.Modal.getInstance(document.getElementById('editarPerfilModal'));
-                            if (modal) modal.hide();
-
-                            // Atualizar valores na página
-                            document.querySelector('.perfil-info-value:nth-of-type(1)')?.parentElement.querySelector('.perfil-info-value').textContent = nomeCompleto;
-
-                            // Mensagem de sucesso
-                            alert('✓ Perfil atualizado com sucesso!\n\nAs suas alterações foram guardadas.');
-
-                            // Reset botão
-                            this.innerHTML = btnOriginalText;
-                            this.disabled = false;
-
-                            // Limpar campos de password
-                            document.getElementById('editPasswordAtual').value = '';
-                            document.getElementById('editPasswordNova').value = '';
-                            document.getElementById('editPasswordConfirmar').value = '';
-
-                            // Recarregar página para mostrar alterações
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        }, 1500);
-                    }, 1000);
-                });
-            }
 
             // O sistema de toggle de utilizador agora está no _Layout.cshtml e funciona globalmente
         });
