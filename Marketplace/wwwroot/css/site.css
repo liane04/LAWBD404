@@ -936,6 +936,30 @@ body[data-mockup-mode="admin"] [data-mockup-user-type-alt*="admin"] {
         padding: 0.25rem 0.5rem;
     }
 
+/* Sistema de Tabs do Perfil */
+.tab-content {
+    position: relative;
+}
+
+.tab-pane {
+    display: none !important;
+    opacity: 0;
+    transition: opacity 0.15s linear;
+}
+
+    .tab-pane.active {
+        display: block !important;
+    }
+
+    .tab-pane.show {
+        opacity: 1;
+    }
+
+    .tab-pane.active.show {
+        display: block !important;
+        opacity: 1;
+    }
+
 /* Botão de Logout */
 .perfil-logout-btn {
     transition: all 0.3s ease;

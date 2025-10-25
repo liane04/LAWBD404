@@ -35,22 +35,22 @@
 
                     <!-- Menu de Navegação -->
                     <div class="perfil-nav-menu">
-                        <a href="#dados-pessoais" class="perfil-nav-item active" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
+                        <a href="#dados-pessoais" class="perfil-nav-item active" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
                             <i class="bi bi-person-fill"></i>
                             <span>Dados Pessoais</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
                         </a>
-                        <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
+                        <a href="#meus-anuncios" class="perfil-nav-item" data-mockup-user-type="vendedor">
                             <i class="bi bi-card-list"></i>
                             <span>Meus Anúncios</span>
                             <span class="badge bg-primary rounded-pill ms-auto">3</span>
                         </a>
-                        <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
+                        <a href="#favoritos" class="perfil-nav-item" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
                             <i class="bi bi-heart-fill"></i>
                             <span>Anúncios Favoritos</span>
                             <span class="badge bg-danger rounded-pill ms-auto">2</span>
                         </a>
-                        <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
+                        <a href="#definicoes" class="perfil-nav-item" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
                             <i class="bi bi-gear-fill"></i>
                             <span>Definições</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
@@ -1142,34 +1142,114 @@
 
 @section Scripts {
     <script>
-        // Sistema de Tabs do Perfil
+        // ===== SISTEMA DE TABS DO PERFIL - VERSÃO 3.0 =====
+        // Última atualização: Corrigido problema de cache e sintaxe
         document.addEventListener('DOMContentLoaded', function () {
-            // Selecionar todos os itens de navegação
+            console.log('=== INICIANDO SISTEMA DE TABS ===');
+
             const navItems = document.querySelectorAll('.perfil-nav-item');
+            const tabPanes = document.querySelectorAll('.tab-pane');
 
-            // Inicializar Bootstrap Tabs
-            navItems.forEach(item => {
-                // Inicializar o tab do Bootstrap
-                const tab = new bootstrap.Tab(item);
+            console.log('Nav Items encontrados:', navItems.length);
+            console.log('Tab Panes encontrados:', tabPanes.length);
 
-                // Adicionar listener para scroll suave ao trocar de tab
-                item.addEventListener('click', function (e) {
-                    // Scroll suave para o topo do conteúdo
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
+            if (navItems.length === 0) {
+                console.error('ERRO: Nenhum .perfil-nav-item encontrado!');
+                return;
+            }
+
+            if (tabPanes.length === 0) {
+                console.error('ERRO: Nenhum .tab-pane encontrado!');
+                return;
+            }
+
+            // Função para ativar um tab manualmente (sem Bootstrap)
+            function activateTab(targetId, clickedItem) {
+                console.log('>>> Ativando tab:', targetId);
+
+                // 1. Remover active de todos os links de navegação
+                navItems.forEach(function(item) {
+                    item.classList.remove('active');
                 });
+                console.log('  ✓ Classes "active" removidas dos links');
+
+                // 2. Remover show e active de todos os painéis
+                tabPanes.forEach(function(pane) {
+                    pane.classList.remove('show', 'active');
+                });
+                console.log('  ✓ Classes removidas dos painéis');
+
+                // 3. Adicionar active ao link clicado
+                if (clickedItem) {
+                    clickedItem.classList.add('active');
+                    console.log('  ✓ Classe "active" adicionada ao link');
+                }
+
+                // 4. Mostrar o painel correspondente
+                const targetPane = document.querySelector(targetId);
+                if (targetPane) {
+                    targetPane.classList.add('active');
+                    targetPane.classList.add('show');
+                    console.log('  ✓ Classes "active" e "show" adicionadas ao painel:', targetId);
+                    console.log('  ✓ Classes do painel:', targetPane.className);
+                    console.log('  ✓ Display do painel:', window.getComputedStyle(targetPane).display);
+                    console.log('✅ Tab ativado com sucesso:', targetId);
+                } else {
+                    console.error('❌ Painel não encontrado:', targetId);
+                }
+
+                // 5. Scroll suave para o topo
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+
+            // Adicionar event listeners aos links de navegação
+            navItems.forEach(function(item, index) {
+                console.log('Registando listener para item', index, ':', item.getAttribute('href'));
+
+                item.addEventListener('click', function (e) {
+                    console.log('🖱️ CLIQUE DETECTADO!');
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const targetId = this.getAttribute('href');
+                    console.log('Target ID:', targetId);
+
+                    activateTab(targetId, this);
+                }, true);
             });
+
+            console.log('✅ Event listeners registados com sucesso!');
+
+            // Ativar tab inicial (dados-pessoais por padrão)
+            console.log('Procurando tab inicial...');
+            const initialTab = document.querySelector('.perfil-nav-item.active');
+            if (initialTab) {
+                const initialTargetId = initialTab.getAttribute('href');
+                console.log('Tab inicial encontrado:', initialTargetId);
+                activateTab(initialTargetId, initialTab);
+            } else {
+                console.log('Nenhum tab inicial ativo, ativando primeiro...');
+                if (navItems.length > 0) {
+                    const firstHref = navItems[0].getAttribute('href');
+                    activateTab(firstHref, navItems[0]);
+                }
+            }
+
+            console.log('=== SISTEMA DE TABS INICIADO ===');
 
             // Sistema de Filtros de Anúncios
             const filterButtons = document.querySelectorAll('.anuncios-filter-btn');
             const anuncioCards = document.querySelectorAll('.anuncio-card');
 
-            filterButtons.forEach(button => {
+            filterButtons.forEach(function(button) {
                 button.addEventListener('click', function () {
                     // Remover classe active de todos os botões
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    filterButtons.forEach(function(btn) {
+                        btn.classList.remove('active');
+                    });
 
                     // Adicionar classe active ao botão clicado
                     this.classList.add('active');
@@ -1178,7 +1258,7 @@
                     const filter = this.getAttribute('data-filter');
 
                     // Filtrar os anúncios
-                    anuncioCards.forEach(card => {
+                    anuncioCards.forEach(function(card) {
                         const status = card.getAttribute('data-status');
 
                         if (filter === 'todos') {
