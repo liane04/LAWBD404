@@ -499,7 +499,8 @@
                             Durante este período, o anúncio ficará marcado como "Reservado" e outros compradores não poderão reservá-lo.
                         </p>
                         <p class="mb-0 small">
-                            <strong>Nota:</strong> A reserva é <strong>gratuita</strong> e não implica obrigação de compra.
+                            <strong>Sinal:</strong> Para garantir a reserva, é necessário efetuar um pagamento de <strong class="text-primary">500€</strong> (sinal definido pelo vendedor).
+                            Este valor será descontado no preço final do veículo. Em caso de desistência da compra, o sinal não é reembolsável.
                         </p>
                     </div>
                 </div>
@@ -517,7 +518,16 @@
                             <div class="col">
                                 <h5 class="mb-1">BMW Série 3 320d Pack M</h5>
                                 <p class="text-muted mb-1 small">2019 • 85.000 km • Diesel • Manual</p>
-                                <p class="text-success fw-bold fs-5 mb-0">28.500 €</p>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <div>
+                                        <p class="text-muted mb-0 small">Preço Total:</p>
+                                        <p class="text-success fw-bold fs-5 mb-0">28.500 €</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <p class="text-muted mb-0 small">Sinal a Pagar:</p>
+                                        <p class="text-primary fw-bold fs-5 mb-0">500 €</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -545,6 +555,25 @@
                         <div class="col-md-6">
                             <label for="reservaDataExpiracao" class="form-label">Validade da Reserva</label>
                             <input type="text" class="form-control" id="reservaDataExpiracao" value="48 horas" readonly>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-credit-card text-primary me-2"></i>Pagamento do Sinal
+                    </h6>
+                    <div class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="metodoPagamento" class="form-label">Método de Pagamento <span class="text-danger">*</span></label>
+                                <select class="form-select" id="metodoPagamento" required>
+                                    <option value="">Selecione o método...</option>
+                                    <option value="mbway">MB WAY</option>
+                                    <option value="transferencia">Transferência Bancária</option>
+                                    <option value="multibanco">Multibanco (Referência MB)</option>
+                                    <option value="cartao">Cartão de Crédito/Débito</option>
+                                </select>
+                                <div class="form-text">O sinal de 500€ será processado após a confirmação do vendedor</div>
+                            </div>
                         </div>
                     </div>
 
@@ -870,6 +899,12 @@
                 // Validação básica do formulário
                 const form = document.getElementById('formReserva');
                 const termosCheckbox = document.getElementById('reservaTermos');
+                const metodoPagamento = document.getElementById('metodoPagamento').value;
+
+                if (!metodoPagamento) {
+                    alert('Por favor, selecione um método de pagamento.');
+                    return;
+                }
 
                 if (!termosCheckbox.checked) {
                     alert('Por favor, aceite os termos e condições para continuar.');
@@ -884,7 +919,7 @@
                 setTimeout(() => {
                     mostrarMensagemSucesso(
                         'Reserva Confirmada!',
-                        'A sua reserva foi efetuada com sucesso. Receberá um email de confirmação em breve. O vendedor irá contactá-lo nas próximas horas.'
+                        'A sua reserva foi efetuada com sucesso. Receberá instruções de pagamento do sinal (500€) por email. O vendedor irá contactá-lo nas próximas horas.'
                     );
                 }, 300);
             });
