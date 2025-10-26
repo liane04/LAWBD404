@@ -218,6 +218,15 @@
                                                    placeholder="190">
                                         </div>
 
+                                        <div class="col-md-4">
+                                            <label for="cilindrada" class="form-label fw-semibold">
+                                                <i class="bi bi-speedometer text-primary me-2"></i>Cilindrada (cm³)
+                                            </label>
+                                            <input type="number" class="form-control form-control-lg" id="cilindrada"
+                                                   placeholder="1995">
+                                            <div class="form-text">Em centímetros cúbicos</div>
+                                        </div>
+
                                         <div class="col-md-6">
                                             <label for="combustivel" class="form-label fw-semibold">
                                                 <i class="bi bi-fuel-pump text-primary me-2"></i>Combustível
@@ -274,42 +283,139 @@
                                                    placeholder="Ex: Preto">
                                         </div>
 
+                                        <div class="col-md-12">
+                                            <label for="localizacao" class="form-label fw-semibold">
+                                                <i class="bi bi-geo-alt text-primary me-2"></i>Localização
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control form-control-lg" id="localizacao"
+                                                   placeholder="Ex: Lisboa, Porto, Esposende..." required>
+                                            <div class="form-text">Cidade ou região onde o veículo se encontra</div>
+                                        </div>
+
                                         <div class="col-12">
-                                            <label class="form-label fw-semibold">
+                                            <label class="form-label fw-semibold mb-3">
                                                 <i class="bi bi-star text-primary me-2"></i>Extras e Equipamento
                                             </label>
-                                            <div class="extras-grid">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra1">
-                                                    <label class="form-check-label" for="extra1">Ar Condicionado</label>
+
+                                            <!-- Segurança -->
+                                            <div class="mb-4">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="bi bi-shield-check me-2"></i>Segurança
+                                                </h6>
+                                                <div class="extras-grid">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_abs" name="extras" value="ABS">
+                                                        <label class="form-check-label" for="extra_abs">ABS</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_airbags" name="extras" value="Airbags">
+                                                        <label class="form-check-label" for="extra_airbags">Airbags</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_estabilidade" name="extras" value="Controlo de Estabilidade">
+                                                        <label class="form-check-label" for="extra_estabilidade">Controlo de Estabilidade</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_sensores" name="extras" value="Sensores Estacionamento">
+                                                        <label class="form-check-label" for="extra_sensores">Sensores Estacionamento</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_camera" name="extras" value="Câmara Traseira">
+                                                        <label class="form-check-label" for="extra_camera">Câmara Traseira</label>
+                                                    </div>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra2">
-                                                    <label class="form-check-label" for="extra2">GPS</label>
+                                            </div>
+
+                                            <!-- Conforto -->
+                                            <div class="mb-4">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="bi bi-lightning-charge me-2"></i>Conforto
+                                                </h6>
+                                                <div class="extras-grid">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_ac" name="extras" value="Ar Condicionado Automático">
+                                                        <label class="form-check-label" for="extra_ac">Ar Condicionado Automático</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_bancos_pele" name="extras" value="Bancos em Pele/Alcântara">
+                                                        <label class="form-check-label" for="extra_bancos_pele">Bancos em Pele/Alcântara</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_bancos_aquecidos" name="extras" value="Bancos Aquecidos">
+                                                        <label class="form-check-label" for="extra_bancos_aquecidos">Bancos Aquecidos</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_volante" name="extras" value="Volante Multifunções">
+                                                        <label class="form-check-label" for="extra_volante">Volante Multifunções</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_cruise" name="extras" value="Cruise Control">
+                                                        <label class="form-check-label" for="extra_cruise">Cruise Control</label>
+                                                    </div>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra3">
-                                                    <label class="form-check-label" for="extra3">Bancos em Pele</label>
+                                            </div>
+
+                                            <!-- Multimédia -->
+                                            <div class="mb-4">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="bi bi-phone me-2"></i>Multimédia
+                                                </h6>
+                                                <div class="extras-grid">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_gps" name="extras" value="Sistema Navegação GPS">
+                                                        <label class="form-check-label" for="extra_gps">Sistema Navegação GPS</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_bluetooth" name="extras" value="Bluetooth">
+                                                        <label class="form-check-label" for="extra_bluetooth">Bluetooth</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_ecra" name="extras" value="Ecrã Tátil">
+                                                        <label class="form-check-label" for="extra_ecra">Ecrã Tátil</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_usb" name="extras" value="USB/AUX">
+                                                        <label class="form-check-label" for="extra_usb">USB/AUX</label>
+                                                    </div>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra4">
-                                                    <label class="form-check-label" for="extra4">Jantes de Liga Leve</label>
+                                            </div>
+
+                                            <!-- Outros -->
+                                            <div class="mb-4">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="bi bi-tools me-2"></i>Outros
+                                                </h6>
+                                                <div class="extras-grid">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_jantes" name="extras" value="Jantes Liga Leve 18&quot;">
+                                                        <label class="form-check-label" for="extra_jantes">Jantes Liga Leve</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_farois" name="extras" value="Faróis LED">
+                                                        <label class="form-check-label" for="extra_farois">Faróis LED</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_pack" name="extras" value="Pack M Sport">
+                                                        <label class="form-check-label" for="extra_pack">Pack Desportivo</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_vidros" name="extras" value="Vidros Escurecidos">
+                                                        <label class="form-check-label" for="extra_vidros">Vidros Escurecidos</label>
+                                                    </div>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra5">
-                                                    <label class="form-check-label" for="extra5">Sensores de Estacionamento</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra6">
-                                                    <label class="form-check-label" for="extra6">Câmara de Marcha Atrás</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra7">
-                                                    <label class="form-check-label" for="extra7">Bluetooth</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra8">
-                                                    <label class="form-check-label" for="extra8">Cruise Control</label>
+                                            </div>
+
+                                            <!-- Outros Extras Personalizados -->
+                                            <div class="mb-3">
+                                                <label for="outrosExtras" class="form-label fw-semibold">
+                                                    <i class="bi bi-pencil-square text-primary me-2"></i>Outros Extras (opcional)
+                                                </label>
+                                                <textarea class="form-control" id="outrosExtras" rows="3"
+                                                    placeholder="Descreva outros extras que o seu veículo possui (ex: Teto panorâmico, bancos elétricos, sistema de som premium, etc.)"></textarea>
+                                                <div class="form-text">
+                                                    <i class="bi bi-info-circle me-1"></i>
+                                                    Adicione extras adicionais que não estejam listados acima
                                                 </div>
                                             </div>
                                         </div>
