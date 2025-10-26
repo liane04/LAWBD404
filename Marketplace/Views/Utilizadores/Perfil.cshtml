@@ -56,6 +56,11 @@
                             <span>Visitas Agendadas</span>
                             <span class="badge bg-info rounded-pill ms-auto">2</span>
                         </a>
+                        <a href="#dados-bancarios" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
+                            <i class="bi bi-bank"></i>
+                            <span>Dados Bancários</span>
+                            <i class="bi bi-chevron-right ms-auto"></i>
+                        </a>
                         <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
                             <i class="bi bi-heart-fill"></i>
                             <span>Anúncios Favoritos</span>
@@ -277,33 +282,84 @@
                         </a>
                     </div>
 
+                    <!-- Estatísticas Rápidas -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body text-center">
+                                    <div class="fs-1 text-primary mb-2">
+                                        <i class="bi bi-grid-fill"></i>
+                                    </div>
+                                    <h4 class="mb-1 fw-bold">5</h4>
+                                    <small class="text-muted">Total de Anúncios</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body text-center">
+                                    <div class="fs-1 text-success mb-2">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </div>
+                                    <h4 class="mb-1 fw-bold">2</h4>
+                                    <small class="text-muted">Ativos</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body text-center">
+                                    <div class="fs-1 text-warning mb-2">
+                                        <i class="bi bi-bookmark-check-fill"></i>
+                                    </div>
+                                    <h4 class="mb-1 fw-bold">1</h4>
+                                    <small class="text-muted">Reservados</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body text-center">
+                                    <div class="fs-1 text-info mb-2">
+                                        <i class="bi bi-check2-circle"></i>
+                                    </div>
+                                    <h4 class="mb-1 fw-bold">2</h4>
+                                    <small class="text-muted">Vendidos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Filtros/Tabs de Estado -->
                     <div class="anuncios-filter-tabs mb-4">
                         <button class="anuncios-filter-btn active" data-filter="todos">
-                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">3</span>
+                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">5</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter="ativos">
-                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">1</span>
+                        <button class="anuncios-filter-btn" data-filter="ativo">
+                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">2</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter="pendentes">
-                            <i class="bi bi-clock-fill me-1"></i>Pendentes <span class="badge bg-warning ms-1">1</span>
+                        <button class="anuncios-filter-btn" data-filter="reservado">
+                            <i class="bi bi-bookmark-check-fill me-1"></i>Reservados <span class="badge bg-warning ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter="vendidos">
-                            <i class="bi bi-archive-fill me-1"></i>Vendidos <span class="badge bg-secondary ms-1">1</span>
+                        <button class="anuncios-filter-btn" data-filter="vendido">
+                            <i class="bi bi-check2-circle me-1"></i>Vendidos <span class="badge bg-info ms-1">2</span>
+                        </button>
+                        <button class="anuncios-filter-btn" data-filter="pausado">
+                            <i class="bi bi-pause-circle-fill me-1"></i>Pausados <span class="badge bg-secondary ms-1">0</span>
                         </button>
                     </div>
 
                     <!-- Lista de Anúncios -->
                     <div class="anuncios-list">
                         <!-- Anúncio 1 - Ativo -->
-                        <div class="anuncio-card card shadow-sm border-0 mb-3" data-status="ativo" data-destacado="false">
+                        <div class="anuncio-card card shadow-sm border-0 mb-3" data-status="ativo">
                             <div class="card-body p-3">
                                 <div class="row g-3 align-items-center">
                                     <div class="col-auto">
                                         <div class="anuncio-thumbnail">
                                             <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1">
-                                            <span class="anuncio-status-badge badge-ativo">
-                                                <i class="bi bi-check-circle-fill"></i>
+                                            <span class="anuncio-status-badge badge bg-success">
+                                                <i class="bi bi-check-circle-fill"></i> ATIVO
                                             </span>
                                         </div>
                                     </div>
@@ -324,6 +380,7 @@
                                             <div class="anuncio-price mt-2">
                                                 <span class="price-label">Preço:</span>
                                                 <span class="price-value">15.900€</span>
+                                                <span class="ms-2 small text-muted">Sinal: 500€</span>
                                             </div>
                                         </div>
                                     </div>
@@ -336,48 +393,98 @@
                                                 <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary" title="Editar">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger" title="Apagar">
+                                                <button class="btn btn-sm btn-outline-danger" title="Apagar">
                                                     <i class="bi bi-trash"></i>
-                                                </a>
+                                                </button>
                                             </div>
-                                            <button class="btn btn-sm btn-warning btn-destacar w-100" data-bs-toggle="modal" data-bs-target="#destacarModal" title="Destacar Anúncio">
-                                                <i class="bi bi-star-fill me-1"></i>Destacar
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Anúncio 2 - Pendente (Destacado) -->
-                        <div class="anuncio-card anuncio-destacado card shadow-sm border-warning mb-3" data-status="pendente" data-destacado="true">
+                        <!-- Anúncio 2 - Ativo -->
+                        <div class="anuncio-card card shadow-sm border-0 mb-3" data-status="ativo">
+                            <div class="card-body p-3">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-auto">
+                                        <div class="anuncio-thumbnail">
+                                            <img src="~/imagens/fordFocus.jpg" alt="Ford Focus">
+                                            <span class="anuncio-status-badge badge bg-success">
+                                                <i class="bi bi-check-circle-fill"></i> ATIVO
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="anuncio-info">
+                                            <h5 class="anuncio-title mb-1">Ford Focus 1.5 TDCi</h5>
+                                            <div class="anuncio-meta">
+                                                <span class="anuncio-meta-item">
+                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 18/10/2025
+                                                </span>
+                                                <span class="anuncio-meta-item">
+                                                    <i class="bi bi-eye-fill me-1"></i>89 visualizações
+                                                </span>
+                                                <span class="anuncio-meta-item">
+                                                    <i class="bi bi-heart-fill me-1"></i>5 favoritos
+                                                </span>
+                                            </div>
+                                            <div class="anuncio-price mt-2">
+                                                <span class="price-label">Preço:</span>
+                                                <span class="price-value">12.500€</span>
+                                                <span class="ms-2 small text-muted">Sinal: 500€</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="anuncio-actions d-flex flex-column gap-2">
+                                            <div class="d-flex gap-2">
+                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-danger" title="Apagar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Anúncio 3 - Reservado -->
+                        <div class="anuncio-card card shadow-sm border-warning mb-3" data-status="reservado">
                             <div class="card-body p-3">
                                 <div class="row g-3 align-items-center">
                                     <div class="col-auto">
                                         <div class="anuncio-thumbnail">
                                             <img src="~/imagens/mercedezClassA.jpg" alt="Mercedes Classe A">
-                                            <span class="anuncio-status-badge badge-pendente">
-                                                <i class="bi bi-clock-fill"></i>
+                                            <span class="anuncio-status-badge badge bg-warning text-dark">
+                                                <i class="bi bi-bookmark-check-fill"></i> RESERVADO
                                             </span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">Mercedes-Benz Classe A</h5>
+                                            <h5 class="anuncio-title mb-1">Mercedes-Benz Classe A 180d</h5>
                                             <div class="anuncio-meta">
                                                 <span class="anuncio-meta-item">
                                                     <i class="bi bi-calendar3 me-1"></i>Publicado a 15/10/2025
                                                 </span>
                                                 <span class="anuncio-meta-item text-warning">
-                                                    <i class="bi bi-exclamation-circle-fill me-1"></i>Aguarda aprovação
+                                                    <i class="bi bi-bookmark-check-fill me-1"></i>Reservado em 24/10/2025
                                                 </span>
                                                 <span class="anuncio-meta-item text-warning">
-                                                    <i class="bi bi-star-fill me-1"></i>Destaque até 25/10/2025
+                                                    <i class="bi bi-person-fill me-1"></i>Por: Maria Costa
                                                 </span>
                                             </div>
                                             <div class="anuncio-price mt-2">
                                                 <span class="price-label">Preço:</span>
                                                 <span class="price-value">22.500€</span>
+                                                <span class="ms-2 small text-success">Sinal recebido: 1.000€</span>
                                             </div>
                                         </div>
                                     </div>
@@ -387,15 +494,12 @@
                                                 <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-warning" title="Editar">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger" title="Apagar">
-                                                    <i class="bi bi-trash"></i>
-                                                </a>
                                             </div>
-                                            <button class="btn btn-sm btn-success btn-renovar-destaque w-100" title="Renovar Destaque">
-                                                <i class="bi bi-arrow-clockwise me-1"></i>Renovar
+                                            <button class="btn btn-sm btn-success w-100" title="Marcar como Vendido">
+                                                <i class="bi bi-check2-circle me-1"></i>Vendido
                                             </button>
                                         </div>
                                     </div>
@@ -403,26 +507,26 @@
                             </div>
                         </div>
 
-                        <!-- Anúncio 3 - Vendido -->
-                        <div class="anuncio-card card shadow-sm border-0 mb-3 anuncio-vendido" data-status="vendido">
+                        <!-- Anúncio 4 - Vendido -->
+                        <div class="anuncio-card card shadow-sm border-0 mb-3 opacity-75" data-status="vendido">
                             <div class="card-body p-3">
                                 <div class="row g-3 align-items-center">
                                     <div class="col-auto">
                                         <div class="anuncio-thumbnail">
                                             <img src="~/imagens/audiA3.jpg" alt="Audi A3">
-                                            <span class="anuncio-status-badge badge-vendido">
-                                                <i class="bi bi-check2-all"></i>
+                                            <span class="anuncio-status-badge badge bg-info text-dark">
+                                                <i class="bi bi-check2-circle"></i> VENDIDO
                                             </span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">Audi A3 Sportback</h5>
+                                            <h5 class="anuncio-title mb-1">Audi A3 Sportback 2.0 TDI</h5>
                                             <div class="anuncio-meta">
                                                 <span class="anuncio-meta-item">
                                                     <i class="bi bi-calendar3 me-1"></i>Publicado a 12/10/2025
                                                 </span>
-                                                <span class="anuncio-meta-item text-success">
+                                                <span class="anuncio-meta-item text-info">
                                                     <i class="bi bi-check-circle-fill me-1"></i>Vendido em 18/10/2025
                                                 </span>
                                             </div>
@@ -440,14 +544,63 @@
                                             <button class="btn btn-sm btn-outline-secondary" disabled>
                                                 <i class="bi bi-pencil"></i>
                                             </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Anúncio 5 - Vendido -->
+                        <div class="anuncio-card card shadow-sm border-0 mb-3 opacity-75" data-status="vendido">
+                            <div class="card-body p-3">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-auto">
+                                        <div class="anuncio-thumbnail">
+                                            <img src="~/imagens/volkswagenGolf.jpg" alt="VW Golf">
+                                            <span class="anuncio-status-badge badge bg-info text-dark">
+                                                <i class="bi bi-check2-circle"></i> VENDIDO
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="anuncio-info">
+                                            <h5 class="anuncio-title mb-1">Volkswagen Golf VII GTI</h5>
+                                            <div class="anuncio-meta">
+                                                <span class="anuncio-meta-item">
+                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 05/10/2025
+                                                </span>
+                                                <span class="anuncio-meta-item text-info">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>Vendido em 10/10/2025
+                                                </span>
+                                            </div>
+                                            <div class="anuncio-price mt-2">
+                                                <span class="price-label">Preço de Venda:</span>
+                                                <span class="price-value">24.900€</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="anuncio-actions d-flex gap-2">
+                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
                                             <button class="btn btn-sm btn-outline-secondary" disabled>
-                                                <i class="bi bi-trash"></i>
+                                                <i class="bi bi-pencil"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Estado Vazio (quando filtrado e sem resultados) -->
+                    <div class="anuncios-empty text-center py-5 d-none">
+                        <div class="mb-4">
+                            <i class="bi bi-inbox" style="font-size: 4rem; color: #e2e8f0;"></i>
+                        </div>
+                        <h4 class="text-muted mb-2">Nenhum anúncio encontrado</h4>
+                        <p class="text-muted mb-4">Não tem anúncios com este estado</p>
                     </div>
                 </div>
 
@@ -892,6 +1045,273 @@
                         <a href="#meus-anuncios" class="btn btn-primary perfil-nav-item" data-bs-toggle="tab">
                             <i class="bi bi-grid-3x3-gap me-2"></i>Ver Meus Anúncios
                         </a>
+                    </div>
+                </div>
+
+                <!-- Aba: Dados Bancários (para Vendedores) -->
+                <div class="tab-pane fade" id="dados-bancarios">
+                    <!-- Cabeçalho da Página -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="mb-1 fw-bold">
+                                <i class="bi bi-bank text-primary me-2"></i>Dados Bancários
+                            </h3>
+                            <p class="text-muted mb-0">Configure os seus dados de pagamento para receber transferências</p>
+                        </div>
+                    </div>
+
+                    <!-- Alert Informativo -->
+                    <div class="alert alert-info border-0 mb-4">
+                        <div class="d-flex">
+                            <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                            <div>
+                                <h6 class="mb-2 fw-bold">Porquê adicionar dados bancários?</h6>
+                                <p class="mb-2">
+                                    Quando um comprador reservar um dos seus veículos, ele precisará fazer uma transferência bancária do sinal.
+                                    Configure aqui os seus dados para facilitar o processo de pagamento.
+                                </p>
+                                <ul class="mb-0 ps-3">
+                                    <li>Receba sinais de reserva diretamente na sua conta</li>
+                                    <li>Os seus dados ficam seguros e privados</li>
+                                    <li>Partilhados apenas com compradores que reservarem</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário de Dados Bancários -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <form id="formDadosBancarios">
+                                <div class="row g-4">
+                                    <!-- NIB -->
+                                    <div class="col-12">
+                                        <label for="nib" class="form-label fw-semibold">
+                                            <i class="bi bi-credit-card-2-front text-primary me-2"></i>NIB (Número de Identificação Bancária)
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" id="nib"
+                                               placeholder="0000 0000 0000 0000 0000 000"
+                                               maxlength="25"
+                                               pattern="[0-9 ]+"
+                                               value="1234 5678 9012 3456 7890 123"
+                                               required>
+                                        <div class="form-text">
+                                            <i class="bi bi-shield-check text-success me-1"></i>
+                                            O NIB é composto por 21 dígitos
+                                        </div>
+                                    </div>
+
+                                    <!-- IBAN -->
+                                    <div class="col-12">
+                                        <label for="iban" class="form-label fw-semibold">
+                                            <i class="bi bi-bank text-primary me-2"></i>IBAN
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" id="iban"
+                                               placeholder="PT50 0000 0000 0000 0000 0000 0"
+                                               maxlength="29"
+                                               value="PT50 1234 5678 9012 3456 7890 1"
+                                               required>
+                                        <div class="form-text">
+                                            <i class="bi bi-globe me-1"></i>
+                                            Formato internacional (PT + 23 dígitos)
+                                        </div>
+                                    </div>
+
+                                    <!-- Nome do Titular -->
+                                    <div class="col-md-6">
+                                        <label for="titularConta" class="form-label fw-semibold">
+                                            <i class="bi bi-person-badge text-primary me-2"></i>Nome do Titular
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" id="titularConta"
+                                               placeholder="Nome completo"
+                                               value="João Duarte Silva"
+                                               required>
+                                        <div class="form-text">Deve corresponder ao nome registado no banco</div>
+                                    </div>
+
+                                    <!-- Banco -->
+                                    <div class="col-md-6">
+                                        <label for="banco" class="form-label fw-semibold">
+                                            <i class="bi bi-building text-primary me-2"></i>Banco
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select form-select-lg" id="banco" required>
+                                            <option value="">Selecione o banco...</option>
+                                            <option value="caixa" selected>Caixa Geral de Depósitos</option>
+                                            <option value="millennium">Millennium BCP</option>
+                                            <option value="santander">Santander Totta</option>
+                                            <option value="novo">Novo Banco</option>
+                                            <option value="montepio">Montepio</option>
+                                            <option value="bpi">Banco BPI</option>
+                                            <option value="activobank">ActivoBank</option>
+                                            <option value="bankinter">Bankinter</option>
+                                            <option value="abanca">Abanca</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Método de Pagamento Preferencial -->
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold">
+                                            <i class="bi bi-wallet2 text-primary me-2"></i>Métodos de Pagamento Aceites
+                                        </label>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-2 payment-method-card">
+                                                    <div class="card-body">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="metodo-transferencia" checked>
+                                                            <label class="form-check-label w-100" for="metodo-transferencia">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="bi bi-bank2 fs-3 text-primary me-3"></i>
+                                                                    <div>
+                                                                        <strong class="d-block">Transferência Bancária</strong>
+                                                                        <small class="text-muted">Pagamento direto para a sua conta</small>
+                                                                    </div>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-2 payment-method-card">
+                                                    <div class="card-body">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="metodo-mbway" checked>
+                                                            <label class="form-check-label w-100" for="metodo-mbway">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="bi bi-phone fs-3 text-success me-3"></i>
+                                                                    <div>
+                                                                        <strong class="d-block">MB WAY</strong>
+                                                                        <small class="text-muted">Pagamento instantâneo via telemóvel</small>
+                                                                    </div>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-2 payment-method-card">
+                                                    <div class="card-body">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="metodo-multibanco">
+                                                            <label class="form-check-label w-100" for="metodo-multibanco">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="bi bi-receipt fs-3 text-info me-3"></i>
+                                                                    <div>
+                                                                        <strong class="d-block">Referência Multibanco</strong>
+                                                                        <small class="text-muted">Pagamento em ATM ou homebanking</small>
+                                                                    </div>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-2 payment-method-card">
+                                                    <div class="card-body">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="metodo-dinheiro">
+                                                            <label class="form-check-label w-100" for="metodo-dinheiro">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="bi bi-cash-stack fs-3 text-warning me-3"></i>
+                                                                    <div>
+                                                                        <strong class="d-block">Dinheiro</strong>
+                                                                        <small class="text-muted">Pagamento em mãos na entrega</small>
+                                                                    </div>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- MB WAY (Condicional) -->
+                                    <div class="col-md-6" id="campo-mbway" style="display: none;">
+                                        <label for="numeroMbway" class="form-label fw-semibold">
+                                            <i class="bi bi-phone-fill text-primary me-2"></i>Número MB WAY
+                                        </label>
+                                        <div class="input-group input-group-lg">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-phone"></i>
+                                            </span>
+                                            <input type="tel" class="form-control" id="numeroMbway"
+                                                   placeholder="+351 912 345 678"
+                                                   value="+351 912 345 678">
+                                        </div>
+                                    </div>
+
+                                    <!-- Notas Adicionais -->
+                                    <div class="col-12">
+                                        <label for="notasBancarias" class="form-label fw-semibold">
+                                            <i class="bi bi-journal-text text-primary me-2"></i>Notas Adicionais
+                                        </label>
+                                        <textarea class="form-control" id="notasBancarias" rows="3"
+                                            placeholder="Informações adicionais sobre pagamentos, horários de disponibilidade, etc.">Disponível para receber pagamentos de segunda a sexta, das 9h às 18h. Preferência por MB WAY para pagamentos mais rápidos.</textarea>
+                                        <div class="form-text">Máximo 200 caracteres</div>
+                                    </div>
+
+                                    <!-- Botões de Ação -->
+                                    <div class="col-12">
+                                        <hr class="my-4">
+                                        <div class="d-flex gap-3 justify-content-end">
+                                            <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+                                                <i class="bi bi-x-circle me-2"></i>Cancelar
+                                            </button>
+                                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                                <i class="bi bi-check-circle me-2"></i>Guardar Dados Bancários
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Card de Segurança -->
+                    <div class="card border-0 bg-light mt-4">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-shield-lock-fill text-success me-2"></i>Segurança e Privacidade
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-lock-fill text-success fs-4 me-2"></i>
+                                        <div>
+                                            <strong class="d-block small">Dados Encriptados</strong>
+                                            <small class="text-muted">Informações protegidas com criptografia SSL</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-eye-slash-fill text-success fs-4 me-2"></i>
+                                        <div>
+                                            <strong class="d-block small">Acesso Restrito</strong>
+                                            <small class="text-muted">Apenas compradores confirmados veem seus dados</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-shield-check-fill text-success fs-4 me-2"></i>
+                                        <div>
+                                            <strong class="d-block small">Conformidade RGPD</strong>
+                                            <small class="text-muted">Cumprimos todas as normas de proteção de dados</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1812,6 +2232,7 @@
             // Sistema de Filtros de Anúncios
             const filterButtons = document.querySelectorAll('.anuncios-filter-btn');
             const anuncioCards = document.querySelectorAll('.anuncio-card');
+            const anunciosEmpty = document.querySelector('.anuncios-empty');
 
             filterButtons.forEach(button => {
                 button.addEventListener('click', function () {
@@ -1824,22 +2245,28 @@
                     // Obter o filtro selecionado
                     const filter = this.getAttribute('data-filter');
 
+                    let visibleCount = 0;
+
                     // Filtrar os anúncios
                     anuncioCards.forEach(card => {
                         const status = card.getAttribute('data-status');
 
-                        if (filter === 'todos') {
+                        if (filter === 'todos' || filter === status) {
                             card.style.display = '';
-                        } else if (filter === 'ativos' && status === 'ativo') {
-                            card.style.display = '';
-                        } else if (filter === 'pendentes' && status === 'pendente') {
-                            card.style.display = '';
-                        } else if (filter === 'vendidos' && status === 'vendido') {
-                            card.style.display = '';
+                            visibleCount++;
                         } else {
                             card.style.display = 'none';
                         }
                     });
+
+                    // Mostrar mensagem se não houver resultados
+                    if (anunciosEmpty) {
+                        if (visibleCount === 0) {
+                            anunciosEmpty.classList.remove('d-none');
+                        } else {
+                            anunciosEmpty.classList.add('d-none');
+                        }
+                    }
                 });
             });
 
@@ -2202,6 +2629,89 @@
             });
 
             // O sistema de toggle de utilizador agora está no _Layout.cshtml e funciona globalmente
+        });
+
+        // ========== Dados Bancários - MB WAY Toggle ==========
+        const metodoMbwayCheckbox = document.getElementById('metodo-mbway');
+        const campoMbway = document.getElementById('campo-mbway');
+
+        if (metodoMbwayCheckbox && campoMbway) {
+            // Mostrar/esconder campo MB WAY
+            metodoMbwayCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    campoMbway.style.display = 'block';
+                    campoMbway.querySelector('input').required = true;
+                } else {
+                    campoMbway.style.display = 'none';
+                    campoMbway.querySelector('input').required = false;
+                }
+            });
+
+            // Verificar estado inicial
+            if (metodoMbwayCheckbox.checked) {
+                campoMbway.style.display = 'block';
+                campoMbway.querySelector('input').required = true;
+            }
+        }
+
+        // ========== Formulário de Dados Bancários ==========
+        const formDadosBancarios = document.getElementById('formDadosBancarios');
+        if (formDadosBancarios) {
+            formDadosBancarios.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Validar se pelo menos um método de pagamento está selecionado
+                const metodosCheckboxes = [
+                    document.getElementById('metodo-transferencia'),
+                    document.getElementById('metodo-mbway'),
+                    document.getElementById('metodo-multibanco'),
+                    document.getElementById('metodo-dinheiro')
+                ];
+
+                const algumSelecionado = metodosCheckboxes.some(cb => cb && cb.checked);
+
+                if (!algumSelecionado) {
+                    alert('Por favor, selecione pelo menos um método de pagamento.');
+                    return;
+                }
+
+                // Simular sucesso
+                alert('Dados bancários guardados com sucesso!');
+
+                // Feedback visual
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Guardado!';
+                submitBtn.classList.remove('btn-primary');
+                submitBtn.classList.add('btn-success');
+
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.classList.remove('btn-success');
+                    submitBtn.classList.add('btn-primary');
+                }, 2000);
+            });
+        }
+
+        // ========== Hover Effect nos Payment Method Cards ==========
+        const paymentCards = document.querySelectorAll('.payment-method-card');
+        paymentCards.forEach(card => {
+            const checkbox = card.querySelector('.form-check-input');
+
+            if (checkbox) {
+                // Aplicar classe checked inicial
+                if (checkbox.checked) {
+                    card.classList.add('border-primary', 'bg-light');
+                }
+
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        card.classList.add('border-primary', 'bg-light');
+                    } else {
+                        card.classList.remove('border-primary', 'bg-light');
+                    }
+                });
+            }
         });
     </script>
 }

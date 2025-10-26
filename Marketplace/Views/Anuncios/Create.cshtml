@@ -90,6 +90,44 @@
                                         </div>
 
                                         <div class="col-12">
+                                            <div class="alert alert-info border-0 d-flex align-items-start">
+                                                <i class="bi bi-info-circle-fill me-3 fs-5 mt-1"></i>
+                                                <div>
+                                                    <h6 class="mb-2 fw-bold">Valor do Sinal para Reserva</h6>
+                                                    <p class="mb-2 small">
+                                                        Defina um valor de sinal (depósito) que os compradores interessados deverão pagar para reservar o veículo.
+                                                        Este valor será descontado no preço final e garante o compromisso do comprador.
+                                                    </p>
+                                                    <div class="row g-2 align-items-end mt-3">
+                                                        <div class="col-md-4">
+                                                            <label for="valorSinal" class="form-label fw-semibold mb-1">
+                                                                <i class="bi bi-bookmark-check text-primary me-1"></i>Valor do Sinal
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">
+                                                                    <i class="bi bi-currency-euro"></i>
+                                                                </span>
+                                                                <input type="number" class="form-control" id="valorSinal"
+                                                                       placeholder="500" min="100" max="5000" value="500" required>
+                                                            </div>
+                                                            <div class="form-text">Mínimo: 100€ | Máximo: 5.000€</div>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <div class="d-flex gap-2 flex-wrap">
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(250)">250€</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(500)">500€</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(1000)">1.000€</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(1500)">1.500€</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(2000)">2.000€</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
                                             <label for="descricao" class="form-label fw-semibold">
                                                 <i class="bi bi-file-text text-primary me-2"></i>Descrição
                                                 <span class="text-danger">*</span>
@@ -444,6 +482,7 @@
             const reviewContent = document.getElementById('reviewContent');
             const titulo = document.getElementById('titulo').value;
             const preco = document.getElementById('preco').value;
+            const valorSinal = document.getElementById('valorSinal').value;
             const marca = document.getElementById('marca').value;
             const modelo = document.getElementById('modelo').value;
             const ano = document.getElementById('ano').value;
@@ -454,6 +493,10 @@
                     <div class="col-12">
                         <h5 class="fw-bold">${titulo}</h5>
                         <h3 class="text-primary">${preco}€</h3>
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-bookmark-check text-primary me-1"></i>
+                            Sinal para reserva: <strong class="text-primary">${valorSinal}€</strong>
+                        </p>
                     </div>
                     <div class="col-md-6">
                         <strong>Marca:</strong> ${marca}
@@ -469,6 +512,11 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Função para definir rapidamente o valor do sinal
+        function setValorSinal(valor) {
+            document.getElementById('valorSinal').value = valor;
         }
 
         // Contador de caracteres

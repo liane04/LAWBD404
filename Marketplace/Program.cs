@@ -23,6 +23,13 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+else
+{
+    app.UseDeveloperExceptionPage();
+}
+
+// Middleware para páginas de status code personalizadas (404, 403, 500, etc.)
+app.UseStatusCodePagesWithReExecute("/Home/StatusCode/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
