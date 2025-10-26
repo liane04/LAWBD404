@@ -27,6 +27,9 @@ namespace Marketplace.Models
         [StringLength(50)]
         public string? Tipo { get; set; }
 
+        [StringLength(500)]
+        public string? ImagemPerfil { get; set; }
+
         public int? MoradaId { get; set; }
         [ForeignKey("MoradaId")]
         public Morada? Morada { get; set; }

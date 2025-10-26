@@ -5,7 +5,8 @@
       "Read(//c/Users/bruno/Desktop/utad/a_1_semestre_3_ano/Laboratotio_web_bd/Fase1/**)",
       "Read(//c/Users/bruno/Desktop/utad/a_1_semestre_3_ano/Laboratotio_web_bd/**)",
       "Bash(dotnet build:*)",
-      "Read(//c/Users/bruno/Pictures/Screenshots/**)"
+      "Read(//c/Users/bruno/Pictures/Screenshots/**)",
+      "Read(//c/Users/bruno/Downloads/**)"
     ],
     "deny": [],
     "ask": []
