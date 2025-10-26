@@ -91,27 +91,12 @@ namespace Marketplace.Controllers
             return View(anuncio);
         }
 
-        // GET: Anuncios/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Anuncios/Edit/5 (Mock view, sem BD durante a fase de UI)
+        public IActionResult Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var anuncio = await _context.Anuncio.FindAsync(id);
-            if (anuncio == null)
-            {
-                return NotFound();
-            }
-            ViewData["CategoriaId"] = new SelectList(_context.Set<Categoria>(), "Id", "Nome", anuncio.CategoriaId);
-            ViewData["CombustivelId"] = new SelectList(_context.Set<Combustivel>(), "Id", "Tipo", anuncio.CombustivelId);
-            ViewData["MarcaId"] = new SelectList(_context.Set<Marca>(), "Id", "Nome", anuncio.MarcaId);
-            ViewData["ModeloId"] = new SelectList(_context.Set<Modelo>(), "Id", "Nome", anuncio.ModeloId);
-            ViewData["TipoId"] = new SelectList(_context.Set<Tipo>(), "Id", "Nome", anuncio.TipoId);
-            // CORREÇÃO: Alterado "Discriminator" para "Nome"
-            ViewData["VendedorId"] = new SelectList(_context.Set<Vendedor>(), "Id", "Nome", anuncio.VendedorId);
-            return View(anuncio);
+            // Durante a fase de mockups não consultamos a BD.
+            // A view de edição é estática e não depende de ViewData/Model.
+            return View();
         }
 
         // POST: Anuncios/Edit/5

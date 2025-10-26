@@ -56,11 +56,11 @@
                             <span>Visitas Agendadas</span>
                             <span class="badge bg-info rounded-pill ms-auto">2</span>
                         </a>
-                        <a href="#dados-bancarios" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
+                       <!--  <a href="#dados-bancarios" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
                             <i class="bi bi-bank"></i>
                             <span>Dados Bancários</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
-                        </a>
+                         </a>-->
                         <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
                             <i class="bi bi-heart-fill"></i>
                             <span>Anúncios Favoritos</span>
@@ -282,54 +282,6 @@
                         </a>
                     </div>
 
-                    <!-- Estatísticas Rápidas -->
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-3">
-                            <div class="card shadow-sm border-0 h-100">
-                                <div class="card-body text-center">
-                                    <div class="fs-1 text-primary mb-2">
-                                        <i class="bi bi-grid-fill"></i>
-                                    </div>
-                                    <h4 class="mb-1 fw-bold">5</h4>
-                                    <small class="text-muted">Total de Anúncios</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card shadow-sm border-0 h-100">
-                                <div class="card-body text-center">
-                                    <div class="fs-1 text-success mb-2">
-                                        <i class="bi bi-check-circle-fill"></i>
-                                    </div>
-                                    <h4 class="mb-1 fw-bold">2</h4>
-                                    <small class="text-muted">Ativos</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card shadow-sm border-0 h-100">
-                                <div class="card-body text-center">
-                                    <div class="fs-1 text-warning mb-2">
-                                        <i class="bi bi-bookmark-check-fill"></i>
-                                    </div>
-                                    <h4 class="mb-1 fw-bold">1</h4>
-                                    <small class="text-muted">Reservados</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card shadow-sm border-0 h-100">
-                                <div class="card-body text-center">
-                                    <div class="fs-1 text-info mb-2">
-                                        <i class="bi bi-check2-circle"></i>
-                                    </div>
-                                    <h4 class="mb-1 fw-bold">2</h4>
-                                    <small class="text-muted">Vendidos</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Filtros/Tabs de Estado -->
                     <div class="anuncios-filter-tabs mb-4">
                         <button class="anuncios-filter-btn active" data-filter="todos">
@@ -359,7 +311,7 @@
                                         <div class="anuncio-thumbnail">
                                             <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1">
                                             <span class="anuncio-status-badge badge bg-success">
-                                                <i class="bi bi-check-circle-fill"></i> ATIVO
+                                                <i class="bi bi-check-circle-fill"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -390,13 +342,16 @@
                                                 <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <a asp-controller="Anuncios" asp-action="Edit" asp-route-id="1" class="btn btn-sm btn-outline-primary" title="Editar">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <button class="btn btn-sm btn-outline-danger" title="Apagar">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
+                                            <button class="btn btn-sm btn-warning w-100" data-bs-toggle="modal" data-bs-target="#destacarModal" title="Destacar Anúncio">
+                                                <i class="bi bi-star-fill me-1"></i>Destacar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -411,7 +366,7 @@
                                         <div class="anuncio-thumbnail">
                                             <img src="~/imagens/fordFocus.jpg" alt="Ford Focus">
                                             <span class="anuncio-status-badge badge bg-success">
-                                                <i class="bi bi-check-circle-fill"></i> ATIVO
+                                                <i class="bi bi-check-circle-fill"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -442,13 +397,16 @@
                                                 <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <a asp-controller="Anuncios" asp-action="Edit" asp-route-id="2" class="btn btn-sm btn-outline-primary" title="Editar">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <button class="btn btn-sm btn-outline-danger" title="Apagar">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
+                                            <button class="btn btn-sm btn-warning w-100" data-bs-toggle="modal" data-bs-target="#destacarModal" title="Destacar Anúncio">
+                                                <i class="bi bi-star-fill me-1"></i>Destacar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -463,7 +421,7 @@
                                         <div class="anuncio-thumbnail">
                                             <img src="~/imagens/mercedezClassA.jpg" alt="Mercedes Classe A">
                                             <span class="anuncio-status-badge badge bg-warning text-dark">
-                                                <i class="bi bi-bookmark-check-fill"></i> RESERVADO
+                                                <i class="bi bi-bookmark-check-fill"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -494,7 +452,7 @@
                                                 <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-warning" title="Editar">
+                                                <a asp-controller="Anuncios" asp-action="Edit" asp-route-id="3" class="btn btn-sm btn-outline-warning" title="Editar">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                             </div>
@@ -515,7 +473,7 @@
                                         <div class="anuncio-thumbnail">
                                             <img src="~/imagens/audiA3.jpg" alt="Audi A3">
                                             <span class="anuncio-status-badge badge bg-info text-dark">
-                                                <i class="bi bi-check2-circle"></i> VENDIDO
+                                                <i class="bi bi-check2-circle"></i>
                                             </span>
                                         </div>
                                     </div>
@@ -558,7 +516,7 @@
                                         <div class="anuncio-thumbnail">
                                             <img src="~/imagens/volkswagenGolf.jpg" alt="VW Golf">
                                             <span class="anuncio-status-badge badge bg-info text-dark">
-                                                <i class="bi bi-check2-circle"></i> VENDIDO
+                                                <i class="bi bi-check2-circle"></i>
                                             </span>
                                         </div>
                                     </div>

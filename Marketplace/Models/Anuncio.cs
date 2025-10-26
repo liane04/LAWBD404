@@ -28,6 +28,14 @@ namespace Marketplace.Models
         [StringLength(50)]
         public string? Caixa { get; set; }
 
+        // Valor do sinal exigido para reserva
+        [Column("Valor_sinal", TypeName = "decimal(10,2)")]
+        public decimal ValorSinal { get; set; } = 0m;
+
+        // Número de visualizações do anúncio
+        [Column("n_visualizacoes")]
+        public int NVisualizacoes { get; set; } = 0;
+
         public int VendedorId { get; set; }
         [ForeignKey("VendedorId")]
         public Vendedor Vendedor { get; set; } = null!;
