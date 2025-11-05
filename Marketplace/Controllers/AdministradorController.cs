@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Marketplace.Controllers
 {
-    // Com a nova abordagem de página única, este controller fica muito mais simples.
-    // A sua única responsabilidade é carregar o painel de administração principal.
+  
+    [Authorize(Roles = "Administrador")]
     public class AdministradorController : Controller
     {
         // Ação para a página principal do painel de administração, que agora contém todas as secções.
@@ -13,3 +14,4 @@ namespace Marketplace.Controllers
         }
     }
 }
+

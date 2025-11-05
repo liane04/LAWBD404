@@ -1,3 +1,12 @@
 Remove-Migration
 Add-Migration InitialCreate
 Update-Database -Context ApplicationDbContext 
+
+
+
+Login 
+
+admin@email.com, vendedor@email.com, comprador@email.com
+
+pass.
+123
