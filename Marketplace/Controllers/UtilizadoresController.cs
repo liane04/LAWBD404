@@ -111,7 +111,8 @@ namespace Marketplace.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim("FullName", user.Nome)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -206,7 +207,8 @@ namespace Marketplace.Controllers
                 new Claim(ClaimTypes.NameIdentifier, novo.Id.ToString()),
                 new Claim(ClaimTypes.Name, novo.Username),
                 new Claim(ClaimTypes.Email, novo.Email),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim("FullName", novo.Nome)
             };
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);

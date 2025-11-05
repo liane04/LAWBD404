@@ -1,5 +1,6 @@
 using Marketplace.Data;
 using Marketplace.Services;
+using Marketplace.Data.Seeders;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -65,9 +66,11 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
     try
     {
         db.Database.Migrate();
+        await ReferenceDataSeeder.SeedAsync(db, env.ContentRootPath, s => System.Console.WriteLine(s));
 
         bool hasAnyUser = db.Set<Marketplace.Models.Utilizador>().Any();
         if (!hasAnyUser)
@@ -118,4 +121,3 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
-
