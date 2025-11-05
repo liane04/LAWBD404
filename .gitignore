@@ -416,3 +416,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Ficheiros de contexto local (Claude Code)
+**/contexto.md
+ESTRUTURA_PROJETO.md
+ANALISE_COMPLETA.txt
