@@ -15,50 +15,7 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="@(ViewData["IsHomePage"] as bool? == true ? "home-page" : "")">
-    <!-- ===== MOCKUP NAVBAR - Alternar Tipo de Utilizador (REMOVER EM PRODUÇÃO) ===== -->
-    <div class="mockup-navbar bg-dark text-white py-2 fixed-top d-none d-md-block" style="z-index: 2000; border-bottom: 2px solid #fbbf24;">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-auto">
-                    <span class="badge bg-warning text-dark fw-bold me-2">
-                        <i class="bi bi-eye-fill me-1"></i>MOCKUP MODE
-                    </span>
-                    <small class="text-muted">Visualizar como:</small>
-                </div>
-                <div class="col">
-                    <div class="btn-group btn-group-sm" role="group" aria-label="User Type Selector">
-                        <input type="radio" class="btn-check" name="mockupUserType" id="mockupVisitante" autocomplete="off">
-                        <label class="btn btn-outline-light" for="mockupVisitante">
-                            <i class="bi bi-person me-1"></i>Visitante
-                        </label>
-
-                        <input type="radio" class="btn-check" name="mockupUserType" id="mockupComprador" autocomplete="off">
-                        <label class="btn btn-outline-info" for="mockupComprador">
-                            <i class="bi bi-person-check me-1"></i>Comprador
-                        </label>
-
-                        <input type="radio" class="btn-check" name="mockupUserType" id="mockupVendedor" autocomplete="off">
-                        <label class="btn btn-outline-success" for="mockupVendedor">
-                            <i class="bi bi-shop me-1"></i>Vendedor
-                        </label>
-
-                        <input type="radio" class="btn-check" name="mockupUserType" id="mockupAdmin" autocomplete="off" checked>
-                        <label class="btn btn-outline-danger" for="mockupAdmin">
-                            <i class="bi bi-shield-fill-check me-1"></i>Administrador
-                        </label>
-                    </div>
-                </div>
-                <div class="col-auto">
-                    <small class="text-warning">
-                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                        <strong>Atenção:</strong> Remover na fase 3
-                    </small>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ===== FIM MOCKUP NAVBAR ===== -->
-
+  
 
     <header class="fixed-top" style="top: 46px;">
         <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar">
