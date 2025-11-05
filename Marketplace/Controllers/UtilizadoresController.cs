@@ -8,20 +8,21 @@ using Microsoft.EntityFrameworkCore;
 using Marketplace.Data;
 using Marketplace.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+using Marketplace.Services;
 
 namespace Marketplace.Controllers
 {
     public class UtilizadoresController : Controller
     {
+        private readonly ApplicationDbContext _db;
 
-        /*
-        private readonly MarketplaceContext _context;
-
-        public UtilizadoresController(MarketplaceContext context)
+        public UtilizadoresController(ApplicationDbContext db)
         {
-            _context = context;
+            _db = db;
         }
-        */
 
         // GET: Utilizadores
         public async Task<IActionResult> Index()
@@ -75,6 +76,69 @@ namespace Marketplace.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+
+        // POST: Utilizadores/Login
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(string email, string password, bool rememberMe = false)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            {
+                TempData["LoginError"] = "Credenciais inválidas.";
+                return View();
+            }
+
+            var user = await _db.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null || !PasswordHasher.VerifyPassword(password, user.PasswordHash))
+            {
+                TempData["LoginError"] = "Email ou palavra-passe incorretos.";
+                return View();
+            }
+
+            string role = user switch
+            {
+                Administrador => "Administrador",
+                Vendedor => "Vendedor",
+                Comprador => "Comprador",
+                _ => "Utilizador"
+            };
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, role)
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+            var authProps = new AuthenticationProperties
+            {
+                IsPersistent = rememberMe,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+            };
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProps);
+
+            // Redirect by role
+            return role switch
+            {
+                "Administrador" => RedirectToAction("Index", "Administrador"),
+                "Vendedor" => RedirectToAction("Index", "Anuncios"),
+                _ => RedirectToAction("Index", "Home")
+            };
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: Utilizadores/Registar
