@@ -47,6 +47,25 @@ namespace Marketplace.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Unique indexes for reference data
+            modelBuilder.Entity<Marca>()
+                .HasIndex(m => m.Nome)
+                .IsUnique();
+
+            modelBuilder.Entity<Tipo>()
+                .HasIndex(t => t.Nome)
+                .IsUnique();
+
+            modelBuilder.Entity<Modelo>()
+                .HasIndex(m => new { m.Nome, m.MarcaId })
+                .IsUnique();
+
+            // Base seed for Tipos
+            modelBuilder.Entity<Tipo>().HasData(
+                new Tipo { Id = 1, Nome = "Carro" },
+                new Tipo { Id = 2, Nome = "Mota" }
+            );
+
             // Configuração da herança TPH para Utilizador
             modelBuilder.Entity<Utilizador>()
                 .HasDiscriminator<string>("Discriminator")

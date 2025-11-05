@@ -13,9 +13,57 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
+    <style>
+        .mockup-navbar { display: none !important; }
+        [data-mockup-user-type] { display: none !important; }
+        header.fixed-top { top: 0 !important; }
+    </style>
 </head>
 <body class="@(ViewData["IsHomePage"] as bool? == true ? "home-page" : "")">
-  
+    <!-- ===== MOCKUP NAVBAR - Alternar Tipo de Utilizador (REMOVER EM PRODUÇÃO) ===== -->
+    <div class="mockup-navbar bg-dark text-white py-2 fixed-top d-none d-md-block" style="z-index: 2000; border-bottom: 2px solid #fbbf24;">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <span class="badge bg-warning text-dark fw-bold me-2">
+                        <i class="bi bi-eye-fill me-1"></i>MOCKUP MODE
+                    </span>
+                    <small class="text-muted">Visualizar como:</small>
+                </div>
+                <div class="col">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="User Type Selector">
+                        <input type="radio" class="btn-check" name="mockupUserType" id="mockupVisitante" autocomplete="off">
+                        <label class="btn btn-outline-light" for="mockupVisitante">
+                            <i class="bi bi-person me-1"></i>Visitante
+                        </label>
+
+                        <input type="radio" class="btn-check" name="mockupUserType" id="mockupComprador" autocomplete="off">
+                        <label class="btn btn-outline-info" for="mockupComprador">
+                            <i class="bi bi-person-check me-1"></i>Comprador
+                        </label>
+
+                        <input type="radio" class="btn-check" name="mockupUserType" id="mockupVendedor" autocomplete="off">
+                        <label class="btn btn-outline-success" for="mockupVendedor">
+                            <i class="bi bi-shop me-1"></i>Vendedor
+                        </label>
+
+                        <input type="radio" class="btn-check" name="mockupUserType" id="mockupAdmin" autocomplete="off" checked>
+                        <label class="btn btn-outline-danger" for="mockupAdmin">
+                            <i class="bi bi-shield-fill-check me-1"></i>Administrador
+                        </label>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <small class="text-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        <strong>Atenção:</strong> Remover na fase 3
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ===== FIM MOCKUP NAVBAR ===== -->
+
 
     <header class="fixed-top" style="top: 46px;">
         <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar">
@@ -43,6 +91,50 @@
                             </a>
                         </div>
 
+                        <!-- Controlo real por autenticação -->
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a class="btn btn-outline-light" asp-controller="Utilizadores" asp-action="Login">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Entrar
+                            </a>
+                            <a class="btn btn-primary" asp-controller="Utilizadores" asp-action="Registar">
+                                <i class="bi bi-person-plus me-1"></i>Registar
+                            </a>
+                        }
+                        else
+                        {
+                            if (User.IsInRole("Vendedor"))
+                            {
+                                <a class="btn btn-primary me-2" asp-controller="Anuncios" asp-action="Create">
+                                    <i class="bi bi-plus-circle-fill me-1"></i>Criar Anúncio
+                                </a>
+                            }
+
+                            <div class="dropdown">
+                                <a href="#" class="d-flex align-items-center link-light text-decoration-none dropdown-toggle" id="dropdownAuthUser" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle fs-4 me-2"></i>
+                                    <span class="d-none d-lg-inline">Olá, @User.Identity.Name!</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownAuthUser">
+                                    @if (User.IsInRole("Administrador"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Administrador" asp-action="Index"><i class="bi bi-speedometer2 me-2"></i>Painel de Gestão</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Mensagens" asp-action="Index"><i class="bi bi-chat-dots me-2"></i>Mensagens</a></li>
+                                    }
+                                    <li><a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil"><i class="bi bi-person me-2"></i>O Meu Perfil</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <form asp-controller="Utilizadores" asp-action="Logout" method="post" class="m-0 px-3 py-1">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="dropdown-item p-0">Sair</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
                         <!-- ESTADO 2: COMPRADOR COM LOGIN -->
                         <div data-mockup-user-type="comprador" class="d-none d-lg-block">
                             <div class="dropdown">

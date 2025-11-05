@@ -142,23 +142,78 @@ namespace Marketplace.Controllers
         }
 
         // POST: Utilizadores/Registar
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registar([Bind("Id,Username,Email,Nome,PasswordHash,Estado,Tipo,MoradaId")] Utilizador utilizador)
+        public async Task<IActionResult> Registar(string nome, string email, string password, string confirmPassword, string userType)
         {
-            /*
-            if (ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                _context.Add(utilizador);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["RegistarError"] = "Preencha todos os campos obrigatórios.";
+                return View();
             }
-            ViewData["MoradaId"] = new SelectList(_context.Set<Morada>(), "Id", "CodigoPostal", utilizador.MoradaId);
-            return View(utilizador);
-            */
-            return View();
+            if (!string.Equals(password, confirmPassword, StringComparison.Ordinal))
+            {
+                TempData["RegistarError"] = "As palavras-passe não coincidem.";
+                return View();
+            }
+
+            var emailExists = await _db.Set<Utilizador>().AnyAsync(u => u.Email == email);
+            if (emailExists)
+            {
+                TempData["RegistarError"] = "Já existe uma conta com este email.";
+                return View();
+            }
+
+            string username = email.Split('@')[0];
+            string hash = PasswordHasher.HashPassword(password);
+
+            Utilizador novo;
+            string role;
+            if (string.Equals(userType, "vendedor", StringComparison.OrdinalIgnoreCase))
+            {
+                novo = new Vendedor
+                {
+                    Username = username,
+                    Email = email,
+                    Nome = nome,
+                    PasswordHash = hash,
+                    Estado = "Ativo",
+                    Tipo = "Vendedor"
+                };
+                _db.Vendedores.Add((Vendedor)novo);
+                role = "Vendedor";
+            }
+            else // default comprador
+            {
+                novo = new Comprador
+                {
+                    Username = username,
+                    Email = email,
+                    Nome = nome,
+                    PasswordHash = hash,
+                    Estado = "Ativo",
+                    Tipo = "Comprador"
+                };
+                _db.Compradores.Add((Comprador)novo);
+                role = "Comprador";
+            }
+
+            await _db.SaveChangesAsync();
+
+            // Autenticar após registo
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, novo.Id.ToString()),
+                new Claim(ClaimTypes.Name, novo.Username),
+                new Claim(ClaimTypes.Email, novo.Email),
+                new Claim(ClaimTypes.Role, role)
+            };
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            // Redirecionar conforme o tipo
+            return role == "Vendedor" ? RedirectToAction("Index", "Anuncios") : RedirectToAction("Index", "Home");
         }
 
         // GET: Utilizadores/Edit/5

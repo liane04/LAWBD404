@@ -10,3 +10,15 @@ admin@email.com, vendedor@email.com, comprador@email.com
 
 pass.
 123
+
+
+
+*Se der erro no login :
+# Aplicar migração existente primeiro
+  dotnet ef database update --context ApplicationDbContext
+
+  # Criar nova migração para ImagemPerfil
+  dotnet ef migrations add AddImagemPerfilColumn --context ApplicationDbContext
+
+  # Aplicar a nova migração
+  dotnet ef database update --context ApplicationDbContext

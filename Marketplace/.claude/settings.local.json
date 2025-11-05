@@ -13,7 +13,11 @@
       "Bash(\"C:\\Users\\bruno\\Desktop\\utad\\a_1_semestre_3_ano\\Laboratotio_web_bd\\app\\Marketplace\\ESTRUTURA_PROJETO.md\")",
       "Bash(\"C:\\Users\\bruno\\Desktop\\utad\\a_1_semestre_3_ano\\Laboratotio_web_bd\\app\\Marketplace\\ANALISE_COMPLETA.txt\")",
       "Bash(dotnet ef migrations:*)",
-      "Bash(dotnet tool install:*)"
+      "Bash(dotnet tool install:*)",
+      "Bash(dotnet ef database update:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(sqlcmd:*)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []

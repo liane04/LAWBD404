@@ -80,7 +80,16 @@
                                 <p class="text-muted">Aceda à sua conta para continuar</p>
                             </div>
 
+                            @if (TempData["LoginError"] is string loginErr)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    @loginErr
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
+
                             <form asp-action="Login" method="post">
+                                @Html.AntiForgeryToken()
                                 <div class="mb-3">
                                     <label for="email" class="form-label fw-semibold">
                                         <i class="bi bi-envelope me-2 text-primary"></i>Email
