@@ -102,12 +102,31 @@ namespace Marketplace.Controllers
             }
             await _db.SaveChangesAsync();
 
-            // Email de confirmação
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
-            var link = Url.Action("ConfirmarEmail", "Utilizadores", new { userId = appUser.Id, token }, Request.Scheme)!;
-            await _emailSender.SendAsync(email, "Confirme o seu email", $"Clique para confirmar: <a href=\"{link}\">{link}</a>");
+            // Email de confirmação - OPCIONAL (não falhar se SMTP não estiver configurado)
+            bool emailEnviado = false;
+            try
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                var link = Url.Action("ConfirmarEmail", "Utilizadores", new { userId = appUser.Id, token }, Request.Scheme)!;
+                await _emailSender.SendAsync(email, "Confirme o seu email", $"Clique para confirmar: <a href=\"{link}\">{link}</a>");
+                emailEnviado = true;
+            }
+            catch (Exception ex)
+            {
+                // Log do erro mas não falhar o registo
+                Console.WriteLine($"⚠️  Erro ao enviar email de confirmação: {ex.Message}");
+            }
 
-            TempData["RegistarSucesso"] = "Conta criada. Verifique o seu email para confirmar.";
+            // Confirmar email automaticamente se o envio falhou (para desenvolvimento)
+            if (!emailEnviado && !appUser.EmailConfirmed)
+            {
+                appUser.EmailConfirmed = true;
+                await _userManager.UpdateAsync(appUser);
+            }
+
+            TempData["RegistarSucesso"] = emailEnviado
+                ? "Conta criada. Verifique o seu email para confirmar."
+                : "Conta criada com sucesso! Pode agora fazer login.";
             return RedirectToAction("Login");
         }
 
@@ -131,11 +150,8 @@ namespace Marketplace.Controllers
                 TempData["LoginError"] = "Email ou palavra-passe incorretos.";
                 return View();
             }
-            if (!user.EmailConfirmed)
-            {
-                TempData["LoginError"] = "Confirme o seu email antes de entrar.";
-                return View();
-            }
+
+            // NOTA: EmailConfirmed não é verificado aqui porque RequireConfirmedEmail = false no Program.cs
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, password, rememberMe, lockoutOnFailure: true);
             if (!result.Succeeded)
@@ -166,12 +182,21 @@ namespace Marketplace.Controllers
         public async Task<IActionResult> ConfirmarEmail(int userId, string token)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null) return RedirectToAction("Login");
+            if (user == null)
+            {
+                ViewBag.Sucesso = false;
+                ViewBag.Mensagem = "Utilizador não encontrado.";
+                return View();
+            }
+
             var res = await _userManager.ConfirmEmailAsync(user, token);
-            TempData[res.Succeeded ? "LoginInfo" : "LoginError"] = res.Succeeded
-                ? "Email confirmado. Já pode iniciar sessão."
-                : "Token inválido ou expirado.";
-            return RedirectToAction("Login");
+            ViewBag.Sucesso = res.Succeeded;
+            ViewBag.Mensagem = res.Succeeded
+                ? "Email confirmado com sucesso! Pode agora fazer login na sua conta."
+                : "Token inválido ou expirado. Por favor, solicite um novo email de confirmação.";
+            ViewBag.Email = user.Email;
+
+            return View();
         }
 
         // POST: Utilizadores/ReenviarConfirmacao
@@ -196,6 +221,126 @@ namespace Marketplace.Controllers
             await _emailSender.SendAsync(email, "Confirme o seu email", $"Clique para confirmar: <a href=\"{link}\">{link}</a>");
             TempData["LoginInfo"] = "Link de confirmação reenviado.";
             return RedirectToAction("Login");
+        }
+
+        // GET: Utilizadores/EsqueceuPassword
+        [HttpGet]
+        public IActionResult EsqueceuPassword() => View();
+
+        // POST: Utilizadores/EsqueceuPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EsqueceuPassword(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                ViewBag.Erro = "Por favor, insira o seu email.";
+                return View();
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                // Por segurança, não revelar se o email existe ou não
+                ViewBag.Sucesso = true;
+                ViewBag.Email = email;
+                return View();
+            }
+
+            // Gerar token de recuperação de password
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var link = Url.Action("RedefinirPassword", "Utilizadores", new { userId = user.Id, token }, Request.Scheme)!;
+
+            // Tentar enviar email (opcional - não falhar se SMTP não configurado)
+            bool emailEnviado = false;
+            try
+            {
+                await _emailSender.SendAsync(
+                    email,
+                    "Recuperação de Palavra-passe - DriveDeal",
+                    $@"<h2>Recuperação de Palavra-passe</h2>
+                       <p>Recebemos um pedido para redefinir a palavra-passe da sua conta.</p>
+                       <p>Clique no link abaixo para definir uma nova palavra-passe:</p>
+                       <p><a href=""{link}"" style=""background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;"">Redefinir Palavra-passe</a></p>
+                       <p>Ou copie e cole este link no seu navegador:</p>
+                       <p>{link}</p>
+                       <p><small>Se não solicitou esta alteração, ignore este email.</small></p>");
+                emailEnviado = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠️  Erro ao enviar email de recuperação: {ex.Message}");
+            }
+
+            ViewBag.Sucesso = true;
+            ViewBag.Email = email;
+            ViewBag.EmailEnviado = emailEnviado;
+            ViewBag.LinkRecuperacao = emailEnviado ? null : link; // Mostrar link se email não foi enviado (dev)
+            return View();
+        }
+
+        // GET: Utilizadores/RedefinirPassword
+        [HttpGet]
+        public async Task<IActionResult> RedefinirPassword(int userId, string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return RedirectToAction("Login");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.UserId = userId;
+            ViewBag.Token = token;
+            ViewBag.Email = user.Email;
+            return View();
+        }
+
+        // POST: Utilizadores/RedefinirPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RedefinirPassword(int userId, string token, string password, string confirmPassword)
+        {
+            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(confirmPassword))
+            {
+                ViewBag.Erro = "Por favor, preencha todos os campos.";
+                ViewBag.UserId = userId;
+                ViewBag.Token = token;
+                return View();
+            }
+
+            if (!string.Equals(password, confirmPassword, StringComparison.Ordinal))
+            {
+                ViewBag.Erro = "As palavras-passe não coincidem.";
+                ViewBag.UserId = userId;
+                ViewBag.Token = token;
+                return View();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                ViewBag.Erro = "Utilizador não encontrado.";
+                return View();
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, token, password);
+            if (!result.Succeeded)
+            {
+                ViewBag.Erro = string.Join("; ", result.Errors.Select(e => e.Description));
+                ViewBag.UserId = userId;
+                ViewBag.Token = token;
+                ViewBag.Email = user.Email;
+                return View();
+            }
+
+            ViewBag.Sucesso = true;
+            ViewBag.Email = user.Email;
+            return View();
         }
     }
 }

@@ -4,12 +4,9 @@ Update-Database -Context ApplicationDbContext
 
 
 
-Login 
-
-admin@email.com, vendedor@email.com, comprador@email.com
-
-pass.
-123
+ 1. Administrador: admin@email.com / Admin123
+  2. Vendedor: vendedor@email.com / Vende123
+  3. Comprador: comprador@email.com / Compr123
 
 
 

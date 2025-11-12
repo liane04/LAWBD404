@@ -16,13 +16,18 @@ namespace Marketplace.Data.Seeders
         {
             log ??= _ => { };
 
-            // Ensure base Tipo "Carro" exists (Id = 1 as configured in HasData).
-            var tipoCarro = await db.Tipos.FindAsync(1);
+            // Ensure base Tipo "Carro" exists - deixar EF gerar o ID automaticamente
+            var tipoCarro = db.Tipos.FirstOrDefault(t => t.Nome == "Carro");
             if (tipoCarro == null)
             {
-                tipoCarro = new Tipo { Id = 1, Nome = "Carro" };
+                tipoCarro = new Tipo { Nome = "Carro" }; // NÃO definir Id - deixar IDENTITY gerar
                 db.Tipos.Add(tipoCarro);
                 await db.SaveChangesAsync();
+                log($"✅ Tipo 'Carro' criado com Id = {tipoCarro.Id}");
+            }
+            else
+            {
+                log($"✓ Tipo 'Carro' já existe (Id = {tipoCarro.Id})");
             }
 
             var path = Path.Combine(contentRootPath, "Data", "Seeds", "car-list.json");
