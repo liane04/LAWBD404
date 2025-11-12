@@ -24,7 +24,9 @@
       "Bash(taskkill //F //PID 25328)",
       "Bash(dotnet run)",
       "Bash(powershell -Command \"Stop-Process -Id 34768 -Force\")",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(manual_migration.sql)",
+      "Bash(del \"C:\\Users\\bruno\\Desktop\\utad\\a_1_semestre_3_ano\\Laboratotio_web_bd\\app\\Marketplace\\ApplyIdentityMigration.cs\")"
     ],
     "deny": [],
     "ask": []

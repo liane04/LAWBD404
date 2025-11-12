@@ -1,11 +1,11 @@
-﻿using Marketplace.Models;
+using Marketplace.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 
 namespace Marketplace.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -187,10 +187,10 @@ namespace Marketplace.Data
                 .HasPrecision(10, 2);
 
             modelBuilder.Entity<AnuncioFav>()
-    .HasOne(af => af.Comprador)
-    .WithMany(c => c.AnunciosFavoritos)
-    .HasForeignKey(af => af.CompradorId)
-    .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(af => af.Comprador)
+                .WithMany(c => c.AnunciosFavoritos)
+                .HasForeignKey(af => af.CompradorId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Relacionamento N:N entre Anuncio e Extra através de AnuncioExtra
             modelBuilder.Entity<AnuncioExtra>()
@@ -202,7 +202,13 @@ namespace Marketplace.Data
                 .HasOne(ae => ae.Extra)
                 .WithMany(e => e.AnuncioExtras)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Identity linkage: cada Utilizador do domínio aponta para um ApplicationUser (único)
+            modelBuilder.Entity<Utilizador>()
+                .HasIndex(u => u.IdentityUserId)
+                .IsUnique();
         }
 
     }
 }
+

@@ -283,8 +283,10 @@
                     </div>
                 </div>
 
-                <!-- Aba: Meus Anúncios (para Vendedores) -->
-                <div class="tab-pane fade" id="meus-anuncios">
+                @if (User.IsInRole("Vendedor"))
+                {
+                    <!-- Aba: Meus Anúncios (para Vendedores) -->
+                    <div class="tab-pane fade" id="meus-anuncios">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -576,10 +578,10 @@
                         <h4 class="text-muted mb-2">Nenhum anúncio encontrado</h4>
                         <p class="text-muted mb-4">Não tem anúncios com este estado</p>
                     </div>
-                </div>
+                    </div>
 
-                <!-- Aba: Reservas Recebidas (para Vendedores) -->
-                <div class="tab-pane fade" id="reservas-recebidas">
+                    <!-- Aba: Reservas Recebidas (para Vendedores) -->
+                    <div class="tab-pane fade" id="reservas-recebidas">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -1287,10 +1289,13 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                    </div>
+                }
 
-                <!-- Aba: Anúncios Favoritos (para Compradores) -->
-                <div class="tab-pane fade" id="favoritos">
+                <!-- Aba: Anúncios Favoritos (para Compradores e Vendedores) -->
+                @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
+                {
+                    <div class="tab-pane fade" id="favoritos">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -1482,10 +1487,13 @@
                             <i class="bi bi-search me-2"></i>Explorar Anúncios
                         </a>
                     </div>
-                </div>
+                    </div>
+                }
 
                 <!-- Aba: Minhas Reservas (para Compradores) -->
-                <div class="tab-pane fade" id="minhas-reservas">
+                @if (User.IsInRole("Comprador"))
+                {
+                    <div class="tab-pane fade" id="minhas-reservas">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -1771,7 +1779,8 @@
                             <i class="bi bi-search me-2"></i>Explorar Anúncios
                         </a>
                     </div>
-                </div>
+                    </div>
+                }
 
                 <!-- Aba: Definições -->
                 <div class="tab-pane fade" id="definicoes">

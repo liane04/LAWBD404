@@ -18,8 +18,10 @@ namespace Marketplace.Models
         [Required, StringLength(120)]
         public string Nome { get; set; } = null!;
 
+        // Legacy password field from pre-Identity auth. When using ASP.NET Identity,
+        // this can be set to a placeholder (e.g., "IDENTITY").
         [Required, StringLength(255)]
-        public string PasswordHash { get; set; } = null!;
+        public string PasswordHash { get; set; } = "IDENTITY";
 
         [StringLength(30)]
         public string? Estado { get; set; }
@@ -33,6 +35,12 @@ namespace Marketplace.Models
         public int? MoradaId { get; set; }
         [ForeignKey("MoradaId")]
         public Morada? Morada { get; set; }
+
+        // Link to ASP.NET Core Identity user
+        public int IdentityUserId { get; set; }
+
+        [ForeignKey("IdentityUserId")]
+        public ApplicationUser IdentityUser { get; set; } = null!;
 
         public ICollection<AcaoUser> AcoesUser { get; set; } = new List<AcaoUser>();
         public ICollection<DenunciaUser> DenunciasRecebidas { get; set; } = new List<DenunciaUser>();
