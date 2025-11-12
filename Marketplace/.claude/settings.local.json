@@ -17,7 +17,14 @@
       "Bash(dotnet ef database update:*)",
       "Bash(dotnet clean:*)",
       "Bash(sqlcmd:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(del \"C:\\Users\\bruno\\Desktop\\utad\\a_1_semestre_3_ano\\Laboratotio_web_bd\\app\\Marketplace\\GenerateHash.cs\")",
+      "Bash(tasklist:*)",
+      "Bash(taskkill /F /PID 25328)",
+      "Bash(taskkill //F //PID 25328)",
+      "Bash(dotnet run)",
+      "Bash(powershell -Command \"Stop-Process -Id 34768 -Force\")",
+      "Bash(powershell -Command:*)"
     ],
     "deny": [],
     "ask": []

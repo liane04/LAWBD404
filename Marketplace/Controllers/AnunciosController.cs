@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Marketplace.Data;
 using Marketplace.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Marketplace.Controllers
 {
@@ -58,6 +59,7 @@ namespace Marketplace.Controllers
         }
 
         // GET: Anuncios/Create
+        [Authorize(Roles = "Vendedor")]
         public IActionResult Create()
         {
             ViewData["CategoriaId"] = new SelectList(_context.Set<Categoria>(), "Id", "Nome");
@@ -73,6 +75,7 @@ namespace Marketplace.Controllers
         // POST: Anuncios/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Vendedor")]
         public async Task<IActionResult> Create([Bind("Id,Preco,Ano,Cor,Descricao,Quilometragem,Titulo,Caixa,VendedorId,MarcaId,ModeloId,CategoriaId,CombustivelId,TipoId")] Anuncio anuncio)
         {
             if (ModelState.IsValid)
@@ -92,6 +95,7 @@ namespace Marketplace.Controllers
         }
 
         // GET: Anuncios/Edit/5 (Mock view, sem BD durante a fase de UI)
+        [Authorize(Roles = "Vendedor")]
         public IActionResult Edit(int? id)
         {
             // Durante a fase de mockups não consultamos a BD.
@@ -102,6 +106,7 @@ namespace Marketplace.Controllers
         // POST: Anuncios/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Vendedor")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Preco,Ano,Cor,Descricao,Quilometragem,Titulo,Caixa,VendedorId,MarcaId,ModeloId,CategoriaId,CombustivelId,TipoId")] Anuncio anuncio)
         {
             if (id != anuncio.Id)
@@ -140,6 +145,7 @@ namespace Marketplace.Controllers
         }
 
         // GET: Anuncios/Delete/5
+        [Authorize(Roles = "Vendedor,Administrador")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -166,6 +172,7 @@ namespace Marketplace.Controllers
         // POST: Anuncios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Vendedor,Administrador")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var anuncio = await _context.Anuncio.FindAsync(id);

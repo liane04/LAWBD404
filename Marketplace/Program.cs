@@ -72,11 +72,12 @@ using (var scope = app.Services.CreateScope())
         db.Database.Migrate();
         await ReferenceDataSeeder.SeedAsync(db, env.ContentRootPath, s => System.Console.WriteLine(s));
 
-        bool hasAnyUser = db.Set<Marketplace.Models.Utilizador>().Any();
-        if (!hasAnyUser)
-        {
-            string hashed = PasswordHasher.HashPassword("123");
+        // Verificar e criar utilizadores padrão se não existirem
+        string hashed = PasswordHasher.HashPassword("123");
 
+        // Admin
+        if (!db.Set<Marketplace.Models.Utilizador>().Any(u => u.Email == "admin@email.com"))
+        {
             var admin = new Marketplace.Models.Administrador
             {
                 Username = "admin",
@@ -87,7 +88,12 @@ using (var scope = app.Services.CreateScope())
                 Tipo = "Administrador",
                 NivelAcesso = "Total"
             };
+            db.Administradores.Add(admin);
+        }
 
+        // Vendedor
+        if (!db.Set<Marketplace.Models.Utilizador>().Any(u => u.Email == "vendedor@email.com"))
+        {
             var vendedor = new Marketplace.Models.Vendedor
             {
                 Username = "vendedor",
@@ -97,7 +103,12 @@ using (var scope = app.Services.CreateScope())
                 Estado = "Ativo",
                 Tipo = "Vendedor"
             };
+            db.Vendedores.Add(vendedor);
+        }
 
+        // Comprador
+        if (!db.Set<Marketplace.Models.Utilizador>().Any(u => u.Email == "comprador@email.com"))
+        {
             var comprador = new Marketplace.Models.Comprador
             {
                 Username = "comprador",
@@ -107,12 +118,10 @@ using (var scope = app.Services.CreateScope())
                 Estado = "Ativo",
                 Tipo = "Comprador"
             };
-
-            db.Administradores.Add(admin);
-            db.Vendedores.Add(vendedor);
             db.Compradores.Add(comprador);
-            db.SaveChanges();
         }
+
+        db.SaveChanges();
     }
     catch
     {

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using Marketplace.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Marketplace.Controllers
 {
@@ -35,6 +36,7 @@ namespace Marketplace.Controllers
         }
 
         // GET: Utilizadores/Perfil
+        [Authorize]
         public IActionResult Perfil()
         {
             return View();
@@ -136,6 +138,7 @@ namespace Marketplace.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

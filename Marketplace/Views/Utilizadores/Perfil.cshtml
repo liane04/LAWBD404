@@ -20,12 +20,24 @@
                         </div>
                         <h5 class="mb-2 fw-bold">João Duarte Silva</h5>
                         <div class="perfil-user-badges mb-2">
-                            <span class="perfil-badge perfil-badge-comprador" data-mockup-user-type="comprador">
-                                <i class="bi bi-person-check-fill"></i> Comprador
-                            </span>
-                            <span class="perfil-badge perfil-badge-vendedor" data-mockup-user-type="vendedor">
-                                <i class="bi bi-shop"></i> Vendedor
-                            </span>
+                            @if (User.IsInRole("Comprador"))
+                            {
+                                <span class="perfil-badge perfil-badge-comprador">
+                                    <i class="bi bi-person-check-fill"></i> Comprador
+                                </span>
+                            }
+                            @if (User.IsInRole("Vendedor"))
+                            {
+                                <span class="perfil-badge perfil-badge-vendedor">
+                                    <i class="bi bi-shop"></i> Vendedor
+                                </span>
+                            }
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <span class="perfil-badge perfil-badge-admin">
+                                    <i class="bi bi-shield-check"></i> Administrador
+                                </span>
+                            }
                         </div>
                         <small class="perfil-member-since">
                             <i class="bi bi-calendar-check me-1"></i>Membro desde Out 2025
@@ -36,47 +48,51 @@
 
                     <!-- Menu de Navegação -->
                     <div class="perfil-nav-menu">
-                        <a href="#dados-pessoais" class="perfil-nav-item active" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
+                        <a href="#dados-pessoais" class="perfil-nav-item active" data-bs-toggle="tab">
                             <i class="bi bi-person-fill"></i>
                             <span>Dados Pessoais</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
                         </a>
-                        <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
-                            <i class="bi bi-card-list"></i>
-                            <span>Meus Anúncios</span>
-                            <span class="badge bg-primary rounded-pill ms-auto">3</span>
-                        </a>
-                        <a href="#reservas-recebidas" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
-                            <i class="bi bi-bookmark-check-fill"></i>
-                            <span>Reservas Recebidas</span>
-                            <span class="badge bg-success rounded-pill ms-auto">1</span>
-                        </a>
-                        <a href="#visitas-agendadas-vendedor" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
-                            <i class="bi bi-calendar-event"></i>
-                            <span>Visitas Agendadas</span>
-                            <span class="badge bg-info rounded-pill ms-auto">2</span>
-                        </a>
-                       <!--  <a href="#dados-bancarios" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
-                            <i class="bi bi-bank"></i>
-                            <span>Dados Bancários</span>
-                            <i class="bi bi-chevron-right ms-auto"></i>
-                         </a>-->
-                        <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
-                            <i class="bi bi-heart-fill"></i>
-                            <span>Anúncios Favoritos</span>
-                            <span class="badge bg-danger rounded-pill ms-auto">2</span>
-                        </a>
-                        <a href="#minhas-reservas" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador">
-                            <i class="bi bi-bookmark-star-fill"></i>
-                            <span>Minhas Reservas</span>
-                            <span class="badge bg-warning rounded-pill ms-auto">1</span>
-                        </a>
-                        <a href="#minhas-visitas" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador">
-                            <i class="bi bi-calendar-check-fill"></i>
-                            <span>Minhas Visitas</span>
-                            <span class="badge bg-info rounded-pill ms-auto">1</span>
-                        </a>
-                        <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
+                        @if (User.IsInRole("Vendedor"))
+                        {
+                            <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-card-list"></i>
+                                <span>Meus Anúncios</span>
+                                <span class="badge bg-primary rounded-pill ms-auto">3</span>
+                            </a>
+                            <a href="#reservas-recebidas" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-bookmark-check-fill"></i>
+                                <span>Reservas Recebidas</span>
+                                <span class="badge bg-success rounded-pill ms-auto">1</span>
+                            </a>
+                            <a href="#visitas-agendadas-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-calendar-event"></i>
+                                <span>Visitas Agendadas</span>
+                                <span class="badge bg-info rounded-pill ms-auto">2</span>
+                            </a>
+                        }
+                        @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
+                        {
+                            <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-heart-fill"></i>
+                                <span>Anúncios Favoritos</span>
+                                <span class="badge bg-danger rounded-pill ms-auto">2</span>
+                            </a>
+                        }
+                        @if (User.IsInRole("Comprador"))
+                        {
+                            <a href="#minhas-reservas" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-bookmark-star-fill"></i>
+                                <span>Minhas Reservas</span>
+                                <span class="badge bg-warning rounded-pill ms-auto">1</span>
+                            </a>
+                            <a href="#minhas-visitas" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-calendar-check-fill"></i>
+                                <span>Minhas Visitas</span>
+                                <span class="badge bg-info rounded-pill ms-auto">1</span>
+                            </a>
+                        }
+                        <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab">
                             <i class="bi bi-gear-fill"></i>
                             <span>Definições</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
