@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Marketplace.Models.Anuncio
+
+@{
     ViewData["Title"] = "Criar Novo Anúncio";
 }
 
@@ -40,7 +42,8 @@
 
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-9">
-            <form id="createAnuncioForm" class="create-anuncio-form">
+            <form id="createAnuncioForm" class="create-anuncio-form" asp-action="Create" asp-controller="Anuncios" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
                         <!-- Step 1: Informação Principal -->
                         <div class="form-step active" data-step="1">
                             <div class="card shadow-sm border-0 mb-4">
@@ -56,7 +59,7 @@
                                                 <i class="bi bi-pencil text-primary me-2"></i>Título do Anúncio
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input type="text" class="form-control form-control-lg" id="titulo"
+                                            <input type="text" class="form-control form-control-lg" id="titulo" name="Titulo"
                                                    placeholder="Ex: BMW Série 3 320d Pack M" required>
                                             <div class="form-text">
                                                 <i class="bi bi-lightbulb text-warning me-1"></i>
@@ -73,8 +76,8 @@
                                                 <span class="input-group-text">
                                                     <i class="bi bi-currency-euro"></i>
                                                 </span>
-                                                <input type="number" class="form-control" id="preco"
-                                                       placeholder="28500" required>
+                                                <input type="number" class="form-control" id="preco" name="Preco"
+                                                       placeholder="28500" step="0.01" required>
                                             </div>
                                             <div class="form-text">Preço de venda do veículo</div>
                                         </div>
@@ -108,8 +111,8 @@
                                                                 <span class="input-group-text">
                                                                     <i class="bi bi-currency-euro"></i>
                                                                 </span>
-                                                                <input type="number" class="form-control" id="valorSinal"
-                                                                       placeholder="500" min="100" max="5000" value="500" required>
+                                                                <input type="number" class="form-control" id="valorSinal" name="ValorSinal"
+                                                                       placeholder="500" min="100" max="5000" value="500" step="0.01" required>
                                                             </div>
                                                             <div class="form-text">Mínimo: 100€ | Máximo: 5.000€</div>
                                                         </div>
@@ -132,7 +135,7 @@
                                                 <i class="bi bi-file-text text-primary me-2"></i>Descrição
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <textarea class="form-control" id="descricao" rows="5" required
+                                            <textarea class="form-control" id="descricao" name="Descricao" rows="5" required
                                                 placeholder="Descreva os pontos fortes do seu carro, estado geral, extras incluídos, histórico de manutenção, etc."></textarea>
                                             <div class="form-text">
                                                 <span id="charCount">0</span>/500 caracteres
@@ -156,39 +159,25 @@
                                 <div class="card-body p-4">
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label for="marca" class="form-label fw-semibold">
+                                            <label asp-for="MarcaId" class="form-label fw-semibold">
                                                 <i class="bi bi-award text-primary me-2"></i>Marca
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select id="marca" class="form-select form-select-lg" required>
-                                                <option value="" selected disabled>Selecione a marca...</option>
-                                                <option value="audi">Audi</option>
-                                                <option value="bmw">BMW</option>
-                                                <option value="mercedes">Mercedes-Benz</option>
-                                                <option value="vw">Volkswagen</option>
-                                                <option value="renault">Renault</option>
-                                                <option value="peugeot">Peugeot</option>
-                                                <option value="citroen">Citroën</option>
-                                                <option value="ford">Ford</option>
-                                                <option value="opel">Opel</option>
-                                                <option value="toyota">Toyota</option>
-                                                <option value="nissan">Nissan</option>
-                                                <option value="hyundai">Hyundai</option>
-                                                <option value="kia">Kia</option>
-                                                <option value="seat">Seat</option>
-                                                <option value="skoda">Skoda</option>
-                                                <option value="volvo">Volvo</option>
-                                                <option value="outro">Outra</option>
+                                            <select asp-for="MarcaId" asp-items="@ViewBag.MarcaId" id="marca" class="form-select form-select-lg" required>
+                                                <option value="">Selecione a marca...</option>
                                             </select>
+                                            <span asp-validation-for="MarcaId" class="text-danger"></span>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label for="modelo" class="form-label fw-semibold">
+                                            <label asp-for="ModeloId" class="form-label fw-semibold">
                                                 <i class="bi bi-tag text-primary me-2"></i>Modelo
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input type="text" class="form-control form-control-lg" id="modelo"
-                                                   placeholder="Ex: Série 3" required>
+                                            <select asp-for="ModeloId" asp-items="@ViewBag.ModeloId" id="modelo" class="form-select form-select-lg" required>
+                                                <option value="">Selecione o modelo...</option>
+                                            </select>
+                                            <span asp-validation-for="ModeloId" class="text-danger"></span>
                                         </div>
 
                                         <div class="col-md-4">
@@ -196,7 +185,7 @@
                                                 <i class="bi bi-calendar-event text-primary me-2"></i>Ano de Registo
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input type="number" class="form-control form-control-lg" id="ano"
+                                            <input type="number" class="form-control form-control-lg" id="ano" name="Ano"
                                                    placeholder="2019" min="1980" max="2025" required>
                                         </div>
 
@@ -205,7 +194,7 @@
                                                 <i class="bi bi-speedometer2 text-primary me-2"></i>Quilómetros
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input type="number" class="form-control form-control-lg" id="kms"
+                                            <input type="number" class="form-control form-control-lg" id="kms" name="Quilometragem"
                                                    placeholder="98000" required>
                                             <div class="form-text">Em quilómetros (km)</div>
                                         </div>
@@ -214,7 +203,7 @@
                                             <label for="potencia" class="form-label fw-semibold">
                                                 <i class="bi bi-lightning-charge text-primary me-2"></i>Potência (cv)
                                             </label>
-                                            <input type="number" class="form-control form-control-lg" id="potencia"
+                                            <input type="number" class="form-control form-control-lg" id="potencia" name="Potencia"
                                                    placeholder="190">
                                         </div>
 
@@ -222,25 +211,20 @@
                                             <label for="cilindrada" class="form-label fw-semibold">
                                                 <i class="bi bi-speedometer text-primary me-2"></i>Cilindrada (cm³)
                                             </label>
-                                            <input type="number" class="form-control form-control-lg" id="cilindrada"
+                                            <input type="number" class="form-control form-control-lg" id="cilindrada" name="Cilindrada"
                                                    placeholder="1995">
                                             <div class="form-text">Em centímetros cúbicos</div>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label for="combustivel" class="form-label fw-semibold">
+                                            <label asp-for="CombustivelId" class="form-label fw-semibold">
                                                 <i class="bi bi-fuel-pump text-primary me-2"></i>Combustível
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select id="combustivel" class="form-select form-select-lg" required>
-                                                <option value="" selected disabled>Selecione...</option>
-                                                <option value="diesel">Diesel</option>
-                                                <option value="gasolina">Gasolina</option>
-                                                <option value="eletrico">Elétrico</option>
-                                                <option value="hibrido">Híbrido (Gasolina)</option>
-                                                <option value="hibrido_diesel">Híbrido (Diesel)</option>
-                                                <option value="gas">GPL/GNV</option>
+                                            <select asp-for="CombustivelId" asp-items="@ViewBag.CombustivelId" id="combustivel" class="form-select form-select-lg" required>
+                                                <option value="">Selecione...</option>
                                             </select>
+                                            <span asp-validation-for="CombustivelId" class="text-danger"></span>
                                         </div>
 
                                         <div class="col-md-6">
@@ -248,11 +232,11 @@
                                                 <i class="bi bi-gear text-primary me-2"></i>Transmissão
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select id="transmissao" class="form-select form-select-lg" required>
-                                                <option value="" selected disabled>Selecione...</option>
-                                                <option value="manual">Manual</option>
-                                                <option value="automatica">Automática</option>
-                                                <option value="semiautomatica">Semi-automática</option>
+                                            <select id="transmissao" name="Caixa" class="form-select form-select-lg" required>
+                                                <option value="">Selecione...</option>
+                                                <option value="Manual">Manual</option>
+                                                <option value="Automática">Automática</option>
+                                                <option value="Semi-automática">Semi-automática</option>
                                             </select>
                                         </div>
 
@@ -260,7 +244,7 @@
                                             <label for="portas" class="form-label fw-semibold">
                                                 <i class="bi bi-door-open text-primary me-2"></i>Número de Portas
                                             </label>
-                                            <select id="portas" class="form-select form-select-lg">
+                                            <select id="portas" name="Portas" class="form-select form-select-lg">
                                                 <option value="">Selecione...</option>
                                                 <option value="2">2/3 portas</option>
                                                 <option value="4">4/5 portas</option>
@@ -271,7 +255,7 @@
                                             <label for="lugares" class="form-label fw-semibold">
                                                 <i class="bi bi-people text-primary me-2"></i>Lugares
                                             </label>
-                                            <input type="number" class="form-control form-control-lg" id="lugares"
+                                            <input type="number" class="form-control form-control-lg" id="lugares" name="Lugares"
                                                    placeholder="5" min="2" max="9">
                                         </div>
 
@@ -279,7 +263,7 @@
                                             <label for="cor" class="form-label fw-semibold">
                                                 <i class="bi bi-palette text-primary me-2"></i>Cor
                                             </label>
-                                            <input type="text" class="form-control form-control-lg" id="cor"
+                                            <input type="text" class="form-control form-control-lg" id="cor" name="Cor"
                                                    placeholder="Ex: Preto">
                                         </div>
 
@@ -288,9 +272,31 @@
                                                 <i class="bi bi-geo-alt text-primary me-2"></i>Localização
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input type="text" class="form-control form-control-lg" id="localizacao"
+                                            <input type="text" class="form-control form-control-lg" id="localizacao" name="Localizacao"
                                                    placeholder="Ex: Lisboa, Porto, Esposende..." required>
                                             <div class="form-text">Cidade ou região onde o veículo se encontra</div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label asp-for="CategoriaId" class="form-label fw-semibold">
+                                                <i class="bi bi-grid text-primary me-2"></i>Categoria
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select asp-for="CategoriaId" asp-items="@ViewBag.CategoriaId" class="form-select form-select-lg" required>
+                                                <option value="">Selecione a categoria...</option>
+                                            </select>
+                                            <span asp-validation-for="CategoriaId" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label asp-for="TipoId" class="form-label fw-semibold">
+                                                <i class="bi bi-car-front-fill text-primary me-2"></i>Tipo de Veículo
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select asp-for="TipoId" asp-items="@ViewBag.TipoId" class="form-select form-select-lg" required>
+                                                <option value="">Selecione o tipo...</option>
+                                            </select>
+                                            <span asp-validation-for="TipoId" class="text-danger"></span>
                                         </div>
 
                                         <div class="col-12">
@@ -445,8 +451,8 @@
                                             <span class="text-danger">*</span>
                                         </label>
                                         <div class="upload-zone" id="uploadZone">
-                                            <input class="form-control d-none" type="file" id="imagens"
-                                                   multiple accept="image/*">
+                                            <input class="form-control d-none" type="file" id="imagens" name="imagens"
+                                                   multiple accept="image/jpeg,image/png,image/webp">
                                             <div class="upload-placeholder">
                                                 <i class="bi bi-cloud-arrow-up"></i>
                                                 <h5>Arraste as fotos aqui</h5>
@@ -459,7 +465,7 @@
                                         </div>
                                         <div class="form-text">
                                             <i class="bi bi-check-circle text-success me-1"></i>
-                                            Formatos aceites: JPG, PNG. Tamanho máximo: 5MB por foto. Máximo: 10 fotos.
+                                            Formatos aceites: JPG, PNG, WebP. Tamanho máximo: 10MB por foto. Máximo: 20 fotos.
                                         </div>
                                     </div>
 
