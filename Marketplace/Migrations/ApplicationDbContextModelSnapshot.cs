@@ -113,7 +113,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("Anuncios");
+                    b.ToTable("Anuncios", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.AnuncioExtra", b =>
@@ -136,7 +136,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("ExtraId");
 
-                    b.ToTable("AnuncioExtras");
+                    b.ToTable("AnuncioExtras", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.AnuncioFav", b =>
@@ -163,7 +163,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("AnunciosFavoritos");
+                    b.ToTable("AnunciosFavoritos", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.ApplicationUser", b =>
@@ -255,7 +255,7 @@ namespace Marketplace.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("Categorias", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Combustivel", b =>
@@ -273,7 +273,7 @@ namespace Marketplace.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Combustiveis");
+                    b.ToTable("Combustiveis", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Compra", b =>
@@ -303,7 +303,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("Compras");
+                    b.ToTable("Compras", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Contactos", b =>
@@ -326,7 +326,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("Contactos");
+                    b.ToTable("Contactos", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.ContactosComprador", b =>
@@ -349,7 +349,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("ContactosCompradores");
+                    b.ToTable("ContactosCompradores", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Conversa", b =>
@@ -382,7 +382,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("Conversas");
+                    b.ToTable("Conversas", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Denuncia", b =>
@@ -425,7 +425,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("Denuncia");
+                    b.ToTable("Denuncia", (string)null);
 
                     b.HasDiscriminator<string>("TipoDenuncia").HasValue("Denuncia");
 
@@ -452,7 +452,7 @@ namespace Marketplace.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Extras");
+                    b.ToTable("Extras", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.FiltrosFav", b =>
@@ -470,7 +470,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("FiltrosFavoritos");
+                    b.ToTable("FiltrosFavoritos", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.HistoricoAcao", b =>
@@ -500,7 +500,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("AdministradorId");
 
-                    b.ToTable("HistoricoAcao");
+                    b.ToTable("HistoricoAcao", (string)null);
 
                     b.HasDiscriminator<string>("TipoAcao").HasValue("HistoricoAcao");
 
@@ -527,7 +527,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("AnuncioId");
 
-                    b.ToTable("Imagens");
+                    b.ToTable("Imagens", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Marca", b =>
@@ -548,7 +548,7 @@ namespace Marketplace.Migrations
                     b.HasIndex("Nome")
                         .IsUnique();
 
-                    b.ToTable("Marcas");
+                    b.ToTable("Marcas", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.MarcasFav", b =>
@@ -571,7 +571,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("MarcaId");
 
-                    b.ToTable("MarcasFavoritas");
+                    b.ToTable("MarcasFavoritas", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Mensagens", b =>
@@ -601,7 +601,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("ConversaId");
 
-                    b.ToTable("Mensagens");
+                    b.ToTable("Mensagens", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Modelo", b =>
@@ -632,7 +632,7 @@ namespace Marketplace.Migrations
                     b.HasIndex("Nome", "MarcaId")
                         .IsUnique();
 
-                    b.ToTable("Modelos");
+                    b.ToTable("Modelos", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Morada", b =>
@@ -660,7 +660,7 @@ namespace Marketplace.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Moradas");
+                    b.ToTable("Moradas", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Notificacoes", b =>
@@ -706,7 +706,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("PesquisasPassadasId");
 
-                    b.ToTable("Notificacoes");
+                    b.ToTable("Notificacoes", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.PesquisasPassadas", b =>
@@ -730,7 +730,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("PesquisasPassadas");
+                    b.ToTable("PesquisasPassadas", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Reserva", b =>
@@ -763,7 +763,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("Reservas");
+                    b.ToTable("Reservas", (string)null);
                 });
 
             modelBuilder.Entity("Marketplace.Models.Tipo", b =>
@@ -784,7 +784,7 @@ namespace Marketplace.Migrations
                     b.HasIndex("Nome")
                         .IsUnique();
 
-                    b.ToTable("Tipos");
+                    b.ToTable("Tipos", (string)null);
 
                     b.HasData(
                         new
@@ -857,7 +857,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("MoradaId");
 
-                    b.ToTable("Utilizador");
+                    b.ToTable("Utilizador", (string)null);
 
                     b.HasDiscriminator().HasValue("Utilizador");
 
@@ -891,7 +891,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("Visitas");
+                    b.ToTable("Visitas", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>

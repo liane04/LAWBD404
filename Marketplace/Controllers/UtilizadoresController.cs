@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Marketplace.Data;
 using Marketplace.Models;
 using Marketplace.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Marketplace.Controllers
 {
@@ -16,17 +18,20 @@ namespace Marketplace.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly IWebHostEnvironment _env;
 
         public UtilizadoresController(
             ApplicationDbContext db,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IWebHostEnvironment env)
         {
             _db = db;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _env = env;
         }
 
         // GET: Utilizadores
@@ -34,7 +39,252 @@ namespace Marketplace.Controllers
 
         // GET: Utilizadores/Perfil
         [Authorize]
-        public IActionResult Perfil() => View();
+        public async Task<IActionResult> Perfil()
+        {
+            var appUser = await _userManager.GetUserAsync(User);
+            if (appUser == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Tentar obter a entidade de domínio associada ao utilizador autenticado
+            Utilizador? domainUser = await _db.Compradores
+                .Include(c => c.Morada)
+                .FirstOrDefaultAsync(c => c.IdentityUserId == appUser.Id);
+
+            if (domainUser == null)
+            {
+                domainUser = await _db.Vendedores
+                    .Include(v => v.Morada)
+                    .FirstOrDefaultAsync(v => v.IdentityUserId == appUser.Id);
+            }
+
+            if (domainUser == null)
+            {
+                domainUser = await _db.Administradores
+                    .Include(a => a.Morada)
+                    .FirstOrDefaultAsync(a => a.IdentityUserId == appUser.Id);
+            }
+
+            var roles = await _userManager.GetRolesAsync(appUser);
+            var claims = await _userManager.GetClaimsAsync(appUser);
+            bool sellerPending = claims.Any(c => c.Type == "SellerRequest" && c.Value == "Pendente");
+
+            var vm = new ProfileViewModel
+            {
+                FullName = appUser.FullName ?? domainUser?.Nome ?? appUser.UserName ?? "Utilizador",
+                Email = appUser.Email ?? domainUser?.Email ?? string.Empty,
+                Username = appUser.UserName ?? domainUser?.Username ?? string.Empty,
+                Estado = domainUser?.Estado ?? "Ativo",
+                ImagemPerfilUrl = appUser.ImagemPerfil ?? domainUser?.ImagemPerfil,
+                MoradaRua = domainUser?.Morada?.Rua,
+                MoradaCodigoPostal = domainUser?.Morada?.CodigoPostal,
+                MoradaLocalidade = domainUser?.Morada?.Localidade,
+                Roles = roles
+                , SellerRequestPending = sellerPending
+            };
+
+            return View(vm);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PedirVendedor()
+        {
+            var appUser = await _userManager.GetUserAsync(User);
+            if (appUser == null) return RedirectToAction("Login");
+            if (await _userManager.IsInRoleAsync(appUser, "Vendedor"))
+            {
+                TempData["PerfilInfo"] = "Já possui permissões de vendedor.";
+                return RedirectToAction(nameof(Perfil));
+            }
+
+            var claims = await _userManager.GetClaimsAsync(appUser);
+            if (claims.Any(c => c.Type == "SellerRequest" && c.Value == "Pendente"))
+            {
+                TempData["PerfilInfo"] = "O seu pedido para vendedor já está pendente.";
+                return RedirectToAction(nameof(Perfil));
+            }
+
+            await _userManager.AddClaimAsync(appUser, new System.Security.Claims.Claim("SellerRequest", "Pendente"));
+            TempData["PerfilSucesso"] = "Pedido para vendedor submetido. Aguarde validação do administrador.";
+            return RedirectToAction(nameof(Perfil));
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelarPedidoVendedor()
+        {
+            var appUser = await _userManager.GetUserAsync(User);
+            if (appUser == null) return RedirectToAction("Login");
+            var claims = await _userManager.GetClaimsAsync(appUser);
+            var pending = claims.FirstOrDefault(c => c.Type == "SellerRequest" && c.Value == "Pendente");
+            if (pending != null)
+            {
+                await _userManager.RemoveClaimAsync(appUser, pending);
+                TempData["PerfilSucesso"] = "Pedido de vendedor cancelado.";
+            }
+            else
+            {
+                TempData["PerfilInfo"] = "Não existe pedido pendente.";
+            }
+            return RedirectToAction(nameof(Perfil));
+        }
+
+        // GET: Utilizadores/Edit
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            var appUser = await _userManager.GetUserAsync(User);
+            if (appUser == null) return RedirectToAction("Login");
+
+            Utilizador? domainUser = await _db.Compradores
+                .Include(c => c.Morada)
+                .FirstOrDefaultAsync(c => c.IdentityUserId == appUser.Id);
+
+            if (domainUser == null)
+            {
+                domainUser = await _db.Vendedores
+                    .Include(v => v.Morada)
+                    .FirstOrDefaultAsync(v => v.IdentityUserId == appUser.Id);
+            }
+
+            if (domainUser == null)
+            {
+                domainUser = await _db.Administradores
+                    .Include(a => a.Morada)
+                    .FirstOrDefaultAsync(a => a.IdentityUserId == appUser.Id);
+            }
+
+            var vm = new EditProfileViewModel
+            {
+                FullName = appUser.FullName ?? domainUser?.Nome ?? string.Empty,
+                Email = appUser.Email ?? domainUser?.Email ?? string.Empty,
+                Username = appUser.UserName ?? domainUser?.Username ?? string.Empty,
+                ImagemAtual = appUser.ImagemPerfil ?? domainUser?.ImagemPerfil,
+                MoradaRua = domainUser?.Morada?.Rua,
+                MoradaCodigoPostal = domainUser?.Morada?.CodigoPostal,
+                MoradaLocalidade = domainUser?.Morada?.Localidade
+            };
+
+            return View(vm);
+        }
+
+        // POST: Utilizadores/Edit
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditProfileViewModel vm)
+        {
+            var appUser = await _userManager.GetUserAsync(User);
+            if (appUser == null) return RedirectToAction("Login");
+
+            if (!ModelState.IsValid)
+            {
+                // Repreenche campos informativos
+                vm.Email = appUser.Email ?? string.Empty;
+                vm.Username = appUser.UserName ?? string.Empty;
+                vm.ImagemAtual = appUser.ImagemPerfil;
+                return View(vm);
+            }
+
+            Utilizador? domainUser = await _db.Compradores
+                .Include(c => c.Morada)
+                .FirstOrDefaultAsync(c => c.IdentityUserId == appUser.Id);
+
+            if (domainUser == null)
+            {
+                domainUser = await _db.Vendedores
+                    .Include(v => v.Morada)
+                    .FirstOrDefaultAsync(v => v.IdentityUserId == appUser.Id);
+            }
+
+            if (domainUser == null)
+            {
+                domainUser = await _db.Administradores
+                    .Include(a => a.Morada)
+                    .FirstOrDefaultAsync(a => a.IdentityUserId == appUser.Id);
+            }
+
+            // Atualizar nome
+            appUser.FullName = vm.FullName;
+            if (domainUser != null)
+            {
+                domainUser.Nome = vm.FullName;
+            }
+
+            // Atualizar/gestionar imagem de perfil
+            if (vm.RemoverImagem)
+            {
+                ImageUploadHelper.DeleteProfileImage(appUser.ImagemPerfil, _env.WebRootPath);
+                appUser.ImagemPerfil = null;
+                if (domainUser != null) domainUser.ImagemPerfil = null;
+            }
+            else if (vm.ProfileImage != null)
+            {
+                if (ImageUploadHelper.IsValidProfileImage(vm.ProfileImage, out var err))
+                {
+                    var newPath = await ImageUploadHelper.UploadProfileImage(vm.ProfileImage, _env.WebRootPath, appUser.Id);
+                    if (!string.IsNullOrWhiteSpace(newPath))
+                    {
+                        ImageUploadHelper.DeleteProfileImage(appUser.ImagemPerfil, _env.WebRootPath);
+                        appUser.ImagemPerfil = newPath;
+                        if (domainUser != null) domainUser.ImagemPerfil = newPath;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("ProfileImage", "Falha ao carregar a imagem. Tente um ficheiro diferente.");
+                        vm.Email = appUser.Email ?? string.Empty;
+                        vm.Username = appUser.UserName ?? string.Empty;
+                        vm.ImagemAtual = appUser.ImagemPerfil;
+                        return View(vm);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("ProfileImage", err);
+                    vm.Email = appUser.Email ?? string.Empty;
+                    vm.Username = appUser.UserName ?? string.Empty;
+                    vm.ImagemAtual = appUser.ImagemPerfil;
+                    return View(vm);
+                }
+            }
+
+            // Atualizar Morada
+            if (domainUser != null)
+            {
+                if (domainUser.Morada == null && (!string.IsNullOrWhiteSpace(vm.MoradaRua) || !string.IsNullOrWhiteSpace(vm.MoradaCodigoPostal) || !string.IsNullOrWhiteSpace(vm.MoradaLocalidade)))
+                {
+                    domainUser.Morada = new Morada
+                    {
+                        Rua = vm.MoradaRua ?? string.Empty,
+                        CodigoPostal = vm.MoradaCodigoPostal ?? string.Empty,
+                        Localidade = vm.MoradaLocalidade ?? string.Empty
+                    };
+                }
+                else if (domainUser.Morada != null)
+                {
+                    domainUser.Morada.Rua = vm.MoradaRua ?? domainUser.Morada.Rua;
+                    domainUser.Morada.CodigoPostal = vm.MoradaCodigoPostal ?? domainUser.Morada.CodigoPostal;
+                    domainUser.Morada.Localidade = vm.MoradaLocalidade ?? domainUser.Morada.Localidade;
+                }
+            }
+
+            // Persistir alterações
+            var identityRes = await _userManager.UpdateAsync(appUser);
+            if (!identityRes.Succeeded)
+            {
+                TempData["PerfilErro"] = string.Join("; ", identityRes.Errors.Select(e => e.Description));
+                return View(vm);
+            }
+
+            await _db.SaveChangesAsync();
+            TempData["PerfilSucesso"] = "Perfil atualizado com sucesso.";
+            return RedirectToAction(nameof(Perfil));
+        }
 
         // GET: Utilizadores/Registar
         [HttpGet]
@@ -82,7 +332,7 @@ namespace Marketplace.Controllers
                     Email = email,
                     Nome = nome,
                     PasswordHash = "IDENTITY",
-                    Estado = "Ativo",
+                    Estado = "Pendente",
                     Tipo = role,
                     IdentityUserId = appUser.Id
                 });
@@ -124,9 +374,13 @@ namespace Marketplace.Controllers
                 await _userManager.UpdateAsync(appUser);
             }
 
+            var posMsg = role == "Vendedor"
+                ? "Conta criada com sucesso! Aguarde validação por um administrador."
+                : "Conta criada com sucesso!";
+
             TempData["RegistarSucesso"] = emailEnviado
-                ? "Conta criada. Verifique o seu email para confirmar."
-                : "Conta criada com sucesso! Pode agora fazer login.";
+                ? (role == "Vendedor" ? "Conta criada. Verifique o email (se aplicável). Aguarde validação." : "Conta criada. Verifique o seu email para confirmar.")
+                : posMsg;
             return RedirectToAction("Login");
         }
 

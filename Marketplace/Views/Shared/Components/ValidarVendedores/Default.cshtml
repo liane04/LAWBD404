@@ -1,0 +1,172 @@
+@model Marketplace.Components.ValidarVendedoresSectionVM
+
+<!-- Cabeçalho -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-1 fw-bold">
+            <i class="bi bi-person-check-fill text-primary me-2"></i>Validar Vendedores
+        </h3>
+        <p class="text-muted mb-0">Aprovar ou rejeitar pedidos de registo de vendedores</p>
+    </div>
+</div>
+
+<!-- Estatísticas de Validação (navegação/filtragem) -->
+<div class="row g-3 mb-4" id="vend-cards">
+    <div class="col-md-3">
+        <a href="#" class="card shadow-sm border-0 border-start border-secondary border-4 vend-card active" data-filter="todos">
+            <div class="card-body d-flex align-items-center">
+                <div class="bg-secondary bg-opacity-10 rounded-circle p-2 me-3">
+                    <i class="bi bi-grid-fill fs-4 text-secondary"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small">Todos</h6>
+                    <h4 class="mb-0 fw-bold text-secondary">@(@Model.TotalPendentes + @Model.TotalAprovados + @Model.TotalRejeitados)</h4>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="#" class="card shadow-sm border-0 border-start border-warning border-4 vend-card" data-filter="pendente">
+            <div class="card-body d-flex align-items-center">
+                <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                    <i class="bi bi-hourglass-split fs-4 text-warning"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small">Pendentes</h6>
+                    <h4 class="mb-0 fw-bold text-warning">@Model.TotalPendentes</h4>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="#" class="card shadow-sm border-0 border-start border-success border-4 vend-card" data-filter="aprovado">
+            <div class="card-body d-flex align-items-center">
+                <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                    <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small">Aprovados</h6>
+                    <h4 class="mb-0 fw-bold text-success">@Model.TotalAprovados</h4>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="#" class="card shadow-sm border-0 border-start border-danger border-4 vend-card" data-filter="rejeitado">
+            <div class="card-body d-flex align-items-center">
+                <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3">
+                    <i class="bi bi-x-circle-fill fs-4 text-danger"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small">Rejeitados</h6>
+                    <h4 class="mb-0 fw-bold text-danger">@Model.TotalRejeitados</h4>
+                </div>
+            </div>
+        </a>
+    </div>
+    
+</div>
+
+<!-- Tabela de Vendedores Pendentes -->
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white border-bottom py-3">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-people-fill me-2 text-primary"></i>Vendedores</h6>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="vend-table">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Vendedor</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>NIF</th>
+                        <th class="text-end pe-4">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @{ var totalRows = (Model.Todos?.Count ?? 0) + (Model.Pedidos?.Count ?? 0); }
+                @if (totalRows == 0)
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">Sem registos.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var v in Model.Todos)
+                    {
+                        var estado = (string.IsNullOrWhiteSpace(v.Estado) || v.Estado == "Pendente") ? "pendente" : (v.Estado == "Ativo" ? "aprovado" : "rejeitado");
+                        <tr>
+                            <td class="ps-4 vend-row" data-estado="@estado">
+                                <div class="fw-bold">@v.Nome</div>
+                            </td>
+                            <td>@v.Email</td>
+                            <td>@v.Username</td>
+                            <td>@(string.IsNullOrWhiteSpace(v.Nif) ? "—" : v.Nif)</td>
+                            <td class="text-end pe-4">
+                                <form asp-controller="Administrador" asp-action="AprovarVendedor" asp-route-id="@v.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success" @(estado=="pendente"?null:"disabled")><i class="bi bi-check-lg me-1"></i>Aprovar</button>
+                                </form>
+                                <form asp-controller="Administrador" asp-action="RejeitarVendedor" asp-route-id="@v.Id" method="post" class="d-inline ms-1">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" @(estado=="pendente"?null:"disabled")><i class="bi bi-x-lg me-1"></i>Rejeitar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+
+                    foreach (var p in Model.Pedidos)
+                    {
+                        <tr>
+                            <td class="ps-4 vend-row" data-estado="pendente">
+                                <div class="fw-bold">@p.Nome <span class="badge bg-info ms-2">Pedido</span></div>
+                            </td>
+                            <td>@p.Email</td>
+                            <td>@p.Username</td>
+                            <td>—</td>
+                            <td class="text-end pe-4">
+                                <form asp-controller="Administrador" asp-action="AprovarPedidoVendedor" asp-route-userId="@p.UserId" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check-lg me-1"></i>Aprovar</button>
+                                </form>
+                                <form asp-controller="Administrador" asp-action="RejeitarPedidoVendedor" asp-route-userId="@p.UserId" method="post" class="d-inline ms-1">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg me-1"></i>Rejeitar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-white text-end">
+        <a asp-controller="Administrador" asp-action="ValidarVendedores" class="btn btn-outline-primary">
+            Página completa
+        </a>
+    </div>
+    </div>
+
+    <script>
+    (function(){
+        const cards = document.querySelectorAll('#vend-cards .vend-card');
+        const rows = document.querySelectorAll('#vend-table tbody tr');
+        function applyFilter(f){
+            rows.forEach(r=>{
+                const cell = r.querySelector('.vend-row');
+                if(!cell){ r.style.display=''; return; }
+                const est = cell.getAttribute('data-estado');
+                r.style.display = (f==='todos' || est===f) ? '' : 'none';
+            });
+            cards.forEach(c=>c.classList.remove('shadow')); // simple visual toggle
+        }
+        cards.forEach(c=>{
+            c.addEventListener('click', function(e){ e.preventDefault();
+                cards.forEach(x=>x.classList.remove('active'));
+                this.classList.add('active');
+                applyFilter(this.getAttribute('data-filter'));
+            });
+        });
+        applyFilter('todos');
+    })();
+    </script>
+    </div>

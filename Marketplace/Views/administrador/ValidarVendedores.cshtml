@@ -1,0 +1,89 @@
+@model IEnumerable<Marketplace.Models.Vendedor>
+@{
+    ViewData["Title"] = "Validar Vendedores";
+}
+
+<div class="container mt-5 pt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="mb-1 fw-bold"><i class="bi bi-person-check-fill text-primary me-2"></i>Validar Vendedores</h3>
+            <p class="text-muted mb-0">Aprovar ou rejeitar registos de vendedores pendentes</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Voltar</a>
+    </div>
+
+    @if (TempData["ValidarVendMsg"] != null)
+    {
+        <div class="alert alert-info">@TempData["ValidarVendMsg"]</div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Username</th>
+                            <th>NIF</th>
+                            <th>Estado</th>
+                            <th class="text-end">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">Sem vendedores pendentes.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            var i = 1;
+                            foreach (var v in Model)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@v.Nome</td>
+                                    <td>@v.Email</td>
+                                    <td>@v.Username</td>
+                                    <td>@(string.IsNullOrWhiteSpace(v.Nif) ? "—" : v.Nif)</td>
+                                    <td>
+                                        @if (string.Equals(v.Estado, "Pendente", System.StringComparison.OrdinalIgnoreCase) || string.IsNullOrWhiteSpace(v.Estado))
+                                        {
+                                            <span class="badge bg-warning text-dark">Pendente</span>
+                                        }
+                                        else if (string.Equals(v.Estado, "Rejeitado", System.StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <span class="badge bg-danger">Rejeitado</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">@v.Estado</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <form asp-action="AprovarVendedor" asp-route-id="@v.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                <i class="bi bi-check-lg me-1"></i>Aprovar
+                                            </button>
+                                        </form>
+                                        <form asp-action="RejeitarVendedor" asp-route-id="@v.Id" method="post" class="d-inline ms-1">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-x-lg me-1"></i>Rejeitar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

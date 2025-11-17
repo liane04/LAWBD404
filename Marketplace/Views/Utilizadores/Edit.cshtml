@@ -1,1 +1,89 @@
-﻿
+@model Marketplace.Models.EditProfileViewModel
+@{
+    ViewData["Title"] = "Editar Perfil";
+}
+
+<div class="container mt-5 pt-5 mb-5 pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom py-3 d-flex align-items-center">
+                    <h5 class="mb-0 fw-semibold">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Editar Perfil
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    @if (TempData["PerfilErro"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["PerfilErro"]</div>
+                    }
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label">Nome Completo</label>
+                            <input asp-for="FullName" class="form-control" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input class="form-control" value="@Model.Email" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Username</label>
+                                <input class="form-control" value="@Model.Username" disabled />
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h6 class="fw-semibold mb-3"><i class="bi bi-geo-alt text-primary me-2"></i>Morada</h6>
+                        <div class="mb-3">
+                            <label asp-for="MoradaRua" class="form-label">Rua</label>
+                            <input asp-for="MoradaRua" class="form-control" />
+                            <span asp-validation-for="MoradaRua" class="text-danger"></span>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label asp-for="MoradaCodigoPostal" class="form-label">Código Postal</label>
+                                <input asp-for="MoradaCodigoPostal" class="form-control" />
+                                <span asp-validation-for="MoradaCodigoPostal" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-8">
+                                <label asp-for="MoradaLocalidade" class="form-label">Localidade</label>
+                                <input asp-for="MoradaLocalidade" class="form-control" />
+                                <span asp-validation-for="MoradaLocalidade" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h6 class="fw-semibold mb-3"><i class="bi bi-camera-fill text-primary me-2"></i>Imagem de Perfil</h6>
+                        <div class="mb-3 d-flex align-items-center gap-3">
+                            <img src="@(string.IsNullOrWhiteSpace(Model.ImagemAtual) ? "https://placehold.co/80x80/2563eb/white?text=U" : Model.ImagemAtual)" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" alt="Imagem atual">
+                            <div class="flex-grow-1">
+                                <input asp-for="ProfileImage" type="file" class="form-control" accept="image/*" />
+                                <small class="text-muted">Formatos: .jpg, .jpeg, .png, .webp (máx. 5MB)</small>
+                                <div>
+                                    <input asp-for="RemoverImagem" class="form-check-input me-2" type="checkbox" id="removerImagemChk" />
+                                    <label class="form-check-label" for="removerImagemChk">Remover imagem atual</label>
+                                </div>
+                                <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <a asp-action="Perfil" class="btn btn-outline-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Guardar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

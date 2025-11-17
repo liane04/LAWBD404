@@ -1,8 +1,21 @@
-﻿@{
+﻿@model Marketplace.Models.ProfileViewModel
+@{
     ViewData["Title"] = "Meu Perfil";
 }
 
 <div class="container mt-5 pt-5 mb-5 pb-5">
+    @if (TempData["PerfilSucesso"] != null)
+    {
+        <div class="alert alert-success">@TempData["PerfilSucesso"]</div>
+    }
+    @if (TempData["PerfilInfo"] != null)
+    {
+        <div class="alert alert-info">@TempData["PerfilInfo"]</div>
+    }
+    @if (TempData["PerfilErro"] != null)
+    {
+        <div class="alert alert-danger">@TempData["PerfilErro"]</div>
+    }
     <div class="row g-4">
         <!-- Barra Lateral de Navegação do Perfil -->
         <div class="col-lg-3">
@@ -11,14 +24,16 @@
                     <!-- Cabeçalho do Perfil -->
                     <div class="perfil-header text-center p-4">
                         <div class="perfil-avatar-wrapper position-relative d-inline-block mb-3">
-                            <img src="https://placehold.co/120x120/2563eb/white?text=JD"
+                            @{ var initials = (Model?.FullName ?? "U").Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+                               var initialsText = initials.Length >= 2 ? ($"{initials[0][0]}{initials[^1][0]}").ToUpper() : ($"{(initials.Length==1 ? initials[0][0] : 'U')}").ToString().ToUpper(); }
+                            <img src="@(string.IsNullOrWhiteSpace(Model?.ImagemPerfilUrl) ? $"https://placehold.co/120x120/2563eb/white?text={initialsText}" : Model!.ImagemPerfilUrl)"
                                  class="perfil-avatar rounded-circle"
                                  alt="Foto de Perfil">
                             <button class="perfil-avatar-edit btn btn-sm btn-primary rounded-circle position-absolute">
                                 <i class="bi bi-camera-fill"></i>
                             </button>
                         </div>
-                        <h5 class="mb-2 fw-bold">João Duarte Silva</h5>
+                        <h5 class="mb-2 fw-bold">@Model.FullName</h5>
                         <div class="perfil-user-badges mb-2">
                             @if (User.IsInRole("Comprador"))
                             {
@@ -40,7 +55,7 @@
                             }
                         </div>
                         <small class="perfil-member-since">
-                            <i class="bi bi-calendar-check me-1"></i>Membro desde Out 2025
+                            <i class="bi bi-envelope me-1"></i>@Model.Email
                         </small>
                     </div>
 
@@ -53,6 +68,17 @@
                             <span>Dados Pessoais</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
                         </a>
+                        @if (!User.IsInRole("Vendedor"))
+                        {
+                            <a href="#tornar-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-award-fill"></i>
+                                <span>Tornar-me Vendedor</span>
+                                @if (Model.SellerRequestPending)
+                                {
+                                    <span class="badge bg-warning text-dark ms-auto">Pendente</span>
+                                }
+                            </a>
+                        }
                         @if (User.IsInRole("Vendedor"))
                         {
                             <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab">
@@ -145,7 +171,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Nome Completo</label>
-                                            <p class="perfil-info-value">João Duarte Silva</p>
+                                            <p class="perfil-info-value">@Model.FullName</p>
                                         </div>
                                     </div>
                                 </div>
@@ -156,7 +182,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Username</label>
-                                            <p class="perfil-info-value">joao.silva</p>
+                                            <p class="perfil-info-value">@Model.Username</p>
                                         </div>
                                     </div>
                                 </div>
@@ -167,7 +193,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Email</label>
-                                            <p class="perfil-info-value">joao.silva@exemplo.com</p>
+                                            <p class="perfil-info-value">@Model.Email</p>
                                         </div>
                                     </div>
                                 </div>
@@ -180,7 +206,7 @@
                                             <label class="perfil-info-label">Estado da Conta</label>
                                             <p class="perfil-info-value">
                                                 <span class="badge bg-success-subtle text-success">
-                                                    <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                                    <i class="bi bi-check-circle-fill me-1"></i>@(string.IsNullOrWhiteSpace(Model.Estado) ? "Ativo" : Model.Estado)
                                                 </span>
                                             </p>
                                         </div>
@@ -241,7 +267,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Rua</label>
-                                            <p class="perfil-info-value">Rua Dr. Manuel Cardona, nº 123, 2º Esq.</p>
+                                            <p class="perfil-info-value">@(string.IsNullOrWhiteSpace(Model.MoradaRua) ? "Não definida" : Model.MoradaRua)</p>
                                         </div>
                                     </div>
                                 </div>
@@ -252,7 +278,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Código Postal</label>
-                                            <p class="perfil-info-value">5000-558</p>
+                                            <p class="perfil-info-value">@(string.IsNullOrWhiteSpace(Model.MoradaCodigoPostal) ? "Não definido" : Model.MoradaCodigoPostal)</p>
                                         </div>
                                     </div>
                                 </div>
@@ -263,7 +289,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Localidade</label>
-                                            <p class="perfil-info-value">Vila Real</p>
+                                            <p class="perfil-info-value">@(string.IsNullOrWhiteSpace(Model.MoradaLocalidade) ? "Não definida" : Model.MoradaLocalidade)</p>
                                         </div>
                                     </div>
                                 </div>
@@ -274,7 +300,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">País</label>
-                                            <p class="perfil-info-value">Portugal</p>
+                                            <p class="perfil-info-value">@Model.MoradaPais</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1289,6 +1315,41 @@
                             </div>
                         </div>
                     </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Aba: Tornar-me Vendedor -->
+                    <div class="tab-pane fade" id="tornar-vendedor">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h3 class="mb-1 fw-bold">
+                                    <i class="bi bi-award-fill text-primary me-2"></i>Tornar-me Vendedor
+                                </h3>
+                                <p class="text-muted mb-0">Peça autorização para publicar anúncios de veículos</p>
+                            </div>
+                        </div>
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body">
+                                @if (!Model.SellerRequestPending)
+                                {
+                                    <form asp-action="PedirVendedor" method="post">
+                                        <p class="mb-3">Ao tornar-se vendedor poderá criar, editar e gerir anúncios. O seu pedido será revisto por um administrador.</p>
+                                        <button type="submit" class="btn btn-primary"><i class="bi bi-send me-2"></i>Submeter Pedido</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                                        <i class="bi bi-hourglass-split me-2"></i>
+                                        <div>O seu pedido está pendente de validação.</div>
+                                    </div>
+                                    <form asp-action="CancelarPedidoVendedor" method="post">
+                                        <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-x-circle me-2"></i>Cancelar Pedido</button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
                     </div>
                 }
 
