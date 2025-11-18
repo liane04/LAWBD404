@@ -132,6 +132,168 @@ namespace Marketplace.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        // POST: Administrador/BloquearUtilizador/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BloquearUtilizador(int id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                TempData["UserWarning"] = "Utilizador não encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Não permitir bloquear administradores
+            var isAdmin = await _userManager.IsInRoleAsync(user, "Administrador");
+            if (isAdmin)
+            {
+                TempData["UserWarning"] = "Não é possível bloquear um administrador.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Bloquear por 100 anos (permanente)
+            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(100));
+            await _userManager.SetLockoutEnabledAsync(user, true);
+
+            TempData["UserSuccess"] = $"Utilizador '{user.FullName ?? user.UserName}' foi bloqueado com sucesso.";
+
+            // Enviar email de notificação
+            try
+            {
+                if (_emailSender != null && !string.IsNullOrEmpty(user.Email))
+                {
+                    await _emailSender.SendAsync(
+                        user.Email,
+                        "Conta Bloqueada - 404 Ride",
+                        $@"<html>
+                        <body style='font-family: Arial, sans-serif;'>
+                            <h2 style='color: #dc3545;'>Conta Bloqueada</h2>
+                            <p>Olá <strong>{user.FullName ?? user.UserName}</strong>,</p>
+                            <p>A sua conta na plataforma <strong>404 Ride</strong> foi <span style='color: #dc3545;'>bloqueada</span> pelo administrador.</p>
+                            <p>Se acredita que isto é um erro, por favor contacte o nosso suporte.</p>
+                            <hr>
+                            <p style='color: #666; font-size: 12px;'>Esta é uma mensagem automática. Por favor não responda a este email.</p>
+                        </body>
+                        </html>");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao enviar email: {ex.Message}");
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Administrador/DesbloquearUtilizador/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DesbloquearUtilizador(int id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                TempData["UserWarning"] = "Utilizador não encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Desbloquear
+            await _userManager.SetLockoutEndDateAsync(user, null);
+
+            TempData["UserSuccess"] = $"Utilizador '{user.FullName ?? user.UserName}' foi desbloqueado com sucesso.";
+
+            // Enviar email de notificação
+            try
+            {
+                if (_emailSender != null && !string.IsNullOrEmpty(user.Email))
+                {
+                    await _emailSender.SendAsync(
+                        user.Email,
+                        "Conta Desbloqueada - 404 Ride",
+                        $@"<html>
+                        <body style='font-family: Arial, sans-serif;'>
+                            <h2 style='color: #28a745;'>Conta Desbloqueada</h2>
+                            <p>Olá <strong>{user.FullName ?? user.UserName}</strong>,</p>
+                            <p>A sua conta na plataforma <strong>404 Ride</strong> foi <span style='color: #28a745;'>desbloqueada</span>.</p>
+                            <p>Já pode voltar a aceder à sua conta normalmente.</p>
+                            <hr>
+                            <p style='color: #666; font-size: 12px;'>Esta é uma mensagem automática. Por favor não responda a este email.</p>
+                        </body>
+                        </html>");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao enviar email: {ex.Message}");
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Administrador/EliminarUtilizador/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarUtilizador(int id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                TempData["UserWarning"] = "Utilizador não encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Não permitir eliminar administradores
+            var isAdmin = await _userManager.IsInRoleAsync(user, "Administrador");
+            if (isAdmin)
+            {
+                TempData["UserWarning"] = "Não é possível eliminar um administrador.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var userName = user.FullName ?? user.UserName;
+
+            // Eliminar registos relacionados na base de dados
+            var isVendedor = await _userManager.IsInRoleAsync(user, "Vendedor");
+            var isComprador = await _userManager.IsInRoleAsync(user, "Comprador");
+
+            if (isVendedor)
+            {
+                var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+                if (vendedor != null)
+                {
+                    // Eliminar anúncios do vendedor
+                    var anuncios = await _db.Anuncios.Where(a => a.VendedorId == vendedor.Id).ToListAsync();
+                    _db.Anuncios.RemoveRange(anuncios);
+
+                    _db.Vendedores.Remove(vendedor);
+                }
+            }
+
+            if (isComprador)
+            {
+                var comprador = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
+                if (comprador != null)
+                {
+                    _db.Compradores.Remove(comprador);
+                }
+            }
+
+            // Eliminar o utilizador do Identity
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                await _db.SaveChangesAsync();
+                TempData["UserSuccess"] = $"Utilizador '{userName}' foi eliminado com sucesso.";
+            }
+            else
+            {
+                TempData["UserWarning"] = $"Erro ao eliminar utilizador: {string.Join(", ", result.Errors.Select(e => e.Description))}";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
 

@@ -98,7 +98,13 @@
                                         <li><a class="dropdown-item" asp-controller="Administrador" asp-action="Index"><i class="bi bi-speedometer2 me-2"></i>Painel de Gestão</a></li>
                                         <li><a class="dropdown-item" asp-controller="Utilizadores" asp-action="Perfil"><i class="bi bi-person me-2"></i>Ver Perfil Pessoal</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" asp-controller="Utilizadores" asp-action="Logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+                                        <li>
+                                            <form asp-controller="Utilizadores" asp-action="Logout" method="post" class="d-inline">
+                                                <button type="submit" class="dropdown-item text-danger" style="border: none; background: none; cursor: pointer; width: 100%; text-align: left;">
+                                                    <i class="bi bi-box-arrow-right me-2"></i>Sair
+                                                </button>
+                                            </form>
+                                        </li>
                                     </ul>
                                 </div>
 
@@ -285,7 +291,7 @@
         </div>
         <div class="text-center p-3 mt-4" style="background-color: rgba(0, 0, 0, 0.2)">
             <div class="container">
-                <span>&copy; @DateTime.Now.Year - 404 Car Marketplace - Todos os direitos reservados.</span>
+                <span>© @DateTime.Now.Year - 404 Car Marketplace - Todos os direitos reservados.</span>
                 <span class="mx-3">|</span>
                 <span>Desenvolvido por grupo 404</span>
             </div>

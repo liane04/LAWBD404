@@ -25,7 +25,7 @@
             padding: 2rem 0;
         }
 
-        .confirmation-card {
+        .confirmaçãon-card {
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
@@ -35,7 +35,7 @@
             text-align: center;
         }
 
-        .confirmation-icon {
+        .confirmaçãon-icon {
             width: 80px;
             height: 80px;
             border-radius: 50%;
@@ -46,24 +46,24 @@
             font-size: 2.5rem;
         }
 
-        .confirmation-icon.success {
+        .confirmaçãon-icon.success {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
-        .confirmation-icon.error {
+        .confirmaçãon-icon.error {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
         }
 
-        .confirmation-title {
+        .confirmaçãon-title {
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 1rem;
             color: #2d3748;
         }
 
-        .confirmation-message {
+        .confirmaçãon-message {
             font-size: 1rem;
             color: #718096;
             margin-bottom: 2rem;
@@ -116,20 +116,20 @@
     </div>
 
     <div class="container">
-        <div class="confirmation-card">
+        <div class="confirmaçãon-card">
             @if (ViewBag.Sucesso)
             {
-                <div class="confirmation-icon success">
+                <div class="confirmaçãon-icon success">
                     <i class="bi bi-check-circle-fill"></i>
                 </div>
-                <h1 class="confirmation-title">Email Confirmado!</h1>
+                <h1 class="confirmaçãon-title">Email Confirmado!</h1>
             }
             else
             {
-                <div class="confirmation-icon error">
+                <div class="confirmaçãon-icon error">
                     <i class="bi bi-exclamation-circle-fill"></i>
                 </div>
-                <h1 class="confirmation-title">Erro na ConfirmaÃ§Ã£o</h1>
+                <h1 class="confirmaçãon-title">Erro na ConfirmaÃ§Ã£o</h1>
             }
 
             @if (!string.IsNullOrEmpty(ViewBag.Email))
@@ -139,7 +139,7 @@
                 </div>
             }
 
-            <p class="confirmation-message">
+            <p class="confirmaçãon-message">
                 @ViewBag.Mensagem
             </p>
 
@@ -181,3 +181,4 @@
     }
 </body>
 </html>
+

@@ -90,7 +90,7 @@
                         <div class="p-5 text-white d-flex flex-column justify-content-between w-100">
                             <div>
                                 <img src="~/imagens/logo_branco.png" alt="404 Car" class="mb-4" style="height: 60px; width: auto;" />
-                                <h3 class="fw-bold mb-3">Junte-se a N√≥s!</h3>
+                                <h3 class="fw-bold mb-3">Junte-se a N&oacute;s!</h3>
                                 <p style="color: rgba(255,255,255,0.8);">Crie a sua conta e comece a explorar as melhores ofertas de ve√≠culos usados.</p>
                             </div>
                             <div>
@@ -162,6 +162,25 @@
                                            required
                                            autocomplete="email"
                                            style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="username" class="form-label fw-semibold">
+                                        <i class="bi bi-person-badge me-2 text-primary"></i>Username
+                                    </label>
+                                    <input type="text"
+                                           class="form-control form-control-lg"
+                                           id="username"
+                                           name="username"
+                                           placeholder="joaosilva"
+                                           required
+                                           minlength="3"
+                                           maxlength="30"
+                                           pattern="^[a-zA-Z0-9_.-]{3,30}$"
+                                           title="3-30 caracteres; letras, n√∫meros, ponto, underscore e h√≠fen"
+                                           autocomplete="username"
+                                           style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
+                                    <div id="usernameFeedback" class="form-text"></div>
                                 </div>
 
                                 <div class="row">
@@ -303,7 +322,40 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Toggle password visibility
+<script>
+        // Username availability (debounced)
+        (function(){
+            const input = document.getElementById('username');
+            const fb = document.getElementById('usernameFeedback');
+            let t = null;
+            function setState(state, text){
+                if (!input) return;
+                input.classList.remove('is-valid','is-invalid');
+                if (state==='''valid'') input.classList.add('is-valid');
+                if (state==='''invalid'') input.classList.add('is-invalid');
+                if (fb) fb.textContent = text || '';
+            }
+            function check(){
+                const val = (input?.value||'').trim();
+                const re = /^[a-zA-Z0-9_.-]{3,30}$/;
+                if (!re.test(val)) { setState('',''); return; }
+                fetch(`/Utilizadores/CheckUsername?username=${encodeURIComponent(val)}`, {cache:'no-store'})
+                  .then(r=>r.json())
+                  .then(d=>{
+                      if (d && d.available){
+                          input.setCustomValidity('');
+                          setState('valid','DisponÌvel');
+                      } else {
+                          input.setCustomValidity('Username indisponÌvel');
+                          setState('invalid','indisponÌvel');
+                      }
+                  }).catch(()=>{});
+            }
+            if (input){
+                input.addEventListener('input', ()=>{ clearTimeout(t); t=setTimeout(check, 300); });
+                input.addEventListener('blur', check);
+            }
+        })();
         document.querySelectorAll('.toggle-password').forEach(button => {
             button.addEventListener('click', function () {
                 const targetId = this.getAttribute('data-target');
@@ -324,9 +376,10 @@
             });
         });
 
-        // Password match validation
+        // Password match validaÁ„on
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirm-password');
+        const username = document.getElementById('username');
 
         function validatePassword() {
             if (password && confirmPassword) {
@@ -341,7 +394,20 @@
         if (password) password.addEventListener('change', validatePassword);
         if (confirmPassword) confirmPassword.addEventListener('keyup', validatePassword);
 
-        // Form validation feedback
+        // Username live validaÁ„on
+        if (username) {
+            username.addEventListener('input', () => {
+                const val = username.value;
+                const re = /^[a-zA-Z0-9_.-]{3,30}$/;
+                if (!re.test(val)) {
+                    username.setCustomValidity('Username inv√°lido (3-30; letras, n√∫meros, ., _, -)');
+                } else {
+                    username.setCustomValidity('');
+                }
+            });
+        }
+
+        // Form validaÁ„on feedback
         const form = document.querySelector('form');
         if (form) {
             form.addEventListener('submit', function (e) {
@@ -373,3 +439,9 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+

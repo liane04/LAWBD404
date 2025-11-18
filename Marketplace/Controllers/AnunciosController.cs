@@ -64,8 +64,18 @@ namespace Marketplace.Controllers
 
         // GET: Anuncios/Create
         [Authorize(Roles = "Vendedor")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // Verificar se o vendedor está aprovado
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+
+            if (vendedor == null || vendedor.Estado != "Ativo")
+            {
+                TempData["Error"] = "A sua conta de vendedor ainda não foi aprovada pelo administrador. Aguarde a aprovação para poder criar anúncios.";
+                return RedirectToAction("Perfil", "Utilizadores");
+            }
+
             ViewData["CategoriaId"] = new SelectList(_context.Set<Categoria>(), "Id", "Nome");
             ViewData["CombustivelId"] = new SelectList(_context.Set<Combustivel>(), "Id", "Tipo");
             ViewData["MarcaId"] = new SelectList(_context.Set<Marca>(), "Id", "Nome");
@@ -95,6 +105,13 @@ namespace Marketplace.Controllers
                 ViewData["ModeloId"] = new SelectList(_context.Set<Modelo>(), "Id", "Nome", anuncio.ModeloId);
                 ViewData["TipoId"] = new SelectList(_context.Set<Tipo>(), "Id", "Nome", anuncio.TipoId);
                 return View(anuncio);
+            }
+
+            // Verificar se o vendedor está aprovado
+            if (vendedor.Estado != "Ativo")
+            {
+                TempData["Error"] = "A sua conta de vendedor ainda não foi aprovada pelo administrador. Aguarde a aprovação para poder criar anúncios.";
+                return RedirectToAction("Perfil", "Utilizadores");
             }
 
             // Associar o vendedor ao anúncio

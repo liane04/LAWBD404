@@ -91,16 +91,16 @@
                             <form asp-action="Login" method="post">
                                 @Html.AntiForgeryToken()
                                 <div class="mb-3">
-                                    <label for="email" class="form-label fw-semibold">
-                                        <i class="bi bi-envelope me-2 text-primary"></i>Email
+                                    <label for="identifier" class="form-label fw-semibold">
+                                        <i class="bi bi-person-badge me-2 text-primary"></i>Email ou Username
                                     </label>
-                                    <input type="email"
+                                    <input type="text"
                                            class="form-control form-control-lg"
-                                           id="email"
-                                           name="email"
-                                           placeholder="seu.email@exemplo.com"
+                                           id="identifier"
+                                           name="identifier"
+                                           placeholder="seu.email@exemplo.com ou joaosilva"
                                            required
-                                           autocomplete="email"
+                                           autocomplete="username"
                                            style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
                                 </div>
 

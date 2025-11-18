@@ -1,0 +1,263 @@
+@model Marketplace.Components.GerirUtilizadoresSectionVM
+
+<!-- Cabeçalho -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-1 fw-bold">
+            <i class="bi bi-people-fill text-primary me-2"></i>Gerir Utilizadores
+        </h3>
+        <p class="text-muted mb-0">Administrar compradores, vendedores e administradores da plataforma</p>
+    </div>
+</div>
+
+<!-- Mensagens de Feedback -->
+@if (TempData["UserSuccess"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>@TempData["UserSuccess"]</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["UserWarning"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>@TempData["UserWarning"]</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Estatísticas de Utilizadores -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 border-start border-primary border-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                            <i class="bi bi-cart-check-fill fs-4 text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 small">Compradores</h6>
+                        <h4 class="mb-0 fw-bold text-primary">@Model.TotalCompradores</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 border-start border-info border-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-info bg-opacity-10 rounded-circle p-2">
+                            <i class="bi bi-shop-window fs-4 text-info"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 small">Vendedores</h6>
+                        <h4 class="mb-0 fw-bold text-info">@Model.TotalVendedores</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 border-start border-secondary border-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-secondary bg-opacity-10 rounded-circle p-2">
+                            <i class="bi bi-shield-fill-check fs-4 text-secondary"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 small">Administradores</h6>
+                        <h4 class="mb-0 fw-bold text-secondary">@Model.TotalAdministradores</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 border-start border-danger border-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-danger bg-opacity-10 rounded-circle p-2">
+                            <i class="bi bi-lock-fill fs-4 text-danger"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 small">Bloqueados</h6>
+                        <h4 class="mb-0 fw-bold text-danger">@Model.TotalBloqueados</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Utilizadores -->
+<div class="card shadow-sm border-0 mb-5">
+    <div class="card-header bg-white border-bottom">
+        <h5 class="mb-0">
+            <i class="bi bi-people text-primary me-2"></i>Todos os Utilizadores
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Utilizadores != null && Model.Utilizadores.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="ps-4">Utilizador</th>
+                            <th scope="col">Tipo de Conta</th>
+                            <th scope="col">Email Confirmado</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col" class="text-end pe-4">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Utilizadores)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(user.ImagemPerfil))
+                                        {
+                                            <img src="@user.ImagemPerfil" alt="Avatar" class="rounded-circle me-3" style="width: 48px; height: 48px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <img src="https://placehold.co/48x48/0d6efd/ffffff?text=@(user.Nome?.Substring(0, 1) ?? "U")"
+                                                 alt="Avatar" class="rounded-circle me-3">
+                                        }
+                                        <div>
+                                            <div class="fw-bold">@user.Nome</div>
+                                            <div class="small text-muted">
+                                                <i class="bi bi-envelope me-1"></i>@user.Email
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(user.Nif))
+                                            {
+                                                <div class="small text-muted">
+                                                    <i class="bi bi-credit-card me-1"></i>NIF: @user.Nif
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (user.IsAdministrador)
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-shield-check me-1"></i>Administrador
+                                        </span>
+                                    }
+                                    @if (user.IsVendedor)
+                                    {
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-shop-window me-1"></i>Vendedor
+                                        </span>
+                                    }
+                                    @if (user.IsComprador)
+                                    {
+                                        <span class="badge bg-primary">
+                                            <i class="bi bi-cart-check me-1"></i>Comprador
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.EmailConfirmed)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Confirmado
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">
+                                            <i class="bi bi-exclamation-circle-fill me-1"></i>Pendente
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.EstaBloqueado)
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-lock-fill me-1"></i>Bloqueado
+                                        </span>
+                                        @if (user.LockoutEnd.HasValue)
+                                        {
+                                            <div class="small text-danger mt-1">
+                                                Até @user.LockoutEnd.Value.LocalDateTime.ToString("dd/MM/yyyy HH:mm")
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        @if (user.EstaBloqueado)
+                                        {
+                                            <form method="post" asp-controller="Administrador" asp-action="DesbloquearUtilizador" asp-route-id="@user.Id">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-success btn-sm rounded-pill px-3"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Desbloquear utilizador"
+                                                        style="min-width: 90px;">
+                                                    <i class="bi bi-unlock-fill me-1"></i>Desbloquear
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form method="post" asp-controller="Administrador" asp-action="BloquearUtilizador" asp-route-id="@user.Id">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-warning btn-sm rounded-pill px-3"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Bloquear acesso à plataforma"
+                                                        onclick="return confirm('Tem certeza que deseja bloquear este utilizador?');"
+                                                        style="min-width: 90px;">
+                                                    <i class="bi bi-lock-fill me-1"></i>Bloquear
+                                                </button>
+                                            </form>
+                                        }
+                                        @if (!user.IsAdministrador)
+                                        {
+                                            <form method="post" asp-controller="Administrador" asp-action="EliminarUtilizador" asp-route-id="@user.Id">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger btn-sm rounded-pill px-3"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar utilizador permanentemente"
+                                                        onclick="return confirm('ATENÇÃO: Esta ação é irreversível! Tem certeza que deseja eliminar este utilizador?');"
+                                                        style="min-width: 90px;">
+                                                    <i class="bi bi-trash-fill me-1"></i>Eliminar
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-people" style="font-size: 4rem; color: #6c757d;"></i>
+                </div>
+                <h5 class="text-muted mb-2">Nenhum utilizador encontrado</h5>
+                <p class="text-muted mb-0">A base de dados não contém utilizadores registados.</p>
+            </div>
+        }
+    </div>
+</div>

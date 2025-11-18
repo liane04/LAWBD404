@@ -84,6 +84,20 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Garantir charset UTF-8 nas respostas HTML (mitiga problemas de encoding)
+app.Use(async (context, next) =>
+{
+    await next();
+    var ct = context.Response.ContentType;
+    if (!string.IsNullOrEmpty(ct) && ct.StartsWith("text/html", StringComparison.OrdinalIgnoreCase))
+    {
+        if (!ct.Contains("charset", StringComparison.OrdinalIgnoreCase))
+        {
+            context.Response.ContentType = "text/html; charset=utf-8";
+        }
+    }
+});
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

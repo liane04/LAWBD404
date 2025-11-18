@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +37,15 @@ namespace Marketplace.Controllers
 
         // GET: Utilizadores
         public IActionResult Index() => View();
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckUsername(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return Json(new { available = false });
+            var existing = await _userManager.FindByNameAsync(username);
+            return Json(new { available = existing == null });
+        }
 
         // GET: Utilizadores/Perfil
         [Authorize]
@@ -77,6 +86,7 @@ namespace Marketplace.Controllers
 
                     ViewBag.Nome = vendedor.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(vendedor.ImagemPerfil) ? null : vendedor.ImagemPerfil;
+                    ViewBag.VendedorEstado = vendedor.Estado;
                 }
             }
 
@@ -353,9 +363,9 @@ namespace Marketplace.Controllers
         // POST: Utilizadores/Registar
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registar(string nome, string email, string password, string confirmPassword, string userType)
+        public async Task<IActionResult> Registar(string nome, string email, string username, string password, string confirmPassword, string userType)
         {
-            if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 TempData["RegistarError"] = "Preencha todos os campos obrigatórios.";
                 return View();
@@ -371,7 +381,7 @@ namespace Marketplace.Controllers
                 return View();
             }
 
-            string username = email.Split('@')[0];
+            
             var appUser = new ApplicationUser { UserName = username, Email = email, FullName = nome };
             var createRes = await _userManager.CreateAsync(appUser, password);
             if (!createRes.Succeeded)
@@ -392,7 +402,7 @@ namespace Marketplace.Controllers
                     Email = email,
                     Nome = nome,
                     PasswordHash = "IDENTITY",
-                    Estado = "Ativo",
+                    Estado = "Pendente",
                     Tipo = role,
                     IdentityUserId = appUser.Id
                 });
@@ -418,7 +428,8 @@ namespace Marketplace.Controllers
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
                 var link = Url.Action("ConfirmarEmail", "Utilizadores", new { userId = appUser.Id, token }, Request.Scheme)!;
-                await _emailSender.SendAsync(email, "Confirme o seu email", $"Clique para confirmar: <a href=\"{link}\">{link}</a>");
+                var html = Marketplace.Services.EmailTemplates.ConfirmEmail("DriveDeal", link);
+                await _emailSender.SendAsync(email, "Confirmação de Email - DriveDeal", html);
                 emailEnviado = true;
             }
             catch (Exception ex)
@@ -447,17 +458,21 @@ namespace Marketplace.Controllers
         // POST: Utilizadores/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string email, string password, bool rememberMe = false)
+        public async Task<IActionResult> Login(string identifier, string password, bool rememberMe = false)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(password))
             {
                 TempData["LoginError"] = "Credenciais inválidas.";
                 return View();
             }
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(identifier);
             if (user == null)
             {
-                TempData["LoginError"] = "Email ou palavra-passe incorretos.";
+                user = await _userManager.FindByNameAsync(identifier);
+            }
+            if (user == null)
+            {
+                TempData["LoginError"] = "Credenciais incorretas.";
                 return View();
             }
 
@@ -466,7 +481,7 @@ namespace Marketplace.Controllers
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, password, rememberMe, lockoutOnFailure: true);
             if (!result.Succeeded)
             {
-                TempData["LoginError"] = "Email ou palavra-passe incorretos.";
+                TempData["LoginError"] = "Credenciais incorretas.";
                 return View();
             }
 
@@ -496,7 +511,7 @@ namespace Marketplace.Controllers
             {
                 ViewBag.Sucesso = false;
                 ViewBag.Mensagem = "Utilizador não encontrado.";
-                return View();
+                return View("ConfirmarEmailNew");
             }
 
             var res = await _userManager.ConfirmEmailAsync(user, token);
@@ -506,7 +521,7 @@ namespace Marketplace.Controllers
                 : "Token inválido ou expirado. Por favor, solicite um novo email de confirmação.";
             ViewBag.Email = user.Email;
 
-            return View();
+            return View("ConfirmarEmailNew");
         }
 
         // POST: Utilizadores/ReenviarConfirmacao
@@ -528,7 +543,8 @@ namespace Marketplace.Controllers
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var link = Url.Action("ConfirmarEmail", "Utilizadores", new { userId = user.Id, token }, Request.Scheme)!;
-            await _emailSender.SendAsync(email, "Confirme o seu email", $"Clique para confirmar: <a href=\"{link}\">{link}</a>");
+            var html = Marketplace.Services.EmailTemplates.ConfirmEmail("DriveDeal", link);
+            await _emailSender.SendAsync(email, "Confirmação de Email - DriveDeal", html);
             TempData["LoginInfo"] = "Link de confirmação reenviado.";
             return RedirectToAction("Login");
         }
@@ -654,4 +670,7 @@ namespace Marketplace.Controllers
         }
     }
 }
+
+
+
 

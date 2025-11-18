@@ -1,0 +1,93 @@
+using System.Text.Encodings.Web;
+
+namespace Marketplace.Services
+{
+    public static class EmailTemplates
+    {
+        // 🎨 Cores
+        private const string PrimaryColor = "#2563eb"; // Azul moderno (modern blue)
+        private const string DarkColor = "#1e293b";   // Cinza azulado escuro (dark slate gray)
+        private const string AppBrandName = "404 Ride"; // Nome da aplicação para o rodapé e logotipo
+
+        /// <summary>
+        /// Gera o template de email para confirmação de registo.
+        /// </summary>
+        /// <param name="appName">O nome da aplicação (usado no corpo do email).</param>
+        /// <param name="confirmLink">O URL de confirmação.</param>
+        /// <returns>A string HTML completa do email.</returns>
+        public static string ConfirmEmail(string appName, string confirmLink)
+        {
+            // Segurança: Codificar variáveis dinâmicas para prevenir XSS.
+            var safeLink = HtmlEncoder.Default.Encode(confirmLink);
+            var safeApp = HtmlEncoder.Default.Encode(appName);
+
+            return BaseWrapper($@"
+                <h2 style='margin:0 0 16px;color:{DarkColor};font-weight:700'>Confirmar Email</h2>
+                <p style='margin:0 0 16px;color:#334155'>Obrigado por se registar no {safeApp}.</p>
+                <p style='margin:0 0 24px;color:#334155'>Clique no botão para confirmar o seu email.</p>
+                <a href='{safeLink}' style='background:{PrimaryColor};color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;display:inline-block;font-weight:600'>Confirmar Email</a>
+                <p style='margin:16px 0 0;color:#64748b;font-size:12px'>Se o botão não funcionar, copie e cole este link no seu navegador:<br><span style='word-break:break-all'>{safeLink}</span></p>
+            ");
+        }
+
+        /// <summary>
+        /// Gera o template de email para redefinição de palavra-passe.
+        /// </summary>
+        /// <param name="appName">O nome da aplicação (usado no corpo do email).</param>
+        /// <param name="resetLink">O URL para redefinição da palavra-passe.</param>
+        /// <returns>A string HTML completa do email.</returns>
+        public static string ResetPassword(string appName, string resetLink)
+        {
+            // Segurança: Codificar variáveis dinâmicas para prevenir XSS.
+            var safeLink = HtmlEncoder.Default.Encode(resetLink);
+            var safeApp = HtmlEncoder.Default.Encode(appName);
+
+            return BaseWrapper($@"
+                <h2 style='margin:0 0 16px;color:{DarkColor};font-weight:700'>Redefinir Palavra-passe</h2>
+                <p style='margin:0 0 16px;color:#334155'>Recebemos um pedido para redefinir a sua palavra-passe no {safeApp}.</p>
+                <p style='margin:0 0 24px;color:#334155'>Clique no botão para definir uma nova palavra-passe.</p>
+                <a href='{safeLink}' style='background:{PrimaryColor};color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;display:inline-block;font-weight:600'>Redefinir Palavra-passe</a>
+                <p style='margin:16px 0 0;color:#64748b;font-size:12px'>Se não solicitou esta alteração, ignore este email.<br>Link direto: <span style='word-break:break-all'>{safeLink}</span></p>
+            ");
+        }
+
+        /// <summary>
+        /// Envolve o conteúdo HTML num wrapper de layout de email base (responsivo).
+        /// </summary>
+        /// <param name="innerHtml">O conteúdo central do email (já considerado seguro).</param>
+        /// <returns>O HTML completo.</returns>
+        private static string BaseWrapper(string innerHtml)
+        {
+            // O innerHtml é considerado seguro porque é definido pelo programador (string literal).
+            return $@"<!doctype html>
+<html lang='pt'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>{AppBrandName}</title></head>
+<body style='margin:0;background:#f1f5f9'>
+  <table role='presentation' cellpadding='0' cellspacing='0' width='100%'>
+    <tr><td style='padding:24px'>
+      <table role='presentation' cellpadding='0' cellspacing='0' width='100%' style='max-width:640px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)'>
+        <tr>
+          <td style='padding:24px 24px 8px'>
+            <div style='display:flex;align-items:center;gap:8px;color:{DarkColor};font-weight:800;font-size:18px'>
+              <span style='display:inline-block;width:24px;height:24px;background:{PrimaryColor};border-radius:6px'></span>
+              <span>{AppBrandName}</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style='padding:8px 24px 24px'>
+            {innerHtml}
+          </td>
+        </tr>
+        <tr>
+          <td style='padding:16px 24px;color:#94a3b8;font-size:12px'>
+            &copy; {System.DateTime.Now:yyyy} {AppBrandName}. Todos os direitos reservados.
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>";
+        }
+    }
+}
