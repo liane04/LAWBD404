@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Marketplace.Data;
 using Marketplace.Models;
 using Marketplace.Services;
@@ -16,17 +19,20 @@ namespace Marketplace.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly IWebHostEnvironment _env;
 
         public UtilizadoresController(
             ApplicationDbContext db,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IWebHostEnvironment env)
         {
             _db = db;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _env = env;
         }
 
         // GET: Utilizadores
@@ -34,7 +40,181 @@ namespace Marketplace.Controllers
 
         // GET: Utilizadores/Perfil
         [Authorize]
-        public IActionResult Perfil() => View();
+        public async Task<IActionResult> Perfil()
+        {
+            // Se o usuário for vendedor, carregar seus anúncios
+            if (User.IsInRole("Vendedor"))
+            {
+                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+
+                if (vendedor != null)
+                {
+                    var anuncios = await _db.Anuncios
+                        .Include(a => a.Marca)
+                        .Include(a => a.Modelo)
+                        .Include(a => a.Tipo)
+                        .Include(a => a.Categoria)
+                        .Include(a => a.Combustivel)
+                        .Include(a => a.Imagens)
+                        .Where(a => a.VendedorId == vendedor.Id)
+                        .OrderByDescending(a => a.Id)
+                        .ToListAsync();
+
+                    ViewBag.MeusAnuncios = anuncios;
+                    ViewBag.AnunciosCount = anuncios.Count;
+
+                    var reservasCount = await _db.Reservas
+                        .Include(r => r.Anuncio)
+                        .Where(r => r.Anuncio.VendedorId == vendedor.Id)
+                        .CountAsync();
+                    ViewBag.ReservasRecebidasCount = reservasCount;
+
+                    var visitasCount = await _db.Visitas
+                        .Where(v => v.VendedorId == vendedor.Id)
+                        .CountAsync();
+                    ViewBag.VisitasAgendadasCount = visitasCount;
+
+                    ViewBag.Nome = vendedor.Nome;
+                    ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(vendedor.ImagemPerfil) ? null : vendedor.ImagemPerfil;
+                }
+            }
+
+            return View();
+        }
+
+        // GET: Utilizadores/Edit
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var appUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (appUser == null) return RedirectToAction("Login");
+
+            var model = new Marketplace.Models.ViewModels.EditarPerfilViewModel
+            {
+                Nome = appUser.FullName ?? appUser.UserName ?? string.Empty,
+                Email = appUser.Email,
+                IsVendedor = await _userManager.IsInRoleAsync(appUser, "Vendedor")
+            };
+
+            if (model.IsVendedor)
+            {
+                var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == appUser.Id);
+                if (vendedor != null)
+                {
+                    model.Nome = vendedor.Nome;
+                    model.Nif = vendedor.Nif;
+                    model.DadosFaturacao = vendedor.DadosFaturacao;
+                    model.ImagemPerfilAtual = vendedor.ImagemPerfil;
+                }
+            }
+            else
+            {
+                var comprador = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == appUser.Id);
+                if (comprador != null)
+                {
+                    model.Nome = comprador.Nome;
+                    model.ImagemPerfilAtual = comprador.ImagemPerfil;
+                }
+            }
+
+            return View(model);
+        }
+
+        // POST: Utilizadores/Edit
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Marketplace.Models.ViewModels.EditarPerfilViewModel model, IFormFile? fotoPerfil)
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var appUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (appUser == null) return RedirectToAction("Login");
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            appUser.FullName = model.Nome;
+            await _userManager.UpdateAsync(appUser);
+
+            if (await _userManager.IsInRoleAsync(appUser, "Vendedor"))
+            {
+                var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == appUser.Id);
+                if (vendedor != null)
+                {
+                    vendedor.Nome = model.Nome;
+                    vendedor.Nif = model.Nif;
+                    vendedor.DadosFaturacao = model.DadosFaturacao;
+
+                    if (fotoPerfil != null)
+                    {
+                        if (ImageUploadHelper.IsValidProfileImage(fotoPerfil, out var error))
+                        {
+                            var newPath = await ImageUploadHelper.UploadProfileImage(fotoPerfil, _env.WebRootPath, appUser.Id);
+                            if (!string.IsNullOrWhiteSpace(newPath))
+                            {
+                                if (!string.IsNullOrWhiteSpace(vendedor.ImagemPerfil))
+                                {
+                                    ImageUploadHelper.DeleteProfileImage(vendedor.ImagemPerfil, _env.WebRootPath);
+                                }
+                                vendedor.ImagemPerfil = newPath;
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Falha ao guardar a imagem de perfil.");
+                                return View(model);
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, error);
+                            return View(model);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var comprador = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == appUser.Id);
+                if (comprador != null)
+                {
+                    comprador.Nome = model.Nome;
+                    if (fotoPerfil != null)
+                    {
+                        if (ImageUploadHelper.IsValidProfileImage(fotoPerfil, out var error))
+                        {
+                            var newPath = await ImageUploadHelper.UploadProfileImage(fotoPerfil, _env.WebRootPath, appUser.Id);
+                            if (!string.IsNullOrWhiteSpace(newPath))
+                            {
+                                if (!string.IsNullOrWhiteSpace(comprador.ImagemPerfil))
+                                {
+                                    ImageUploadHelper.DeleteProfileImage(comprador.ImagemPerfil, _env.WebRootPath);
+                                }
+                                comprador.ImagemPerfil = newPath;
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Falha ao guardar a imagem de perfil.");
+                                return View(model);
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, error);
+                            return View(model);
+                        }
+                    }
+                }
+            }
+
+            await _db.SaveChangesAsync();
+            TempData["PerfilSucesso"] = "Perfil atualizado com sucesso.";
+            return RedirectToAction("Perfil");
+        }
 
         // GET: Utilizadores/Registar
         [HttpGet]

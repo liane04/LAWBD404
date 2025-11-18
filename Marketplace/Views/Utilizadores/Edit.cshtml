@@ -1,1 +1,72 @@
 ﻿
+@model Marketplace.Models.ViewModels.EditarPerfilViewModel
+
+@{
+    ViewData["Title"] = "Editar Perfil";
+}
+
+<div class="container mt-5 pt-5 mb-5 pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white d-flex align-items-center">
+                    <i class="bi bi-person-gear me-2"></i>
+                    <h5 class="mb-0">Editar Perfil</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" asp-controller="Utilizadores" method="post" enctype="multipart/form-data">
+                        <div class="row g-4">
+                            <div class="col-12 d-flex align-items-center gap-3">
+                                <img src="@((Model.ImagemPerfilAtual ?? Url.Content("~/imagens/logo.png")))" alt="Avatar" class="rounded-circle" style="width:72px;height:72px;object-fit:cover;">
+                                <div>
+                                    <label class="form-label mb-1">Foto de Perfil</label>
+                                    <input type="file" name="fotoPerfil" class="form-control" accept=".jpg,.jpeg,.png,.webp">
+                                    <small class="text-muted">Formatos: .jpg, .png, .webp (até 5MB)</small>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Nome" class="form-label">Nome</label>
+                                <input asp-for="Nome" class="form-control" />
+                                <span asp-validation-for="Nome" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input class="form-control" value="@Model.Email" disabled />
+                                <small class="text-muted">O email não pode ser alterado nesta página.</small>
+                            </div>
+
+                            @if (Model.IsVendedor)
+                            {
+                                <div class="col-md-6">
+                                    <label asp-for="Nif" class="form-label">NIF</label>
+                                    <input asp-for="Nif" class="form-control" />
+                                    <span asp-validation-for="Nif" class="text-danger"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="DadosFaturacao" class="form-label">Dados de Faturação</label>
+                                    <input asp-for="DadosFaturacao" class="form-control" />
+                                    <span asp-validation-for="DadosFaturacao" class="text-danger"></span>
+                                </div>
+                            }
+
+                            <div class="col-12 d-flex justify-content-between mt-2">
+                                <a asp-action="Perfil" asp-controller="Utilizadores" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Voltar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save me-1"></i> Guardar Alterações
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

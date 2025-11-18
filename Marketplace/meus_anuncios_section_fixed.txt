@@ -1,0 +1,50 @@
+                @if (User.IsInRole("Vendedor"))
+                {
+                    <!-- Aba: Meus Anúncios (para Vendedores) -->
+                    <div class="tab-pane fade" id="meus-anuncios">
+                    <!-- Cabeçalho da Página -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="mb-1 fw-bold">
+                                <i class="bi bi-card-list text-primary me-2"></i>Meus Anúncios
+                            </h3>
+                            <p class="text-muted mb-0">Gerir os seus veículos anunciados na plataforma</p>
+                        </div>
+                        <a asp-controller="Anuncios" asp-action="Create" class="btn btn-success">
+                            <i class="bi bi-plus-circle me-2"></i>Criar Novo Anúncio
+                        </a>
+                    </div>
+
+                    <!-- Filtros/Tabs de Estado -->
+                    <div class="anuncios-filter-tabs mb-4">
+                        <button class="anuncios-filter-btn active" data-filter="todos">
+                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">0</span>
+                        </button>
+                        <button class="anuncios-filter-btn" data-filter="ativo">
+                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">0</span>
+                        </button>
+                        <button class="anuncios-filter-btn" data-filter="reservado">
+                            <i class="bi bi-bookmark-check-fill me-1"></i>Reservados <span class="badge bg-warning ms-1">0</span>
+                        </button>
+                        <button class="anuncios-filter-btn" data-filter="vendido">
+                            <i class="bi bi-check2-circle me-1"></i>Vendidos <span class="badge bg-info ms-1">0</span>
+                        </button>
+                        <button class="anuncios-filter-btn" data-filter="pausado">
+                            <i class="bi bi-pause-circle-fill me-1"></i>Pausados <span class="badge bg-secondary ms-1">0</span>
+                        </button>
+                    </div>
+
+                    <!-- Lista de Anúncios -->
+                    <div class="anuncios-list">
+                        @await Html.PartialAsync("_MeusAnunciosList", ViewBag.MeusAnuncios as IEnumerable<Marketplace.Models.Anuncio>)
+
+                        <!-- Estado Vazio (quando filtrado e sem resultados) -->
+                        <div class="anuncios-empty text-center py-5 d-none">
+                            <div class="mb-4">
+                                <i class="bi bi-inbox" style="font-size: 4rem; color: #e2e8f0;"></i>
+                            </div>
+                            <h4 class="text-muted mb-2">Nenhum anúncio encontrado</h4>
+                            <p class="text-muted mb-4">Não tem anúncios com este estado</p>
+                        </div>
+                    </div>
+                    </div>

@@ -1,5 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Detalhes do Anúncio";
+﻿@model Marketplace.Models.Anuncio
+
+@{
+    ViewData["Title"] = Model.Titulo;
 }
 
 <!-- Breadcrumb Navigation -->
@@ -8,10 +10,22 @@
         <ol class="breadcrumb py-3 mb-0">
             <li class="breadcrumb-item"><a href="/"><i class="bi bi-house-door-fill me-1"></i>Início</a></li>
             <li class="breadcrumb-item"><a href="/Anuncios">Anúncios</a></li>
-            <li class="breadcrumb-item active" aria-current="page">BMW Série 3 320d</li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Titulo</li>
         </ol>
     </div>
 </nav>
+
+<!-- Mensagem de Sucesso -->
+@if (TempData["Success"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <strong>@TempData["Success"]</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
 
 <div class="container my-5">
     <div class="row">
@@ -21,7 +35,7 @@
             <div class="mb-4">
                 <div class="d-flex align-items-start justify-content-between mb-3">
                     <div>
-                        <h1 class="h2 mb-2">BMW Série 3 320d Pack M</h1>
+                        <h1 class="h2 mb-2">@Model.Titulo</h1>
                         <div class="d-flex gap-2 flex-wrap">
                             <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>Verificado</span>
                             <span class="badge bg-primary"><i class="bi bi-star-fill me-1"></i>Destaque</span>
@@ -48,82 +62,93 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <p class="text-muted mb-1 small">Preço:</p>
-                            <h2 class="text-primary fw-bold mb-0">28.500 €</h2>
+                            <h2 class="text-primary fw-bold mb-0">@Model.Preco.ToString("N0") €</h2>
                         </div>
-                        <div class="text-end">
-                            <p class="text-muted mb-1 small">Valor estimado:</p>
-                            <p class="mb-0 fw-semibold text-success"><i class="bi bi-graph-up-arrow me-1"></i>Bom negócio</p>
-                        </div>
+                        @if (Model.ValorSinal > 0)
+                        {
+                            <div class="text-end">
+                                <p class="text-muted mb-1 small">Sinal para reserva:</p>
+                                <p class="mb-0 fw-semibold text-success">@Model.ValorSinal.ToString("N0") €</p>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
 
             <!-- Galeria de Imagens (Carrossel) -->
             <div class="gallery-container mb-4">
-                <div id="galleryCarousel" class="carousel slide shadow-lg rounded-3 overflow-hidden" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img src="~/imagens/bmwSerie1.jpg" class="d-block w-100 gallery-main-image" alt="Frente do carro" onclick="openFullscreen(0)">
+                @if (Model.Imagens != null && Model.Imagens.Any())
+                {
+                    <div id="galleryCarousel" class="carousel slide shadow-lg rounded-3 overflow-hidden" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @for (int i = 0; i < Model.Imagens.Count; i++)
+                            {
+                                var imagem = Model.Imagens.ElementAt(i);
+                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                    <img src="@imagem.ImagemCaminho" class="d-block w-100 gallery-main-image" alt="@Model.Titulo - Imagem @(i + 1)" onclick="openFullscreen(@i)">
+                                </div>
+                            }
                         </div>
-                        <div class="carousel-item">
-                            <img src="https://placehold.co/800x600/343a40/e9ecef?text=Interior" class="d-block w-100 gallery-main-image" alt="Interior do carro" onclick="openFullscreen(1)">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="https://placehold.co/800x600/343a40/e9ecef?text=Traseira" class="d-block w-100 gallery-main-image" alt="Traseira do carro" onclick="openFullscreen(2)">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="https://placehold.co/800x600/343a40/e9ecef?text=Lateral" class="d-block w-100 gallery-main-image" alt="Lateral do carro" onclick="openFullscreen(3)">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="https://placehold.co/800x600/343a40/e9ecef?text=Painel" class="d-block w-100 gallery-main-image" alt="Painel do carro" onclick="openFullscreen(4)">
-                        </div>
+                        @if (Model.Imagens.Count > 1)
+                        {
+                            <button class="carousel-control-prev" type="button" data-bs-target="#galleryCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Anterior</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#galleryCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Seguinte</span>
+                            </button>
+                        }
+                        <button class="btn btn-light btn-fullscreen" onclick="openFullscreen(0)">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                        </button>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#galleryCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#galleryCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Seguinte</span>
-                    </button>
-                    <button class="btn btn-light btn-fullscreen" onclick="openFullscreen(0)">
-                        <i class="bi bi-arrows-fullscreen"></i>
-                    </button>
-                </div>
 
-                <!-- Miniaturas -->
-                <div class="gallery-thumbnails mt-3">
-                    <div class="thumbnail-item active" onclick="goToSlide(0)">
-                        <img src="~/imagens/bmwSerie1.jpg" alt="Thumb 1">
+                    <!-- Miniaturas -->
+                    @if (Model.Imagens.Count > 1)
+                    {
+                        <div class="gallery-thumbnails mt-3">
+                            @for (int i = 0; i < Math.Min(Model.Imagens.Count, 5); i++)
+                            {
+                                var imagem = Model.Imagens.ElementAt(i);
+                                <div class="thumbnail-item @(i == 0 ? "active" : "")" onclick="goToSlide(@i)">
+                                    <img src="@imagem.ImagemCaminho" alt="Miniatura @(i + 1)">
+                                </div>
+                            }
+                            @if (Model.Imagens.Count > 5)
+                            {
+                                <div class="thumbnail-item view-all">
+                                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                                    <span>Ver todas (@Model.Imagens.Count)</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="card shadow-lg rounded-3">
+                        <img src="~/imagens/no-image.jpg" class="card-img-top" alt="Sem imagem disponível" style="height: 400px; object-fit: cover;">
+                        <div class="card-body text-center">
+                            <p class="text-muted mb-0"><i class="bi bi-image me-2"></i>Sem imagens disponíveis</p>
+                        </div>
                     </div>
-                    <div class="thumbnail-item" onclick="goToSlide(1)">
-                        <img src="https://placehold.co/150x100/343a40/e9ecef?text=Interior" alt="Thumb 2">
-                    </div>
-                    <div class="thumbnail-item" onclick="goToSlide(2)">
-                        <img src="https://placehold.co/150x100/343a40/e9ecef?text=Traseira" alt="Thumb 3">
-                    </div>
-                    <div class="thumbnail-item" onclick="goToSlide(3)">
-                        <img src="https://placehold.co/150x100/343a40/e9ecef?text=Lateral" alt="Thumb 4">
-                    </div>
-                    <div class="thumbnail-item" onclick="goToSlide(4)">
-                        <img src="https://placehold.co/150x100/343a40/e9ecef?text=Painel" alt="Thumb 5">
-                    </div>
-                    <div class="thumbnail-item view-all">
-                        <i class="bi bi-grid-3x3-gap-fill"></i>
-                        <span>Ver todas (5)</span>
-                    </div>
-                </div>
+                }
             </div>
 
             <!-- Detalhes Rápidos -->
             <div class="card shadow-sm mb-4">
                 <div class="card-body anuncio-details-grid-details-page">
-                    <span><i class="bi bi-calendar3"></i> 2019</span>
-                    <span><i class="bi bi-speedometer2"></i> 98.000 km</span>
-                    <span><i class="bi bi-fuel-pump-fill"></i> Diesel</span>
-                    <span><i class="bi bi-gear-fill"></i> Manual</span>
-                    <span><i class="bi bi-palette-fill"></i> Cinzento</span>
-                    <span><i class="bi bi-person-check-fill"></i> Particular</span>
+                    <span><i class="bi bi-calendar3"></i> @Model.Ano</span>
+                    <span><i class="bi bi-speedometer2"></i> @(Model.Quilometragem?.ToString("N0") ?? "N/A") km</span>
+                    <span><i class="bi bi-fuel-pump-fill"></i> @Model.Combustivel?.Tipo</span>
+                    <span><i class="bi bi-gear-fill"></i> @Model.Caixa</span>
+                    @if (!string.IsNullOrEmpty(Model.Cor))
+                    {
+                        <span><i class="bi bi-palette-fill"></i> @Model.Cor</span>
+                    }
+                    <span><i class="bi bi-person-check-fill"></i> @Model.Vendedor?.Nome</span>
                 </div>
             </div>
 
@@ -134,8 +159,7 @@
                     <h4 class="mb-0"><i class="bi bi-file-text-fill me-2"></i>Descrição</h4>
                 </div>
                 <div class="card-body">
-                    <p class="mb-2">Carro nacional em excelente estado, com todas as revisões na marca. Pack M completo, interior e exterior. Viatura muito estimada e com um consumo médio de 5L/100km. Não fumador.</p>
-                    <p class="mb-0">Equipado com GPS profissional, bancos desportivos em alcântara, jantes de 18 polegadas, faróis LED e sensores de estacionamento à frente e atrás.</p>
+                    <p class="mb-0">@(Model.Descricao ?? "Sem descrição disponível.")</p>
                 </div>
             </div>
 
@@ -146,90 +170,146 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="specifications-grid">
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-building"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Marca</span>
-                                <span class="spec-value">BMW</span>
+                        @if (Model.Marca != null)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-building"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Marca</span>
+                                    <span class="spec-value">@Model.Marca.Nome</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-car-front"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Modelo</span>
-                                <span class="spec-value">Série 3</span>
+                        }
+                        @if (Model.Modelo != null)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-car-front"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Modelo</span>
+                                    <span class="spec-value">@Model.Modelo.Nome</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-calendar3"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Ano</span>
-                                <span class="spec-value">2019</span>
+                        }
+                        @if (Model.Ano.HasValue)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-calendar3"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Ano</span>
+                                    <span class="spec-value">@Model.Ano</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-speedometer2"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Quilómetros</span>
-                                <span class="spec-value">98.000 km</span>
+                        }
+                        @if (Model.Quilometragem.HasValue)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-speedometer2"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Quilómetros</span>
+                                    <span class="spec-value">@Model.Quilometragem.Value.ToString("N0") km</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-fuel-pump-fill"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Combustível</span>
-                                <span class="spec-value">Diesel</span>
+                        }
+                        @if (Model.Combustivel != null)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-fuel-pump-fill"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Combustível</span>
+                                    <span class="spec-value">@Model.Combustivel.Tipo</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-gear-fill"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Caixa</span>
-                                <span class="spec-value">Manual</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Caixa))
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-gear-fill"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Caixa</span>
+                                    <span class="spec-value">@Model.Caixa</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-lightning-charge-fill"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Potência</span>
-                                <span class="spec-value">190 cv</span>
+                        }
+                        @if (Model.Tipo != null)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-car-front-fill"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Tipo de Veículo</span>
+                                    <span class="spec-value">@Model.Tipo.Nome</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-speedometer"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Cilindrada</span>
-                                <span class="spec-value">1995 cm³</span>
+                        }
+                        @if (Model.Categoria != null)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-tag-fill"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Categoria</span>
+                                    <span class="spec-value">@Model.Categoria.Nome</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-palette-fill"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Cor</span>
-                                <span class="spec-value">Cinzento</span>
+                        }
+                        @if (Model.Potencia.HasValue)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Potência</span>
+                                    <span class="spec-value">@Model.Potencia cv</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-door-closed-fill"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Portas</span>
-                                <span class="spec-value">4</span>
+                        }
+                        @if (Model.Cilindrada.HasValue)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-speedometer"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Cilindrada</span>
+                                    <span class="spec-value">@Model.Cilindrada cm³</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-people-fill"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Lugares</span>
-                                <span class="spec-value">5</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Cor))
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-palette-fill"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Cor</span>
+                                    <span class="spec-value">@Model.Cor</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-icon"><i class="bi bi-geo-alt"></i></div>
-                            <div class="spec-content">
-                                <span class="spec-label">Localização</span>
-                                <span class="spec-value">Marco</span>
+                        }
+                        @if (Model.Portas.HasValue)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-door-closed-fill"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Portas</span>
+                                    <span class="spec-value">@Model.Portas</span>
+                                </div>
                             </div>
-                        </div>
+                        }
+                        @if (Model.Lugares.HasValue)
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-people-fill"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Lugares</span>
+                                    <span class="spec-value">@Model.Lugares</span>
+                                </div>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Localizacao))
+                        {
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-geo-alt"></i></div>
+                                <div class="spec-content">
+                                    <span class="spec-label">Localização</span>
+                                    <span class="spec-value">@Model.Localizacao</span>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -288,14 +368,23 @@
         <!-- Coluna Lateral: Vendedor e Contacto -->
         <div class="col-lg-4">
             <!-- Seller Card -->
-            <div class="seller-card card shadow-sm sticky-top mb-4">
+            <div class="seller-card card shadow-sm sticky-top mb-4" style="top: 80px;">
                 <div class="card-body text-center">
                     <div class="position-relative d-inline-block mb-3">
-                        <img src="https://placehold.co/100x100/0d6efd/ffffff?text=User" class="rounded-circle seller-avatar" alt="Foto do Vendedor">
+                        <img src="https://placehold.co/100x100/0d6efd/ffffff?text=@(Model.Vendedor?.Nome?.Substring(0, 1) ?? "V")" class="rounded-circle seller-avatar" alt="Foto do Vendedor">
                         <span class="badge-verified"><i class="bi bi-patch-check-fill"></i></span>
                     </div>
-                    <h5 class="card-title mb-1">Pedro Costa</h5>
-                    <p class="text-muted mb-2">Membro desde 2021</p>
+                    <h5 class="card-title mb-1">@(Model.Vendedor?.Nome ?? "Vendedor")</h5>
+                    <p class="text-muted mb-2">
+                        @if (!string.IsNullOrEmpty(Model.Vendedor?.Email))
+                        {
+                            <small><i class="bi bi-envelope me-1"></i>@Model.Vendedor.Email</small>
+                        }
+                        else
+                        {
+                            <span>Vendedor</span>
+                        }
+                    </p>
 
                     <!-- Rating -->
                     <div class="seller-rating mb-3">
@@ -306,7 +395,7 @@
                             <i class="bi bi-star-fill text-warning"></i>
                             <i class="bi bi-star-half text-warning"></i>
                         </div>
-                        <small class="text-muted">4.5 (28 avaliações)</small>
+                        <small class="text-muted">4.5 (avaliações em breve)</small>
                     </div>
 
                     <!-- Seller Stats -->
@@ -314,14 +403,18 @@
                         <div class="row text-center g-2">
                             <div class="col-6">
                                 <div class="stat-box p-2 bg-light rounded">
-                                    <div class="stat-number text-primary fw-bold">12</div>
-                                    <div class="stat-label small text-muted">Anúncios</div>
+                                    <div class="stat-number text-primary fw-bold">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </div>
+                                    <div class="stat-label small text-muted">@Model.NVisualizacoes visualizações</div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="stat-box p-2 bg-light rounded">
-                                    <div class="stat-number text-success fw-bold">98%</div>
-                                    <div class="stat-label small text-muted">Resposta</div>
+                                    <div class="stat-number text-success fw-bold">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </div>
+                                    <div class="stat-label small text-muted">Verificado</div>
                                 </div>
                             </div>
                         </div>
@@ -346,7 +439,7 @@
                     </div>
                 </div>
                 <div class="card-footer text-center bg-light">
-                    <a href="#" class="text-primary text-decoration-none fw-semibold">
+                    <a href="/Utilizadores/Perfil" class="text-primary text-decoration-none fw-semibold">
                         <i class="bi bi-grid-3x3-gap me-1"></i>Ver todos os anúncios
                     </a>
                 </div>
@@ -499,7 +592,7 @@
                             Durante este período, o anúncio ficará marcado como "Reservado" e outros compradores não poderão reservá-lo.
                         </p>
                         <p class="mb-0 small">
-                            <strong>Sinal:</strong> Para garantir a reserva, é necessário efetuar um pagamento de <strong class="text-primary">500€</strong> (sinal definido pelo vendedor).
+                            <strong>Sinal:</strong> Para garantir a reserva, é necessário efetuar um pagamento de <strong class="text-primary">@(Model.ValorSinal > 0 ? Model.ValorSinal.ToString("N0") + "€" : "a definir pelo vendedor")</strong>.
                             Este valor será descontado no preço final do veículo. Em caso de desistência da compra, o sinal não é reembolsável.
                         </p>
                     </div>
@@ -513,20 +606,31 @@
                         </h6>
                         <div class="row g-3">
                             <div class="col-auto">
-                                <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 3" class="rounded" style="width: 100px; height: 75px; object-fit: cover;">
+                                @{
+                                    var primeiraImagemModal = Model.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/no-image.jpg";
+                                }
+                                <img src="@primeiraImagemModal" alt="@Model.Titulo" class="rounded" style="width: 100px; height: 75px; object-fit: cover;">
                             </div>
                             <div class="col">
-                                <h5 class="mb-1">BMW Série 3 320d Pack M</h5>
-                                <p class="text-muted mb-1 small">2019 • 85.000 km • Diesel • Manual</p>
+                                <h5 class="mb-1">@Model.Titulo</h5>
+                                <p class="text-muted mb-1 small">
+                                    @Model.Ano •
+                                    @(Model.Quilometragem?.ToString("N0") ?? "N/A") km •
+                                    @Model.Combustivel?.Tipo •
+                                    @Model.Caixa
+                                </p>
                                 <div class="d-flex justify-content-between align-items-center mt-2">
                                     <div>
                                         <p class="text-muted mb-0 small">Preço Total:</p>
-                                        <p class="text-success fw-bold fs-5 mb-0">28.500 €</p>
+                                        <p class="text-success fw-bold fs-5 mb-0">@Model.Preco.ToString("N0") €</p>
                                     </div>
-                                    <div class="text-end">
-                                        <p class="text-muted mb-0 small">Sinal a Pagar:</p>
-                                        <p class="text-primary fw-bold fs-5 mb-0">500 €</p>
-                                    </div>
+                                    @if (Model.ValorSinal > 0)
+                                    {
+                                        <div class="text-end">
+                                            <p class="text-muted mb-0 small">Sinal a Pagar:</p>
+                                            <p class="text-primary fw-bold fs-5 mb-0">@Model.ValorSinal.ToString("N0") €</p>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -572,7 +676,7 @@
                                     <option value="multibanco">Multibanco (Referência MB)</option>
                                     <option value="cartao">Cartão de Crédito/Débito</option>
                                 </select>
-                                <div class="form-text">O sinal de 500€ será processado após a confirmação do vendedor</div>
+                                <div class="form-text">@(Model.ValorSinal > 0 ? $"O sinal de {Model.ValorSinal:N0}€ será processado após a confirmação do vendedor" : "O valor do sinal será processado após a confirmação do vendedor")</div>
                             </div>
                         </div>
                     </div>
@@ -677,12 +781,17 @@
                         </h6>
                         <div class="row g-3">
                             <div class="col-auto">
-                                <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 3" class="rounded" style="width: 100px; height: 75px; object-fit: cover;">
+                                <img src="@primeiraImagemModal" alt="@Model.Titulo" class="rounded" style="width: 100px; height: 75px; object-fit: cover;">
                             </div>
                             <div class="col">
-                                <h5 class="mb-1">BMW Série 3 320d Pack M</h5>
-                                <p class="text-muted mb-1 small">2019 • 85.000 km • Diesel • Manual</p>
-                                <p class="text-success fw-bold fs-5 mb-0">28.500 €</p>
+                                <h5 class="mb-1">@Model.Titulo</h5>
+                                <p class="text-muted mb-1 small">
+                                    @Model.Ano •
+                                    @(Model.Quilometragem?.ToString("N0") ?? "N/A") km •
+                                    @Model.Combustivel?.Tipo •
+                                    @Model.Caixa
+                                </p>
+                                <p class="text-success fw-bold fs-5 mb-0">@Model.Preco.ToString("N0") €</p>
                             </div>
                         </div>
                     </div>
@@ -695,12 +804,15 @@
                             <i class="bi bi-person-badge text-primary me-2"></i>Vendedor
                         </h6>
                         <div class="d-flex align-items-center">
-                            <img src="https://placehold.co/60x60/0d6efd/ffffff?text=PC" class="rounded-circle me-3" alt="Pedro Costa">
+                            <img src="https://placehold.co/60x60/0d6efd/ffffff?text=@(Model.Vendedor?.Nome?.Substring(0, 1) ?? "V")" class="rounded-circle me-3" alt="@(Model.Vendedor?.Nome ?? "Vendedor")">
                             <div>
-                                <h6 class="mb-1">Pedro Costa</h6>
+                                <h6 class="mb-1">@(Model.Vendedor?.Nome ?? "Vendedor")</h6>
                                 <p class="text-muted mb-0 small">
-                                    <i class="bi bi-star-fill text-warning me-1"></i>4.5 (28 avaliações) •
-                                    <i class="bi bi-geo-alt-fill text-primary me-1"></i>Porto
+                                    <i class="bi bi-star-fill text-warning me-1"></i>4.5 (avaliações em breve)
+                                    @if (!string.IsNullOrEmpty(Model.Localizacao))
+                                    {
+                                        <span> • <i class="bi bi-geo-alt-fill text-primary me-1"></i>@Model.Localizacao</span>
+                                    }
                                 </p>
                             </div>
                         </div>

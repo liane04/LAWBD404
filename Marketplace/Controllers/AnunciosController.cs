@@ -35,8 +35,6 @@ namespace Marketplace.Controllers
         // GET: Anuncios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-
-            /*
             if (id == null)
             {
                 return NotFound();
@@ -49,15 +47,19 @@ namespace Marketplace.Controllers
                 .Include(a => a.Modelo)
                 .Include(a => a.Tipo)
                 .Include(a => a.Vendedor)
+                .Include(a => a.Imagens)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (anuncio == null)
             {
                 return NotFound();
             }
 
+            // Incrementar visualizações
+            anuncio.NVisualizacoes++;
+            await _context.SaveChangesAsync();
+
             return View(anuncio);
-            */
-            return View();
         }
 
         // GET: Anuncios/Create
@@ -99,6 +101,17 @@ namespace Marketplace.Controllers
             anuncio.VendedorId = vendedor.Id;
             anuncio.NVisualizacoes = 0;
 
+            // Remover erros de validação dos campos que não vêm do formulário
+            ModelState.Remove("VendedorId");
+            ModelState.Remove("NVisualizacoes");
+            ModelState.Remove("Vendedor");
+            ModelState.Remove("Marca");
+            ModelState.Remove("Modelo");
+            ModelState.Remove("Categoria");
+            ModelState.Remove("Combustivel");
+            ModelState.Remove("Tipo");
+            ModelState.Remove("Imagens");
+
             if (ModelState.IsValid)
             {
                 // Adicionar o anúncio à base de dados
@@ -112,8 +125,12 @@ namespace Marketplace.Controllers
                 }
 
                 TempData["Success"] = "Anúncio criado com sucesso!";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = anuncio.Id });
             }
+
+            // Log erros de validação
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            Console.WriteLine("Erros de validação: " + string.Join(", ", errors));
 
             ViewData["CategoriaId"] = new SelectList(_context.Set<Categoria>(), "Id", "Nome", anuncio.CategoriaId);
             ViewData["CombustivelId"] = new SelectList(_context.Set<Combustivel>(), "Id", "Tipo", anuncio.CombustivelId);
@@ -275,6 +292,31 @@ namespace Marketplace.Controllers
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        // API endpoint para obter o TipoId de um Modelo
+        [HttpGet]
+        public async Task<IActionResult> GetModeloTipo(int modeloId)
+        {
+            var modelo = await _context.Set<Modelo>().FindAsync(modeloId);
+            if (modelo == null)
+            {
+                return NotFound();
+            }
+            return Json(new { tipoId = modelo.TipoId });
+        }
+
+        // API endpoint para obter modelos filtrados por marca
+        [HttpGet]
+        public async Task<IActionResult> GetModelosByMarca(int marcaId)
+        {
+            var modelos = await _context.Set<Modelo>()
+                .Where(m => m.MarcaId == marcaId)
+                .OrderBy(m => m.Nome)
+                .Select(m => new { id = m.Id, nome = m.Nome })
+                .ToListAsync();
+
+            return Json(modelos);
         }
 
         private bool AnuncioExists(int id)

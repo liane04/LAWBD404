@@ -11,6 +11,7 @@ namespace Marketplace.Models
         [Required, Column(TypeName = "decimal(10,2)")]
         public decimal Preco { get; set; }
 
+        [Range(1900, 2025, ErrorMessage = "O ano deve estar entre 1900 e 2025")]
         public int? Ano { get; set; }
 
         [StringLength(50)]

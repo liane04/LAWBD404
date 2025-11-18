@@ -11,7 +11,7 @@
                     <!-- Cabeçalho do Perfil -->
                     <div class="perfil-header text-center p-4">
                         <div class="perfil-avatar-wrapper position-relative d-inline-block mb-3">
-                            <img src="https://placehold.co/120x120/2563eb/white?text=JD"
+                            <img src="@((ViewBag.ImagemPerfil as string) ?? Url.Content("~/imagens/logo.png"))"
                                  class="perfil-avatar rounded-circle"
                                  alt="Foto de Perfil">
                             <button class="perfil-avatar-edit btn btn-sm btn-primary rounded-circle position-absolute">
@@ -58,17 +58,17 @@
                             <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-card-list"></i>
                                 <span>Meus Anúncios</span>
-                                <span class="badge bg-primary rounded-pill ms-auto">3</span>
+                                <span class="badge bg-primary rounded-pill ms-auto">@((ViewBag.AnunciosCount ?? 0))</span>
                             </a>
                             <a href="#reservas-recebidas" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-bookmark-check-fill"></i>
                                 <span>Reservas Recebidas</span>
-                                <span class="badge bg-success rounded-pill ms-auto">1</span>
+                                <span class="badge bg-success rounded-pill ms-auto">@((ViewBag.ReservasRecebidasCount ?? 0))</span>
                             </a>
                             <a href="#visitas-agendadas-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-calendar-event"></i>
                                 <span>Visitas Agendadas</span>
-                                <span class="badge bg-info rounded-pill ms-auto">2</span>
+                                <span class="badge bg-info rounded-pill ms-auto">@((ViewBag.VisitasAgendadasCount ?? 0))</span>
                             </a>
                         }
                         @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
@@ -321,252 +321,11 @@
 
                     <!-- Lista de Anúncios -->
                     <div class="anuncios-list">
-                        <!-- Anúncio 1 - Ativo -->
-                        <div class="anuncio-card card shadow-sm border-0 mb-3" data-status="ativo">
-                            <div class="card-body p-3">
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-auto">
-                                        <div class="anuncio-thumbnail">
-                                            <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1">
-                                            <span class="anuncio-status-badge badge bg-success">
-                                                <i class="bi bi-check-circle-fill"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">BMW Série 1 116d</h5>
-                                            <div class="anuncio-meta">
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 20/10/2025
-                                                </span>
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-eye-fill me-1"></i>127 visualizações
-                                                </span>
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-heart-fill me-1"></i>8 favoritos
-                                                </span>
-                                            </div>
-                                            <div class="anuncio-price mt-2">
-                                                <span class="price-label">Preço:</span>
-                                                <span class="price-value">15.900€</span>
-                                                <span class="ms-2 small text-muted">Sinal: 500€</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="anuncio-actions d-flex flex-column gap-2">
-                                            <div class="d-flex gap-2">
-                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <a asp-controller="Anuncios" asp-action="Edit" asp-route-id="1" class="btn btn-sm btn-outline-primary" title="Editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-danger" title="Apagar">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </div>
-                                            <button class="btn btn-sm btn-warning w-100" data-bs-toggle="modal" data-bs-target="#destacarModal" title="Destacar Anúncio">
-                                                <i class="bi bi-star-fill me-1"></i>Destacar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Anúncio 2 - Ativo -->
-                        <div class="anuncio-card card shadow-sm border-0 mb-3" data-status="ativo">
-                            <div class="card-body p-3">
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-auto">
-                                        <div class="anuncio-thumbnail">
-                                            <img src="~/imagens/fordFocus.jpg" alt="Ford Focus">
-                                            <span class="anuncio-status-badge badge bg-success">
-                                                <i class="bi bi-check-circle-fill"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">Ford Focus 1.5 TDCi</h5>
-                                            <div class="anuncio-meta">
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 18/10/2025
-                                                </span>
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-eye-fill me-1"></i>89 visualizações
-                                                </span>
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-heart-fill me-1"></i>5 favoritos
-                                                </span>
-                                            </div>
-                                            <div class="anuncio-price mt-2">
-                                                <span class="price-label">Preço:</span>
-                                                <span class="price-value">12.500€</span>
-                                                <span class="ms-2 small text-muted">Sinal: 500€</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="anuncio-actions d-flex flex-column gap-2">
-                                            <div class="d-flex gap-2">
-                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <a asp-controller="Anuncios" asp-action="Edit" asp-route-id="2" class="btn btn-sm btn-outline-primary" title="Editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-danger" title="Apagar">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </div>
-                                            <button class="btn btn-sm btn-warning w-100" data-bs-toggle="modal" data-bs-target="#destacarModal" title="Destacar Anúncio">
-                                                <i class="bi bi-star-fill me-1"></i>Destacar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Anúncio 3 - Reservado -->
-                        <div class="anuncio-card card shadow-sm border-warning mb-3" data-status="reservado">
-                            <div class="card-body p-3">
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-auto">
-                                        <div class="anuncio-thumbnail">
-                                            <img src="~/imagens/mercedezClassA.jpg" alt="Mercedes Classe A">
-                                            <span class="anuncio-status-badge badge bg-warning text-dark">
-                                                <i class="bi bi-bookmark-check-fill"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">Mercedes-Benz Classe A 180d</h5>
-                                            <div class="anuncio-meta">
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 15/10/2025
-                                                </span>
-                                                <span class="anuncio-meta-item text-warning">
-                                                    <i class="bi bi-bookmark-check-fill me-1"></i>Reservado em 24/10/2025
-                                                </span>
-                                                <span class="anuncio-meta-item text-warning">
-                                                    <i class="bi bi-person-fill me-1"></i>Por: Maria Costa
-                                                </span>
-                                            </div>
-                                            <div class="anuncio-price mt-2">
-                                                <span class="price-label">Preço:</span>
-                                                <span class="price-value">22.500€</span>
-                                                <span class="ms-2 small text-success">Sinal recebido: 1.000€</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="anuncio-actions d-flex flex-column gap-2">
-                                            <div class="d-flex gap-2">
-                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <a asp-controller="Anuncios" asp-action="Edit" asp-route-id="3" class="btn btn-sm btn-outline-warning" title="Editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                            </div>
-                                            <button class="btn btn-sm btn-success w-100" title="Marcar como Vendido">
-                                                <i class="bi bi-check2-circle me-1"></i>Vendido
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Anúncio 4 - Vendido -->
-                        <div class="anuncio-card card shadow-sm border-0 mb-3 opacity-75" data-status="vendido">
-                            <div class="card-body p-3">
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-auto">
-                                        <div class="anuncio-thumbnail">
-                                            <img src="~/imagens/audiA3.jpg" alt="Audi A3">
-                                            <span class="anuncio-status-badge badge bg-info text-dark">
-                                                <i class="bi bi-check2-circle"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">Audi A3 Sportback 2.0 TDI</h5>
-                                            <div class="anuncio-meta">
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 12/10/2025
-                                                </span>
-                                                <span class="anuncio-meta-item text-info">
-                                                    <i class="bi bi-check-circle-fill me-1"></i>Vendido em 18/10/2025
-                                                </span>
-                                            </div>
-                                            <div class="anuncio-price mt-2">
-                                                <span class="price-label">Preço de Venda:</span>
-                                                <span class="price-value">18.200€</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="anuncio-actions d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <button class="btn btn-sm btn-outline-secondary" disabled>
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Anúncio 5 - Vendido -->
-                        <div class="anuncio-card card shadow-sm border-0 mb-3 opacity-75" data-status="vendido">
-                            <div class="card-body p-3">
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-auto">
-                                        <div class="anuncio-thumbnail">
-                                            <img src="~/imagens/volkswagenGolf.jpg" alt="VW Golf">
-                                            <span class="anuncio-status-badge badge bg-info text-dark">
-                                                <i class="bi bi-check2-circle"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">Volkswagen Golf VII GTI</h5>
-                                            <div class="anuncio-meta">
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 05/10/2025
-                                                </span>
-                                                <span class="anuncio-meta-item text-info">
-                                                    <i class="bi bi-check-circle-fill me-1"></i>Vendido em 10/10/2025
-                                                </span>
-                                            </div>
-                                            <div class="anuncio-price mt-2">
-                                                <span class="price-label">Preço de Venda:</span>
-                                                <span class="price-value">24.900€</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="anuncio-actions d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <button class="btn btn-sm btn-outline-secondary" disabled>
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        @await Html.PartialAsync("_MeusAnunciosList", ViewBag.MeusAnuncios as IEnumerable<Marketplace.Models.Anuncio>)
+                        <div class="mt-3">
+                            <a asp-controller="Utilizadores" asp-action="Edit" class="btn btn-outline-primary">
+                                <i class="bi bi-person-gear me-1"></i> Editar Perfil
+                            </a>
                         </div>
                     </div>
 

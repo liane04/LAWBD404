@@ -54,7 +54,22 @@
                                 </div>
                                 <div class="card-body p-4">
                                     <div class="row g-3">
-                                        <div class="col-12">
+                                        <div class="col-md-6">
+                                            <label asp-for="CategoriaId" class="form-label fw-semibold">
+                                                <i class="bi bi-car-front text-primary me-2"></i>Tipo de Veículo
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select asp-for="CategoriaId" asp-items="@ViewBag.CategoriaId" class="form-select form-select-lg" required>
+                                                <option value="">Selecione o tipo...</option>
+                                            </select>
+                                            <span asp-validation-for="CategoriaId" class="text-danger"></span>
+                                            <div class="form-text">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                Carro, Moto, Caravana, etc.
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
                                             <label for="titulo" class="form-label fw-semibold">
                                                 <i class="bi bi-pencil text-primary me-2"></i>Título do Anúncio
                                                 <span class="text-danger">*</span>
@@ -174,8 +189,8 @@
                                                 <i class="bi bi-tag text-primary me-2"></i>Modelo
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select asp-for="ModeloId" asp-items="@ViewBag.ModeloId" id="modelo" class="form-select form-select-lg" required>
-                                                <option value="">Selecione o modelo...</option>
+                                            <select asp-for="ModeloId" id="modelo" class="form-select form-select-lg" required disabled>
+                                                <option value="">Selecione primeiro a marca...</option>
                                             </select>
                                             <span asp-validation-for="ModeloId" class="text-danger"></span>
                                         </div>
@@ -267,7 +282,7 @@
                                                    placeholder="Ex: Preto">
                                         </div>
 
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
                                             <label for="localizacao" class="form-label fw-semibold">
                                                 <i class="bi bi-geo-alt text-primary me-2"></i>Localização
                                                 <span class="text-danger">*</span>
@@ -278,25 +293,17 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label asp-for="CategoriaId" class="form-label fw-semibold">
-                                                <i class="bi bi-grid text-primary me-2"></i>Categoria
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <select asp-for="CategoriaId" asp-items="@ViewBag.CategoriaId" class="form-select form-select-lg" required>
-                                                <option value="">Selecione a categoria...</option>
-                                            </select>
-                                            <span asp-validation-for="CategoriaId" class="text-danger"></span>
-                                        </div>
-
-                                        <div class="col-md-6">
                                             <label asp-for="TipoId" class="form-label fw-semibold">
-                                                <i class="bi bi-car-front-fill text-primary me-2"></i>Tipo de Veículo
-                                                <span class="text-danger">*</span>
+                                                <i class="bi bi-grid text-primary me-2"></i>Categoria
                                             </label>
-                                            <select asp-for="TipoId" asp-items="@ViewBag.TipoId" class="form-select form-select-lg" required>
-                                                <option value="">Selecione o tipo...</option>
+                                            <select asp-for="TipoId" asp-items="@ViewBag.TipoId" id="tipoSelect" class="form-select form-select-lg" readonly>
+                                                <option value="">Preenchido automaticamente...</option>
                                             </select>
                                             <span asp-validation-for="TipoId" class="text-danger"></span>
+                                            <div class="form-text">
+                                                <i class="bi bi-magic me-1 text-success"></i>
+                                                Preenchido automaticamente ao selecionar o modelo (SUV, Ligeiro, etc.)
+                                            </div>
                                         </div>
 
                                         <div class="col-12">
@@ -643,8 +650,12 @@
         const uploadZone = document.getElementById('uploadZone');
         const imageInput = document.getElementById('imagens');
         const imagePreview = document.getElementById('imagePreview');
+        let selectedFiles = new DataTransfer();
 
-        uploadZone.addEventListener('click', () => imageInput.click());
+        uploadZone.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-remove')) return; // Não abrir file picker se clicar em remover
+            imageInput.click();
+        });
 
         uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -658,7 +669,6 @@
         uploadZone.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadZone.classList.remove('dragover');
-            imageInput.files = e.dataTransfer.files;
             handleFiles(e.dataTransfer.files);
         });
 
@@ -666,19 +676,34 @@
             handleFiles(e.target.files);
         });
 
-        function handleFiles(files) {
+        function handleFiles(newFiles) {
+            // Adicionar novos ficheiros ao DataTransfer
+            for (let i = 0; i < newFiles.length && selectedFiles.files.length < 20; i++) {
+                selectedFiles.items.add(newFiles[i]);
+            }
+
+            // Atualizar o input
+            imageInput.files = selectedFiles.files;
+
+            // Atualizar preview
+            updatePreview();
+        }
+
+        function updatePreview() {
             imagePreview.innerHTML = '';
 
-            for (let i = 0; i < files.length && i < 10; i++) {
+            const files = selectedFiles.files;
+            for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const reader = new FileReader();
 
                 reader.onload = (e) => {
                     const div = document.createElement('div');
                     div.className = 'image-preview-item';
+                    div.dataset.index = i;
                     div.innerHTML = `
                         <img src="${e.target.result}" alt="Preview">
-                        <button type="button" class="btn-remove" onclick="removeImage(this)">
+                        <button type="button" class="btn-remove" onclick="removeImage(${i})">
                             <i class="bi bi-x-circle-fill"></i>
                         </button>
                         ${i === 0 ? '<span class="badge bg-primary">Principal</span>' : ''}
@@ -688,10 +713,101 @@
 
                 reader.readAsDataURL(file);
             }
+
+            // Mostrar/ocultar zona de upload
+            if (files.length > 0) {
+                uploadZone.querySelector('.upload-placeholder').style.display = 'none';
+            } else {
+                uploadZone.querySelector('.upload-placeholder').style.display = 'block';
+            }
         }
 
-        function removeImage(btn) {
-            btn.closest('.image-preview-item').remove();
+        window.removeImage = function(index) {
+            // Criar novo DataTransfer sem o ficheiro removido
+            const newDataTransfer = new DataTransfer();
+            const files = Array.from(selectedFiles.files);
+
+            files.forEach((file, i) => {
+                if (i !== index) {
+                    newDataTransfer.items.add(file);
+                }
+            });
+
+            selectedFiles = newDataTransfer;
+            imageInput.files = selectedFiles.files;
+            updatePreview();
+        };
+
+        // Filtrar modelos por marca (cascading dropdown)
+        const marcaSelect = document.querySelector('select[name="MarcaId"]');
+        const modeloSelect = document.querySelector('select[name="ModeloId"]');
+        const tipoSelect = document.querySelector('select[name="TipoId"]');
+
+        if (marcaSelect && modeloSelect) {
+            marcaSelect.addEventListener('change', async function() {
+                const marcaId = this.value;
+
+                // Limpar o select de modelos
+                modeloSelect.innerHTML = '<option value="">Selecione o modelo...</option>';
+                modeloSelect.disabled = !marcaId;
+
+                // Limpar o tipo também
+                if (tipoSelect) {
+                    tipoSelect.value = '';
+                }
+
+                if (!marcaId) return;
+
+                try {
+                    const response = await fetch(`/Anuncios/GetModelosByMarca?marcaId=${marcaId}`);
+                    if (response.ok) {
+                        const modelos = await response.json();
+
+                        modelos.forEach(modelo => {
+                            const option = document.createElement('option');
+                            option.value = modelo.id;
+                            option.textContent = modelo.nome;
+                            modeloSelect.appendChild(option);
+                        });
+
+                        // Animação visual
+                        modeloSelect.style.backgroundColor = '#d4edda';
+                        setTimeout(() => {
+                            modeloSelect.style.backgroundColor = '';
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar modelos:', error);
+                }
+            });
+        }
+
+        // Auto-preencher Tipo de Veículo quando Modelo é selecionado
+        if (modeloSelect && tipoSelect) {
+            modeloSelect.addEventListener('change', async function() {
+                const modeloId = this.value;
+
+                if (!modeloId) {
+                    tipoSelect.value = '';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/Anuncios/GetModeloTipo?modeloId=${modeloId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        tipoSelect.value = data.tipoId;
+
+                        // Animação visual de confirmação
+                        tipoSelect.style.backgroundColor = '#d4edda';
+                        setTimeout(() => {
+                            tipoSelect.style.backgroundColor = '';
+                        }, 1000);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter tipo do modelo:', error);
+                }
+            });
         }
 
         // Inicializar
