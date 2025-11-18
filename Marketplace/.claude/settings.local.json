@@ -31,7 +31,8 @@
       "Bash(nul)",
       "Bash(timeout /t 5 /nobreak)",
       "Bash(python fix_perfil.py:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

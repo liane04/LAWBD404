@@ -2455,5 +2455,55 @@
                 });
             }
         });
-    </script>
+</script>
+<script>
+    // Dinamizar cabeçalho e "Dados Pessoais" sem depender do encoding do ficheiro
+    (function () {
+        // Carregar dados dinâmicos do perfil via JSON para evitar problemas de encoding no ficheiro
+        fetch('/Utilizadores/PerfilDados', { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (!data) return;
+                const nome = data.nome || '';
+                const email = data.email || '';
+                const phone = data.phone || '';
+                const rua = (data.morada && data.morada.rua) || '';
+                const localidade = (data.morada && data.morada.localidade) || '';
+                const cp = (data.morada && data.morada.codigoPostal) || '';
+
+                // Substituir o nome e avatar no header
+                try {
+                    const headerName = document.querySelector('.perfil-header h5');
+                    if (headerName && nome) headerName.textContent = nome;
+                    const avatarImg = document.querySelector('.perfil-avatar');
+                    if (avatarImg && data.imagemPerfil) avatarImg.setAttribute('src', data.imagemPerfil);
+                } catch {}
+
+                // Atualizar cartões de Dados Pessoais
+                try {
+                    const labelValuePairs = document.querySelectorAll('.perfil-info-item');
+                    labelValuePairs.forEach(it => {
+                        const label = it.querySelector('.perfil-info-label');
+                        const value = it.querySelector('.perfil-info-value');
+                        if (!label || !value) return;
+                        const text = (label.textContent || '').trim().toLowerCase();
+                        if (text.includes('nome')) {
+                            if (nome) value.textContent = nome;
+                        } else if (text.includes('email')) {
+                            if (email) value.textContent = email;
+                        } else if (text.includes('telefone') || text.includes('telemóvel') || text.includes('telemovel')) {
+                            if (phone) value.textContent = phone;
+                        } else if (text.includes('rua')) {
+                            if (rua) value.textContent = rua;
+                        } else if (text.includes('código postal') || text.includes('codigo postal')) {
+                            if (cp) value.textContent = cp;
+                        } else if (text.includes('localidade')) {
+                            if (localidade) value.textContent = localidade;
+                        }
+                    });
+                } catch {}
+            })
+            .catch(() => { /* ignora erros */ });
+    })();
+</script>
 }

@@ -32,8 +32,14 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Email</label>
-                                <input class="form-control" value="@Model.Email" disabled />
+                                <label asp-for="Telefone" class="form-label">Telefone</label>
+                                <input asp-for="Telefone" class="form-control" inputmode="numeric" />
+                                <span asp-validation-for="Telefone" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label">Email</label>
+                                <input asp-for="Email" class="form-control" disabled />
                                 <small class="text-muted">O email não pode ser alterado nesta página.</small>
                             </div>
 
@@ -41,7 +47,7 @@
                             {
                                 <div class="col-md-6">
                                     <label asp-for="Nif" class="form-label">NIF</label>
-                                    <input asp-for="Nif" class="form-control" />
+                                    <input asp-for="Nif" class="form-control" inputmode="numeric" maxlength="9" />
                                     <span asp-validation-for="Nif" class="text-danger"></span>
                                 </div>
                                 <div class="col-12">
@@ -50,6 +56,26 @@
                                     <span asp-validation-for="DadosFaturacao" class="text-danger"></span>
                                 </div>
                             }
+
+                            <div class="col-12">
+                                <hr />
+                                <h6 class="mb-3">Morada</h6>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Rua" class="form-label">Rua</label>
+                                <input asp-for="Rua" class="form-control" />
+                                <span asp-validation-for="Rua" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Localidade" class="form-label">Localidade</label>
+                                <input asp-for="Localidade" class="form-control" />
+                                <span asp-validation-for="Localidade" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CodigoPostal" class="form-label">Código Postal</label>
+                                <input asp-for="CodigoPostal" class="form-control" inputmode="numeric" maxlength="8" />
+                                <span asp-validation-for="CodigoPostal" class="text-danger"></span>
+                            </div>
 
                             <div class="col-12 d-flex justify-content-between mt-2">
                                 <a asp-action="Perfil" asp-controller="Utilizadores" class="btn btn-outline-secondary">
@@ -69,4 +95,70 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const tel = document.getElementById('Telefone');
+            const nif = document.getElementById('Nif');
+            const cp = document.getElementById('CodigoPostal');
+
+            function onlyDigits(s) { return (s || '').replace(/\D+/g, ''); }
+
+            function formatPhonePT(v) {
+                let s = onlyDigits(v);
+                if (s.startsWith('351')) s = s.substring(3);
+                s = s.substring(0, 9);
+                if (s.length <= 3) return s;
+                if (s.length <= 6) return s.substring(0, 3) + ' ' + s.substring(3);
+                return s.substring(0, 3) + ' ' + s.substring(3, 6) + ' ' + s.substring(6);
+            }
+
+            function formatCP(v) {
+                const s = onlyDigits(v).substring(0, 7);
+                if (s.length <= 4) return s;
+                return s.substring(0, 4) + '-' + s.substring(4);
+            }
+
+            function isValidNif(n) {
+                const s = onlyDigits(n);
+                if (s.length !== 9) return false;
+                if (!/^[1235689]/.test(s)) return false;
+                let sum = 0;
+                for (let i = 0; i < 8; i++) sum += parseInt(s[i]) * (9 - i);
+                let check = 11 - (sum % 11);
+                if (check >= 10) check = 0;
+                return check === parseInt(s[8]);
+            }
+
+            if (tel) {
+                tel.addEventListener('input', () => {
+                    const caret = tel.selectionStart;
+                    const before = tel.value;
+                    tel.value = formatPhonePT(tel.value);
+                });
+            }
+            if (cp) {
+                cp.addEventListener('input', () => {
+                    cp.value = formatCP(cp.value);
+                });
+            }
+            if (nif) {
+                nif.addEventListener('input', () => {
+                    const s = onlyDigits(nif.value).substring(0, 9);
+                    nif.value = s;
+                    nif.classList.remove('is-invalid');
+                });
+                nif.addEventListener('blur', () => {
+                    const valid = isValidNif(nif.value);
+                    const msgSpan = document.querySelector("span[data-valmsg-for='Nif']");
+                    if (!valid) {
+                        nif.classList.add('is-invalid');
+                        if (msgSpan) { msgSpan.textContent = 'NIF inválido'; msgSpan.classList.add('field-validation-error'); }
+                    } else {
+                        nif.classList.remove('is-invalid');
+                        if (msgSpan) { msgSpan.textContent = ''; msgSpan.classList.remove('field-validation-error'); }
+                    }
+                });
+            }
+        })();
+    </script>
 }

@@ -83,6 +83,55 @@ namespace Marketplace.Controllers
             return View();
         }
 
+        // GET: Utilizadores/PerfilDados (JSON para dinamizar a view de Perfil)
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> PerfilDados()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var appUser = await _userManager.FindByIdAsync(userId.ToString());
+            string? nome = appUser?.FullName ?? appUser?.UserName;
+            string? email = appUser?.Email;
+            string? phone = appUser?.PhoneNumber;
+            string? imagem = null;
+            string? rua = null;
+            string? localidade = null;
+            string? codigoPostal = null;
+
+            if (User.IsInRole("Vendedor"))
+            {
+                var vendedor = await _db.Vendedores.Include(v => v.Morada).FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+                if (vendedor != null)
+                {
+                    nome = vendedor.Nome;
+                    imagem = vendedor.ImagemPerfil;
+                    if (vendedor.Morada != null)
+                    {
+                        rua = vendedor.Morada.Rua;
+                        localidade = vendedor.Morada.Localidade;
+                        codigoPostal = vendedor.Morada.CodigoPostal;
+                    }
+                }
+            }
+            else if (User.IsInRole("Comprador"))
+            {
+                var comprador = await _db.Compradores.Include(c => c.Morada).FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+                if (comprador != null)
+                {
+                    nome = comprador.Nome;
+                    imagem = comprador.ImagemPerfil;
+                    if (comprador.Morada != null)
+                    {
+                        rua = comprador.Morada.Rua;
+                        localidade = comprador.Morada.Localidade;
+                        codigoPostal = comprador.Morada.CodigoPostal;
+                    }
+                }
+            }
+
+            return Json(new { nome, email, phone, imagemPerfil = imagem, morada = new { rua, localidade, codigoPostal } });
+        }
+
         // GET: Utilizadores/Edit
         [Authorize]
         [HttpGet]
@@ -96,27 +145,40 @@ namespace Marketplace.Controllers
             {
                 Nome = appUser.FullName ?? appUser.UserName ?? string.Empty,
                 Email = appUser.Email,
+                Telefone = appUser.PhoneNumber,
                 IsVendedor = await _userManager.IsInRoleAsync(appUser, "Vendedor")
             };
 
             if (model.IsVendedor)
             {
-                var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == appUser.Id);
+                var vendedor = await _db.Vendedores.Include(v => v.Morada).FirstOrDefaultAsync(v => v.IdentityUserId == appUser.Id);
                 if (vendedor != null)
                 {
                     model.Nome = vendedor.Nome;
                     model.Nif = vendedor.Nif;
                     model.DadosFaturacao = vendedor.DadosFaturacao;
                     model.ImagemPerfilAtual = vendedor.ImagemPerfil;
+                    if (vendedor.Morada != null)
+                    {
+                        model.Rua = vendedor.Morada.Rua;
+                        model.Localidade = vendedor.Morada.Localidade;
+                        model.CodigoPostal = vendedor.Morada.CodigoPostal;
+                    }
                 }
             }
             else
             {
-                var comprador = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == appUser.Id);
+                var comprador = await _db.Compradores.Include(c => c.Morada).FirstOrDefaultAsync(c => c.IdentityUserId == appUser.Id);
                 if (comprador != null)
                 {
                     model.Nome = comprador.Nome;
                     model.ImagemPerfilAtual = comprador.ImagemPerfil;
+                    if (comprador.Morada != null)
+                    {
+                        model.Rua = comprador.Morada.Rua;
+                        model.Localidade = comprador.Morada.Localidade;
+                        model.CodigoPostal = comprador.Morada.CodigoPostal;
+                    }
                 }
             }
 
@@ -138,17 +200,48 @@ namespace Marketplace.Controllers
                 return View(model);
             }
 
+            // Validação extra: NIF (checksum PT)
+            if (!string.IsNullOrWhiteSpace(model.Nif) && !IsValidNif(model.Nif))
+            {
+                ModelState.AddModelError("Nif", "NIF inválido (checksum)");
+                return View(model);
+            }
+
             appUser.FullName = model.Nome;
+            if (!string.IsNullOrWhiteSpace(model.Telefone))
+            {
+                appUser.PhoneNumber = model.Telefone;
+            }
             await _userManager.UpdateAsync(appUser);
 
             if (await _userManager.IsInRoleAsync(appUser, "Vendedor"))
             {
-                var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == appUser.Id);
+                var vendedor = await _db.Vendedores.Include(v => v.Morada).FirstOrDefaultAsync(v => v.IdentityUserId == appUser.Id);
                 if (vendedor != null)
                 {
                     vendedor.Nome = model.Nome;
                     vendedor.Nif = model.Nif;
                     vendedor.DadosFaturacao = model.DadosFaturacao;
+
+                    // Morada
+                    if (!string.IsNullOrWhiteSpace(model.Rua) && !string.IsNullOrWhiteSpace(model.Localidade) && !string.IsNullOrWhiteSpace(model.CodigoPostal))
+                    {
+                        if (vendedor.Morada == null)
+                        {
+                            vendedor.Morada = new Morada
+                            {
+                                Rua = model.Rua!,
+                                Localidade = model.Localidade!,
+                                CodigoPostal = model.CodigoPostal!
+                            };
+                        }
+                        else
+                        {
+                            vendedor.Morada.Rua = model.Rua!;
+                            vendedor.Morada.Localidade = model.Localidade!;
+                            vendedor.Morada.CodigoPostal = model.CodigoPostal!;
+                        }
+                    }
 
                     if (fotoPerfil != null)
                     {
@@ -179,10 +272,29 @@ namespace Marketplace.Controllers
             }
             else
             {
-                var comprador = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == appUser.Id);
+                var comprador = await _db.Compradores.Include(c => c.Morada).FirstOrDefaultAsync(c => c.IdentityUserId == appUser.Id);
                 if (comprador != null)
                 {
                     comprador.Nome = model.Nome;
+                    // Morada
+                    if (!string.IsNullOrWhiteSpace(model.Rua) && !string.IsNullOrWhiteSpace(model.Localidade) && !string.IsNullOrWhiteSpace(model.CodigoPostal))
+                    {
+                        if (comprador.Morada == null)
+                        {
+                            comprador.Morada = new Morada
+                            {
+                                Rua = model.Rua!,
+                                Localidade = model.Localidade!,
+                                CodigoPostal = model.CodigoPostal!
+                            };
+                        }
+                        else
+                        {
+                            comprador.Morada.Rua = model.Rua!;
+                            comprador.Morada.Localidade = model.Localidade!;
+                            comprador.Morada.CodigoPostal = model.CodigoPostal!;
+                        }
+                    }
                     if (fotoPerfil != null)
                     {
                         if (ImageUploadHelper.IsValidProfileImage(fotoPerfil, out var error))
@@ -214,6 +326,24 @@ namespace Marketplace.Controllers
             await _db.SaveChangesAsync();
             TempData["PerfilSucesso"] = "Perfil atualizado com sucesso.";
             return RedirectToAction("Perfil");
+        }
+
+        private bool IsValidNif(string? nif)
+        {
+            if (string.IsNullOrWhiteSpace(nif)) return true;
+            var digits = new string(nif.Where(char.IsDigit).ToArray());
+            if (digits.Length != 9) return false;
+            var first = digits[0];
+            if ("1235689".IndexOf(first) < 0) return false;
+            int sum = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                sum += (digits[i] - '0') * (9 - i);
+            }
+            var mod11 = sum % 11;
+            var check = 11 - mod11;
+            if (check >= 10) check = 0;
+            return check == (digits[8] - '0');
         }
 
         // GET: Utilizadores/Registar
