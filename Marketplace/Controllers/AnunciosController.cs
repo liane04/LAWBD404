@@ -23,13 +23,84 @@ namespace Marketplace.Controllers
         }
 
         // GET: Anuncios
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? marcaId, int? modeloId, int? tipoId, int? combustivelId,
+            decimal? precoMax, int? anoMin, int? anoMax, int? kmMax, string? caixa, string? localizacao,
+            string? ordenacao)
         {
-            /*   codigo comentado prq estava a dar erro a fazer as views estaticas (corrigir aao fazer o resto)
-            var marketplaceContext = _context.Anuncios.Include(a => a.Categoria).Include(a => a.Combustivel).Include(a => a.Marca).Include(a => a.Modelo).Include(a => a.Tipo).Include(a => a.Vendedor);
-            return View(await marketplaceContext.ToListAsync());
-            */
-            return View();
+            // Carregar todos os anúncios com informações relacionadas
+            var query = _context.Anuncios
+                .Include(a => a.Categoria)
+                .Include(a => a.Combustivel)
+                .Include(a => a.Marca)
+                .Include(a => a.Modelo)
+                .Include(a => a.Tipo)
+                .Include(a => a.Vendedor)
+                .Include(a => a.Imagens)
+                .AsQueryable();
+
+            // Aplicar filtros
+            if (marcaId.HasValue)
+                query = query.Where(a => a.MarcaId == marcaId.Value);
+
+            if (modeloId.HasValue)
+                query = query.Where(a => a.ModeloId == modeloId.Value);
+
+            if (tipoId.HasValue)
+                query = query.Where(a => a.TipoId == tipoId.Value);
+
+            if (combustivelId.HasValue)
+                query = query.Where(a => a.CombustivelId == combustivelId.Value);
+
+            if (precoMax.HasValue)
+                query = query.Where(a => a.Preco <= precoMax.Value);
+
+            if (anoMin.HasValue)
+                query = query.Where(a => a.Ano >= anoMin.Value);
+
+            if (anoMax.HasValue)
+                query = query.Where(a => a.Ano <= anoMax.Value);
+
+            if (kmMax.HasValue)
+                query = query.Where(a => a.Quilometragem <= kmMax.Value);
+
+            if (!string.IsNullOrWhiteSpace(caixa))
+                query = query.Where(a => a.Caixa != null && a.Caixa.ToLower() == caixa.ToLower());
+
+            if (!string.IsNullOrWhiteSpace(localizacao))
+                query = query.Where(a => a.Localizacao != null && a.Localizacao.ToLower().Contains(localizacao.ToLower()));
+
+            // Aplicar ordenação
+            query = ordenacao switch
+            {
+                "preco-asc" => query.OrderBy(a => a.Preco),
+                "preco-desc" => query.OrderByDescending(a => a.Preco),
+                "ano-desc" => query.OrderByDescending(a => a.Ano),
+                "km-asc" => query.OrderBy(a => a.Quilometragem),
+                _ => query.OrderByDescending(a => a.Id) // Relevância (mais recentes primeiro)
+            };
+
+            var anuncios = await query.ToListAsync();
+
+            // Carregar dados para os filtros
+            ViewBag.Marcas = await _context.Set<Marca>().OrderBy(m => m.Nome).ToListAsync();
+            ViewBag.Modelos = await _context.Set<Modelo>().OrderBy(m => m.Nome).ToListAsync();
+            ViewBag.Tipos = await _context.Set<Tipo>().OrderBy(t => t.Nome).ToListAsync();
+            ViewBag.Combustiveis = await _context.Set<Combustivel>().OrderBy(c => c.Tipo).ToListAsync();
+
+            // Manter valores dos filtros aplicados
+            ViewBag.MarcaIdSelecionada = marcaId;
+            ViewBag.ModeloIdSelecionado = modeloId;
+            ViewBag.TipoIdSelecionado = tipoId;
+            ViewBag.CombustivelIdSelecionado = combustivelId;
+            ViewBag.PrecoMax = precoMax;
+            ViewBag.AnoMin = anoMin;
+            ViewBag.AnoMax = anoMax;
+            ViewBag.KmMax = kmMax;
+            ViewBag.Caixa = caixa;
+            ViewBag.Localizacao = localizacao;
+            ViewBag.Ordenacao = ordenacao;
+
+            return View(anuncios);
         }
 
         // GET: Anuncios/Details/5

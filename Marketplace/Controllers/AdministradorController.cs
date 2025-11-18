@@ -294,6 +294,37 @@ namespace Marketplace.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        // POST: Administrador/EliminarAnuncio/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarAnuncio(int id)
+        {
+            var anuncio = await _db.Anuncios
+                .Include(a => a.Imagens)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (anuncio == null)
+            {
+                TempData["AnuncioWarning"] = "Anúncio não encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var tituloAnuncio = anuncio.Titulo;
+
+            // Eliminar imagens relacionadas
+            if (anuncio.Imagens != null && anuncio.Imagens.Any())
+            {
+                _db.Imagens.RemoveRange(anuncio.Imagens);
+            }
+
+            // Eliminar o anúncio
+            _db.Anuncios.Remove(anuncio);
+            await _db.SaveChangesAsync();
+
+            TempData["AnuncioSuccess"] = $"Anúncio '{tituloAnuncio}' foi eliminado com sucesso.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
 
