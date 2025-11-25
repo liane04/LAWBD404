@@ -46,10 +46,19 @@
         </div>
 
         <!-- Botão de Acesso Rápido à Listagem de Anúncios -->
-        <div class="mt-4">
-            <a asp-controller="Anuncios" asp-action="Index" id="btnHeroVerAnuncios" class="btn btn-primary hero-cta-btn btn-lg px-4">
-                <i class="bi bi-grid-3x3-gap-fill me-2"></i>Ver Anúncios
-            </a>
+        <div class="mt-5">
+            <div class="d-inline-flex flex-column align-items-center">
+                <a asp-controller="Anuncios" asp-action="Index" id="btnHeroVerAnuncios" class="btn hero-cta-btn-enhanced btn-lg px-5 py-3 mb-3" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important; color: white !important; opacity: 1 !important; visibility: visible !important;">
+                    <span class="d-flex align-items-center" style="color: white !important;">
+                        <i class="bi bi-grid-3x3-gap-fill me-3 fs-4" style="color: white !important;"></i>
+                        <span class="btn-text" style="color: white !important;">
+                            <strong class="d-block fs-5" style="color: white !important;">Explorar Anúncios</strong>
+                            <small class="d-block opacity-90" style="color: white !important;">Mais de 150+ veículos disponíveis</small>
+                        </span>
+                        <i class="bi bi-arrow-right-circle-fill ms-3 fs-4 arrow-icon" style="color: white !important;"></i>
+                    </span>
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -136,6 +145,24 @@
                 const url = params.toString() ? `${baseUrl}?${params}` : baseUrl;
                 window.location.href = url;
             });
+
+            // Animação de contador para o número de veículos
+            const counterElement = document.querySelector('.hero-cta-btn-enhanced small');
+            if (counterElement) {
+                let count = 0;
+                const target = 150;
+                const duration = 2000; // 2 segundos
+                const increment = target / (duration / 16); // 60 FPS
+
+                const counter = setInterval(() => {
+                    count += increment;
+                    if (count >= target) {
+                        count = target;
+                        clearInterval(counter);
+                    }
+                    counterElement.innerHTML = `Mais de ${Math.floor(count)}+ veículos disponíveis`;
+                }, 16);
+            }
         });
     </script>
 }

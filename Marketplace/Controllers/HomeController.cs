@@ -28,5 +28,12 @@ namespace Marketplace.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [Route("Home/StatusCode/{code:int}")]
+        public IActionResult HandleStatusCode(int code)
+        {
+            ViewData["StatusCode"] = code;
+            return View("~/Views/Shared/StatusCode.cshtml");
+        }
     }
 }

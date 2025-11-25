@@ -1,8 +1,8 @@
-@*@model Marketplace.Models.Utilizador*@
+﻿@*@model Marketplace.Models.Utilizador*@
 
 @{
     ViewData["Title"] = "Criar Conta";
-    Layout = null; // Remove o layout padrão
+    Layout = null; // Remove o layout padrÃ£o
 }
 
 <!DOCTYPE html>
@@ -85,198 +85,226 @@
             <div class="col-12 col-md-11 col-lg-9 col-xl-8">
             <div class="card shadow-lg border-0" style="border-radius: 1.5rem; overflow: hidden;">
                 <div class="row g-0">
-                    <!-- Coluna da esquerda - Informação visual -->
+                    <!-- Coluna da esquerda - InformaÃ§Ã£o visual -->
                     <div class="col-lg-5 d-none d-lg-flex" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);">
                         <div class="p-5 text-white d-flex flex-column justify-content-between w-100">
                             <div>
                                 <img src="~/imagens/logo_branco.png" alt="404 Car" class="mb-4" style="height: 60px; width: auto;" />
-                                <h3 class="fw-bold mb-3">Junte-se a Nós!</h3>
-                                <p style="color: rgba(255,255,255,0.8);">Crie a sua conta e comece a explorar as melhores ofertas de veículos usados.</p>
+                                <h3 class="fw-bold mb-3">Junte-se a N&oacute;s!</h3>
+                                <p style="color: rgba(255,255,255,0.8);">Crie a sua conta e comece a explorar as melhores ofertas de veÃ­culos usados.</p>
                             </div>
                             <div>
                                 <div class="mb-3 d-flex align-items-center">
                                     <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                    <span>Registo rápido e seguro</span>
+                                    <span>Registo rÃ¡pido e seguro</span>
                                 </div>
                                 <div class="mb-3 d-flex align-items-center">
                                     <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                    <span>Acesso a milhares de anúncios</span>
+                                    <span>Acesso a milhares de anÃºncios</span>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                    <span>Notificações personalizadas</span>
+                                    <span>NotificaÃ§Ãµes personalizadas</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Coluna da direita - Formulário -->
+                    <!-- Coluna da direita - FormulÃ¡rio -->
                     <div class="col-lg-7">
                         <div class="p-4 p-lg-5">
                             <!-- Header mobile -->
                             <div class="text-center mb-4 d-lg-none">
                                 <img src="~/imagens/logo.png" alt="404 Car" class="mb-3" style="height: 50px; width: auto;" />
                                 <h3 class="fw-bold">Criar Conta</h3>
-                                <p class="text-muted">Junte-se à nossa comunidade</p>
+                                <p class="text-muted">Junte-se Ã  nossa comunidade</p>
                             </div>
 
                             <!-- Header desktop -->
                             <div class="mb-4 d-none d-lg-block">
                                 <h3 class="fw-bold mb-2">Criar Nova Conta</h3>
-                                <p class="text-muted">Preencha os dados para começar</p>
+                                <p class="text-muted">Preencha os dados para comeÃ§ar</p>
                             </div>
 
-                            <form asp-action="Registar" method="post">
-                                <div class="mb-3">
-                                    <label for="nome" class="form-label fw-semibold">
-                                        <i class="bi bi-person me-2 text-primary"></i>Nome Completo
-                                    </label>
-                                    <input type="text"
-                                           class="form-control form-control-lg"
-                                           id="nome"
-                                           name="nome"
-                                           placeholder="João Silva"
-                                           required
-                                           autocomplete="name"
-                                           style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
+                            @if (TempData["RegistarError"] is string regErr)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    @regErr
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
+                            }
 
-                                <div class="mb-3">
-                                    <label for="email" class="form-label fw-semibold">
-                                        <i class="bi bi-envelope me-2 text-primary"></i>Email
-                                    </label>
-                                    <input type="email"
-                                           class="form-control form-control-lg"
-                                           id="email"
-                                           name="email"
-                                           placeholder="seu.email@exemplo.com"
-                                           required
-                                           autocomplete="email"
-                                           style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password" class="form-label fw-semibold">
-                                            <i class="bi bi-lock me-2 text-primary"></i>Palavra-passe
+                                <form asp-action="Registar" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <div class="mb-3">
+                                        <label for="nome" class="form-label fw-semibold">
+                                            <i class="bi bi-person me-2 text-primary"></i>Nome Completo
                                         </label>
-                                        <div class="position-relative">
-                                            <input type="password"
-                                                   class="form-control form-control-lg pe-5"
-                                                   id="password"
-                                                   name="password"
-                                                   placeholder="••••••••"
-                                                   required
-                                                   autocomplete="new-password"
-                                                   minlength="6"
-                                                   style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
-                                            <button type="button"
-                                                    class="btn btn-link position-absolute text-muted p-0 toggle-password"
-                                                    data-target="password"
-                                                    style="right: 15px; top: 50%; transform: translateY(-50%); text-decoration: none;">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="confirm-password" class="form-label fw-semibold">
-                                            <i class="bi bi-lock-fill me-2 text-primary"></i>Confirmar
-                                        </label>
-                                        <div class="position-relative">
-                                            <input type="password"
-                                                   class="form-control form-control-lg pe-5"
-                                                   id="confirm-password"
-                                                   name="confirmPassword"
-                                                   placeholder="••••••••"
-                                                   required
-                                                   autocomplete="new-password"
-                                                   minlength="6"
-                                                   style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
-                                            <button type="button"
-                                                    class="btn btn-link position-absolute text-muted p-0 toggle-password"
-                                                    data-target="confirm-password"
-                                                    style="right: 15px; top: 50%; transform: translateY(-50%); text-decoration: none;">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr class="my-4">
-
-                                <div class="mb-4">
-                                    <label class="form-label fw-semibold mb-3">
-                                        <i class="bi bi-briefcase me-2 text-primary"></i>Qual o seu objetivo na plataforma?
-                                    </label>
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <div class="user-type-card">
-                                                <input class="form-check-input"
-                                                       type="radio"
-                                                       name="userType"
-                                                       id="typeComprador"
-                                                       value="comprador"
-                                                       checked>
-                                                <label class="user-type-label" for="typeComprador">
-                                                    <i class="bi bi-cart-check-fill fs-4 mb-2"></i>
-                                                    <strong>Comprador</strong>
-                                                    <small class="text-muted d-block mt-2">Quero procurar e comprar veículos</small>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="user-type-card">
-                                                <input class="form-check-input"
-                                                       type="radio"
-                                                       name="userType"
-                                                       id="typeVendedor"
-                                                       value="vendedor">
-                                                <label class="user-type-label" for="typeVendedor">
-                                                    <i class="bi bi-shop fs-4 mb-2"></i>
-                                                    <strong>Vendedor</strong>
-                                                    <small class="text-muted d-block mt-2">Quero publicar anúncios <span class="badge bg-warning text-dark">Requer validação</span></small>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-4">
-                                    <div class="d-flex align-items-center">
-                                        <input class="form-check-input me-2"
-                                               type="checkbox"
-                                               id="termsAccept"
+                                        <input type="text"
+                                               class="form-control form-control-lg"
+                                               id="nome"
+                                               name="nome"
+                                               placeholder="João Silva"
                                                required
-                                               style="width: 1.1rem; height: 1.1rem;">
-                                        <label class="form-check-label mb-0" for="termsAccept">
-                                            Aceito os <a href="#" class="text-primary">Termos e Condições</a> e a <a href="#" class="text-primary">Política de Privacidade</a>
-                                        </label>
+                                               autocomplete="name"
+                                               style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
                                     </div>
-                                </div>
 
-                                <div class="d-grid mb-3">
-                                    <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 0.75rem;">
-                                        <i class="bi bi-person-plus me-2"></i>Criar Conta
-                                    </button>
-                                </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label fw-semibold">
+                                            <i class="bi bi-envelope me-2 text-primary"></i>Email
+                                        </label>
+                                        <input type="email"
+                                               class="form-control form-control-lg"
+                                               id="email"
+                                               name="email"
+                                               placeholder="seu.email@exemplo.com"
+                                               required
+                                               autocomplete="email"
+                                               style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
+                                    </div>
 
-                                <div class="text-center position-relative my-4">
-                                    <hr class="my-0">
-                                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">ou</span>
-                                </div>
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label fw-semibold">
+                                            <i class="bi bi-person-badge me-2 text-primary"></i>Username
+                                        </label>
+                                        <input type="text"
+                                               class="form-control form-control-lg"
+                                               id="username"
+                                               name="username"
+                                               placeholder="joaosilva"
+                                               required
+                                               minlength="3"
+                                               maxlength="30"
+                                               pattern="^[a-zA-Z0-9_.-]{3,30}$"
+                                               title="3-30 caracteres; letras, números, ponto, underscore e hífen"
+                                               autocomplete="username"
+                                               style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
+                                        <div id="usernameFeedback" class="form-text"></div>
+                                    </div>
 
-                                <div class="text-center">
-                                    <p class="mb-0 text-muted">
-                                        Já tem uma conta?
-                                        <a asp-controller="Utilizadores"
-                                           asp-action="Login"
-                                           class="text-primary text-decoration-none fw-bold">
-                                            Fazer login
-                                        </a>
-                                    </p>
-                                </div>
-                            </form>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="password" class="form-label fw-semibold">
+                                                <i class="bi bi-lock me-2 text-primary"></i>Palavra-passe
+                                            </label>
+                                            <div class="position-relative">
+                                                <input type="password"
+                                                       class="form-control form-control-lg pe-5"
+                                                       id="password"
+                                                       name="password"
+                                                       placeholder="••••••••"
+                                                       required
+                                                       autocomplete="new-password"
+                                                       minlength="6"
+                                                       style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
+                                                <button type="button"
+                                                        class="btn btn-link position-absolute text-muted p-0 toggle-password"
+                                                        data-target="password"
+                                                        style="right: 15px; top: 50%; transform: translateY(-50%); text-decoration: none;">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label for="confirm-password" class="form-label fw-semibold">
+                                                <i class="bi bi-lock-fill me-2 text-primary"></i>Confirmar
+                                            </label>
+                                            <div class="position-relative">
+                                                <input type="password"
+                                                       class="form-control form-control-lg pe-5"
+                                                       id="confirm-password"
+                                                       name="confirmPassword"
+                                                       placeholder="••••••••"
+                                                       required
+                                                       autocomplete="new-password"
+                                                       minlength="6"
+                                                       style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
+                                                <button type="button"
+                                                        class="btn btn-link position-absolute text-muted p-0 toggle-password"
+                                                        data-target="confirm-password"
+                                                        style="right: 15px; top: 50%; transform: translateY(-50%); text-decoration: none;">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold mb-3">
+                                            <i class="bi bi-briefcase me-2 text-primary"></i>Qual o seu objetivo na plataforma?
+                                        </label>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="user-type-card">
+                                                    <input class="form-check-input"
+                                                           type="radio"
+                                                           name="userType"
+                                                           id="typeComprador"
+                                                           value="comprador"
+                                                           checked>
+                                                    <label class="user-type-label" for="typeComprador">
+                                                        <i class="bi bi-cart-check-fill fs-4 mb-2"></i>
+                                                        <strong>Comprador</strong>
+                                                        <small class="text-muted d-block mt-2">Quero procurar e comprar veículos</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="user-type-card">
+                                                    <input class="form-check-input"
+                                                           type="radio"
+                                                           name="userType"
+                                                           id="typeVendedor"
+                                                           value="vendedor">
+                                                    <label class="user-type-label" for="typeVendedor">
+                                                        <i class="bi bi-shop fs-4 mb-2"></i>
+                                                        <strong>Vendedor</strong>
+                                                        <small class="text-muted d-block mt-2">Quero publicar anúncios <span class="badge bg-warning text-dark">Requer validação</span></small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-center">
+                                            <input class="form-check-input me-2"
+                                                   type="checkbox"
+                                                   id="termsAccept"
+                                                   required
+                                                   style="width: 1.1rem; height: 1.1rem;">
+                                            <label class="form-check-label mb-0" for="termsAccept">
+                                                Aceito os <a href="#" class="text-primary">Termos e Condições</a> e a <a href="#" class="text-primary">Política de Privacidade</a>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid mb-3">
+                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 0.75rem;">
+                                            <i class="bi bi-person-plus me-2"></i>Criar Conta
+                                        </button>
+                                    </div>
+
+                                    <div class="text-center position-relative my-4">
+                                        <hr class="my-0">
+                                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">ou</span>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <p class="mb-0 text-muted">
+                                            Já tem uma conta?
+                                            <a asp-controller="Utilizadores"
+                                               asp-action="Login"
+                                               class="text-primary text-decoration-none fw-bold">
+                                                Fazer login
+                                            </a>
+                                        </p>
+                                    </div>
+                                </form>
                         </div>
                     </div>
                 </div>
@@ -285,7 +313,7 @@
             <!-- Link voltar -->
             <div class="text-center mt-4">
                 <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none">
-                    <i class="bi bi-arrow-left me-2"></i>Voltar à página inicial
+                    <i class="bi bi-arrow-left me-2"></i>Voltar Ã  pÃ¡gina inicial
                 </a>
             </div>
         </div>
@@ -294,7 +322,40 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Toggle password visibility
+<script>
+        // Username availability (debounced)
+        (function(){
+            const input = document.getElementById('username');
+            const fb = document.getElementById('usernameFeedback');
+            let t = null;
+            function setState(state, text){
+                if (!input) return;
+                input.classList.remove('is-valid','is-invalid');
+                if (state==='''valid'') input.classList.add('is-valid');
+                if (state==='''invalid'') input.classList.add('is-invalid');
+                if (fb) fb.textContent = text || '';
+            }
+            function check(){
+                const val = (input?.value||'').trim();
+                const re = /^[a-zA-Z0-9_.-]{3,30}$/;
+                if (!re.test(val)) { setState('',''); return; }
+                fetch(`/Utilizadores/CheckUsername?username=${encodeURIComponent(val)}`, {cache:'no-store'})
+                  .then(r=>r.json())
+                  .then(d=>{
+                      if (d && d.available){
+                          input.setCustomValidity('');
+                          setState('valid','Disponível');
+                      } else {
+                          input.setCustomValidity('Username indisponível');
+                          setState('invalid','indisponível');
+                      }
+                  }).catch(()=>{});
+            }
+            if (input){
+                input.addEventListener('input', ()=>{ clearTimeout(t); t=setTimeout(check, 300); });
+                input.addEventListener('blur', check);
+            }
+        })();
         document.querySelectorAll('.toggle-password').forEach(button => {
             button.addEventListener('click', function () {
                 const targetId = this.getAttribute('data-target');
@@ -315,14 +376,15 @@
             });
         });
 
-        // Password match validation
+        // Password match validaçãon
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirm-password');
+        const username = document.getElementById('username');
 
         function validatePassword() {
             if (password && confirmPassword) {
                 if (password.value !== confirmPassword.value) {
-                    confirmPassword.setCustomValidity('As palavras-passe não coincidem');
+                    confirmPassword.setCustomValidity('As palavras-passe nÃ£o coincidem');
                 } else {
                     confirmPassword.setCustomValidity('');
                 }
@@ -332,7 +394,20 @@
         if (password) password.addEventListener('change', validatePassword);
         if (confirmPassword) confirmPassword.addEventListener('keyup', validatePassword);
 
-        // Form validation feedback
+        // Username live validaçãon
+        if (username) {
+            username.addEventListener('input', () => {
+                const val = username.value;
+                const re = /^[a-zA-Z0-9_.-]{3,30}$/;
+                if (!re.test(val)) {
+                    username.setCustomValidity('Username invÃ¡lido (3-30; letras, nÃºmeros, ., _, -)');
+                } else {
+                    username.setCustomValidity('');
+                }
+            });
+        }
+
+        // Form validaçãon feedback
         const form = document.querySelector('form');
         if (form) {
             form.addEventListener('submit', function (e) {
@@ -364,3 +439,9 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+

@@ -1,0 +1,214 @@
+@model Marketplace.Components.ModerarAnunciosSectionVM
+
+<!-- Cabeçalho -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-1 fw-bold">
+            <i class="bi bi-megaphone-fill text-primary me-2"></i>Moderar Anúncios
+        </h3>
+        <p class="text-muted mb-0">Visualizar e gerir todos os anúncios da plataforma</p>
+    </div>
+</div>
+
+<!-- Mensagens de Feedback -->
+@if (TempData["AnuncioSuccess"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>@TempData["AnuncioSuccess"]</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["AnuncioWarning"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>@TempData["AnuncioWarning"]</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Estatísticas de Moderação -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 border-start border-warning border-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-warning bg-opacity-10 rounded-circle p-2">
+                            <i class="bi bi-hourglass-split fs-4 text-warning"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 small">Pendentes Aprovação</h6>
+                        <h4 class="mb-0 fw-bold text-warning">@Model.TotalPendentes</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 border-start border-success border-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-2">
+                            <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 small">Ativos</h6>
+                        <h4 class="mb-0 fw-bold text-success">@Model.TotalAtivos</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 border-start border-danger border-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-danger bg-opacity-10 rounded-circle p-2">
+                            <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 small">Com Denúncias</h6>
+                        <h4 class="mb-0 fw-bold text-danger">@Model.TotalDenuncias</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 border-start border-secondary border-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-secondary bg-opacity-10 rounded-circle p-2">
+                            <i class="bi bi-pause-circle-fill fs-4 text-secondary"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 small">Pausados/Removidos</h6>
+                        <h4 class="mb-0 fw-bold text-secondary">@Model.TotalPausados</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Anúncios -->
+<div class="card shadow-sm border-0 mb-5">
+    <div class="card-header bg-white border-bottom">
+        <h5 class="mb-0">
+            <i class="bi bi-card-list text-primary me-2"></i>Todos os Anúncios (@Model.Anuncios.Count)
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Anuncios != null && Model.Anuncios.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="ps-4">Anúncio</th>
+                            <th scope="col">Vendedor</th>
+                            <th scope="col">Preço</th>
+                            <th scope="col">Visualizações</th>
+                            <th scope="col" class="text-end pe-4">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var anuncio in Model.Anuncios)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(anuncio.PrimeiraImagem))
+                                        {
+                                            <img src="@anuncio.PrimeiraImagem" alt="@anuncio.Titulo"
+                                                 class="rounded me-3" style="width: 80px; height: 60px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-secondary bg-opacity-10 rounded me-3 d-flex align-items-center justify-content-center"
+                                                 style="width: 80px; height: 60px;">
+                                                <i class="bi bi-car-front fs-3 text-secondary"></i>
+                                            </div>
+                                        }
+                                        <div>
+                                            <div class="fw-bold">@anuncio.Titulo</div>
+                                            <div class="small text-muted">
+                                                @anuncio.MarcaNome @anuncio.ModeloNome
+                                                @if (anuncio.Ano.HasValue)
+                                                {
+                                                    <span>• @anuncio.Ano</span>
+                                                }
+                                                @if (anuncio.Quilometragem.HasValue)
+                                                {
+                                                    <span>• @anuncio.Quilometragem.Value.ToString("N0") km</span>
+                                                }
+                                            </div>
+                                            <div class="small text-muted">
+                                                <i class="bi bi-geo-alt me-1"></i>@(anuncio.Localizacao ?? "N/A")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">@anuncio.VendedorNome</div>
+                                    <div class="small text-muted">ID: @anuncio.VendedorId</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-primary">@anuncio.Preco.ToString("C")</div>
+                                    <div class="small text-muted">
+                                        @anuncio.TipoNome
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-eye me-2 text-muted"></i>
+                                        <span class="fw-bold">@anuncio.NVisualizacoes</span>
+                                    </div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id"
+                                           class="btn btn-info btn-sm rounded-pill px-3"
+                                           data-bs-toggle="tooltip" title="Ver detalhes"
+                                           target="_blank"
+                                           style="min-width: 80px;">
+                                            <i class="bi bi-eye-fill me-1"></i>Ver
+                                        </a>
+                                        <form method="post" asp-controller="Administrador" asp-action="EliminarAnuncio" asp-route-id="@anuncio.Id">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm rounded-pill px-3"
+                                                    data-bs-toggle="tooltip" title="Eliminar anúncio"
+                                                    onclick="return confirm('Tem certeza que deseja eliminar este anúncio? Esta ação é irreversível.');"
+                                                    style="min-width: 80px;">
+                                                <i class="bi bi-trash-fill me-1"></i>Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-inbox" style="font-size: 4rem; color: #6c757d;"></i>
+                </div>
+                <h5 class="text-muted mb-2">Nenhum anúncio encontrado</h5>
+                <p class="text-muted mb-0">A plataforma ainda não tem anúncios publicados.</p>
+            </div>
+        }
+    </div>
+</div>

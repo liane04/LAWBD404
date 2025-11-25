@@ -11,7 +11,7 @@
                     <!-- Cabeçalho do Perfil -->
                     <div class="perfil-header text-center p-4">
                         <div class="perfil-avatar-wrapper position-relative d-inline-block mb-3">
-                            <img src="https://placehold.co/120x120/2563eb/white?text=JD"
+                            <img src="@((ViewBag.ImagemPerfil as string) ?? Url.Content("~/imagens/logo.png"))"
                                  class="perfil-avatar rounded-circle"
                                  alt="Foto de Perfil">
                             <button class="perfil-avatar-edit btn btn-sm btn-primary rounded-circle position-absolute">
@@ -20,12 +20,24 @@
                         </div>
                         <h5 class="mb-2 fw-bold">João Duarte Silva</h5>
                         <div class="perfil-user-badges mb-2">
-                            <span class="perfil-badge perfil-badge-comprador" data-mockup-user-type="comprador">
-                                <i class="bi bi-person-check-fill"></i> Comprador
-                            </span>
-                            <span class="perfil-badge perfil-badge-vendedor" data-mockup-user-type="vendedor">
-                                <i class="bi bi-shop"></i> Vendedor
-                            </span>
+                            @if (User.IsInRole("Comprador"))
+                            {
+                                <span class="perfil-badge perfil-badge-comprador">
+                                    <i class="bi bi-person-check-fill"></i> Comprador
+                                </span>
+                            }
+                            @if (User.IsInRole("Vendedor"))
+                            {
+                                <span class="perfil-badge perfil-badge-vendedor">
+                                    <i class="bi bi-shop"></i> Vendedor
+                                </span>
+                            }
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <span class="perfil-badge perfil-badge-admin">
+                                    <i class="bi bi-shield-check"></i> Administrador
+                                </span>
+                            }
                         </div>
                         <small class="perfil-member-since">
                             <i class="bi bi-calendar-check me-1"></i>Membro desde Out 2025
@@ -36,42 +48,51 @@
 
                     <!-- Menu de Navegação -->
                     <div class="perfil-nav-menu">
-                        <a href="#dados-pessoais" class="perfil-nav-item active" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
+                        <a href="#dados-pessoais" class="perfil-nav-item active" data-bs-toggle="tab">
                             <i class="bi bi-person-fill"></i>
                             <span>Dados Pessoais</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
                         </a>
-                        <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
-                            <i class="bi bi-card-list"></i>
-                            <span>Meus Anúncios</span>
-                            <span class="badge bg-primary rounded-pill ms-auto">3</span>
-                        </a>
-                        <a href="#reservas-recebidas" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
-                            <i class="bi bi-bookmark-check-fill"></i>
-                            <span>Reservas Recebidas</span>
-                            <span class="badge bg-success rounded-pill ms-auto">1</span>
-                        </a>
-                        <a href="#visitas-agendadas-vendedor" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="vendedor">
-                            <i class="bi bi-calendar-event"></i>
-                            <span>Visitas Agendadas</span>
-                            <span class="badge bg-info rounded-pill ms-auto">2</span>
-                        </a>
-                        <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
-                            <i class="bi bi-heart-fill"></i>
-                            <span>Anúncios Favoritos</span>
-                            <span class="badge bg-danger rounded-pill ms-auto">2</span>
-                        </a>
-                        <a href="#minhas-reservas" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador">
-                            <i class="bi bi-bookmark-star-fill"></i>
-                            <span>Minhas Reservas</span>
-                            <span class="badge bg-warning rounded-pill ms-auto">1</span>
-                        </a>
-                        <a href="#minhas-visitas" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador">
-                            <i class="bi bi-calendar-check-fill"></i>
-                            <span>Minhas Visitas</span>
-                            <span class="badge bg-info rounded-pill ms-auto">1</span>
-                        </a>
-                        <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor,admin">
+                        @if (User.IsInRole("Vendedor"))
+                        {
+                            <a href="#meus-anuncios" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-card-list"></i>
+                                <span>Meus Anúncios</span>
+                                <span class="badge bg-primary rounded-pill ms-auto">@((ViewBag.AnunciosCount ?? 0))</span>
+                            </a>
+                            <a href="#reservas-recebidas" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-bookmark-check-fill"></i>
+                                <span>Reservas Recebidas</span>
+                                <span class="badge bg-success rounded-pill ms-auto">@((ViewBag.ReservasRecebidasCount ?? 0))</span>
+                            </a>
+                            <a href="#visitas-agendadas-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-calendar-event"></i>
+                                <span>Visitas Agendadas</span>
+                                <span class="badge bg-info rounded-pill ms-auto">@((ViewBag.VisitasAgendadasCount ?? 0))</span>
+                            </a>
+                        }
+                        @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
+                        {
+                            <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-heart-fill"></i>
+                                <span>Anúncios Favoritos</span>
+                                <span class="badge bg-danger rounded-pill ms-auto" id="favoritos-badge-nav">@(ViewBag.FavoritosCount ?? 0)</span>
+                            </a>
+                        }
+                        @if (User.IsInRole("Comprador"))
+                        {
+                            <a href="#minhas-reservas" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-bookmark-star-fill"></i>
+                                <span>Minhas Reservas</span>
+                                <span class="badge bg-warning rounded-pill ms-auto">1</span>
+                            </a>
+                            <a href="#minhas-visitas" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-calendar-check-fill"></i>
+                                <span>Minhas Visitas</span>
+                                <span class="badge bg-info rounded-pill ms-auto">1</span>
+                            </a>
+                        }
+                        <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab">
                             <i class="bi bi-gear-fill"></i>
                             <span>Definições</span>
                             <i class="bi bi-chevron-right ms-auto"></i>
@@ -92,6 +113,45 @@
 
         <!-- Conteúdo do Perfil -->
         <div class="col-lg-9">
+            <!-- Mensagens de Feedback -->
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>@TempData["Error"]</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["PerfilSucesso"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong>@TempData["PerfilSucesso"]</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @* Aviso permanente para vendedores pendentes *@
+            @if (User.IsInRole("Vendedor") && ViewBag.VendedorEstado != null && ViewBag.VendedorEstado != "Ativo")
+            {
+                <div class="alert alert-warning border-0 shadow-sm" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="alert-heading mb-2">
+                                <i class="bi bi-info-circle-fill me-2"></i>Conta Pendente de Aprovação
+                            </h5>
+                            <p class="mb-0">
+                                A sua conta de vendedor está pendente de aprovação pelo administrador.
+                                Assim que for aprovada, receberá um email de confirmação e poderá começar a criar anúncios.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+
             <div class="tab-content">
                 <!-- Aba: Dados Pessoais -->
                 <div class="tab-pane fade show active" id="dados-pessoais">
@@ -262,8 +322,10 @@
                     </div>
                 </div>
 
-                <!-- Aba: Meus Anúncios (para Vendedores) -->
-                <div class="tab-pane fade" id="meus-anuncios">
+                @if (User.IsInRole("Vendedor"))
+                {
+                    <!-- Aba: Meus Anúncios (para Vendedores) -->
+                    <div class="tab-pane fade" id="meus-anuncios">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -280,179 +342,44 @@
                     <!-- Filtros/Tabs de Estado -->
                     <div class="anuncios-filter-tabs mb-4">
                         <button class="anuncios-filter-btn active" data-filter="todos">
-                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">3</span>
+                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">5</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter="ativos">
-                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">1</span>
+                        <button class="anuncios-filter-btn" data-filter="ativo">
+                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">2</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter="pendentes">
-                            <i class="bi bi-clock-fill me-1"></i>Pendentes <span class="badge bg-warning ms-1">1</span>
+                        <button class="anuncios-filter-btn" data-filter="reservado">
+                            <i class="bi bi-bookmark-check-fill me-1"></i>Reservados <span class="badge bg-warning ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter="vendidos">
-                            <i class="bi bi-archive-fill me-1"></i>Vendidos <span class="badge bg-secondary ms-1">1</span>
+                        <button class="anuncios-filter-btn" data-filter="vendido">
+                            <i class="bi bi-check2-circle me-1"></i>Vendidos <span class="badge bg-info ms-1">2</span>
+                        </button>
+                        <button class="anuncios-filter-btn" data-filter="pausado">
+                            <i class="bi bi-pause-circle-fill me-1"></i>Pausados <span class="badge bg-secondary ms-1">0</span>
                         </button>
                     </div>
 
                     <!-- Lista de Anúncios -->
                     <div class="anuncios-list">
-                        <!-- Anúncio 1 - Ativo -->
-                        <div class="anuncio-card card shadow-sm border-0 mb-3" data-status="ativo" data-destacado="false">
-                            <div class="card-body p-3">
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-auto">
-                                        <div class="anuncio-thumbnail">
-                                            <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1">
-                                            <span class="anuncio-status-badge badge-ativo">
-                                                <i class="bi bi-check-circle-fill"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">BMW Série 1 116d</h5>
-                                            <div class="anuncio-meta">
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 20/10/2025
-                                                </span>
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-eye-fill me-1"></i>127 visualizações
-                                                </span>
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-heart-fill me-1"></i>8 favoritos
-                                                </span>
-                                            </div>
-                                            <div class="anuncio-price mt-2">
-                                                <span class="price-label">Preço:</span>
-                                                <span class="price-value">15.900€</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="anuncio-actions d-flex flex-column gap-2">
-                                            <div class="d-flex gap-2">
-                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary" title="Editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger" title="Apagar">
-                                                    <i class="bi bi-trash"></i>
-                                                </a>
-                                            </div>
-                                            <button class="btn btn-sm btn-warning btn-destacar w-100" data-bs-toggle="modal" data-bs-target="#destacarModal" title="Destacar Anúncio">
-                                                <i class="bi bi-star-fill me-1"></i>Destacar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Anúncio 2 - Pendente (Destacado) -->
-                        <div class="anuncio-card anuncio-destacado card shadow-sm border-warning mb-3" data-status="pendente" data-destacado="true">
-                            <div class="card-body p-3">
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-auto">
-                                        <div class="anuncio-thumbnail">
-                                            <img src="~/imagens/mercedezClassA.jpg" alt="Mercedes Classe A">
-                                            <span class="anuncio-status-badge badge-pendente">
-                                                <i class="bi bi-clock-fill"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">Mercedes-Benz Classe A</h5>
-                                            <div class="anuncio-meta">
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 15/10/2025
-                                                </span>
-                                                <span class="anuncio-meta-item text-warning">
-                                                    <i class="bi bi-exclamation-circle-fill me-1"></i>Aguarda aprovação
-                                                </span>
-                                                <span class="anuncio-meta-item text-warning">
-                                                    <i class="bi bi-star-fill me-1"></i>Destaque até 25/10/2025
-                                                </span>
-                                            </div>
-                                            <div class="anuncio-price mt-2">
-                                                <span class="price-label">Preço:</span>
-                                                <span class="price-value">22.500€</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="anuncio-actions d-flex flex-column gap-2">
-                                            <div class="d-flex gap-2">
-                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-primary" title="Ver Detalhes">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <a asp-controller="Anuncios" asp-action="Edit" class="btn btn-sm btn-outline-primary" title="Editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <a asp-controller="Anuncios" asp-action="Delete" class="btn btn-sm btn-outline-danger" title="Apagar">
-                                                    <i class="bi bi-trash"></i>
-                                                </a>
-                                            </div>
-                                            <button class="btn btn-sm btn-success btn-renovar-destaque w-100" title="Renovar Destaque">
-                                                <i class="bi bi-arrow-clockwise me-1"></i>Renovar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Anúncio 3 - Vendido -->
-                        <div class="anuncio-card card shadow-sm border-0 mb-3 anuncio-vendido" data-status="vendido">
-                            <div class="card-body p-3">
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-auto">
-                                        <div class="anuncio-thumbnail">
-                                            <img src="~/imagens/audiA3.jpg" alt="Audi A3">
-                                            <span class="anuncio-status-badge badge-vendido">
-                                                <i class="bi bi-check2-all"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="anuncio-info">
-                                            <h5 class="anuncio-title mb-1">Audi A3 Sportback</h5>
-                                            <div class="anuncio-meta">
-                                                <span class="anuncio-meta-item">
-                                                    <i class="bi bi-calendar3 me-1"></i>Publicado a 12/10/2025
-                                                </span>
-                                                <span class="anuncio-meta-item text-success">
-                                                    <i class="bi bi-check-circle-fill me-1"></i>Vendido em 18/10/2025
-                                                </span>
-                                            </div>
-                                            <div class="anuncio-price mt-2">
-                                                <span class="price-label">Preço de Venda:</span>
-                                                <span class="price-value">18.200€</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="anuncio-actions d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <button class="btn btn-sm btn-outline-secondary" disabled>
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-secondary" disabled>
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        @await Html.PartialAsync("_MeusAnunciosList", ViewBag.MeusAnuncios as IEnumerable<Marketplace.Models.Anuncio>)
+                        <div class="mt-3">
+                            <a asp-controller="Utilizadores" asp-action="Edit" class="btn btn-outline-primary">
+                                <i class="bi bi-person-gear me-1"></i> Editar Perfil
+                            </a>
                         </div>
                     </div>
-                </div>
 
-                <!-- Aba: Reservas Recebidas (para Vendedores) -->
-                <div class="tab-pane fade" id="reservas-recebidas">
+                    <!-- Estado Vazio (quando filtrado e sem resultados) -->
+                    <div class="anuncios-empty text-center py-5 d-none">
+                        <div class="mb-4">
+                            <i class="bi bi-inbox" style="font-size: 4rem; color: #e2e8f0;"></i>
+                        </div>
+                        <h4 class="text-muted mb-2">Nenhum anúncio encontrado</h4>
+                        <p class="text-muted mb-4">Não tem anúncios com este estado</p>
+                    </div>
+                    </div>
+
+                    <!-- Aba: Reservas Recebidas (para Vendedores) -->
+                    <div class="tab-pane fade" id="reservas-recebidas">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -615,18 +542,18 @@
                         </div>
                     </div>
 
-                    <!-- Filtros de Status -->
-                    <div class="visitas-filter-tabs mb-4">
-                        <button class="anuncios-filter-btn active" data-filter-visitas-vendedor="todas">
+                    <!-- Filtros de Status - Horizontal -->
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-outline-primary active" data-filter-visitas-vendedor="todas">
                             <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">2</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas-vendedor="pendentes">
+                        <button class="btn btn-outline-warning" data-filter-visitas-vendedor="pendentes">
                             <i class="bi bi-clock-fill me-1"></i>Aguardam Confirmação <span class="badge bg-warning ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas-vendedor="confirmadas">
+                        <button class="btn btn-outline-success" data-filter-visitas-vendedor="confirmadas">
                             <i class="bi bi-check-circle-fill me-1"></i>Confirmadas <span class="badge bg-success ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas-vendedor="concluidas">
+                        <button class="btn btn-outline-secondary" data-filter-visitas-vendedor="concluidas">
                             <i class="bi bi-archive-fill me-1"></i>Concluídas <span class="badge bg-secondary ms-1">0</span>
                         </button>
                     </div>
@@ -674,6 +601,43 @@
                                         <div class="alert alert-warning mb-3 small">
                                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                             <strong>Ação necessária:</strong> Confirme ou proponha uma data alternativa para a visita.
+                                        </div>
+
+                                        <!-- Histórico de Ações -->
+                                        <div class="mb-3">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#historicoVisitaVendedor1" aria-expanded="false">
+                                                <i class="bi bi-clock-history me-1"></i>Ver Histórico de Ações
+                                            </button>
+                                            <div class="collapse mt-2" id="historicoVisitaVendedor1">
+                                                <div class="card card-body p-3 bg-light">
+                                                    <div class="timeline-visita">
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-warning"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Aguarda sua Confirmação</small>
+                                                                        <small class="text-muted">Agora</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Necessita confirmar ou propor nova data</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-info"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Pedido Recebido</small>
+                                                                        <small class="text-muted">26/10/2025 16:35</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Maria Fernandes solicitou visita para 27/10/2025 às 10:00</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="visita-comprador-info mb-3 p-3 bg-light rounded">
@@ -760,6 +724,55 @@
                                             <strong>Visita confirmada.</strong> Prepare toda a documentação do veículo e esteja disponível no local combinado.
                                         </div>
 
+                                        <!-- Histórico de Ações -->
+                                        <div class="mb-3">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#historicoVisitaVendedor2" aria-expanded="false">
+                                                <i class="bi bi-clock-history me-1"></i>Ver Histórico de Ações
+                                            </button>
+                                            <div class="collapse mt-2" id="historicoVisitaVendedor2">
+                                                <div class="card card-body p-3 bg-light">
+                                                    <div class="timeline-visita">
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-success"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Visita Confirmada</small>
+                                                                        <small class="text-muted">25/10/2025 18:30</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Confirmou a visita para 26/10/2025 às 15:00</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-info"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Pedido Recebido</small>
+                                                                        <small class="text-muted">25/10/2025 14:20</small>
+                                                                    </div>
+                                                                    <small class="text-muted">João Silva solicitou visita</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-primary"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Notificação Enviada</small>
+                                                                        <small class="text-muted">25/10/2025 14:20</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Comprador foi notificado da confirmação</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="visita-comprador-info mb-3 p-3 bg-light rounded">
                                             <h6 class="mb-2 small fw-bold">
                                                 <i class="bi bi-person-badge me-1"></i>Interessado
@@ -809,8 +822,283 @@
                     </div>
                 </div>
 
-                <!-- Aba: Anúncios Favoritos (para Compradores) -->
-                <div class="tab-pane fade" id="favoritos">
+                <!-- Aba: Dados Bancários (para Vendedores) -->
+                <div class="tab-pane fade" id="dados-bancarios">
+                    <!-- Cabeçalho da Página -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="mb-1 fw-bold">
+                                <i class="bi bi-bank text-primary me-2"></i>Dados Bancários
+                            </h3>
+                            <p class="text-muted mb-0">Configure os seus dados de pagamento para receber transferências</p>
+                        </div>
+                    </div>
+
+                    <!-- Alert Informativo -->
+                    <div class="alert alert-info border-0 mb-4">
+                        <div class="d-flex">
+                            <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                            <div>
+                                <h6 class="mb-2 fw-bold">Porquê adicionar dados bancários?</h6>
+                                <p class="mb-2">
+                                    Quando um comprador reservar um dos seus veículos, ele precisará fazer uma transferência bancária do sinal.
+                                    Configure aqui os seus dados para facilitar o processo de pagamento.
+                                </p>
+                                <ul class="mb-0 ps-3">
+                                    <li>Receba sinais de reserva diretamente na sua conta</li>
+                                    <li>Os seus dados ficam seguros e privados</li>
+                                    <li>Partilhados apenas com compradores que reservarem</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário de Dados Bancários -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <form id="formDadosBancarios">
+                                <div class="row g-4">
+                                    <!-- NIB -->
+                                    <div class="col-12">
+                                        <label for="nib" class="form-label fw-semibold">
+                                            <i class="bi bi-credit-card-2-front text-primary me-2"></i>NIB (Número de Identificação Bancária)
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" id="nib"
+                                               placeholder="0000 0000 0000 0000 0000 000"
+                                               maxlength="25"
+                                               pattern="[0-9 ]+"
+                                               value="1234 5678 9012 3456 7890 123"
+                                               required>
+                                        <div class="form-text">
+                                            <i class="bi bi-shield-check text-success me-1"></i>
+                                            O NIB é composto por 21 dígitos
+                                        </div>
+                                    </div>
+
+                                    <!-- IBAN -->
+                                    <div class="col-12">
+                                        <label for="iban" class="form-label fw-semibold">
+                                            <i class="bi bi-bank text-primary me-2"></i>IBAN
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" id="iban"
+                                               placeholder="PT50 0000 0000 0000 0000 0000 0"
+                                               maxlength="29"
+                                               value="PT50 1234 5678 9012 3456 7890 1"
+                                               required>
+                                        <div class="form-text">
+                                            <i class="bi bi-globe me-1"></i>
+                                            Formato internacional (PT + 23 dígitos)
+                                        </div>
+                                    </div>
+
+                                    <!-- Nome do Titular -->
+                                    <div class="col-md-6">
+                                        <label for="titularConta" class="form-label fw-semibold">
+                                            <i class="bi bi-person-badge text-primary me-2"></i>Nome do Titular
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg" id="titularConta"
+                                               placeholder="Nome completo"
+                                               value="João Duarte Silva"
+                                               required>
+                                        <div class="form-text">Deve corresponder ao nome registado no banco</div>
+                                    </div>
+
+                                    <!-- Banco -->
+                                    <div class="col-md-6">
+                                        <label for="banco" class="form-label fw-semibold">
+                                            <i class="bi bi-building text-primary me-2"></i>Banco
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select form-select-lg" id="banco" required>
+                                            <option value="">Selecione o banco...</option>
+                                            <option value="caixa" selected>Caixa Geral de Depósitos</option>
+                                            <option value="millennium">Millennium BCP</option>
+                                            <option value="santander">Santander Totta</option>
+                                            <option value="novo">Novo Banco</option>
+                                            <option value="montepio">Montepio</option>
+                                            <option value="bpi">Banco BPI</option>
+                                            <option value="activobank">ActivoBank</option>
+                                            <option value="bankinter">Bankinter</option>
+                                            <option value="abanca">Abanca</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Método de Pagamento Preferencial -->
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold">
+                                            <i class="bi bi-wallet2 text-primary me-2"></i>Métodos de Pagamento Aceites
+                                        </label>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-2 payment-method-card">
+                                                    <div class="card-body">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="metodo-transferencia" checked>
+                                                            <label class="form-check-label w-100" for="metodo-transferencia">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="bi bi-bank2 fs-3 text-primary me-3"></i>
+                                                                    <div>
+                                                                        <strong class="d-block">Transferência Bancária</strong>
+                                                                        <small class="text-muted">Pagamento direto para a sua conta</small>
+                                                                    </div>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-2 payment-method-card">
+                                                    <div class="card-body">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="metodo-mbway" checked>
+                                                            <label class="form-check-label w-100" for="metodo-mbway">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="bi bi-phone fs-3 text-success me-3"></i>
+                                                                    <div>
+                                                                        <strong class="d-block">MB WAY</strong>
+                                                                        <small class="text-muted">Pagamento instantâneo via telemóvel</small>
+                                                                    </div>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-2 payment-method-card">
+                                                    <div class="card-body">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="metodo-multibanco">
+                                                            <label class="form-check-label w-100" for="metodo-multibanco">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="bi bi-receipt fs-3 text-info me-3"></i>
+                                                                    <div>
+                                                                        <strong class="d-block">Referência Multibanco</strong>
+                                                                        <small class="text-muted">Pagamento em ATM ou homebanking</small>
+                                                                    </div>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-2 payment-method-card">
+                                                    <div class="card-body">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="metodo-dinheiro">
+                                                            <label class="form-check-label w-100" for="metodo-dinheiro">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="bi bi-cash-stack fs-3 text-warning me-3"></i>
+                                                                    <div>
+                                                                        <strong class="d-block">Dinheiro</strong>
+                                                                        <small class="text-muted">Pagamento em mãos na entrega</small>
+                                                                    </div>
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- MB WAY (Condicional) -->
+                                    <div class="col-md-6" id="campo-mbway" style="display: none;">
+                                        <label for="numeroMbway" class="form-label fw-semibold">
+                                            <i class="bi bi-phone-fill text-primary me-2"></i>Número MB WAY
+                                        </label>
+                                        <div class="input-group input-group-lg">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-phone"></i>
+                                            </span>
+                                            <input type="tel" class="form-control" id="numeroMbway"
+                                                   placeholder="+351 912 345 678"
+                                                   value="+351 912 345 678">
+                                        </div>
+                                    </div>
+
+                                    <!-- Notas Adicionais -->
+                                    <div class="col-12">
+                                        <label for="notasBancarias" class="form-label fw-semibold">
+                                            <i class="bi bi-journal-text text-primary me-2"></i>Notas Adicionais
+                                        </label>
+                                        <textarea class="form-control" id="notasBancarias" rows="3"
+                                            placeholder="Informações adicionais sobre pagamentos, horários de disponibilidade, etc.">Disponível para receber pagamentos de segunda a sexta, das 9h às 18h. Preferência por MB WAY para pagamentos mais rápidos.</textarea>
+                                        <div class="form-text">Máximo 200 caracteres</div>
+                                    </div>
+
+                                    <!-- Botões de Ação -->
+                                    <div class="col-12">
+                                        <hr class="my-4">
+                                        <div class="d-flex gap-3 justify-content-end">
+                                            <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+                                                <i class="bi bi-x-circle me-2"></i>Cancelar
+                                            </button>
+                                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                                <i class="bi bi-check-circle me-2"></i>Guardar Dados Bancários
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Card de Segurança -->
+                    <div class="card border-0 bg-light mt-4">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-shield-lock-fill text-success me-2"></i>Segurança e Privacidade
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-lock-fill text-success fs-4 me-2"></i>
+                                        <div>
+                                            <strong class="d-block small">Dados Encriptados</strong>
+                                            <small class="text-muted">Informações protegidas com criptografia SSL</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-eye-slash-fill text-success fs-4 me-2"></i>
+                                        <div>
+                                            <strong class="d-block small">Acesso Restrito</strong>
+                                            <small class="text-muted">Apenas compradores confirmados veem seus dados</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-shield-check-fill text-success fs-4 me-2"></i>
+                                        <div>
+                                            <strong class="d-block small">Conformidade RGPD</strong>
+                                            <small class="text-muted">Cumprimos todas as normas de proteção de dados</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                }
+
+                <!-- Aba: Anúncios Favoritos (para Compradores e Vendedores) -->
+                @{
+                    var favoritos = ViewBag.MeusFavoritos as List<Marketplace.Models.AnuncioFav> ?? new List<Marketplace.Models.AnuncioFav>();
+                    var favoritosCount = ViewBag.FavoritosCount ?? 0;
+                    var mediaPreco = favoritos.Any() ? favoritos.Average(f => f.Anuncio.Preco) : 0;
+                }
+                @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
+                {
+                    <div class="tab-pane fade" id="favoritos">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -821,191 +1109,133 @@
                         </div>
                         <div class="favoritos-stats d-flex gap-3">
                             <div class="stat-item text-center">
-                                <div class="stat-value text-primary fw-bold">2</div>
+                                <div class="stat-value text-primary fw-bold" id="favoritos-count-perfil">@favoritosCount</div>
                                 <div class="stat-label text-muted small">Favoritos</div>
                             </div>
-                            <div class="stat-item text-center">
-                                <div class="stat-value text-success fw-bold">15.900€</div>
-                                <div class="stat-label text-muted small">Média de Preço</div>
-                            </div>
+                            @if (favoritos.Any())
+                            {
+                                <div class="stat-item text-center">
+                                    <div class="stat-value text-success fw-bold">@mediaPreco.ToString("N0")€</div>
+                                    <div class="stat-label text-muted small">Média de Preço</div>
+                                </div>
+                            }
                         </div>
                     </div>
 
-                    <!-- Filtros de Ordenação -->
-                    <div class="favoritos-sort-bar mb-4 d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-funnel text-muted"></i>
-                            <span class="text-muted small">Ordenar por:</span>
-                        </div>
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-sm btn-outline-secondary active">
-                                <i class="bi bi-clock me-1"></i>Mais Recentes
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-currency-euro me-1"></i>Menor Preço
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-currency-euro me-1"></i>Maior Preço
-                            </button>
-                        </div>
-                    </div>
+                    @if (favoritos.Any())
+                    {
+                        <!-- Grid de Favoritos -->
+                        <div class="favoritos-grid" id="favoritos-container-perfil">
+                            @foreach (var favorito in favoritos)
+                            {
+                                var anuncio = favorito.Anuncio;
+                                var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "/imagens/default-car.jpg";
+                                var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
 
-                    <!-- Grid de Favoritos -->
-                    <div class="favoritos-grid">
-                        <!-- Favorito 1 -->
-                        <div class="favorito-card card shadow-sm border-0 mb-3">
-                            <div class="card-body p-0">
-                                <div class="row g-0">
-                                    <div class="col-md-5">
-                                        <div class="favorito-image-wrapper">
-                                            <img src="~/imagens/audiA3.jpg" alt="Audi A3 Sportback" class="favorito-image">
-                                            <button class="favorito-heart-btn active" title="Remover dos favoritos">
-                                                <i class="bi bi-heart-fill"></i>
-                                            </button>
-                                            <span class="favorito-badge badge-disponivel">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Disponível
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <div class="favorito-content p-4">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <div>
-                                                    <h5 class="favorito-title mb-1">Audi A3 Sportback</h5>
-                                                    <p class="favorito-subtitle text-muted mb-0">2.0 TDI Sport | 2019</p>
-                                                </div>
-                                                <div class="favorito-price-tag">
-                                                    <span class="price-value">18.500€</span>
+                                <div class="favorito-card card shadow-sm border-0 mb-3" data-favorito-id="@favorito.Id">
+                                    <div class="card-body p-0">
+                                        <div class="row g-0">
+                                            <div class="col-md-5">
+                                                <div class="favorito-image-wrapper">
+                                                    <img src="@imagemPrincipal" alt="@anuncio.Titulo" class="favorito-image">
+                                                    <button class="favorito-heart-btn active btn-favorito"
+                                                            data-anuncio-id="@anuncio.Id"
+                                                            title="Remover dos favoritos">
+                                                        <i class="bi bi-heart-fill"></i>
+                                                    </button>
+                                                    @if (anuncio.Tipo != null)
+                                                    {
+                                                        <span class="favorito-badge badge-disponivel">
+                                                            <i class="bi bi-check-circle-fill me-1"></i>@anuncio.Tipo.Nome
+                                                        </span>
+                                                    }
                                                 </div>
                                             </div>
+                                            <div class="col-md-7">
+                                                <div class="favorito-content p-4">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <div>
+                                                            <h5 class="favorito-title mb-1">@anuncio.Titulo</h5>
+                                                            <p class="favorito-subtitle text-muted mb-0">@marcaModelo @(anuncio.Ano.HasValue ? "| " + anuncio.Ano : "")</p>
+                                                        </div>
+                                                        <div class="favorito-price-tag">
+                                                            <span class="price-value">@anuncio.Preco.ToString("N0")€</span>
+                                                        </div>
+                                                    </div>
 
-                                            <div class="favorito-specs mt-3 mb-3">
-                                                <div class="spec-item">
-                                                    <i class="bi bi-speedometer2 text-primary"></i>
-                                                    <span>85.000 km</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-fuel-pump text-primary"></i>
-                                                    <span>Diesel</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-gear text-primary"></i>
-                                                    <span>Manual</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-geo-alt text-primary"></i>
-                                                    <span>Porto</span>
-                                                </div>
-                                            </div>
+                                                    <div class="favorito-specs mt-3 mb-3">
+                                                        @if (anuncio.Quilometragem.HasValue)
+                                                        {
+                                                            <div class="spec-item">
+                                                                <i class="bi bi-speedometer2 text-primary"></i>
+                                                                <span>@anuncio.Quilometragem.Value.ToString("N0") km</span>
+                                                            </div>
+                                                        }
+                                                        @if (anuncio.Combustivel != null)
+                                                        {
+                                                            <div class="spec-item">
+                                                                <i class="bi bi-fuel-pump text-primary"></i>
+                                                                <span>@anuncio.Combustivel.Tipo</span>
+                                                            </div>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(anuncio.Caixa))
+                                                        {
+                                                            <div class="spec-item">
+                                                                <i class="bi bi-gear text-primary"></i>
+                                                                <span>@anuncio.Caixa</span>
+                                                            </div>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(anuncio.Localizacao))
+                                                        {
+                                                            <div class="spec-item">
+                                                                <i class="bi bi-geo-alt text-primary"></i>
+                                                                <span>@anuncio.Localizacao</span>
+                                                            </div>
+                                                        }
+                                                    </div>
 
-                                            <div class="favorito-meta d-flex align-items-center justify-content-end mb-3">
-                                                <span class="badge bg-success-subtle text-success">
-                                                    <i class="bi bi-arrow-down-circle me-1"></i>Preço reduzido
-                                                </span>
-                                            </div>
-
-                                            <div class="favorito-actions d-flex gap-2">
-                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary flex-grow-1">
-                                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
-                                                </a>
-                                                <button class="btn btn-outline-primary" title="Contactar Vendedor">
-                                                    <i class="bi bi-chat-dots"></i>
-                                                </button>
-                                                <button class="btn btn-outline-danger favorito-remove-btn" title="Remover dos favoritos">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
+                                                    <div class="favorito-actions d-flex gap-2">
+                                                        <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-primary flex-grow-1">
+                                                            <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                                        </a>
+                                                        <button class="btn btn-outline-primary" title="Contactar Vendedor">
+                                                            <i class="bi bi-chat-dots"></i>
+                                                        </button>
+                                                        <form asp-controller="Favoritos" asp-action="Remove" asp-route-id="@favorito.Id" method="post" class="d-inline remove-favorito-form-perfil">
+                                                            <button type="submit" class="btn btn-outline-danger" title="Remover dos favoritos">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Estado Vazio (mostrar quando não houver favoritos) -->
+                        <div class="favoritos-empty text-center py-5">
+                            <div class="mb-4">
+                                <i class="bi bi-heart" style="font-size: 4rem; color: #e2e8f0;"></i>
                             </div>
+                            <h4 class="text-muted mb-2">Ainda não tem favoritos</h4>
+                            <p class="text-muted mb-4">Guarde os anúncios que mais gosta para acesso rápido</p>
+                            <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                <i class="bi bi-search me-2"></i>Explorar Anúncios
+                            </a>
                         </div>
-
-                        <!-- Favorito 2 -->
-                        <div class="favorito-card card shadow-sm border-0 mb-3">
-                            <div class="card-body p-0">
-                                <div class="row g-0">
-                                    <div class="col-md-5">
-                                        <div class="favorito-image-wrapper">
-                                            <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1" class="favorito-image">
-                                            <button class="favorito-heart-btn active" title="Remover dos favoritos">
-                                                <i class="bi bi-heart-fill"></i>
-                                            </button>
-                                            <span class="favorito-badge badge-disponivel">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Disponível
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <div class="favorito-content p-4">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <div>
-                                                    <h5 class="favorito-title mb-1">BMW Série 1 116d</h5>
-                                                    <p class="favorito-subtitle text-muted mb-0">Advantage | 2018</p>
-                                                </div>
-                                                <div class="favorito-price-tag">
-                                                    <span class="price-value">13.300€</span>
-                                                </div>
-                                            </div>
-
-                                            <div class="favorito-specs mt-3 mb-3">
-                                                <div class="spec-item">
-                                                    <i class="bi bi-speedometer2 text-primary"></i>
-                                                    <span>120.000 km</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-fuel-pump text-primary"></i>
-                                                    <span>Diesel</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-gear text-primary"></i>
-                                                    <span>Manual</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-geo-alt text-primary"></i>
-                                                    <span>Lisboa</span>
-                                                </div>
-                                            </div>
-
-                                            <div class="favorito-meta d-flex align-items-center justify-content-end mb-3">
-                                                <span class="badge bg-primary-subtle text-primary">
-                                                    <i class="bi bi-star-fill me-1"></i>Destaque
-                                                </span>
-                                            </div>
-
-                                            <div class="favorito-actions d-flex gap-2">
-                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary flex-grow-1">
-                                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
-                                                </a>
-                                                <button class="btn btn-outline-primary" title="Contactar Vendedor">
-                                                    <i class="bi bi-chat-dots"></i>
-                                                </button>
-                                                <button class="btn btn-outline-danger favorito-remove-btn" title="Remover dos favoritos">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    }
                     </div>
-
-                    <!-- Estado Vazio (mostrar quando não houver favoritos) -->
-                    <div class="favoritos-empty text-center py-5 d-none">
-                        <div class="mb-4">
-                            <i class="bi bi-heart" style="font-size: 4rem; color: #e2e8f0;"></i>
-                        </div>
-                        <h4 class="text-muted mb-2">Ainda não tem favoritos</h4>
-                        <p class="text-muted mb-4">Guarde os anúncios que mais gosta para acesso rápido</p>
-                        <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
-                            <i class="bi bi-search me-2"></i>Explorar Anúncios
-                        </a>
-                    </div>
-                </div>
+                }
 
                 <!-- Aba: Minhas Reservas (para Compradores) -->
-                <div class="tab-pane fade" id="minhas-reservas">
+                @if (User.IsInRole("Comprador"))
+                {
+                    <div class="tab-pane fade" id="minhas-reservas">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -1135,18 +1365,18 @@
                         </div>
                     </div>
 
-                    <!-- Filtros de Status -->
-                    <div class="visitas-filter-tabs mb-4">
-                        <button class="anuncios-filter-btn active" data-filter-visitas="todas">
+                    <!-- Filtros de Status - Horizontal -->
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-outline-primary active" data-filter-visitas="todas">
                             <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas="pendentes">
+                        <button class="btn btn-outline-warning" data-filter-visitas="pendentes">
                             <i class="bi bi-clock-fill me-1"></i>Pendentes <span class="badge bg-warning ms-1">0</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas="confirmadas">
+                        <button class="btn btn-outline-success" data-filter-visitas="confirmadas">
                             <i class="bi bi-check-circle-fill me-1"></i>Confirmadas <span class="badge bg-success ms-1">1</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-visitas="concluidas">
+                        <button class="btn btn-outline-secondary" data-filter-visitas="concluidas">
                             <i class="bi bi-archive-fill me-1"></i>Concluídas <span class="badge bg-secondary ms-1">0</span>
                         </button>
                     </div>
@@ -1196,6 +1426,55 @@
                                             <strong>Visita confirmada pelo vendedor.</strong> Compareça no local na data e hora agendadas.
                                         </div>
 
+                                        <!-- Histórico de Ações -->
+                                        <div class="mb-3">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#historicoVisita1" aria-expanded="false">
+                                                <i class="bi bi-clock-history me-1"></i>Ver Histórico de Ações
+                                            </button>
+                                            <div class="collapse mt-2" id="historicoVisita1">
+                                                <div class="card card-body p-3 bg-light">
+                                                    <div class="timeline-visita">
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-success"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Visita Confirmada</small>
+                                                                        <small class="text-muted">25/10/2025 18:45</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Vendedor confirmou a visita para 26/10/2025 às 15:00</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita mb-2">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-info"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Pedido Enviado</small>
+                                                                        <small class="text-muted">25/10/2025 14:20</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Solicitou visita ao veículo</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="timeline-item-visita">
+                                                            <div class="d-flex">
+                                                                <div class="timeline-dot bg-primary"></div>
+                                                                <div class="flex-grow-1 ms-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <small class="fw-semibold">Visita Criada</small>
+                                                                        <small class="text-muted">25/10/2025 14:20</small>
+                                                                    </div>
+                                                                    <small class="text-muted">Pedido de visita registado no sistema</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="visita-vendedor mb-3 p-3 bg-light rounded">
                                             <h6 class="mb-2 small fw-bold">
                                                 <i class="bi bi-person-badge me-1"></i>Vendedor
@@ -1242,7 +1521,8 @@
                             <i class="bi bi-search me-2"></i>Explorar Anúncios
                         </a>
                     </div>
-                </div>
+                    </div>
+                }
 
                 <!-- Aba: Definições -->
                 <div class="tab-pane fade" id="definicoes">
@@ -1677,6 +1957,7 @@
             // Sistema de Filtros de Anúncios
             const filterButtons = document.querySelectorAll('.anuncios-filter-btn');
             const anuncioCards = document.querySelectorAll('.anuncio-card');
+            const anunciosEmpty = document.querySelector('.anuncios-empty');
 
             filterButtons.forEach(button => {
                 button.addEventListener('click', function () {
@@ -1689,22 +1970,28 @@
                     // Obter o filtro selecionado
                     const filter = this.getAttribute('data-filter');
 
+                    let visibleCount = 0;
+
                     // Filtrar os anúncios
                     anuncioCards.forEach(card => {
                         const status = card.getAttribute('data-status');
 
-                        if (filter === 'todos') {
+                        if (filter === 'todos' || filter === status) {
                             card.style.display = '';
-                        } else if (filter === 'ativos' && status === 'ativo') {
-                            card.style.display = '';
-                        } else if (filter === 'pendentes' && status === 'pendente') {
-                            card.style.display = '';
-                        } else if (filter === 'vendidos' && status === 'vendido') {
-                            card.style.display = '';
+                            visibleCount++;
                         } else {
                             card.style.display = 'none';
                         }
                     });
+
+                    // Mostrar mensagem se não houver resultados
+                    if (anunciosEmpty) {
+                        if (visibleCount === 0) {
+                            anunciosEmpty.classList.remove('d-none');
+                        } else {
+                            anunciosEmpty.classList.add('d-none');
+                        }
+                    }
                 });
             });
 
@@ -1955,7 +2242,22 @@
 
             visitasFilterButtons.forEach(button => {
                 button.addEventListener('click', function () {
-                    visitasFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Remove active de todos os botões
+                    visitasFilterButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        // Restaura classes originais
+                        if (btn.getAttribute('data-filter-visitas') === 'todas') {
+                            btn.className = 'btn btn-outline-primary';
+                        } else if (btn.getAttribute('data-filter-visitas') === 'pendentes') {
+                            btn.className = 'btn btn-outline-warning';
+                        } else if (btn.getAttribute('data-filter-visitas') === 'confirmadas') {
+                            btn.className = 'btn btn-outline-success';
+                        } else if (btn.getAttribute('data-filter-visitas') === 'concluidas') {
+                            btn.className = 'btn btn-outline-secondary';
+                        }
+                    });
+
+                    // Adiciona active ao botão clicado
                     this.classList.add('active');
 
                     const filter = this.getAttribute('data-filter-visitas');
@@ -2013,7 +2315,22 @@
 
             visitasVendedorFilterButtons.forEach(button => {
                 button.addEventListener('click', function () {
-                    visitasVendedorFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Remove active de todos os botões
+                    visitasVendedorFilterButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        // Restaura classes originais
+                        if (btn.getAttribute('data-filter-visitas-vendedor') === 'todas') {
+                            btn.className = 'btn btn-outline-primary';
+                        } else if (btn.getAttribute('data-filter-visitas-vendedor') === 'pendentes') {
+                            btn.className = 'btn btn-outline-warning';
+                        } else if (btn.getAttribute('data-filter-visitas-vendedor') === 'confirmadas') {
+                            btn.className = 'btn btn-outline-success';
+                        } else if (btn.getAttribute('data-filter-visitas-vendedor') === 'concluidas') {
+                            btn.className = 'btn btn-outline-secondary';
+                        }
+                    });
+
+                    // Adiciona active ao botão clicado
                     this.classList.add('active');
 
                     const filter = this.getAttribute('data-filter-visitas-vendedor');
@@ -2038,5 +2355,210 @@
 
             // O sistema de toggle de utilizador agora está no _Layout.cshtml e funciona globalmente
         });
-    </script>
+
+        // ========== Dados Bancários - MB WAY Toggle ==========
+        const metodoMbwayCheckbox = document.getElementById('metodo-mbway');
+        const campoMbway = document.getElementById('campo-mbway');
+
+        if (metodoMbwayCheckbox && campoMbway) {
+            // Mostrar/esconder campo MB WAY
+            metodoMbwayCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    campoMbway.style.display = 'block';
+                    campoMbway.querySelector('input').required = true;
+                } else {
+                    campoMbway.style.display = 'none';
+                    campoMbway.querySelector('input').required = false;
+                }
+            });
+
+            // Verificar estado inicial
+            if (metodoMbwayCheckbox.checked) {
+                campoMbway.style.display = 'block';
+                campoMbway.querySelector('input').required = true;
+            }
+        }
+
+        // ========== Formulário de Dados Bancários ==========
+        const formDadosBancarios = document.getElementById('formDadosBancarios');
+        if (formDadosBancarios) {
+            formDadosBancarios.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Validar se pelo menos um método de pagamento está selecionado
+                const metodosCheckboxes = [
+                    document.getElementById('metodo-transferencia'),
+                    document.getElementById('metodo-mbway'),
+                    document.getElementById('metodo-multibanco'),
+                    document.getElementById('metodo-dinheiro')
+                ];
+
+                const algumSelecionado = metodosCheckboxes.some(cb => cb && cb.checked);
+
+                if (!algumSelecionado) {
+                    alert('Por favor, selecione pelo menos um método de pagamento.');
+                    return;
+                }
+
+                // Simular sucesso
+                alert('Dados bancários guardados com sucesso!');
+
+                // Feedback visual
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Guardado!';
+                submitBtn.classList.remove('btn-primary');
+                submitBtn.classList.add('btn-success');
+
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.classList.remove('btn-success');
+                    submitBtn.classList.add('btn-primary');
+                }, 2000);
+            });
+        }
+
+        // ========== Hover Effect nos Payment Method Cards ==========
+        const paymentCards = document.querySelectorAll('.payment-method-card');
+        paymentCards.forEach(card => {
+            const checkbox = card.querySelector('.form-check-input');
+
+            if (checkbox) {
+                // Aplicar classe checked inicial
+                if (checkbox.checked) {
+                    card.classList.add('border-primary', 'bg-light');
+                }
+
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        card.classList.add('border-primary', 'bg-light');
+                    } else {
+                        card.classList.remove('border-primary', 'bg-light');
+                    }
+                });
+            }
+        });
+</script>
+<script>
+    // Dinamizar cabeçalho e "Dados Pessoais" sem depender do encoding do ficheiro
+    (function () {
+        // Carregar dados dinâmicos do perfil via JSON para evitar problemas de encoding no ficheiro
+        fetch('/Utilizadores/PerfilDados', { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (!data) return;
+                const nome = data.nome || '';
+                const email = data.email || '';
+                const phone = data.phone || '';
+                const rua = (data.morada && data.morada.rua) || '';
+                const localidade = (data.morada && data.morada.localidade) || '';
+                const cp = (data.morada && data.morada.codigoPostal) || '';
+
+                // Substituir o nome e avatar no header
+                try {
+                    const headerName = document.querySelector('.perfil-header h5');
+                    if (headerName && nome) headerName.textContent = nome;
+                    const avatarImg = document.querySelector('.perfil-avatar');
+                    if (avatarImg && data.imagemPerfil) avatarImg.setAttribute('src', data.imagemPerfil);
+                } catch {}
+
+                // Atualizar cartões de Dados Pessoais
+                try {
+                    const labelValuePairs = document.querySelectorAll('.perfil-info-item');
+                    labelValuePairs.forEach(it => {
+                        const label = it.querySelector('.perfil-info-label');
+                        const value = it.querySelector('.perfil-info-value');
+                        if (!label || !value) return;
+                        const text = (label.textContent || '').trim().toLowerCase();
+                        if (text.includes('nome')) {
+                            if (nome) value.textContent = nome;
+                        } else if (text.includes('email')) {
+                            if (email) value.textContent = email;
+                        } else if (text.includes('telefone') || text.includes('telemóvel') || text.includes('telemovel')) {
+                            if (phone) value.textContent = phone;
+                        } else if (text.includes('rua')) {
+                            if (rua) value.textContent = rua;
+                        } else if (text.includes('código postal') || text.includes('codigo postal')) {
+                            if (cp) value.textContent = cp;
+                        } else if (text.includes('localidade')) {
+                            if (localidade) value.textContent = localidade;
+                        }
+                    });
+                } catch {}
+            })
+            .catch(() => { /* ignora erros */ });
+    })();
+</script>
+
+<script src="~/js/favoritos.js"></script>
+<script>
+    // JavaScript adicional para manejar remoção de favoritos na página de perfil
+    document.addEventListener('DOMContentLoaded', function () {
+        // Confirmação antes de remover favorito (formulário)
+        document.querySelectorAll('.remove-favorito-form-perfil').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                if (!confirm('Tem certeza que deseja remover este anúncio dos favoritos?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Adicionar evento customizado para atualizar UI quando favorito é removido via AJAX
+        document.addEventListener('favoritoRemoved', function (e) {
+            const anuncioId = e.detail.anuncioId;
+            const card = document.querySelector(`[data-favorito-id] .btn-favorito[data-anuncio-id="${anuncioId}"]`)?.closest('[data-favorito-id]');
+
+            if (card) {
+                // Remove o card com animação
+                card.style.transition = 'opacity 0.3s ease';
+                card.style.opacity = '0';
+
+                setTimeout(() => {
+                    card.remove();
+
+                    // Atualiza contadores
+                    const remainingCards = document.querySelectorAll('#favoritos-container-perfil [data-favorito-id]').length;
+                    document.getElementById('favoritos-badge-nav').textContent = remainingCards;
+                    document.getElementById('favoritos-count-perfil').textContent = remainingCards;
+
+                    // Se não houver mais favoritos, mostra empty state
+                    if (remainingCards === 0) {
+                        const container = document.getElementById('favoritos-container-perfil');
+                        if (container) {
+                            container.innerHTML = `
+                                <div class="favoritos-empty text-center py-5">
+                                    <div class="mb-4">
+                                        <i class="bi bi-heart" style="font-size: 4rem; color: #e2e8f0;"></i>
+                                    </div>
+                                    <h4 class="text-muted mb-2">Ainda não tem favoritos</h4>
+                                    <p class="text-muted mb-4">Guarde os anúncios que mais gosta para acesso rápido</p>
+                                    <a href="/Anuncios" class="btn btn-primary">
+                                        <i class="bi bi-search me-2"></i>Explorar Anúncios
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }
+                }, 300);
+            }
+        });
+
+        // Sobrescrever função de toggle do favoritos.js para disparar evento customizado
+        const originalToggle = window.FavoritosApp?.toggleFavorito;
+        if (originalToggle && typeof originalToggle === 'function') {
+            window.FavoritosApp.toggleFavorito = async function (anuncioId, button) {
+                const result = await originalToggle.call(this, anuncioId, button);
+
+                // Disparar evento customizado quando favorito é removido
+                if (result && !result.adicionado) {
+                    document.dispatchEvent(new CustomEvent('favoritoRemoved', {
+                        detail: { anuncioId: anuncioId }
+                    }));
+                }
+
+                return result;
+            };
+        }
+    });
+</script>
 }

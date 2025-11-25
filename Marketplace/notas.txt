@@ -1,3 +1,25 @@
 Remove-Migration
 Add-Migration InitialCreate
 Update-Database -Context ApplicationDbContext 
+
+
+
+ 1. Administrador: admin@email.com / Admin123
+  2. Vendedor: vendedor@email.com / Vende123
+  3. Comprador: comprador@email.com / Compr123
+  PALAVRA PASSE GERAL: UTIL123
+
+*Se der erro no login :
+# Aplicar migração existente primeiro
+  dotnet ef database update --context ApplicationDbContext
+
+  # Criar nova migração para ImagemPerfil
+  dotnet ef migrations add AddImagemPerfilColumn --context ApplicationDbContext
+
+  # Aplicar a nova migração
+  dotnet ef database update --context ApplicationDbContext
+
+  ---------------------------------------------------------------------------------------------------------------------
+  Add-Migration AddIdentityTables -Context ApplicationDbContext
+  Drop-Database -Context ApplicationDbContext
+  Update-Database -Context ApplicationDbContext

@@ -297,6 +297,11 @@ body.home-page .navbar:not(.scrolled) {
         }
 
 /* -------------------------------------------------------------------------- */
+/* botão acesso direto listagem de veidulos                                                       */
+/* -------------------------------------------------------------------------- */
+
+
+/* -------------------------------------------------------------------------- */
 /* Cards e An�ncios                                                          */
 /* -------------------------------------------------------------------------- */
 
@@ -645,7 +650,7 @@ body.home-page .navbar:not(.scrolled) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* P�ginas de Autentica��o                                                   */
+/* Páginas de Autenticação                                                   */
 /* -------------------------------------------------------------------------- */
 
 .auth-container {
@@ -671,115 +676,6 @@ body.home-page .navbar:not(.scrolled) {
         text-align: center;
         border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
     }
-
-/* -------------------------------------------------------------------------- */
-/* MOCKUP NAVBAR - Alternar Tipo de Utilizador (Remover em Produção)        */
-/* -------------------------------------------------------------------------- */
-
-.mockup-navbar {
-    height: 46px;
-    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
-    animation: mockupPulse 3s ease-in-out infinite;
-}
-
-@keyframes mockupPulse {
-    0%, 100% {
-        border-bottom-color: #fbbf24;
-    }
-    50% {
-        border-bottom-color: #f59e0b;
-    }
-}
-
-.mockup-navbar .btn-group-sm .btn {
-    font-size: 0.75rem;
-    padding: 0.35rem 0.75rem;
-    font-weight: 600;
-    border-width: 1.5px;
-    transition: all 0.3s ease;
-}
-
-.mockup-navbar .btn-check:checked + .btn {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
-.mockup-navbar .btn-outline-light:hover {
-    background-color: #6c757d;
-    border-color: #6c757d;
-}
-
-.mockup-navbar .btn-outline-info:hover {
-    background-color: #0dcaf0;
-    border-color: #0dcaf0;
-}
-
-.mockup-navbar .btn-outline-success:hover {
-    background-color: #198754;
-    border-color: #198754;
-}
-
-.mockup-navbar .btn-outline-danger:hover {
-    background-color: #dc3545;
-    border-color: #dc3545;
-}
-
-/* Esconder elementos baseado no mockup mode por padrão */
-[data-mockup-user-type],
-[data-mockup-user-type-alt] {
-    display: none !important;
-}
-
-/* Mostrar quando o tipo corresponder ao modo ativo do body */
-body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"],
-body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"],
-body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"],
-body[data-mockup-mode="admin"] [data-mockup-user-type="admin"] {
-    display: inline-block !important;
-}
-
-/* Para elementos block específicos */
-body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"].d-block,
-body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"].d-block,
-body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"].d-block,
-body[data-mockup-mode="admin"] [data-mockup-user-type="admin"].d-block {
-    display: block !important;
-}
-
-/* Para elementos inline/flex */
-body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"].d-flex,
-body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"].d-flex,
-body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"].d-flex,
-body[data-mockup-mode="admin"] [data-mockup-user-type="admin"].d-flex {
-    display: flex !important;
-}
-
-/* Para dropdowns */
-body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"].dropdown,
-body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"].dropdown,
-body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"].dropdown,
-body[data-mockup-mode="admin"] [data-mockup-user-type="admin"].dropdown {
-    display: inline-block !important;
-}
-
-/* Para botões */
-body[data-mockup-mode="visitante"] [data-mockup-user-type="visitante"].btn,
-body[data-mockup-mode="comprador"] [data-mockup-user-type="comprador"].btn,
-body[data-mockup-mode="vendedor"] [data-mockup-user-type="vendedor"].btn,
-body[data-mockup-mode="admin"] [data-mockup-user-type="admin"].btn {
-    display: inline-block !important;
-}
-
-/* Suporte para múltiplos tipos */
-body[data-mockup-mode="vendedor"] [data-mockup-user-type-alt*="vendedor"],
-body[data-mockup-mode="admin"] [data-mockup-user-type-alt*="admin"] {
-    display: block !important;
-}
-
-/* Esconder barra de mockup em ecrãs pequenos e ajustar header */
-@media (max-width: 767.98px) {
-    header.fixed-top { top: 0 !important; }
-}
 
 /* -------------------------------------------------------------------------- */
 /* Perfil do Utilizador                                                      */
@@ -2076,6 +1972,18 @@ body[data-mockup-mode="admin"] [data-mockup-user-type-alt*="admin"] {
         background-color: rgba(37, 99, 235, 0.08);
         color: var(--primary-color);
     }
+
+/* Estilo para botão de logout no dropdown */
+.dropdown-item button[type="submit"] {
+    border: none;
+    background: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+}
 
 .dropdown-divider {
     margin: 0.5rem 0;
@@ -4547,7 +4455,6 @@ img {
 @media print {
     .navbar,
     .footer,
-    .mockup-navbar,
     .btn {
         display: none !important;
     }
@@ -4608,4 +4515,281 @@ img {
 .hero-cta-btn:active {
     transform: translateY(0);
     box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+/* -------------------------------------------------------------- */
+/* Timeline de Visitas                                           */
+/* -------------------------------------------------------------- */
+
+/* -------------------------------------------------------------- */
+/* Timeline de Visitas                                           */
+/* -------------------------------------------------------------- */
+.timeline-visita {
+    position: relative;
+}
+
+.timeline-item-visita {
+    position: relative;
+}
+
+.timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+.timeline-item-visita:not(:last-child) .timeline-dot::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 20px;
+    background-color: #e2e8f0;
+}
+
+/* Hover effect nos botões de filtro */
+.btn-outline-primary.active,
+.btn-outline-warning.active,
+.btn-outline-success.active,
+.btn-outline-secondary.active {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.btn-outline-primary.active .badge,
+.btn-outline-warning.active .badge,
+.btn-outline-success.active .badge,
+.btn-outline-secondary.active .badge {
+    background-color: white !important;
+    color: var(--primary-color) !important;
+}
+
+/* -------------------------------------------------------------- */
+/* Botão Hero Melhorado - Ver Anúncios                           */
+/* -------------------------------------------------------------- */
+.hero-cta-btn-enhanced {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 16px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 10px 40px rgba(37, 99, 235, 0.35),
+                0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.hero-cta-btn-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s;
+}
+
+.hero-cta-btn-enhanced:hover::before {
+    left: 100%;
+}
+
+.hero-cta-btn-enhanced:hover {
+    color: white !important;
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 60px rgba(37, 99, 235, 0.45),
+                0 0 0 5px rgba(37, 99, 235, 0.15);
+}
+
+.hero-cta-btn-enhanced:active {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+}
+
+.hero-cta-btn-enhanced .arrow-icon {
+    transition: transform 0.3s ease;
+}
+
+.hero-cta-btn-enhanced:hover .arrow-icon {
+    transform: translateX(8px);
+    animation: pulse-arrow 1.5s infinite;
+}
+
+@keyframes pulse-arrow {
+    0%, 100% {
+        opacity: 1;
+        transform: translateX(8px);
+    }
+    50% {
+        opacity: 0.7;
+        transform: translateX(12px);
+    }
+}
+
+.hero-cta-btn-enhanced .btn-text small {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+}
+
+/* Badges informativos */
+.badge.bg-light {
+    border: 1px solid #e2e8f0;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.badge.bg-light:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #cbd5e1;
+}
+
+/* Animação de entrada para os badges */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.badge.bg-light:nth-child(1) {
+    animation: fadeInUp 0.6s ease 0.1s both;
+}
+
+.badge.bg-light:nth-child(2) {
+    animation: fadeInUp 0.6s ease 0.2s both;
+}
+
+.badge.bg-light:nth-child(3) {
+    animation: fadeInUp 0.6s ease 0.3s both;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .hero-cta-btn-enhanced {
+        padding: 1rem 2rem !important;
+    }
+    
+    .hero-cta-btn-enhanced .btn-text strong {
+        font-size: 1.1rem !important;
+    }
+    
+    .hero-cta-btn-enhanced .btn-text small {
+        font-size: 0.7rem;
+    }
+    
+    .badge.bg-light {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.8rem !important;
+    }
+}
+
+/* Animação de Pulso Sutil no Botão */
+@keyframes gentle-pulse {
+    0% {
+        box-shadow: 0 10px 40px rgba(37, 99, 235, 0.35), 
+                    0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    50% {
+        box-shadow: 0 10px 40px rgba(37, 99, 235, 0.45), 
+                    0 0 0 6px rgba(37, 99, 235, 0.15);
+    }
+    100% {
+        box-shadow: 0 10px 40px rgba(37, 99, 235, 0.35), 
+                    0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+}
+
+.hero-cta-btn-enhanced {
+    animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+/* Efeito de brilho nos ícones dos badges */
+.badge i {
+    transition: all 0.3s ease;
+}
+
+.badge:hover i {
+    transform: scale(1.2);
+    filter: brightness(1.2);
+}
+
+.badge .bi-shield-check {
+    animation: rotate-check 2s ease-in-out infinite;
+}
+
+@keyframes rotate-check {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(360deg); }
+}
+
+.badge:hover .bi-shield-check {
+    animation-play-state: paused;
+}
+
+/* Garantir visibilidade do conteúdo do botão */
+.hero-cta-btn-enhanced span,
+.hero-cta-btn-enhanced .btn-text,
+.hero-cta-btn-enhanced strong,
+.hero-cta-btn-enhanced small,
+.hero-cta-btn-enhanced i {
+    color: white !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.hero-cta-btn-enhanced .btn-text strong {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.hero-cta-btn-enhanced .btn-text small {
+    font-size: 0.85rem !important;
+    font-weight: 400 !important;
+    opacity: 0.95 !important;
+    line-height: 1.3 !important;
+}
+
+/* Garantir que o botão funcione dentro da hero-section */
+.hero-section .hero-cta-btn-enhanced {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
+    color: #ffffff !important;
+    position: relative !important;
+    z-index: 100 !important;
+}
+
+.hero-section .hero-cta-btn-enhanced * {
+    color: #ffffff !important;
+}
+
+/* Fix para badges */
+.hero-section .badge.bg-light {
+    background-color: #f8f9fa !important;
+    color: #1e293b !important;
+    z-index: 100 !important;
+}
+
+.hero-section .badge.bg-light i {
+    opacity: 1 !important;
 }
