@@ -111,133 +111,26 @@ using (var smtpScope = app.Services.CreateScope())
     }
 }
 
-// Seed default users (admin, seller, buyer) on startup
-using (var scope = app.Services.CreateScope())
+// Seed data only in Development
+if (app.Environment.IsDevelopment())
 {
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var db = services.GetRequiredService<ApplicationDbContext>();
+    var env = services.GetRequiredService<IHostEnvironment>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+
     try
     {
         db.Database.Migrate();
-        await ReferenceDataSeeder.SeedAsync(
-            db,
-            env.ContentRootPath,
-            s => Console.WriteLine(s)
-        );  
-
-        // Ensure roles - IMPORTANTE: Criar sempre no arranque
-        string[] roles = new[] { "Administrador", "Vendedor", "Comprador" };
-        foreach (var r in roles)
-        {
-            if (!await roleManager.RoleExistsAsync(r))
-            {
-                var result = await roleManager.CreateAsync(new IdentityRole<int> { Name = r });
-                if (result.Succeeded)
-                    Console.WriteLine($"✅ Role '{r}' criado com sucesso");
-                else
-                    Console.WriteLine($"❌ Erro ao criar role '{r}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
-            }
-            else
-            {
-                Console.WriteLine($"✓ Role '{r}' já existe");
-            }
-        }
-
-        // Seed default users via Identity
-        async Task<ApplicationUser> EnsureUserAsync(string email, string username, string fullName, string role, string password)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                user = new ApplicationUser
-                {
-                    UserName = username,
-                    Email = email,
-                    FullName = fullName,
-                    EmailConfirmed = true
-                };
-                var createResult = await userManager.CreateAsync(user, password);
-                if (!createResult.Succeeded)
-                {
-                    Console.WriteLine($"❌ Erro ao criar utilizador {email}: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
-                    return null;
-                }
-
-                var roleResult = await userManager.AddToRoleAsync(user, role);
-                if (!roleResult.Succeeded)
-                {
-                    Console.WriteLine($"❌ Erro ao adicionar role {role} ao utilizador {email}: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
-                }
-                else
-                {
-                    Console.WriteLine($"✅ Utilizador {email} criado com role {role}");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"✓ Utilizador {email} já existe");
-            }
-            return user;
-        }
-
-        // Passwords fortes que cumprem os requisitos: 8+ caracteres, maiúsculas, minúsculas, dígitos
-        var adminUser = await EnsureUserAsync("admin@email.com", "admin", "Administrador", "Administrador", "Admin123");
-        var vendUser = await EnsureUserAsync("vendedor@email.com", "vendedor", "Vendedor Demo", "Vendedor", "Vende123");
-        var compUser = await EnsureUserAsync("comprador@email.com", "comprador", "Comprador Demo", "Comprador", "Compr123");
-
-        // Ensure domain entities linked to Identity users
-        if (adminUser != null && !db.Administradores.Any(a => a.IdentityUserId == adminUser.Id))
-        {
-            db.Administradores.Add(new Marketplace.Models.Administrador
-            {
-                Username = adminUser.UserName!,
-                Email = adminUser.Email!,
-                Nome = adminUser.FullName ?? "Administrador",
-                PasswordHash = "IDENTITY",
-                Estado = "Ativo",
-                Tipo = "Administrador",
-                NivelAcesso = "Total",
-                IdentityUserId = adminUser.Id
-            });
-        }
-
-        if (vendUser != null && !db.Vendedores.Any(v => v.IdentityUserId == vendUser.Id))
-        {
-            db.Vendedores.Add(new Marketplace.Models.Vendedor
-            {
-                Username = vendUser.UserName!,
-                Email = vendUser.Email!,
-                Nome = vendUser.FullName ?? "Vendedor Demo",
-                PasswordHash = "IDENTITY",
-                Estado = "Ativo",
-                Tipo = "Vendedor",
-                IdentityUserId = vendUser.Id
-            });
-        }
-
-        if (compUser != null && !db.Compradores.Any(c => c.IdentityUserId == compUser.Id))
-        {
-            db.Compradores.Add(new Marketplace.Models.Comprador
-            {
-                Username = compUser.UserName!,
-                Email = compUser.Email!,
-                Nome = compUser.FullName ?? "Comprador Demo",
-                PasswordHash = "IDENTITY",
-                Estado = "Ativo",
-                Tipo = "Comprador",
-                IdentityUserId = compUser.Id
-            });
-        }
-
-        db.SaveChanges();
-        Console.WriteLine("✅ Seeding de dados completo!");
+        await ReferenceDataSeeder.SeedAsync(db, env.ContentRootPath, Console.WriteLine);
+        await UserSeeder.SeedAsync(userManager, roleManager, db, env.ContentRootPath, Console.WriteLine);
+        await AnuncioSeeder.SeedAsync(db, env.ContentRootPath, Console.WriteLine);
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"❌ ERRO no seeding: {ex.Message}");
-        Console.WriteLine($"StackTrace: {ex.StackTrace}");
+        Console.WriteLine($"Seeding error: {ex.Message}");
         if (ex.InnerException != null)
         {
             Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
