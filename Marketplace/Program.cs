@@ -1,4 +1,4 @@
-using Marketplace.Data;
+﻿using Marketplace.Data;
 using Marketplace.Services;
 using Marketplace.Data.Seeders;
 using Marketplace.Models;
@@ -12,10 +12,7 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DbContexts
-builder.Services.AddDbContext<MarketplaceContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MarketplaceContext") ?? throw new InvalidOperationException("Connection string 'MarketplaceContext' not found.")));
-
+// DbContext (Identity + domínio)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -124,9 +121,11 @@ using (var scope = app.Services.CreateScope())
     try
     {
         db.Database.Migrate();
-        // TEMPORARIAMENTE DESATIVADO - problemas com estrutura BD
-        // await ReferenceDataSeeder.SeedAsync(db, env.ContentRootPath, s => System.Console.WriteLine(s));
-        Console.WriteLine("⏭️  ReferenceDataSeeder desativado temporariamente");
+        await ReferenceDataSeeder.SeedAsync(
+            db,
+            env.ContentRootPath,
+            s => Console.WriteLine(s)
+        );  
 
         // Ensure roles - IMPORTANTE: Criar sempre no arranque
         string[] roles = new[] { "Administrador", "Vendedor", "Comprador" };
