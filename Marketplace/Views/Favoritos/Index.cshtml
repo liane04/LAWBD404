@@ -1,0 +1,296 @@
+@model IEnumerable<Marketplace.Models.AnuncioFav>
+
+@{
+    ViewData["Title"] = "Meus Favoritos";
+}
+
+<div class="container my-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 mb-2">
+                        <i class="bi bi-heart-fill text-danger me-2"></i>
+                        Anúncios Favoritos
+                    </h1>
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-bookmark-star me-1"></i>
+                        @Model.Count() @(Model.Count() == 1 ? "anúncio guardado" : "anúncios guardados")
+                    </p>
+                </div>
+                <div>
+                    <a href="@Url.Action("Index", "Anuncios")" class="btn btn-outline-primary">
+                        <i class="bi bi-search me-1"></i>
+                        Explorar Mais Veículos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <!-- Empty State -->
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="bi bi-heart display-1 text-muted mb-3"></i>
+                    <h3 class="text-muted">Ainda não tem favoritos</h3>
+                    <p class="text-muted mb-4">
+                        Explore os veículos disponíveis e adicione aos favoritos clicando no ícone de coração
+                    </p>
+                    <a href="@Url.Action("Index", "Anuncios")" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search me-2"></i>
+                        Explorar Veículos
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Grid de Favoritos -->
+        <div class="row g-4">
+            @foreach (var favorito in Model)
+            {
+                var anuncio = favorito.Anuncio;
+                var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "/imagens/default-car.jpg";
+                var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm hover-shadow transition">
+                        <!-- Imagem -->
+                        <div class="position-relative">
+                            <a href="@Url.Action("Details", "Anuncios", new { id = anuncio.Id })">
+                                <img src="@imagemPrincipal"
+                                     class="card-img-top"
+                                     alt="@marcaModelo"
+                                     style="height: 220px; object-fit: cover;">
+                            </a>
+
+                            <!-- Botão Remover Favorito -->
+                            <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-3 rounded-circle favorito-btn"
+                                    data-anuncio-id="@anuncio.Id"
+                                    data-is-favorito="true"
+                                    title="Remover dos favoritos">
+                                <i class="bi bi-heart-fill"></i>
+                            </button>
+
+                            <!-- Badge de Tipo -->
+                            @if (anuncio.Tipo != null)
+                            {
+                                <span class="badge bg-primary position-absolute top-0 start-0 m-3">
+                                    @anuncio.Tipo.Nome
+                                </span>
+                            }
+                        </div>
+
+                        <!-- Conteúdo do Card -->
+                        <div class="card-body">
+                            <!-- Título -->
+                            <h5 class="card-title mb-2">
+                                <a href="@Url.Action("Details", "Anuncios", new { id = anuncio.Id })"
+                                   class="text-decoration-none text-dark">
+                                    @anuncio.Titulo
+                                </a>
+                            </h5>
+
+                            <!-- Marca e Modelo -->
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-car-front me-1"></i>
+                                @marcaModelo
+                            </p>
+
+                            <!-- Preço -->
+                            <h4 class="text-primary mb-3">
+                                @anuncio.Preco.ToString("C2")
+                            </h4>
+
+                            <!-- Especificações -->
+                            <div class="d-flex justify-content-between text-muted small mb-3">
+                                <span>
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    @anuncio.Ano
+                                </span>
+                                <span>
+                                    <i class="bi bi-speedometer2 me-1"></i>
+                                    @anuncio.Quilometragem?.ToString("N0") km
+                                </span>
+                                <span>
+                                    <i class="bi bi-fuel-pump me-1"></i>
+                                    @anuncio.Combustivel?.Tipo
+                                </span>
+                            </div>
+
+                            <!-- Localização -->
+                            @if (!string.IsNullOrEmpty(anuncio.Localizacao))
+                            {
+                                <p class="text-muted small mb-3">
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    @anuncio.Localizacao
+                                </p>
+                            }
+
+                            <!-- Ações -->
+                            <div class="d-flex gap-2">
+                                <a href="@Url.Action("Details", "Anuncios", new { id = anuncio.Id })"
+                                   class="btn btn-primary btn-sm flex-grow-1">
+                                    <i class="bi bi-eye me-1"></i>
+                                    Ver Detalhes
+                                </a>
+
+                                <form asp-action="Remove" asp-route-id="@favorito.Id" method="post" class="d-inline remove-favorito-form">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Remover dos favoritos">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Toggle favorito via AJAX (botão coração)
+        document.querySelectorAll('.favorito-btn').forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const anuncioId = parseInt(this.dataset.anuncioId);
+                const isFavorito = this.dataset.isFavorito === 'true';
+
+                try {
+                    const response = await fetch('@Url.Action("Toggle", "Favoritos")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        },
+                        body: JSON.stringify(anuncioId)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Remove o card da página (já que foi removido dos favoritos)
+                        this.closest('.col-md-6').remove();
+
+                        // Atualiza o contador
+                        const totalFavoritos = document.querySelectorAll('.col-md-6').length;
+                        const contadorElement = document.querySelector('.text-muted.mb-0');
+                        if (contadorElement) {
+                            contadorElement.innerHTML = `<i class="bi bi-bookmark-star me-1"></i> ${totalFavoritos} ${totalFavoritos === 1 ? 'anúncio guardado' : 'anúncios guardados'}`;
+                        }
+
+                        // Se não houver mais favoritos, mostra empty state
+                        if (totalFavoritos === 0) {
+                            location.reload();
+                        }
+
+                        // Toast de sucesso
+                        showToast(result.message, 'success');
+                    } else {
+                        showToast(result.message || 'Erro ao atualizar favorito', 'error');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    showToast('Erro ao comunicar com o servidor', 'error');
+                }
+            });
+        });
+
+        // Confirmação antes de remover (formulário)
+        document.querySelectorAll('.remove-favorito-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                if (!confirm('Tem certeza que deseja remover este anúncio dos favoritos?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toastContainer = document.querySelector('.toast-container') || createToastContainer();
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            toast.addEventListener('hidden.bs.toast', () => toast.remove());
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '9999';
+            document.body.appendChild(container);
+            return container;
+        }
+    </script>
+
+    <style>
+        .hover-shadow {
+            transition: all 0.3s ease;
+        }
+
+        .hover-shadow:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+        .favorito-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+        .favorito-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .transition {
+            transition: all 0.3s ease;
+        }
+    </style>
+
+    <script src="~/js/favoritos.js"></script>
+}

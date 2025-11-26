@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Marketplace.Models.Anuncio
+
+@{
     ViewData["Title"] = "Criar Novo Anúncio";
 }
 
@@ -40,7 +42,8 @@
 
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-9">
-            <form id="createAnuncioForm" class="create-anuncio-form">
+            <form id="createAnuncioForm" class="create-anuncio-form" asp-action="Create" asp-controller="Anuncios" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
                         <!-- Step 1: Informação Principal -->
                         <div class="form-step active" data-step="1">
                             <div class="card shadow-sm border-0 mb-4">
@@ -51,12 +54,27 @@
                                 </div>
                                 <div class="card-body p-4">
                                     <div class="row g-3">
-                                        <div class="col-12">
+                                        <div class="col-md-6">
+                                            <label asp-for="CategoriaId" class="form-label fw-semibold">
+                                                <i class="bi bi-car-front text-primary me-2"></i>Tipo de Veículo
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select asp-for="CategoriaId" asp-items="@ViewBag.CategoriaId" class="form-select form-select-lg" required>
+                                                <option value="">Selecione o tipo...</option>
+                                            </select>
+                                            <span asp-validation-for="CategoriaId" class="text-danger"></span>
+                                            <div class="form-text">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                Carro, Moto, Caravana, etc.
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
                                             <label for="titulo" class="form-label fw-semibold">
                                                 <i class="bi bi-pencil text-primary me-2"></i>Título do Anúncio
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input type="text" class="form-control form-control-lg" id="titulo"
+                                            <input type="text" class="form-control form-control-lg" id="titulo" name="Titulo"
                                                    placeholder="Ex: BMW Série 3 320d Pack M" required>
                                             <div class="form-text">
                                                 <i class="bi bi-lightbulb text-warning me-1"></i>
@@ -73,8 +91,8 @@
                                                 <span class="input-group-text">
                                                     <i class="bi bi-currency-euro"></i>
                                                 </span>
-                                                <input type="number" class="form-control" id="preco"
-                                                       placeholder="28500" required>
+                                                <input type="number" class="form-control" id="preco" name="Preco"
+                                                       placeholder="28500" step="0.01" required>
                                             </div>
                                             <div class="form-text">Preço de venda do veículo</div>
                                         </div>
@@ -90,11 +108,49 @@
                                         </div>
 
                                         <div class="col-12">
+                                            <div class="alert alert-info border-0 d-flex align-items-start">
+                                                <i class="bi bi-info-circle-fill me-3 fs-5 mt-1"></i>
+                                                <div>
+                                                    <h6 class="mb-2 fw-bold">Valor do Sinal para Reserva</h6>
+                                                    <p class="mb-2 small">
+                                                        Defina um valor de sinal (depósito) que os compradores interessados deverão pagar para reservar o veículo.
+                                                        Este valor será descontado no preço final e garante o compromisso do comprador.
+                                                    </p>
+                                                    <div class="row g-2 align-items-end mt-3">
+                                                        <div class="col-md-4">
+                                                            <label for="valorSinal" class="form-label fw-semibold mb-1">
+                                                                <i class="bi bi-bookmark-check text-primary me-1"></i>Valor do Sinal
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">
+                                                                    <i class="bi bi-currency-euro"></i>
+                                                                </span>
+                                                                <input type="number" class="form-control" id="valorSinal" name="ValorSinal"
+                                                                       placeholder="500" min="100" max="5000" value="500" step="0.01" required>
+                                                            </div>
+                                                            <div class="form-text">Mínimo: 100€ | Máximo: 5.000€</div>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <div class="d-flex gap-2 flex-wrap">
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(250)">250€</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(500)">500€</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(1000)">1.000€</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(1500)">1.500€</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setValorSinal(2000)">2.000€</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
                                             <label for="descricao" class="form-label fw-semibold">
                                                 <i class="bi bi-file-text text-primary me-2"></i>Descrição
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <textarea class="form-control" id="descricao" rows="5" required
+                                            <textarea class="form-control" id="descricao" name="Descricao" rows="5" required
                                                 placeholder="Descreva os pontos fortes do seu carro, estado geral, extras incluídos, histórico de manutenção, etc."></textarea>
                                             <div class="form-text">
                                                 <span id="charCount">0</span>/500 caracteres
@@ -118,39 +174,25 @@
                                 <div class="card-body p-4">
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label for="marca" class="form-label fw-semibold">
+                                            <label asp-for="MarcaId" class="form-label fw-semibold">
                                                 <i class="bi bi-award text-primary me-2"></i>Marca
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select id="marca" class="form-select form-select-lg" required>
-                                                <option value="" selected disabled>Selecione a marca...</option>
-                                                <option value="audi">Audi</option>
-                                                <option value="bmw">BMW</option>
-                                                <option value="mercedes">Mercedes-Benz</option>
-                                                <option value="vw">Volkswagen</option>
-                                                <option value="renault">Renault</option>
-                                                <option value="peugeot">Peugeot</option>
-                                                <option value="citroen">Citroën</option>
-                                                <option value="ford">Ford</option>
-                                                <option value="opel">Opel</option>
-                                                <option value="toyota">Toyota</option>
-                                                <option value="nissan">Nissan</option>
-                                                <option value="hyundai">Hyundai</option>
-                                                <option value="kia">Kia</option>
-                                                <option value="seat">Seat</option>
-                                                <option value="skoda">Skoda</option>
-                                                <option value="volvo">Volvo</option>
-                                                <option value="outro">Outra</option>
+                                            <select asp-for="MarcaId" asp-items="@ViewBag.MarcaId" id="marca" class="form-select form-select-lg" required>
+                                                <option value="">Selecione a marca...</option>
                                             </select>
+                                            <span asp-validation-for="MarcaId" class="text-danger"></span>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label for="modelo" class="form-label fw-semibold">
+                                            <label asp-for="ModeloId" class="form-label fw-semibold">
                                                 <i class="bi bi-tag text-primary me-2"></i>Modelo
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input type="text" class="form-control form-control-lg" id="modelo"
-                                                   placeholder="Ex: Série 3" required>
+                                            <select asp-for="ModeloId" id="modelo" class="form-select form-select-lg" required disabled>
+                                                <option value="">Selecione primeiro a marca...</option>
+                                            </select>
+                                            <span asp-validation-for="ModeloId" class="text-danger"></span>
                                         </div>
 
                                         <div class="col-md-4">
@@ -158,7 +200,7 @@
                                                 <i class="bi bi-calendar-event text-primary me-2"></i>Ano de Registo
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input type="number" class="form-control form-control-lg" id="ano"
+                                            <input type="number" class="form-control form-control-lg" id="ano" name="Ano"
                                                    placeholder="2019" min="1980" max="2025" required>
                                         </div>
 
@@ -167,7 +209,7 @@
                                                 <i class="bi bi-speedometer2 text-primary me-2"></i>Quilómetros
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input type="number" class="form-control form-control-lg" id="kms"
+                                            <input type="number" class="form-control form-control-lg" id="kms" name="Quilometragem"
                                                    placeholder="98000" required>
                                             <div class="form-text">Em quilómetros (km)</div>
                                         </div>
@@ -176,24 +218,28 @@
                                             <label for="potencia" class="form-label fw-semibold">
                                                 <i class="bi bi-lightning-charge text-primary me-2"></i>Potência (cv)
                                             </label>
-                                            <input type="number" class="form-control form-control-lg" id="potencia"
+                                            <input type="number" class="form-control form-control-lg" id="potencia" name="Potencia"
                                                    placeholder="190">
                                         </div>
 
+                                        <div class="col-md-4">
+                                            <label for="cilindrada" class="form-label fw-semibold">
+                                                <i class="bi bi-speedometer text-primary me-2"></i>Cilindrada (cm³)
+                                            </label>
+                                            <input type="number" class="form-control form-control-lg" id="cilindrada" name="Cilindrada"
+                                                   placeholder="1995">
+                                            <div class="form-text">Em centímetros cúbicos</div>
+                                        </div>
+
                                         <div class="col-md-6">
-                                            <label for="combustivel" class="form-label fw-semibold">
+                                            <label asp-for="CombustivelId" class="form-label fw-semibold">
                                                 <i class="bi bi-fuel-pump text-primary me-2"></i>Combustível
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select id="combustivel" class="form-select form-select-lg" required>
-                                                <option value="" selected disabled>Selecione...</option>
-                                                <option value="diesel">Diesel</option>
-                                                <option value="gasolina">Gasolina</option>
-                                                <option value="eletrico">Elétrico</option>
-                                                <option value="hibrido">Híbrido (Gasolina)</option>
-                                                <option value="hibrido_diesel">Híbrido (Diesel)</option>
-                                                <option value="gas">GPL/GNV</option>
+                                            <select asp-for="CombustivelId" asp-items="@ViewBag.CombustivelId" id="combustivel" class="form-select form-select-lg" required>
+                                                <option value="">Selecione...</option>
                                             </select>
+                                            <span asp-validation-for="CombustivelId" class="text-danger"></span>
                                         </div>
 
                                         <div class="col-md-6">
@@ -201,11 +247,11 @@
                                                 <i class="bi bi-gear text-primary me-2"></i>Transmissão
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select id="transmissao" class="form-select form-select-lg" required>
-                                                <option value="" selected disabled>Selecione...</option>
-                                                <option value="manual">Manual</option>
-                                                <option value="automatica">Automática</option>
-                                                <option value="semiautomatica">Semi-automática</option>
+                                            <select id="transmissao" name="Caixa" class="form-select form-select-lg" required>
+                                                <option value="">Selecione...</option>
+                                                <option value="Manual">Manual</option>
+                                                <option value="Automática">Automática</option>
+                                                <option value="Semi-automática">Semi-automática</option>
                                             </select>
                                         </div>
 
@@ -213,7 +259,7 @@
                                             <label for="portas" class="form-label fw-semibold">
                                                 <i class="bi bi-door-open text-primary me-2"></i>Número de Portas
                                             </label>
-                                            <select id="portas" class="form-select form-select-lg">
+                                            <select id="portas" name="Portas" class="form-select form-select-lg">
                                                 <option value="">Selecione...</option>
                                                 <option value="2">2/3 portas</option>
                                                 <option value="4">4/5 portas</option>
@@ -224,7 +270,7 @@
                                             <label for="lugares" class="form-label fw-semibold">
                                                 <i class="bi bi-people text-primary me-2"></i>Lugares
                                             </label>
-                                            <input type="number" class="form-control form-control-lg" id="lugares"
+                                            <input type="number" class="form-control form-control-lg" id="lugares" name="Lugares"
                                                    placeholder="5" min="2" max="9">
                                         </div>
 
@@ -232,46 +278,157 @@
                                             <label for="cor" class="form-label fw-semibold">
                                                 <i class="bi bi-palette text-primary me-2"></i>Cor
                                             </label>
-                                            <input type="text" class="form-control form-control-lg" id="cor"
+                                            <input type="text" class="form-control form-control-lg" id="cor" name="Cor"
                                                    placeholder="Ex: Preto">
                                         </div>
 
+                                        <div class="col-md-6">
+                                            <label for="localizacao" class="form-label fw-semibold">
+                                                <i class="bi bi-geo-alt text-primary me-2"></i>Localização
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control form-control-lg" id="localizacao" name="Localizacao"
+                                                   placeholder="Ex: Lisboa, Porto, Esposende..." required>
+                                            <div class="form-text">Cidade ou região onde o veículo se encontra</div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label asp-for="TipoId" class="form-label fw-semibold">
+                                                <i class="bi bi-grid text-primary me-2"></i>Categoria
+                                            </label>
+                                            <select asp-for="TipoId" asp-items="@ViewBag.TipoId" id="tipoSelect" class="form-select form-select-lg" readonly>
+                                                <option value="">Preenchido automaticamente...</option>
+                                            </select>
+                                            <span asp-validation-for="TipoId" class="text-danger"></span>
+                                            <div class="form-text">
+                                                <i class="bi bi-magic me-1 text-success"></i>
+                                                Preenchido automaticamente ao selecionar o modelo (SUV, Ligeiro, etc.)
+                                            </div>
+                                        </div>
+
                                         <div class="col-12">
-                                            <label class="form-label fw-semibold">
+                                            <label class="form-label fw-semibold mb-3">
                                                 <i class="bi bi-star text-primary me-2"></i>Extras e Equipamento
                                             </label>
-                                            <div class="extras-grid">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra1">
-                                                    <label class="form-check-label" for="extra1">Ar Condicionado</label>
+
+                                            <!-- Segurança -->
+                                            <div class="mb-4">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="bi bi-shield-check me-2"></i>Segurança
+                                                </h6>
+                                                <div class="extras-grid">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_abs" name="extras" value="ABS">
+                                                        <label class="form-check-label" for="extra_abs">ABS</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_airbags" name="extras" value="Airbags">
+                                                        <label class="form-check-label" for="extra_airbags">Airbags</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_estabilidade" name="extras" value="Controlo de Estabilidade">
+                                                        <label class="form-check-label" for="extra_estabilidade">Controlo de Estabilidade</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_sensores" name="extras" value="Sensores Estacionamento">
+                                                        <label class="form-check-label" for="extra_sensores">Sensores Estacionamento</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_camera" name="extras" value="Câmara Traseira">
+                                                        <label class="form-check-label" for="extra_camera">Câmara Traseira</label>
+                                                    </div>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra2">
-                                                    <label class="form-check-label" for="extra2">GPS</label>
+                                            </div>
+
+                                            <!-- Conforto -->
+                                            <div class="mb-4">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="bi bi-lightning-charge me-2"></i>Conforto
+                                                </h6>
+                                                <div class="extras-grid">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_ac" name="extras" value="Ar Condicionado Automático">
+                                                        <label class="form-check-label" for="extra_ac">Ar Condicionado Automático</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_bancos_pele" name="extras" value="Bancos em Pele/Alcântara">
+                                                        <label class="form-check-label" for="extra_bancos_pele">Bancos em Pele/Alcântara</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_bancos_aquecidos" name="extras" value="Bancos Aquecidos">
+                                                        <label class="form-check-label" for="extra_bancos_aquecidos">Bancos Aquecidos</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_volante" name="extras" value="Volante Multifunções">
+                                                        <label class="form-check-label" for="extra_volante">Volante Multifunções</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_cruise" name="extras" value="Cruise Control">
+                                                        <label class="form-check-label" for="extra_cruise">Cruise Control</label>
+                                                    </div>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra3">
-                                                    <label class="form-check-label" for="extra3">Bancos em Pele</label>
+                                            </div>
+
+                                            <!-- Multimédia -->
+                                            <div class="mb-4">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="bi bi-phone me-2"></i>Multimédia
+                                                </h6>
+                                                <div class="extras-grid">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_gps" name="extras" value="Sistema Navegação GPS">
+                                                        <label class="form-check-label" for="extra_gps">Sistema Navegação GPS</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_bluetooth" name="extras" value="Bluetooth">
+                                                        <label class="form-check-label" for="extra_bluetooth">Bluetooth</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_ecra" name="extras" value="Ecrã Tátil">
+                                                        <label class="form-check-label" for="extra_ecra">Ecrã Tátil</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_usb" name="extras" value="USB/AUX">
+                                                        <label class="form-check-label" for="extra_usb">USB/AUX</label>
+                                                    </div>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra4">
-                                                    <label class="form-check-label" for="extra4">Jantes de Liga Leve</label>
+                                            </div>
+
+                                            <!-- Outros -->
+                                            <div class="mb-4">
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="bi bi-tools me-2"></i>Outros
+                                                </h6>
+                                                <div class="extras-grid">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_jantes" name="extras" value="Jantes Liga Leve 18&quot;">
+                                                        <label class="form-check-label" for="extra_jantes">Jantes Liga Leve</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_farois" name="extras" value="Faróis LED">
+                                                        <label class="form-check-label" for="extra_farois">Faróis LED</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_pack" name="extras" value="Pack M Sport">
+                                                        <label class="form-check-label" for="extra_pack">Pack Desportivo</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="extra_vidros" name="extras" value="Vidros Escurecidos">
+                                                        <label class="form-check-label" for="extra_vidros">Vidros Escurecidos</label>
+                                                    </div>
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra5">
-                                                    <label class="form-check-label" for="extra5">Sensores de Estacionamento</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra6">
-                                                    <label class="form-check-label" for="extra6">Câmara de Marcha Atrás</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra7">
-                                                    <label class="form-check-label" for="extra7">Bluetooth</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="extra8">
-                                                    <label class="form-check-label" for="extra8">Cruise Control</label>
+                                            </div>
+
+                                            <!-- Outros Extras Personalizados -->
+                                            <div class="mb-3">
+                                                <label for="outrosExtras" class="form-label fw-semibold">
+                                                    <i class="bi bi-pencil-square text-primary me-2"></i>Outros Extras (opcional)
+                                                </label>
+                                                <textarea class="form-control" id="outrosExtras" rows="3"
+                                                    placeholder="Descreva outros extras que o seu veículo possui (ex: Teto panorâmico, bancos elétricos, sistema de som premium, etc.)"></textarea>
+                                                <div class="form-text">
+                                                    <i class="bi bi-info-circle me-1"></i>
+                                                    Adicione extras adicionais que não estejam listados acima
                                                 </div>
                                             </div>
                                         </div>
@@ -301,8 +458,8 @@
                                             <span class="text-danger">*</span>
                                         </label>
                                         <div class="upload-zone" id="uploadZone">
-                                            <input class="form-control d-none" type="file" id="imagens"
-                                                   multiple accept="image/*">
+                                            <input class="form-control d-none" type="file" id="imagens" name="imagens"
+                                                   multiple accept="image/jpeg,image/png,image/webp">
                                             <div class="upload-placeholder">
                                                 <i class="bi bi-cloud-arrow-up"></i>
                                                 <h5>Arraste as fotos aqui</h5>
@@ -315,7 +472,7 @@
                                         </div>
                                         <div class="form-text">
                                             <i class="bi bi-check-circle text-success me-1"></i>
-                                            Formatos aceites: JPG, PNG. Tamanho máximo: 5MB por foto. Máximo: 10 fotos.
+                                            Formatos aceites: JPG, PNG, WebP. Tamanho máximo: 10MB por foto. Máximo: 20 fotos.
                                         </div>
                                     </div>
 
@@ -444,6 +601,7 @@
             const reviewContent = document.getElementById('reviewContent');
             const titulo = document.getElementById('titulo').value;
             const preco = document.getElementById('preco').value;
+            const valorSinal = document.getElementById('valorSinal').value;
             const marca = document.getElementById('marca').value;
             const modelo = document.getElementById('modelo').value;
             const ano = document.getElementById('ano').value;
@@ -454,6 +612,10 @@
                     <div class="col-12">
                         <h5 class="fw-bold">${titulo}</h5>
                         <h3 class="text-primary">${preco}€</h3>
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-bookmark-check text-primary me-1"></i>
+                            Sinal para reserva: <strong class="text-primary">${valorSinal}€</strong>
+                        </p>
                     </div>
                     <div class="col-md-6">
                         <strong>Marca:</strong> ${marca}
@@ -471,6 +633,11 @@
             `;
         }
 
+        // Função para definir rapidamente o valor do sinal
+        function setValorSinal(valor) {
+            document.getElementById('valorSinal').value = valor;
+        }
+
         // Contador de caracteres
         const descricao = document.getElementById('descricao');
         const charCount = document.getElementById('charCount');
@@ -483,8 +650,12 @@
         const uploadZone = document.getElementById('uploadZone');
         const imageInput = document.getElementById('imagens');
         const imagePreview = document.getElementById('imagePreview');
+        let selectedFiles = new DataTransfer();
 
-        uploadZone.addEventListener('click', () => imageInput.click());
+        uploadZone.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-remove')) return; // Não abrir file picker se clicar em remover
+            imageInput.click();
+        });
 
         uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -498,7 +669,6 @@
         uploadZone.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadZone.classList.remove('dragover');
-            imageInput.files = e.dataTransfer.files;
             handleFiles(e.dataTransfer.files);
         });
 
@@ -506,19 +676,34 @@
             handleFiles(e.target.files);
         });
 
-        function handleFiles(files) {
+        function handleFiles(newFiles) {
+            // Adicionar novos ficheiros ao DataTransfer
+            for (let i = 0; i < newFiles.length && selectedFiles.files.length < 20; i++) {
+                selectedFiles.items.add(newFiles[i]);
+            }
+
+            // Atualizar o input
+            imageInput.files = selectedFiles.files;
+
+            // Atualizar preview
+            updatePreview();
+        }
+
+        function updatePreview() {
             imagePreview.innerHTML = '';
 
-            for (let i = 0; i < files.length && i < 10; i++) {
+            const files = selectedFiles.files;
+            for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const reader = new FileReader();
 
                 reader.onload = (e) => {
                     const div = document.createElement('div');
                     div.className = 'image-preview-item';
+                    div.dataset.index = i;
                     div.innerHTML = `
                         <img src="${e.target.result}" alt="Preview">
-                        <button type="button" class="btn-remove" onclick="removeImage(this)">
+                        <button type="button" class="btn-remove" onclick="removeImage(${i})">
                             <i class="bi bi-x-circle-fill"></i>
                         </button>
                         ${i === 0 ? '<span class="badge bg-primary">Principal</span>' : ''}
@@ -528,10 +713,101 @@
 
                 reader.readAsDataURL(file);
             }
+
+            // Mostrar/ocultar zona de upload
+            if (files.length > 0) {
+                uploadZone.querySelector('.upload-placeholder').style.display = 'none';
+            } else {
+                uploadZone.querySelector('.upload-placeholder').style.display = 'block';
+            }
         }
 
-        function removeImage(btn) {
-            btn.closest('.image-preview-item').remove();
+        window.removeImage = function(index) {
+            // Criar novo DataTransfer sem o ficheiro removido
+            const newDataTransfer = new DataTransfer();
+            const files = Array.from(selectedFiles.files);
+
+            files.forEach((file, i) => {
+                if (i !== index) {
+                    newDataTransfer.items.add(file);
+                }
+            });
+
+            selectedFiles = newDataTransfer;
+            imageInput.files = selectedFiles.files;
+            updatePreview();
+        };
+
+        // Filtrar modelos por marca (cascading dropdown)
+        const marcaSelect = document.querySelector('select[name="MarcaId"]');
+        const modeloSelect = document.querySelector('select[name="ModeloId"]');
+        const tipoSelect = document.querySelector('select[name="TipoId"]');
+
+        if (marcaSelect && modeloSelect) {
+            marcaSelect.addEventListener('change', async function() {
+                const marcaId = this.value;
+
+                // Limpar o select de modelos
+                modeloSelect.innerHTML = '<option value="">Selecione o modelo...</option>';
+                modeloSelect.disabled = !marcaId;
+
+                // Limpar o tipo também
+                if (tipoSelect) {
+                    tipoSelect.value = '';
+                }
+
+                if (!marcaId) return;
+
+                try {
+                    const response = await fetch(`/Anuncios/GetModelosByMarca?marcaId=${marcaId}`);
+                    if (response.ok) {
+                        const modelos = await response.json();
+
+                        modelos.forEach(modelo => {
+                            const option = document.createElement('option');
+                            option.value = modelo.id;
+                            option.textContent = modelo.nome;
+                            modeloSelect.appendChild(option);
+                        });
+
+                        // Animação visual
+                        modeloSelect.style.backgroundColor = '#d4edda';
+                        setTimeout(() => {
+                            modeloSelect.style.backgroundColor = '';
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar modelos:', error);
+                }
+            });
+        }
+
+        // Auto-preencher Tipo de Veículo quando Modelo é selecionado
+        if (modeloSelect && tipoSelect) {
+            modeloSelect.addEventListener('change', async function() {
+                const modeloId = this.value;
+
+                if (!modeloId) {
+                    tipoSelect.value = '';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/Anuncios/GetModeloTipo?modeloId=${modeloId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        tipoSelect.value = data.tipoId;
+
+                        // Animação visual de confirmação
+                        tipoSelect.style.backgroundColor = '#d4edda';
+                        setTimeout(() => {
+                            tipoSelect.style.backgroundColor = '';
+                        }, 1000);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter tipo do modelo:', error);
+                }
+            });
         }
 
         // Inicializar

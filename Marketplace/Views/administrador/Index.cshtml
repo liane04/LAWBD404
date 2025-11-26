@@ -52,466 +52,1198 @@
 
             <!-- Secção Dashboard (Conteúdo alterado) -->
             <div id="dashboard-content" class="admin-content-section">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Bem-vindo, Administrador!</h3>
-                        <p class="lead">Selecione uma opção no menu à esquerda para começar a gerir a plataforma.</p>
+                <!-- Cabeçalho da Dashboard -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="mb-1 fw-bold">
+                            <i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard Administrativa
+                        </h3>
+                        <p class="text-muted mb-0">Visão geral do Marketplace DriveDeal</p>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted d-block">Última atualização</small>
+                        <strong class="text-primary">24/10/2025 14:30</strong>
+                    </div>
+                </div>
 
-                        <!-- Estatísticas Movidas para o Dashboard -->
-                        <div class="row mt-4 mb-4">
-                            <div class="col-md-4">
-                                <div class="card shadow-sm dashboard-stat-card stat-primary">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-title fs-6 mb-0">Utilizadores Ativos</h5>
-                                            <div class="display-6 fw-bold">1,254</div>
-                                        </div>
-                                        <i class="bi bi-people-fill fs-2 text-primary opacity-25"></i>
+                <!-- Métricas Principais - Linha 1 -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 h-100 dashboard-stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="stat-icon bg-primary-subtle text-primary rounded-3 p-3">
+                                        <i class="bi bi-cart-check-fill fs-4"></i>
                                     </div>
+                                    <span class="badge bg-success-subtle text-success">
+                                        <i class="bi bi-arrow-up"></i> 12%
+                                    </span>
                                 </div>
+                                <h6 class="text-muted mb-1 fw-normal">Compradores</h6>
+                                <h3 class="mb-0 fw-bold">847</h3>
+                                <small class="text-muted">+94 este mês</small>
                             </div>
-                            <div class="col-md-4">
-                                <div class="card shadow-sm dashboard-stat-card stat-success">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-title fs-6 mb-0">Anúncios Ativos</h5>
-                                            <div class="display-6 fw-bold">832</div>
-                                        </div>
-                                        <i class="bi bi-megaphone-fill fs-2 text-success opacity-25"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 h-100 dashboard-stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="stat-icon bg-info-subtle text-info rounded-3 p-3">
+                                        <i class="bi bi-shop-window fs-4"></i>
                                     </div>
+                                    <span class="badge bg-success-subtle text-success">
+                                        <i class="bi bi-arrow-up"></i> 8%
+                                    </span>
                                 </div>
+                                <h6 class="text-muted mb-1 fw-normal">Vendedores</h6>
+                                <h3 class="mb-0 fw-bold">407</h3>
+                                <small class="text-muted">+31 este mês</small>
                             </div>
-                            <div class="col-md-4">
-                                <div class="card shadow-sm dashboard-stat-card stat-warning">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-title fs-6 mb-0">A Validar</h5>
-                                            <div class="display-6 fw-bold">12</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 h-100 dashboard-stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="stat-icon bg-success-subtle text-success rounded-3 p-3">
+                                        <i class="bi bi-megaphone-fill fs-4"></i>
+                                    </div>
+                                    <span class="badge bg-success-subtle text-success">
+                                        <i class="bi bi-arrow-up"></i> 15%
+                                    </span>
+                                </div>
+                                <h6 class="text-muted mb-1 fw-normal">Anúncios Ativos</h6>
+                                <h3 class="mb-0 fw-bold">832</h3>
+                                <small class="text-muted">+112 este mês</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 h-100 dashboard-stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="stat-icon bg-warning-subtle text-warning rounded-3 p-3">
+                                        <i class="bi bi-currency-euro fs-4"></i>
+                                    </div>
+                                    <span class="badge bg-success-subtle text-success">
+                                        <i class="bi bi-arrow-up"></i> 23%
+                                    </span>
+                                </div>
+                                <h6 class="text-muted mb-1 fw-normal">Vendas no Mês</h6>
+                                <h3 class="mb-0 fw-bold">156</h3>
+                                <small class="text-muted">Volume: 2,8M€</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alertas e Pendências - Linha 2 -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-person-check-fill fs-4 text-warning"></i>
                                         </div>
-                                        <i class="bi bi-person-check-fill fs-2 text-warning opacity-25"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1">Vendedores a Validar</h6>
+                                        <h4 class="mb-0 fw-bold text-warning">12</h4>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-danger border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-flag-fill fs-4 text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1">Denúncias Abertas</h6>
+                                        <h4 class="mb-0 fw-bold text-danger">7</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-primary border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-clipboard-check-fill fs-4 text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1">Anúncios Pendentes</h6>
+                                        <h4 class="mb-0 fw-bold text-primary">5</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 border-start border-secondary border-4 h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle p-3">
+                                            <i class="bi bi-star-fill fs-4 text-secondary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-muted mb-1">Destaques Ativos</h6>
+                                        <h4 class="mb-0 fw-bold text-secondary">43</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <hr class="my-4">
-                        <p>Aqui pode validar novos vendedores, moderar anúncios, gerir denúncias e consultar o estado geral do Marketplace 404.</p>
+                <!-- Ações Rápidas e Atividade Recente -->
+                <div class="row g-3 mb-4">
+                    <!-- Ações Rápidas -->
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-lightning-charge-fill text-primary me-2"></i>Ações Rápidas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <a href="#" class="btn btn-outline-primary text-start" data-target="#validar-vendedores-content">
+                                        <i class="bi bi-person-check-fill me-2"></i>Validar Vendedores
+                                        <span class="badge bg-warning float-end">12</span>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-danger text-start" data-target="#gerir-denuncias-content">
+                                        <i class="bi bi-flag-fill me-2"></i>Gerir Denúncias
+                                        <span class="badge bg-danger float-end">7</span>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-info text-start" data-target="#moderar-anuncios-content">
+                                        <i class="bi bi-clipboard-check-fill me-2"></i>Moderar Anúncios
+                                        <span class="badge bg-primary float-end">5</span>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-secondary text-start" data-target="#gerir-utilizadores-content">
+                                        <i class="bi bi-people-fill me-2"></i>Gerir Utilizadores
+                                    </a>
+                                    <a href="#" class="btn btn-outline-success text-start" data-target="#estatisticas-content">
+                                        <i class="bi bi-graph-up-arrow me-2"></i>Ver Estatísticas
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Atividade Recente -->
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-clock-history text-primary me-2"></i>Atividade Recente
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="activity-feed">
+                                    <div class="activity-item border-start border-primary border-3 ps-3 pb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-person-plus-fill text-primary"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Novo vendedor registado</strong></p>
+                                                <small class="text-muted">João Pereira aguarda aprovação</small>
+                                            </div>
+                                            <small class="text-muted">Há 15 min</small>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item border-start border-danger border-3 ps-3 pb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-danger bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-flag-fill text-danger"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Nova denúncia recebida</strong></p>
+                                                <small class="text-muted">Anúncio #A5543 denunciado por conteúdo enganador</small>
+                                            </div>
+                                            <small class="text-muted">Há 1h</small>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item border-start border-success border-3 ps-3 pb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-success bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-check-circle-fill text-success"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Anúncio aprovado</strong></p>
+                                                <small class="text-muted">VW Golf 1.6 TDI de Miguel Costa</small>
+                                            </div>
+                                            <small class="text-muted">Há 2h</small>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item border-start border-warning border-3 ps-3 pb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-warning bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-currency-euro text-warning"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Nova compra realizada</strong></p>
+                                                <small class="text-muted">BMW Série 1 vendido por 15.900€</small>
+                                            </div>
+                                            <small class="text-muted">Há 3h</small>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item border-start border-secondary border-3 ps-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="activity-icon bg-secondary bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi bi-lock-fill text-secondary"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="mb-0"><strong>Utilizador bloqueado</strong></p>
+                                                <small class="text-muted">Bruno Vieira bloqueado por comportamento fraudulento</small>
+                                            </div>
+                                            <small class="text-muted">Há 5h</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="#" class="btn btn-sm btn-outline-primary" data-target="#historico-acoes-content">
+                                        Ver Histórico Completo <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Marcas e Categorias Mais Procuradas -->
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-trophy-fill text-warning me-2"></i>Top 5 Marcas Mais Vendidas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">BMW</span>
+                                        <span class="badge bg-primary-subtle text-primary">42 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">Mercedes-Benz</span>
+                                        <span class="badge bg-primary-subtle text-primary">38 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">Audi</span>
+                                        <span class="badge bg-primary-subtle text-primary">35 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 83%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">Volkswagen</span>
+                                        <span class="badge bg-primary-subtle text-primary">29 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 69%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-0">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold">Peugeot</span>
+                                        <span class="badge bg-primary-subtle text-primary">24 vendas</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 57%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-graph-up text-success me-2"></i>Estatísticas Gerais
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="text-center p-3 bg-light rounded">
+                                            <i class="bi bi-eye-fill fs-3 text-primary mb-2"></i>
+                                            <h4 class="mb-0 fw-bold">127K</h4>
+                                            <small class="text-muted">Visualizações no Mês</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center p-3 bg-light rounded">
+                                            <i class="bi bi-heart-fill fs-3 text-danger mb-2"></i>
+                                            <h4 class="mb-0 fw-bold">3.4K</h4>
+                                            <small class="text-muted">Anúncios Favoritados</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center p-3 bg-light rounded">
+                                            <i class="bi bi-calendar-check-fill fs-3 text-info mb-2"></i>
+                                            <h4 class="mb-0 fw-bold">542</h4>
+                                            <small class="text-muted">Reservas Ativas</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center p-3 bg-light rounded">
+                                            <i class="bi bi-chat-dots-fill fs-3 text-warning mb-2"></i>
+                                            <h4 class="mb-0 fw-bold">1.8K</h4>
+                                            <small class="text-muted">Mensagens Trocadas</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- ======================= Conteúdo: Validar Vendedores ======================= -->
             <div id="validar-vendedores-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Validar Vendedores</h3>
-                        <p class="text-muted">Abaixo estão os pedidos de registo de vendedor que aguardam a sua aprovação.</p>
-
-                        <!-- Tabela de Vendedores Pendentes -->
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">Utilizador</th>
-                                        <th scope="col">Data de Pedido</th>
-                                        <th scope="col">NIF (para validação)</th>
-                                        <th scope="col">Estado</th>
-                                        <th scope="col" class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Exemplo de Vendedor 1: Pendente -->
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=JP" alt="Avatar" class="rounded-circle me-3">
-                                                <div>
-                                                    <div class="fw-bold">João Pereira</div>
-                                                    <div class="small text-muted">joao.pereira@email.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>22/10/2025</td>
-                                        <td>
-                                            <span class="font-monospace">211345678</span>
-                                            <!-- Botão de copiar (estático) -->
-                                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="alert('NIF copiado! (funcionalidade a implementar)')"><i class="bi bi-clipboard"></i></button>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-warning-soft text-dark">Pendente</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-success"><i class="bi bi-check-circle me-1"></i> Aprovar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Rejeitar</button>
-                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#validarVendedorModal"><i class="bi bi-eye me-1"></i> Ver</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Exemplo de Vendedor 2: Pendente -->
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/FFF3E0/FFA000?text=MS" alt="Avatar" class="rounded-circle me-3">
-                                                <div>
-                                                    <div class="fw-bold">Maria Santos</div>
-                                                    <div class="small text-muted">msantos@email.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>21/10/2025</td>
-                                        <td>
-                                            <span class="font-monospace">255678123</span>
-                                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="alert('NIF copiado! (funcionalidade a implementar)')"><i class="bi bi-clipboard"></i></button>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-warning-soft text-dark">Pendente</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-success"><i class="bi bi-check-circle me-1"></i> Aprovar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Rejeitar</button>
-                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#validarVendedorModal"><i class="bi bi-eye me-1"></i> Ver</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Exemplo de Vendedor 3: Rejeitado -->
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/F0F3F5/6C757D?text=RG" alt="Avatar" class="rounded-circle me-3">
-                                                <div>
-                                                    <div class="fw-bold">Rui Gonçalves</div>
-                                                    <div class="small text-muted">rui.g@email.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>20/10/2025</td>
-                                        <td>
-                                            <span class="font-monospace">123123123</span>
-                                            <button class="btn btn-sm btn-link p-0 ms-1" onclick="alert('NIF copiado! (funcionalidade a implementar)')"><i class="bi bi-clipboard"></i></button>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-danger-soft">Rejeitado</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary" disabled>Ações</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                @await Component.InvokeAsync("ValidarVendedores")
             </div>
             <!-- ======================= Conteúdo: Gerir Utilizadores ======================= -->
             <div id="gerir-utilizadores-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="mb-0">Gerir Utilizadores</h3>
-                            <!-- Botão para abrir o modal -->
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#criarUtilizadorModal">
-                                <i class="bi bi-plus-circle me-1"></i> Criar Novo ADMINISTRADOR
-                            </button>
-                        </div>
-
-                        <!-- Tabela de Utilizadores -->
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">Nome</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Tipo de Conta</th>
-                                        <th scope="col">Estado</th>
-                                        <th scope="col" class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Exemplo de Utilizador 1 -->
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/EBF4FF/1E63FF?text=AS" alt="Avatar" class="rounded-circle me-3">
-                                                <div>
-                                                    <div class="fw-bold">Ana Silva</div>
-                                                    <div class="small text-muted">as.silva@email.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>as.silva@email.com</td>
-                                        <td>
-                                            <span class="badge bg-primary-soft">Comprador</span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-success-soft">Ativo</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i> Editar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-lock me-1"></i> Bloquear</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Exemplo de Utilizador 2 -->
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/F0F3F5/6C757D?text=BV" alt="Avatar" class="rounded-circle me-3">
-                                                <div>
-                                                    <div class="fw-bold">Bruno Vieira</div>
-                                                    <div class="small text-muted">bruno.v@email.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>bruno.v@email.com</td>
-                                        <td>
-                                            <span class="badge bg-info-soft">Vendedor</span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-danger-soft">Bloqueado</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i> Editar</button>
-                                            <button class="btn btn-sm btn-outline-success"><i class="bi bi-unlock me-1"></i> Desbloquear</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Exemplo de Utilizador 3 -->
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/40x40/FFF3E0/FFA000?text=CR" alt="Avatar" class="rounded-circle me-3">
-                                                <div>
-                                                    <div class="fw-bold">Carla Ribeiro</div>
-                                                    <div class="small text-muted">c.ribeiro@email.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>c.ribeiro@email.com</td>
-                                        <td>
-                                            <span class="badge bg-primary-soft">Comprador</span>
-                                            <span class="badge bg-info-soft">Vendedor</span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-success-soft">Ativo</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i> Editar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-lock me-1"></i> Bloquear</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                @await Component.InvokeAsync("GerirUtilizadores")
             </div>
 
             <!-- ======================= Conteúdo: Moderar Anúncios ======================= -->
             <div id="moderar-anuncios-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Moderar Anúncios</h3>
+                @await Component.InvokeAsync("ModerarAnuncios")
+            </div>
+        </div>
+    </div>
+</div>
 
-                        <!-- Tabela de Anúncios -->
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col" style="width: 120px;">Anúncio</th>
-                                        <th scope="col">Título</th>
-                                        <th scope="col">Estado</th>
-                                        <th scope="col">Notas</th>
-                                        <th scope="col" class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Exemplo de Anúncio 1 -->
-                                    <tr>
-                                        <td>
-                                            <img src="~/imagens/bmwSerie1.jpg" alt="[Imagem de um BMW Série 1]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
-                                        </td>
-                                        <td>
-                                            <div class="fw-bold">BMW Série 1 116d</div>
-                                            <div class="small text-muted">Vendedor: Ana Silva</div>
-                                        </td>
-                                        <td><span class="badge bg-success-soft">Ativo</span></td>
-                                        <td class="small">--</td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pause-circle me-1"></i> Pausar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i> Remover</button>
-                                        </td>
-                                    </tr>
-                                    <!-- Exemplo de Anúncio 2 -->
-                                    <tr>
-                                        <td>
-                                            <img src="https://placehold.co/100x60/F0F3F5/6C757D?text=Audi+A3" alt="[Imagem de um Audi A3]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
-                                        </td>
-                                        <td>
-                                            <div class="fw-bold">Audi A3 2.0 TDI (Fotos Falsas)</div>
-                                            <div class="small text-muted">Vendedor: Bruno Vieira</div>
-                                        </td>
-                                        <td><span class="badge bg-danger-soft">Removido</span></td>
-                                        <td class="small">Anúncio removido por violar termos (fotos).</td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary" disabled>Pausar</button>
-                                            <button class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-counterclockwise me-1"></i> Restaurar</button>
-                                        </td>
-                                    </tr>
-                                    <!-- NOVO Exemplo de Anúncio 3 -->
-                                    <tr>
-                                        <td>
-                                            <img src="https://placehold.co/100x60/FFF3E0/FFA000?text=VW+Golf" alt="[Imagem de um VW Golf]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
-                                        </td>
-                                        <td>
-                                            <div class="fw-bold">VW Golf 1.6 TDI</div>
-                                            <div class="small text-muted">Vendedor: Miguel Costa</div>
-                                        </td>
-                                        <td><span class="badge bg-warning-soft text-dark">Pendente de Revisão</span></td>
-                                        <td class="small">Anúncio novo, aguarda primeira aprovação.</td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-success"><i class="bi bi-check-circle me-1"></i> Aprovar</button>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle me-1"></i> Rejeitar</button>
-                                        </td>
-                                    </tr>
+<!-- ========================= MODAIS ========================= -->
 
-                                    <!-- NOVO Exemplo de Anúncio 4 -->
-                                    <tr>
-                                        <td>
-                                            <img src="https://placehold.co/100x60/EBF4FF/1E63FF?text=Peugeot+208" alt="[Imagem de um Peugeot 208]" class="rounded me-3" style="width: 100px; height: 60px; object-fit: cover;">
-                                        </td>
-                                        <td>
-                                            <div class="fw-bold">Peugeot 208 Elétrico</div>
-                                            <div class="small text-muted">Vendedor: Carla Ribeiro</div>
-                                        </td>
-                                        <td><span class="badge bg-success-soft">Ativo</span></td>
-                                        <td class="small text-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i> 1 Denúncia Recebida</td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-warning"><i class="bi bi-eye me-1"></i> Ver Denúncia</button>
-                                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pause-circle me-1"></i> Pausar</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+<!-- Modal: Detalhes do Vendedor -->
+<div class="modal fade" id="detalhesVendedorModal" tabindex="-1" aria-labelledby="detalhesVendedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold" id="detalhesVendedorModalLabel">
+                    <i class="bi bi-person-vcard me-2"></i>Detalhes do Vendedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Informações Pessoais -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://placehold.co/80x80/2563eb/ffffff?text=JP" alt="Avatar" class="rounded-circle me-3">
+                        <div>
+                            <h5 class="mb-1 fw-bold">João Pereira</h5>
+                            <p class="text-muted mb-0">joao.pereira@email.com</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Dados Pessoais -->
+                    <div class="col-md-6">
+                        <h6 class="text-primary fw-bold mb-3">
+                            <i class="bi bi-person-fill me-2"></i>Dados Pessoais
+                        </h6>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Nome Completo</label>
+                            <div class="fw-semibold">João Manuel Pereira</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Username</label>
+                            <div class="fw-semibold">joao.pereira</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">NIF</label>
+                            <div class="fw-semibold font-monospace">211345678</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Data de Registo</label>
+                            <div class="fw-semibold">22/10/2025 às 12:30</div>
+                        </div>
+                    </div>
+
+                    <!-- Contactos -->
+                    <div class="col-md-6">
+                        <h6 class="text-primary fw-bold mb-3">
+                            <i class="bi bi-telephone-fill me-2"></i>Contactos
+                        </h6>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Email</label>
+                            <div class="fw-semibold">joao.pereira@email.com</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Telemóvel</label>
+                            <div class="fw-semibold">+351 912 345 678</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small d-block mb-1">Telefone Alternativo</label>
+                            <div class="text-muted">Não definido</div>
+                        </div>
+                    </div>
+
+                    <!-- Morada -->
+                    <div class="col-12">
+                        <h6 class="text-primary fw-bold mb-3">
+                            <i class="bi bi-geo-alt-fill me-2"></i>Morada
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="text-muted small d-block mb-1">Rua</label>
+                                <div class="fw-semibold">Rua da República, nº 45, 3º Dto.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="text-muted small d-block mb-1">Código Postal</label>
+                                <div class="fw-semibold">4710-229</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block mb-1">Localidade</label>
+                                <div class="fw-semibold">Braga</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block mb-1">País</label>
+                                <div class="fw-semibold">Portugal</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verificações RF 37 -->
+                    <div class="col-12">
+                        <h6 class="text-primary fw-bold mb-3">
+                            <i class="bi bi-shield-check me-2"></i>Verificações de Validação
+                        </h6>
+                        <div class="list-group">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-envelope-check me-2"></i>Email Verificado</span>
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle-fill"></i> Sim
+                                </span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-phone-vibrate me-2"></i>Telemóvel Verificado</span>
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle-fill"></i> Sim
+                                </span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-file-earmark-text me-2"></i>NIF Validado</span>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-hourglass-split"></i> A verificar
+                                </span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-files me-2"></i>Registo Duplicado</span>
+                                <span class="badge bg-success">
+                                    <i class="bi bi-x-circle-fill"></i> Não
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Fechar
+                </button>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejeitarVendedorModal">
+                    <i class="bi bi-x-circle me-1"></i>Rejeitar Vendedor
+                </button>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#aprovarVendedorModal">
+                    <i class="bi bi-check-circle me-1"></i>Aprovar Vendedor
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <!-- Secção Gerir Denúncias -->
-            <div id="gerir-denuncias-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Gerir Denúncias</h3>
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tipo</th>
-                                        <th>Motivo</th>
-                                        <th>Estado</th>
-                                        <th class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>#D1024</td>
-                                        <td>Utilizador</td>
-                                        <td>Comportamento abusivo</td>
-                                        <td><span class="badge bg-danger-soft">Aberta</span></td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-primary">Analisar</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#D1023</td>
-                                        <td>Anúncio</td>
-                                        <td>Fotografias falsas</td>
-                                        <td><span class="badge bg-secondary-soft">Fechada</span></td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-secondary">Ver Detalhes</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+<!-- Modal: Aprovar Vendedor -->
+<div class="modal fade" id="aprovarVendedorModal" tabindex="-1" aria-labelledby="aprovarVendedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white border-0">
+                <h5 class="modal-title fw-bold" id="aprovarVendedorModalLabel">
+                    <i class="bi bi-check-circle-fill me-2"></i>Aprovar Vendedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-check-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Confirmar Aprovação de Vendedor</h5>
+                    <p class="text-muted mb-0">
+                        Tem a certeza que pretende aprovar o registo de <strong class="text-dark">João Pereira</strong> como vendedor na plataforma?
+                    </p>
+                </div>
+
+                <div class="alert alert-info d-flex align-items-start" role="alert">
+                    <i class="bi bi-info-circle-fill flex-shrink-0 me-2 mt-1"></i>
+                    <div class="small">
+                        Ao aprovar, o vendedor receberá um email de confirmação e poderá iniciar a publicação de anúncios na plataforma.
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="confirmacaoAprovacao" required>
+                    <label class="form-check-label" for="confirmacaoAprovacao">
+                        Confirmo que verifiquei todos os dados do vendedor (NIF, email, telefone)
+                    </label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notasAprovacao" class="form-label">Notas (opcional)</label>
+                    <textarea class="form-control" id="notasAprovacao" rows="2" placeholder="Adicione notas sobre a aprovação..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-success" id="btnConfirmarAprovacao">
+                    <i class="bi bi-check-circle me-1"></i>Confirmar Aprovação
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Rejeitar Vendedor -->
+<div class="modal fade" id="rejeitarVendedorModal" tabindex="-1" aria-labelledby="rejeitarVendedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white border-0">
+                <h5 class="modal-title fw-bold" id="rejeitarVendedorModalLabel">
+                    <i class="bi bi-x-circle-fill me-2"></i>Rejeitar Vendedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-x-fill text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Rejeitar Registo de Vendedor</h5>
+                    <p class="text-muted mb-0">
+                        Tem a certeza que pretende rejeitar o registo de <strong class="text-dark">João Pereira</strong>?
+                    </p>
+                </div>
+
+                <div class="alert alert-warning d-flex align-items-start" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 mt-1"></i>
+                    <div class="small">
+                        Esta ação é <strong>irreversível</strong>. O utilizador receberá um email com o motivo da rejeição.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="motivoRejeicao" class="form-label">
+                        Motivo da Rejeição <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select" id="motivoRejeicao" required>
+                        <option value="" selected>Selecione um motivo...</option>
+                        <option value="nif_invalido">NIF Inválido ou Duplicado</option>
+                        <option value="dados_incorretos">Dados Pessoais Incorretos</option>
+                        <option value="email_invalido">Email Inválido ou Não Verificado</option>
+                        <option value="telefone_invalido">Telefone Inválido</option>
+                        <option value="reputacao">Problemas de Reputação</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="detalhesRejeicao" class="form-label">
+                        Detalhes Adicionais <span class="text-danger">*</span>
+                    </label>
+                    <textarea class="form-control" id="detalhesRejeicao" rows="3" placeholder="Descreva o motivo da rejeição. Esta mensagem será enviada ao utilizador..." required></textarea>
+                    <div class="form-text">Mínimo 20 caracteres</div>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmacaoRejeicao" required>
+                    <label class="form-check-label" for="confirmacaoRejeicao">
+                        Confirmo que esta rejeição é justificada e final
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-arrow-left me-1"></i>Voltar
+                </button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarRejeicao">
+                    <i class="bi bi-x-circle me-1"></i>Confirmar Rejeição
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= MODAIS GERIR UTILIZADORES ========================= -->
+
+<!-- Modal: Adicionar Novo Utilizador -->
+<div class="modal fade" id="adicionarUtilizadorModal" tabindex="-1" aria-labelledby="adicionarUtilizadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold" id="adicionarUtilizadorModalLabel">
+                    <i class="bi bi-person-plus-fill me-2"></i>Adicionar Novo Utilizador
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="formAdicionarUtilizador">
+                    <div class="row g-3">
+                        <!-- Dados Pessoais -->
+                        <div class="col-12">
+                            <h6 class="text-primary fw-bold mb-3">
+                                <i class="bi bi-person-fill me-2"></i>Dados Pessoais
+                            </h6>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoNome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="novoNome" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoUsername" class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="novoUsername" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="novoEmail" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoTelefone" class="form-label">Telefone <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="novoTelefone" placeholder="+351 912 345 678" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoPassword" class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="novoPassword" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="novoPasswordConfirm" class="form-label">Confirmar Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="novoPasswordConfirm" required>
+                        </div>
+
+                        <!-- Tipo de Utilizador -->
+                        <div class="col-12 mt-4">
+                            <h6 class="text-primary fw-bold mb-3">
+                                <i class="bi bi-person-badge-fill me-2"></i>Tipo de Utilizador
+                            </h6>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="tipoComprador" value="comprador">
+                                <label class="form-check-label" for="tipoComprador">
+                                    <i class="bi bi-cart-check me-1"></i>Comprador
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="tipoVendedor" value="vendedor">
+                                <label class="form-check-label" for="tipoVendedor">
+                                    <i class="bi bi-shop-window me-1"></i>Vendedor
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="tipoAdmin" value="admin">
+                                <label class="form-check-label" for="tipoAdmin">
+                                    <i class="bi bi-shield-fill-check me-1"></i>Administrador
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Permissões de Administrador (RF 27, RF 35) -->
+                        <div class="col-12 mt-3" id="adminPermissoesSection" style="display: none;">
+                            <div class="alert alert-warning">
+                                <h6 class="alert-heading fw-bold">
+                                    <i class="bi bi-shield-exclamation me-2"></i>Permissões de Administrador
+                                </h6>
+                                <p class="mb-3 small">Selecione o nível de acesso para este administrador:</p>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="nivelAcesso" id="nivelCompleto" value="completo" checked>
+                                    <label class="form-check-label" for="nivelCompleto">
+                                        <strong>Completo</strong> - Acesso total a todas as funcionalidades
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="nivelAcesso" id="nivelModeracao" value="moderacao">
+                                    <label class="form-check-label" for="nivelModeracao">
+                                        <strong>Moderação</strong> - Gerir anúncios e denúncias apenas
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="nivelAcesso" id="nivelUtilizadores" value="utilizadores">
+                                    <label class="form-check-label" for="nivelUtilizadores">
+                                        <strong>Gestão de Utilizadores</strong> - Validar e gerir utilizadores apenas
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="nivelAcesso" id="nivelLeitura" value="leitura">
+                                    <label class="form-check-label" for="nivelLeitura">
+                                        <strong>Leitura</strong> - Visualizar estatísticas e relatórios apenas
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnAdicionarUtilizador">
+                    <i class="bi bi-check-circle me-1"></i>Adicionar Utilizador
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Editar Utilizador -->
+<div class="modal fade" id="editarUtilizadorModal" tabindex="-1" aria-labelledby="editarUtilizadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold" id="editarUtilizadorModalLabel">
+                    <i class="bi bi-pencil-fill me-2"></i>Editar Utilizador
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" value="Ana Silva">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" value="ana.silva">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="as.silva@email.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" value="+351 912 345 678">
+                    </div>
+                    <div class="col-12 mt-4">
+                        <h6 class="text-primary fw-bold mb-3">Tipo de Conta</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="editTipoComprador" checked>
+                            <label class="form-check-label" for="editTipoComprador">
+                                <i class="bi bi-cart-check me-1"></i>Comprador
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="editTipoVendedor">
+                            <label class="form-check-label" for="editTipoVendedor">
+                                <i class="bi bi-shop-window me-1"></i>Vendedor
+                            </label>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnSalvarEdicao">
+                    <i class="bi bi-check-circle me-1"></i>Guardar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <!-- ... código existente ... --><!-- Secção Estatísticas --><div id="estatisticas-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Estatísticas Detalhadas</h3>
+<!-- Modal: Bloquear Utilizador (RF 28, RF 33) -->
+<div class="modal fade" id="bloquearUtilizadorModal" tabindex="-1" aria-labelledby="bloquearUtilizadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white border-0">
+                <h5 class="modal-title fw-bold" id="bloquearUtilizadorModalLabel">
+                    <i class="bi bi-lock-fill me-2"></i>Bloquear Utilizador
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-lock text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Bloquear Acesso ao Utilizador</h5>
+                    <p class="text-muted mb-0">
+                        Tem a certeza que pretende bloquear <strong class="text-dark">Ana Silva</strong>?
+                    </p>
+                </div>
 
-                        <!-- Gráfico de Variação de Vendas --><div class="row mb-4">
-                            <div class="col-12">
-                                <div class="card shadow-sm border-0">
-                                    <div class="card-header bg-white border-0">
-                                        <h5 class="mb-0">Variação de Vendas nos Últimos 6 Meses</h5>
+                <div class="alert alert-danger d-flex align-items-start" role="alert">
+                    <i class="bi bi-exclamation-octagon-fill flex-shrink-0 me-2 mt-1"></i>
+                    <div class="small">
+                        O utilizador não poderá aceder à plataforma até ser desbloqueado.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="motivoBloqueio" class="form-label">
+                        Motivo do Bloqueio <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select" id="motivoBloqueio" required>
+                        <option value="" selected>Selecione um motivo...</option>
+                        <option value="fraude">Atividade Fraudulenta</option>
+                        <option value="spam">Spam ou Abuso</option>
+                        <option value="violacao_termos">Violação de Termos de Uso</option>
+                        <option value="anuncios_falsos">Anúncios Enganadores</option>
+                        <option value="comportamento_inadequado">Comportamento Inadequado</option>
+                        <option value="pagamento_pendente">Pagamentos Pendentes</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="detalhesBloqueio" class="form-label">
+                        Detalhes do Bloqueio <span class="text-danger">*</span>
+                    </label>
+                    <textarea class="form-control" id="detalhesBloqueio" rows="3" placeholder="Descreva o motivo do bloqueio. Esta informação ficará registada no histórico..." required></textarea>
+                    <div class="form-text">Mínimo 20 caracteres (RF 28, RF 33)</div>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmacaoBloqueio" required>
+                    <label class="form-check-label" for="confirmacaoBloqueio">
+                        Confirmo que este bloqueio é justificado
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-arrow-left me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarBloqueio">
+                    <i class="bi bi-lock-fill me-1"></i>Confirmar Bloqueio
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Desbloquear Utilizador -->
+<div class="modal fade" id="desbloquearUtilizadorModal" tabindex="-1" aria-labelledby="desbloquearUtilizadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white border-0">
+                <h5 class="modal-title fw-bold" id="desbloquearUtilizadorModalLabel">
+                    <i class="bi bi-unlock-fill me-2"></i>Desbloquear Utilizador
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-check text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Restaurar Acesso do Utilizador</h5>
+                    <p class="text-muted mb-0">
+                        Tem a certeza que pretende desbloquear <strong class="text-dark">Bruno Vieira</strong>?
+                    </p>
+                </div>
+
+                <div class="alert alert-info d-flex align-items-start" role="alert">
+                    <i class="bi bi-info-circle-fill flex-shrink-0 me-2 mt-1"></i>
+                    <div class="small">
+                        <strong>Bloqueado por:</strong> Fraude detetada<br>
+                        <strong>Data:</strong> 08/08/2025<br>
+                        <strong>Admin:</strong> admin@marketplace.com
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notasDesbloqueio" class="form-label">Notas do Desbloqueio (opcional)</label>
+                    <textarea class="form-control" id="notasDesbloqueio" rows="2" placeholder="Adicione notas sobre o desbloqueio..."></textarea>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmacaoDesbloqueio" required>
+                    <label class="form-check-label" for="confirmacaoDesbloqueio">
+                        Confirmo que pretendo restaurar o acesso deste utilizador
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-success" id="btnConfirmarDesbloqueio">
+                    <i class="bi bi-unlock-fill me-1"></i>Desbloquear Utilizador
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= MODAL DENÚNCIAS ========================= -->
+
+<!-- Modal: Detalhes da Denúncia -->
+<div class="modal fade" id="detalheDenunciaModal" tabindex="-1" aria-labelledby="detalheDenunciaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-danger bg-opacity-10 border-danger">
+                <h5 class="modal-title text-danger fw-bold" id="detalheDenunciaModalLabel">
+                    <i class="bi bi-flag-fill me-2"></i>Detalhes da Denúncia #D1024
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Informações Principais -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light h-100">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-info-circle-fill text-primary me-2"></i>Informações da Denúncia
+                                </h6>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">ID</small>
+                                        <p class="mb-0 fw-semibold">#D1024</p>
                                     </div>
-                                    <div class="card-body">
-                                        <img src="~/imagens/6meses.png" class="img-fluid rounded" alt="[Gráfico de linha de variação de vendas]">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Data</small>
+                                        <p class="mb-0 fw-semibold">24/10/2025 10:30</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Estado</small>
+                                        <p class="mb-0"><span class="badge bg-warning text-dark">Pendente</span></p>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Prioridade</small>
+                                        <p class="mb-0"><span class="badge bg-danger">Alta</span></p>
+                                    </div>
+                                    <div class="col-12">
+                                        <small class="text-muted d-block">Tipo</small>
+                                        <p class="mb-0 fw-semibold">Anúncio</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-lg-6 mb-4">
-                                <div class="card shadow-sm border-0">
-                                    <div class="card-header bg-white border-0">
-                                        <h5 class="mb-0">Top Marcas/Modelos</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <img src="~/imagens/marcasvendidas.png" class="img-fluid rounded" alt="[Gráfico doughnut de top marcas]">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light h-100">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-people-fill text-primary me-2"></i>Envolvidos
+                                </h6>
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-1">Denunciante</small>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://placehold.co/40x40/0d6efd/ffffff?text=JS" class="rounded-circle me-2" alt="João Silva">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">João Silva</p>
+                                            <small class="text-muted">#U5432 • joao.silva@exemplo.com</small>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6 mb-4">
-                                <div class="card shadow-sm border-0">
-                                    <div class="card-header bg-white border-0">
-                                        <h5 class="mb-0">Distribuição de Anúncios por Estado</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <img src="~/imagens/estadosAnuncios.png" class="img-fluid rounded" alt="[Gráfico de distribuição de anúncios por estado]">
+                                <div>
+                                    <small class="text-muted d-block mb-1">Denunciado (Vendedor)</small>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://placehold.co/40x40/dc3545/ffffff?text=PC" class="rounded-circle me-2" alt="Pedro Costa">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">Pedro Costa</p>
+                                            <small class="text-muted">#U2341 • pedro.costa@exemplo.com</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
+                <!-- Motivo e Descrição -->
+                <div class="card border-0 bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-flag-fill text-danger me-2"></i>Motivo da Denúncia
+                        </h6>
+                        <div class="mb-3">
+                            <span class="badge bg-danger mb-2">Conteúdo Enganador</span>
+                            <p class="mb-0">
+                                "O anúncio apresenta fotografias que não correspondem ao veículo real. Quilometragem adulterada e estado do veículo falsificado. O vendedor afirma que o carro tem 50.000km mas as fotos mostram claramente sinais de maior desgaste. Solicitei visita ao veículo e constatei divergências graves."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Objeto Denunciado -->
+                <div class="card border-0 bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-megaphone-fill text-primary me-2"></i>Anúncio Denunciado
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-auto">
+                                <img src="~/imagens/bmwSerie1.jpg" alt="BMW" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
+                            </div>
+                            <div class="col">
+                                <h6 class="mb-1">BMW Série 3 320d Pack M</h6>
+                                <p class="text-muted mb-2 small">Anúncio #A5543 • Publicado em 20/10/2025</p>
+                                <p class="mb-1"><strong>Preço:</strong> 28.500€</p>
+                                <p class="mb-1"><strong>Quilometragem anunciada:</strong> 50.000 km</p>
+                                <p class="mb-0"><strong>Localização:</strong> Porto</p>
+                            </div>
+                            <div class="col-auto">
+                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye me-1"></i>Ver Anúncio
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evidências -->
+                <div class="card border-0 bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-paperclip text-primary me-2"></i>Evidências Anexadas
+                        </h6>
+                        <div class="row g-2">
+                            <div class="col-auto">
+                                <div class="card border">
+                                    <div class="card-body p-2 text-center" style="width: 100px;">
+                                        <i class="bi bi-file-earmark-image fs-3 text-primary"></i>
+                                        <small class="d-block mt-1">foto1.jpg</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="card border">
+                                    <div class="card-body p-2 text-center" style="width: 100px;">
+                                        <i class="bi bi-file-earmark-image fs-3 text-primary"></i>
+                                        <small class="d-block mt-1">foto2.jpg</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="card border">
+                                    <div class="card-body p-2 text-center" style="width: 100px;">
+                                        <i class="bi bi-file-earmark-pdf fs-3 text-danger"></i>
+                                        <small class="d-block mt-1">prova.pdf</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline de Ações -->
+                <div class="card border-0 bg-light">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-clock-history text-primary me-2"></i>Histórico de Ações
+                        </h6>
+                        <div class="timeline">
+                            <div class="timeline-item mb-3">
+                                <div class="d-flex">
+                                    <div class="timeline-marker bg-danger"></div>
+                                    <div class="timeline-content ms-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">Denúncia Criada</p>
+                                                <small class="text-muted">Por João Silva (#U5432)</small>
+                                            </div>
+                                            <small class="text-muted">24/10/2025 10:30</small>
+                                        </div>
+                                        <p class="mb-0 small text-muted mt-1">Denúncia submetida com 3 evidências anexadas</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item mb-3">
+                                <div class="d-flex">
+                                    <div class="timeline-marker bg-warning"></div>
+                                    <div class="timeline-content ms-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">Prioridade Atribuída</p>
+                                                <small class="text-muted">Sistema automático</small>
+                                            </div>
+                                            <small class="text-muted">24/10/2025 10:31</small>
+                                        </div>
+                                        <p class="mb-0 small text-muted mt-1">Denúncia marcada como alta prioridade devido à gravidade</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="d-flex">
+                                    <div class="timeline-marker bg-info"></div>
+                                    <div class="timeline-content ms-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">Aguarda Análise</p>
+                                                <small class="text-muted">Estado atual</small>
+                                            </div>
+                                            <small class="text-muted">Agora</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Secção Histórico de Ações -->
-            <div id="historico-acoes-content" class="admin-content-section" style="display: none;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Histórico de Ações Administrativas</h3>
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>Data/Hora</th>
-                                        <th>Administrador</th>
-                                        <th>Ação</th>
-                                        <th>Detalhes</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>21/10/2025 15:30</td>
-                                        <td>admin@marketplace.com</td>
-                                        <td>Bloqueou Utilizador</td>
-                                        <td>Utilizador "Rui Santos" bloqueado por fraude.</td>
-                                    </tr>
-                                    <tr>
-                                        <td>21/10/2025 11:15</td>
-                                        <td>admin@marketplace.com</td>
-                                        <td>Removeu Anúncio</td>
-                                        <td>Anúncio #A5543 removido por conteúdo impróprio.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Fechar
+                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger">
+                        <i class="bi bi-trash-fill me-1"></i>Remover Anúncio
+                    </button>
+                    <button type="button" class="btn btn-warning">
+                        <i class="bi bi-pause-circle-fill me-1"></i>Suspender Vendedor
+                    </button>
+                    <button type="button" class="btn btn-success">
+                        <i class="bi bi-check-circle-fill me-1"></i>Aprovar Denúncia
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>Rejeitar
+                    </button>
                 </div>
             </div>
         </div>
@@ -524,34 +1256,847 @@
         document.addEventListener('DOMContentLoaded', function () {
             const sidebarLinks = document.querySelectorAll('.admin-sidebar .list-group-item-action');
             const contentSections = document.querySelectorAll('.admin-content-section');
+            const quickActionLinks = document.querySelectorAll('.btn[data-target]');
 
+            // Função para alternar entre secções
+            function switchSection(targetId) {
+                // Esconde todas as secções
+                contentSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+
+                // Mostra a secção correspondente
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                }
+
+                // Atualiza o item ativo no menu lateral
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                const matchingSidebarLink = Array.from(sidebarLinks).find(
+                    link => link.getAttribute('data-target') === targetId
+                );
+                if (matchingSidebarLink) {
+                    matchingSidebarLink.classList.add('active');
+                }
+
+                // Scroll suave para o topo
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+
+            // Event listeners para links do menu lateral
             sidebarLinks.forEach(link => {
                 link.addEventListener('click', function (event) {
                     event.preventDefault();
-
-                    // Esconde todas as outras secções
-                    contentSections.forEach(section => {
-                        section.style.display = 'none';
-                    });
-
-                    // Mostra a secção correspondente ao link clicado
                     const targetId = this.getAttribute('data-target');
-                    const targetSection = document.querySelector(targetId);
-                    if (targetSection) {
-                        targetSection.style.display = 'block';
-                    }
-
-                    // Atualiza o item ativo no menu
-                    sidebarLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
+                    switchSection(targetId);
                 });
             });
- 
 
-             // Gráfico 1: Novos Registos (Gráfico de Barras)
-           
-            // --- FIM DO CÓDIGO DOS GRÁFICOS ---
+            // Event listeners para botões de Ações Rápidas
+            quickActionLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    switchSection(targetId);
+                });
+            });
+
+            // ==================== VALIDAR VENDEDORES ====================
+
+            // Filtrar vendedores por estado
+            const filterEstadoButtons = document.querySelectorAll('input[name="filterEstadoVendedor"]');
+            const vendedorRows = document.querySelectorAll('.vendedor-row');
+
+            filterEstadoButtons.forEach(button => {
+                button.addEventListener('change', function() {
+                    const filterId = this.id;
+                    let filterValue = '';
+
+                    if (filterId === 'filterPendentes') filterValue = 'pendente';
+                    else if (filterId === 'filterAprovados') filterValue = 'aprovado';
+                    else if (filterId === 'filterRejeitados') filterValue = 'rejeitado';
+
+                    vendedorRows.forEach(row => {
+                        if (filterId === 'filterTodos' || row.dataset.estado === filterValue) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Pesquisar vendedores
+            const searchVendedor = document.getElementById('searchVendedor');
+            if (searchVendedor) {
+                searchVendedor.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+
+                    vendedorRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Copiar NIF
+            const copyNifButtons = document.querySelectorAll('.copy-nif-btn');
+            copyNifButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const nif = this.dataset.nif;
+                    navigator.clipboard.writeText(nif).then(() => {
+                        const icon = this.querySelector('i');
+                        const originalClass = icon.className;
+                        icon.className = 'bi bi-check2';
+                        this.classList.add('text-success');
+
+                        setTimeout(() => {
+                            icon.className = originalClass;
+                            this.classList.remove('text-success');
+                        }, 2000);
+                    }).catch(err => {
+                        alert('Erro ao copiar NIF');
+                    });
+                });
+            });
+
+            // Aprovar Vendedor
+            const btnConfirmarAprovacao = document.getElementById('btnConfirmarAprovacao');
+            if (btnConfirmarAprovacao) {
+                btnConfirmarAprovacao.addEventListener('click', function() {
+                    const confirmacao = document.getElementById('confirmacaoAprovacao');
+
+                    if (!confirmacao.checked) {
+                        alert('Por favor, confirme que verificou todos os dados do vendedor.');
+                        return;
+                    }
+
+                    const notas = document.getElementById('notasAprovacao').value;
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A processar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Aprovado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('aprovarVendedorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Vendedor aprovado com sucesso!\nO vendedor receberá um email de confirmação.');
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            confirmacao.checked = false;
+                            document.getElementById('notasAprovacao').value = '';
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Rejeitar Vendedor
+            const btnConfirmarRejeicao = document.getElementById('btnConfirmarRejeicao');
+            if (btnConfirmarRejeicao) {
+                btnConfirmarRejeicao.addEventListener('click', function() {
+                    const motivo = document.getElementById('motivoRejeicao').value;
+                    const detalhes = document.getElementById('detalhesRejeicao').value;
+                    const confirmacao = document.getElementById('confirmacaoRejeicao');
+
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para a rejeição.');
+                        return;
+                    }
+
+                    if (detalhes.length < 20) {
+                        alert('Por favor, forneça detalhes adicionais (mínimo 20 caracteres).');
+                        return;
+                    }
+
+                    if (!confirmacao.checked) {
+                        alert('Por favor, confirme que esta rejeição é justificada.');
+                        return;
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A processar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-x-circle-fill me-1"></i>Rejeitado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('rejeitarVendedorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✗ Vendedor rejeitado.\nO vendedor receberá um email com o motivo da rejeição.');
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('motivoRejeicao').value = '';
+                            document.getElementById('detalhesRejeicao').value = '';
+                            confirmacao.checked = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // ==================== GERIR UTILIZADORES ====================
+
+            // Mostrar/Esconder permissões de administrador
+            const tipoAdminCheckbox = document.getElementById('tipoAdmin');
+            const adminPermissoesSection = document.getElementById('adminPermissoesSection');
+
+            if (tipoAdminCheckbox) {
+                tipoAdminCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        adminPermissoesSection.style.display = 'block';
+                    } else {
+                        adminPermissoesSection.style.display = 'none';
+                    }
+                });
+            }
+
+            // Filtrar utilizadores por tipo
+            const filterTipoUtilizador = document.getElementById('filterTipoUtilizador');
+            const filterEstadoUtilizador = document.getElementById('filterEstadoUtilizador');
+            const searchUtilizador = document.getElementById('searchUtilizador');
+            const utilizadorRows = document.querySelectorAll('.utilizador-row');
+
+            function filtrarUtilizadores() {
+                const tipoSelecionado = filterTipoUtilizador ? filterTipoUtilizador.value : '';
+                const estadoSelecionado = filterEstadoUtilizador ? filterEstadoUtilizador.value : '';
+                const searchTerm = searchUtilizador ? searchUtilizador.value.toLowerCase() : '';
+
+                utilizadorRows.forEach(row => {
+                    const tipos = row.dataset.tipo;
+                    const estado = row.dataset.estado;
+                    const text = row.textContent.toLowerCase();
+
+                    let mostrar = true;
+
+                    // Filtro de tipo
+                    if (tipoSelecionado && !tipos.includes(tipoSelecionado)) {
+                        mostrar = false;
+                    }
+
+                    // Filtro de estado
+                    if (estadoSelecionado && estado !== estadoSelecionado) {
+                        mostrar = false;
+                    }
+
+                    // Filtro de pesquisa
+                    if (searchTerm && !text.includes(searchTerm)) {
+                        mostrar = false;
+                    }
+
+                    row.style.display = mostrar ? '' : 'none';
+                });
+            }
+
+            if (filterTipoUtilizador) {
+                filterTipoUtilizador.addEventListener('change', filtrarUtilizadores);
+            }
+
+            if (filterEstadoUtilizador) {
+                filterEstadoUtilizador.addEventListener('change', filtrarUtilizadores);
+            }
+
+            if (searchUtilizador) {
+                searchUtilizador.addEventListener('input', filtrarUtilizadores);
+            }
+
+            // Adicionar Utilizador
+            const btnAdicionarUtilizador = document.getElementById('btnAdicionarUtilizador');
+            if (btnAdicionarUtilizador) {
+                btnAdicionarUtilizador.addEventListener('click', function() {
+                    const nome = document.getElementById('novoNome').value;
+                    const username = document.getElementById('novoUsername').value;
+                    const email = document.getElementById('novoEmail').value;
+                    const telefone = document.getElementById('novoTelefone').value;
+                    const password = document.getElementById('novoPassword').value;
+                    const passwordConfirm = document.getElementById('novoPasswordConfirm').value;
+
+                    const tipoComprador = document.getElementById('tipoComprador').checked;
+                    const tipoVendedor = document.getElementById('tipoVendedor').checked;
+                    const tipoAdmin = document.getElementById('tipoAdmin').checked;
+
+                    // Validações
+                    if (!nome || !username || !email || !telefone || !password) {
+                        alert('Por favor, preencha todos os campos obrigatórios.');
+                        return;
+                    }
+
+                    if (password !== passwordConfirm) {
+                        alert('As passwords não coincidem.');
+                        return;
+                    }
+
+                    if (!tipoComprador && !tipoVendedor && !tipoAdmin) {
+                        alert('Por favor, selecione pelo menos um tipo de utilizador.');
+                        return;
+                    }
+
+                    let nivelAcesso = '';
+                    if (tipoAdmin) {
+                        const nivelSelecionado = document.querySelector('input[name="nivelAcesso"]:checked');
+                        nivelAcesso = nivelSelecionado ? nivelSelecionado.value : 'completo';
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A criar...';
+
+                    // Simular criação
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Criado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('adicionarUtilizadorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Utilizador adicionado com sucesso!\nNome: ' + nome + '\nEmail: ' + email);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('formAdicionarUtilizador').reset();
+                            adminPermissoesSection.style.display = 'none';
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Salvar Edição
+            const btnSalvarEdicao = document.getElementById('btnSalvarEdicao');
+            if (btnSalvarEdicao) {
+                btnSalvarEdicao.addEventListener('click', function() {
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A guardar...';
+
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Guardado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('editarUtilizadorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Alterações guardadas com sucesso!');
+
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Bloquear Utilizador (RF 28, RF 33)
+            const btnConfirmarBloqueio = document.getElementById('btnConfirmarBloqueio');
+            if (btnConfirmarBloqueio) {
+                btnConfirmarBloqueio.addEventListener('click', function() {
+                    const motivo = document.getElementById('motivoBloqueio').value;
+                    const detalhes = document.getElementById('detalhesBloqueio').value;
+                    const confirmacao = document.getElementById('confirmacaoBloqueio');
+
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para o bloqueio.');
+                        return;
+                    }
+
+                    if (detalhes.length < 20) {
+                        alert('Por favor, forneça detalhes do bloqueio (mínimo 20 caracteres).');
+                        return;
+                    }
+
+                    if (!confirmacao.checked) {
+                        alert('Por favor, confirme que este bloqueio é justificado.');
+                        return;
+                    }
+
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A bloquear...';
+
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-lock-fill me-1"></i>Bloqueado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('bloquearUtilizadorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Utilizador bloqueado com sucesso!\nMotivo: ' + motivo + '\nO bloqueio foi registado no histórico.');
+
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('motivoBloqueio').value = '';
+                            document.getElementById('detalhesBloqueio').value = '';
+                            confirmacao.checked = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Desbloquear Utilizador
+            const btnConfirmarDesbloqueio = document.getElementById('btnConfirmarDesbloqueio');
+            if (btnConfirmarDesbloqueio) {
+                btnConfirmarDesbloqueio.addEventListener('click', function() {
+                    const confirmacao = document.getElementById('confirmacaoDesbloqueio');
+
+                    if (!confirmacao.checked) {
+                        alert('Por favor, confirme que pretende desbloquear este utilizador.');
+                        return;
+                    }
+
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A desbloquear...';
+
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-unlock-fill me-1"></i>Desbloqueado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('desbloquearUtilizadorModal'));
+                            if (modal) modal.hide();
+
+                            alert('✓ Utilizador desbloqueado com sucesso!\nO utilizador pode agora aceder à plataforma.');
+
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('notasDesbloqueio').value = '';
+                            confirmacao.checked = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // ==================== MODERAR ANÚNCIOS ====================
+
+            // Elementos de filtro e pesquisa
+            const searchAnuncio = document.getElementById('searchAnuncio');
+            const filterEstadoAnuncio = document.getElementById('filterEstadoAnuncio');
+            const filterOrdenacao = document.getElementById('filterOrdenacao');
+            const anuncioRows = document.querySelectorAll('.anuncio-row');
+
+            // Função para filtrar e ordenar anúncios
+            function filtrarAnuncios() {
+                const searchTerm = searchAnuncio ? searchAnuncio.value.toLowerCase() : '';
+                const estadoSelecionado = filterEstadoAnuncio ? filterEstadoAnuncio.value : '';
+
+                let rowsVisiveis = [];
+
+                anuncioRows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    const estado = row.dataset.estado;
+                    const denuncias = parseInt(row.dataset.denuncias);
+
+                    let mostrar = true;
+
+                    // Filtro de pesquisa
+                    if (searchTerm && !text.includes(searchTerm)) {
+                        mostrar = false;
+                    }
+
+                    // Filtro de estado
+                    if (estadoSelecionado) {
+                        if (estadoSelecionado === 'denuncia') {
+                            // Mostrar anúncios com denúncias
+                            if (denuncias === 0) {
+                                mostrar = false;
+                            }
+                        } else if (estado !== estadoSelecionado) {
+                            mostrar = false;
+                        }
+                    }
+
+                    if (mostrar) {
+                        row.style.display = '';
+                        rowsVisiveis.push(row);
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Aplicar ordenação
+                aplicarOrdenacao(rowsVisiveis);
+            }
+
+            // Função para ordenar anúncios
+            function aplicarOrdenacao(rows) {
+                if (!filterOrdenacao || rows.length === 0) return;
+
+                const tbody = rows[0].parentElement;
+                const ordenacao = filterOrdenacao.value;
+
+                // Converter NodeList para array e extrair dados
+                const rowsComDados = Array.from(rows).map(row => {
+                    const precoText = row.querySelector('td:nth-child(3)')?.textContent || '0';
+                    const preco = parseFloat(precoText.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                    const denuncias = parseInt(row.dataset.denuncias) || 0;
+
+                    return { row, preco, denuncias };
+                });
+
+                // Ordenar conforme seleção
+                switch(ordenacao) {
+                    case 'recente':
+                        // Mantém ordem original (mais recentes primeiro)
+                        break;
+                    case 'antigo':
+                        // Inverte a ordem
+                        rowsComDados.reverse();
+                        break;
+                    case 'denuncias':
+                        // Ordena por número de denúncias (descendente)
+                        rowsComDados.sort((a, b) => b.denuncias - a.denuncias);
+                        break;
+                    case 'preco_desc':
+                        // Ordena por preço (descendente)
+                        rowsComDados.sort((a, b) => b.preco - a.preco);
+                        break;
+                    case 'preco_asc':
+                        // Ordena por preço (ascendente)
+                        rowsComDados.sort((a, b) => a.preco - b.preco);
+                        break;
+                }
+
+                // Reordenar os elementos no DOM
+                rowsComDados.forEach(item => {
+                    tbody.appendChild(item.row);
+                });
+            }
+
+            // Event listeners para filtros
+            if (searchAnuncio) {
+                searchAnuncio.addEventListener('input', filtrarAnuncios);
+            }
+
+            if (filterEstadoAnuncio) {
+                filterEstadoAnuncio.addEventListener('change', filtrarAnuncios);
+            }
+
+            if (filterOrdenacao) {
+                filterOrdenacao.addEventListener('change', filtrarAnuncios);
+            }
+
+            // Aprovar Anúncio
+            const btnConfirmarAprovacaoAnuncio = document.getElementById('btnConfirmarAprovacaoAnuncio');
+            if (btnConfirmarAprovacaoAnuncio) {
+                btnConfirmarAprovacaoAnuncio.addEventListener('click', function() {
+                    const notas = document.getElementById('notasAprovacao').value;
+                    const notificar = document.getElementById('notificarVendedorAprovacao').checked;
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A aprovar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Aprovado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('aprovarAnuncioModal'));
+                            if (modal) modal.hide();
+
+                            let mensagem = '✓ Anúncio aprovado com sucesso!';
+                            if (notificar) {
+                                mensagem += '\nO vendedor receberá um email de confirmação.';
+                            }
+                            alert(mensagem);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('notasAprovacao').value = '';
+                            document.getElementById('notificarVendedorAprovacao').checked = false;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Pausar Anúncio (RF 29)
+            const btnConfirmarPausa = document.getElementById('btnConfirmarPausa');
+            if (btnConfirmarPausa) {
+                btnConfirmarPausa.addEventListener('click', function() {
+                    const motivo = document.getElementById('motivoPausa').value;
+                    const detalhes = document.getElementById('detalhesPausa').value;
+                    const notificar = document.getElementById('notificarVendedorPausa').checked;
+
+                    // Validações (RF 29)
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para a pausa.');
+                        return;
+                    }
+
+                    if (detalhes.length < 20) {
+                        alert('Por favor, forneça detalhes da pausa (mínimo 20 caracteres).');
+                        return;
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A pausar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-pause-circle-fill me-1"></i>Pausado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('pausarAnuncioModal'));
+                            if (modal) modal.hide();
+
+                            let mensagem = '✓ Anúncio pausado com sucesso!\nMotivo: ' + motivo;
+                            if (notificar) {
+                                mensagem += '\nO vendedor será notificado.';
+                            }
+                            mensagem += '\nA ação foi registada no histórico (RF 32).';
+                            alert(mensagem);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('motivoPausa').value = '';
+                            document.getElementById('detalhesPausa').value = '';
+                            document.getElementById('notificarVendedorPausa').checked = true;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Remover Anúncio (RF 29, RF 32)
+            const btnConfirmarRemocao = document.getElementById('btnConfirmarRemocao');
+            if (btnConfirmarRemocao) {
+                btnConfirmarRemocao.addEventListener('click', function() {
+                    const motivo = document.getElementById('motivoRemocao').value;
+                    const detalhes = document.getElementById('detalhesRemocao').value;
+                    const bloquear = document.getElementById('bloquearNovoAnuncioSimilar').checked;
+                    const notificar = document.getElementById('notificarVendedorRemocao').checked;
+
+                    // Validações rigorosas (RF 29, RF 32)
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para a remoção.');
+                        return;
+                    }
+
+                    if (detalhes.length < 30) {
+                        alert('Por favor, forneça detalhes completos da remoção (mínimo 30 caracteres).\nEsta informação é obrigatória para auditoria (RF 32).');
+                        return;
+                    }
+
+                    // Confirmação adicional para ação crítica
+                    if (!confirm('⚠️ ATENÇÃO: Esta ação removerá o anúncio da plataforma.\n\nTem a certeza que deseja continuar?')) {
+                        return;
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A remover...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-trash-fill me-1"></i>Removido!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('removerAnuncioModal'));
+                            if (modal) modal.hide();
+
+                            let mensagem = '✓ Anúncio removido com sucesso!\nMotivo: ' + motivo;
+                            if (bloquear) {
+                                mensagem += '\n⚠️ Anúncios similares deste vendedor serão bloqueados.';
+                            }
+                            if (notificar) {
+                                mensagem += '\nO vendedor receberá notificação com o motivo.';
+                            }
+                            mensagem += '\n\n✓ A remoção foi registada no histórico administrativo (RF 32).';
+                            alert(mensagem);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('motivoRemocao').value = '';
+                            document.getElementById('detalhesRemocao').value = '';
+                            document.getElementById('bloquearNovoAnuncioSimilar').checked = false;
+                            document.getElementById('notificarVendedorRemocao').checked = true;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // Restaurar Anúncio (RF 32)
+            const btnConfirmarRestauracao = document.getElementById('btnConfirmarRestauracao');
+            if (btnConfirmarRestauracao) {
+                btnConfirmarRestauracao.addEventListener('click', function() {
+                    const justificativa = document.getElementById('justificativaRestauracao').value;
+                    const verificacao = document.getElementById('verificacaoCorrecoes');
+                    const notificar = document.getElementById('notificarVendedorRestauracao').checked;
+
+                    // Validações
+                    if (justificativa.length < 20) {
+                        alert('Por favor, forneça uma justificativa para a restauração (mínimo 20 caracteres).\nEsta informação é necessária para auditoria (RF 32).');
+                        return;
+                    }
+
+                    if (!verificacao.checked) {
+                        alert('Por favor, confirme que as irregularidades foram corrigidas pelo vendedor.');
+                        return;
+                    }
+
+                    // Feedback visual
+                    const btnOriginalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A restaurar...';
+
+                    // Simular processamento
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-arrow-counterclockwise me-1"></i>Restaurado!';
+
+                        setTimeout(() => {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('restaurarAnuncioModal'));
+                            if (modal) modal.hide();
+
+                            let mensagem = '✓ Anúncio restaurado com sucesso!';
+                            if (notificar) {
+                                mensagem += '\nO vendedor será notificado sobre a reativação.';
+                            }
+                            mensagem += '\n\n✓ A restauração foi registada no histórico (RF 32).';
+                            alert(mensagem);
+
+                            // Reset
+                            this.innerHTML = btnOriginalText;
+                            this.disabled = false;
+                            document.getElementById('justificativaRestauracao').value = '';
+                            verificacao.checked = false;
+                            document.getElementById('notificarVendedorRestauracao').checked = true;
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+
+            // ==================== GERIR DENÚNCIAS ====================
+
+            // Sistema de Filtros para Denúncias
+            const filtroDenunciaEstado = document.getElementById('filtroDenunciaEstado');
+            const filtroDenunciaTipo = document.getElementById('filtroDenunciaTipo');
+            const filtroDenunciaPrioridade = document.getElementById('filtroDenunciaPrioridade');
+            const pesquisarDenuncia = document.getElementById('pesquisarDenuncia');
+            const denunciasCards = document.querySelectorAll('[data-denuncia-estado]');
+            const denunciasEmpty = document.querySelector('.denuncias-empty');
+
+            function filtrarDenuncias() {
+                const estadoSelecionado = filtroDenunciaEstado ? filtroDenunciaEstado.value : 'todas';
+                const tipoSelecionado = filtroDenunciaTipo ? filtroDenunciaTipo.value : 'todos';
+                const prioridadeSelecionada = filtroDenunciaPrioridade ? filtroDenunciaPrioridade.value : 'todas';
+                const termoPesquisa = pesquisarDenuncia ? pesquisarDenuncia.value.toLowerCase() : '';
+
+                let denunciasVisiveis = 0;
+
+                denunciasCards.forEach(card => {
+                    const estado = card.getAttribute('data-denuncia-estado');
+                    const tipo = card.getAttribute('data-denuncia-tipo');
+                    const prioridade = card.getAttribute('data-denuncia-prioridade');
+                    const textoCard = card.textContent.toLowerCase();
+
+                    const matchEstado = estadoSelecionado === 'todas' || estado === estadoSelecionado;
+                    const matchTipo = tipoSelecionado === 'todos' || tipo === tipoSelecionado;
+                    const matchPrioridade = prioridadeSelecionada === 'todas' || prioridade === prioridadeSelecionada;
+                    const matchPesquisa = termoPesquisa === '' || textoCard.includes(termoPesquisa);
+
+                    if (matchEstado && matchTipo && matchPrioridade && matchPesquisa) {
+                        card.style.display = '';
+                        denunciasVisiveis++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Mostrar/esconder mensagem de lista vazia
+                if (denunciasEmpty) {
+                    if (denunciasVisiveis === 0) {
+                        denunciasEmpty.classList.remove('d-none');
+                    } else {
+                        denunciasEmpty.classList.add('d-none');
+                    }
+                }
+            }
+
+            // Event listeners para os filtros
+            if (filtroDenunciaEstado) {
+                filtroDenunciaEstado.addEventListener('change', filtrarDenuncias);
+            }
+            if (filtroDenunciaTipo) {
+                filtroDenunciaTipo.addEventListener('change', filtrarDenuncias);
+            }
+            if (filtroDenunciaPrioridade) {
+                filtroDenunciaPrioridade.addEventListener('change', filtrarDenuncias);
+            }
+            if (pesquisarDenuncia) {
+                pesquisarDenuncia.addEventListener('input', filtrarDenuncias);
+            }
+
+            // Aplicar filtro inicial (mostrar pendentes)
+            if (filtroDenunciaEstado) {
+                filtrarDenuncias();
+            }
         });
     </script>
+    <style>
+        /* Estilos para Timeline */
+        .timeline-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px currentColor;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        /* Estilos para Cards de Denúncias */
+        .denuncia-motivo {
+            border-left: 3px solid #dc3545;
+            padding-left: 1rem;
+        }
+
+        /* Hover effects para ações rápidas */
+        .card.bg-light .btn {
+            transition: all 0.2s;
+        }
+
+        .card.bg-light .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Stats cards hover */
+        .border-start {
+            transition: all 0.3s ease;
+        }
+
+        .border-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+        }
+    </style>
 }
 

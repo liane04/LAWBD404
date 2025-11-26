@@ -1,11 +1,11 @@
-﻿using Marketplace.Models;
+using Marketplace.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 
 namespace Marketplace.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -40,10 +40,31 @@ namespace Marketplace.Data
         public DbSet<Mensagens> Mensagens { get; set; }
         public DbSet<DenunciaAnuncio> DenunciasAnuncio { get; set; }
         public DbSet<DenunciaUser> DenunciasUser { get; set; }
+        public DbSet<Extra> Extras { get; set; }
+        public DbSet<AnuncioExtra> AnuncioExtras { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Unique indexes for reference data
+            modelBuilder.Entity<Marca>()
+                .HasIndex(m => m.Nome)
+                .IsUnique();
+
+            modelBuilder.Entity<Tipo>()
+                .HasIndex(t => t.Nome)
+                .IsUnique();
+
+            modelBuilder.Entity<Modelo>()
+                .HasIndex(m => new { m.Nome, m.MarcaId })
+                .IsUnique();
+
+            // Base seed for Tipos
+            modelBuilder.Entity<Tipo>().HasData(
+                new Tipo { Id = 1, Nome = "Carro" },
+                new Tipo { Id = 2, Nome = "Mota" }
+            );
 
             // Configuração da herança TPH para Utilizador
             modelBuilder.Entity<Utilizador>()
@@ -166,11 +187,28 @@ namespace Marketplace.Data
                 .HasPrecision(10, 2);
 
             modelBuilder.Entity<AnuncioFav>()
-    .HasOne(af => af.Comprador)
-    .WithMany(c => c.AnunciosFavoritos)
-    .HasForeignKey(af => af.CompradorId)
-    .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(af => af.Comprador)
+                .WithMany(c => c.AnunciosFavoritos)
+                .HasForeignKey(af => af.CompradorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento N:N entre Anuncio e Extra através de AnuncioExtra
+            modelBuilder.Entity<AnuncioExtra>()
+                .HasOne(ae => ae.Anuncio)
+                .WithMany(a => a.AnuncioExtras)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AnuncioExtra>()
+                .HasOne(ae => ae.Extra)
+                .WithMany(e => e.AnuncioExtras)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Identity linkage: cada Utilizador do domínio aponta para um ApplicationUser (único)
+            modelBuilder.Entity<Utilizador>()
+                .HasIndex(u => u.IdentityUserId)
+                .IsUnique();
         }
 
     }
 }
+

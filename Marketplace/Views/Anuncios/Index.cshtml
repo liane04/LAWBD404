@@ -1,5 +1,11 @@
+@model IEnumerable<Marketplace.Models.Anuncio>
+
 @{
     ViewData["Title"] = "Comprar Carros";
+    var marcas = ViewBag.Marcas as List<Marketplace.Models.Marca> ?? new List<Marketplace.Models.Marca>();
+    var modelos = ViewBag.Modelos as List<Marketplace.Models.Modelo> ?? new List<Marketplace.Models.Modelo>();
+    var tipos = ViewBag.Tipos as List<Marketplace.Models.Tipo> ?? new List<Marketplace.Models.Tipo>();
+    var combustiveis = ViewBag.Combustiveis as List<Marketplace.Models.Combustivel> ?? new List<Marketplace.Models.Combustivel>();
 }
 
 <!-- Hero Section com título -->
@@ -37,33 +43,36 @@
                     </button>
                 </div>
 
-                <form id="filtrosForm">
+                <form id="filtrosForm" method="get" asp-action="Index">
                     <!-- Filtro de Marca -->
                     <div class="filter-group">
-                        <label for="marca" class="filter-label">
+                        <label for="marcaId" class="filter-label">
                             <i class="bi bi-bookmark-fill me-2"></i>Marca
                         </label>
-                        <select id="marca" class="form-select">
-                            <option value="" selected>Todas as Marcas</option>
-                            <option value="bmw">BMW</option>
-                            <option value="mercedes">Mercedes-Benz</option>
-                            <option value="audi">Audi</option>
-                            <option value="volkswagen">Volkswagen</option>
-                            <option value="toyota">Toyota</option>
-                            <option value="ford">Ford</option>
+                        <select name="marcaId" id="marcaId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Todas as Marcas</option>
+                            @foreach (var marca in marcas)
+                            {
+                                <option value="@marca.Id" selected="@(ViewBag.MarcaIdSelecionada == marca.Id)">
+                                    @marca.Nome
+                                </option>
+                            }
                         </select>
                     </div>
 
                     <!-- Filtro de Modelo -->
                     <div class="filter-group">
-                        <label for="modelo" class="filter-label">
+                        <label for="modeloId" class="filter-label">
                             <i class="bi bi-tags-fill me-2"></i>Modelo
                         </label>
-                        <select id="modelo" class="form-select">
-                            <option value="" selected>Todos os Modelos</option>
-                            <option value="serie1">Série 1</option>
-                            <option value="classeA">Classe A</option>
-                            <option value="a3">A3</option>
+                        <select name="modeloId" id="modeloId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Todos os Modelos</option>
+                            @foreach (var modelo in modelos)
+                            {
+                                <option value="@modelo.Id" selected="@(ViewBag.ModeloIdSelecionado == modelo.Id)">
+                                    @modelo.Nome
+                                </option>
+                            }
                         </select>
                     </div>
 
@@ -190,7 +199,7 @@
             <div class="results-toolbar">
                 <div class="results-info">
                     <h6 class="mb-0">
-                        <span class="results-count">3 Veículos</span>
+                        <span class="results-count">@Model.Count() Veículos</span>
                         <span class="text-muted small">encontrados</span>
                     </h6>
                 </div>
@@ -219,136 +228,78 @@
 
             <!-- Lista de Anúncios -->
             <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mt-2">
-                <!-- Anúncio 1 -->
-                <div class="col">
-                    <div class="card anuncio-card h-100">
-                        <div class="card-img-wrapper">
-                            <a asp-controller="Anuncios" asp-action="Details">
-                                <img src="~/imagens/bmwSerie1.jpg" class="card-img-top" alt="BMW Série 1 116d">
-                            </a>
-                            <span class="badge-destaque">
-                                <i class="bi bi-star-fill me-1"></i>Destaque
-                            </span>
-                            <button class="btn-favorito" onclick="toggleFavorito(this)">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <div class="card-header-info mb-2">
-                                <span class="badge bg-secondary">Usado</span>
-                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Lisboa</span>
-                            </div>
-                            <h5 class="card-title">BMW Série 1 116d</h5>
-                            <div class="card-price">18.500 €</div>
-                            <p class="card-text text-muted small flex-grow-1">
-                                Um carro desportivo e eficiente, perfeito para a cidade e viagens longas.
-                            </p>
-                            <div class="anuncio-details-grid mt-auto">
-                                <span><i class="bi bi-calendar3"></i> 2018</span>
-                                <span><i class="bi bi-speedometer2"></i> 110k km</span>
-                                <span><i class="bi bi-fuel-pump"></i> Diesel</span>
-                                <span><i class="bi bi-gear"></i> Manual</span>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="d-grid gap-2">
-                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
-                                </a>
-                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(1, 'BMW Série 1 116d', '~/imagens/bmwSerie1.jpg', '18.500 €', '2018', '110000', 'Diesel', 'Manual', '116', '1995', this)" data-anuncio-id="1">
-                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Anúncio 2 -->
-                <div class="col">
-                    <div class="card anuncio-card h-100">
-                        <div class="card-img-wrapper">
-                            <a asp-controller="Anuncios" asp-action="Details">
-                                <img src="~/imagens/audiA3.jpg" class="card-img-top" alt="Audi A3 Sportback">
-                            </a>
-                            <button class="btn-favorito active" onclick="toggleFavorito(this)">
-                                <i class="bi bi-heart-fill"></i>
-                            </button>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <div class="card-header-info mb-2">
-                                <span class="badge bg-secondary">Usado</span>
-                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Porto</span>
-                            </div>
-                            <h5 class="card-title">Audi A3 Sportback</h5>
-                            <div class="card-price">22.000 €</div>
-                            <p class="card-text text-muted small flex-grow-1">
-                                Conforto, tecnologia e design elegante. O parceiro ideal para o dia a dia.
-                            </p>
-                            <div class="anuncio-details-grid mt-auto">
-                                <span><i class="bi bi-calendar3"></i> 2019</span>
-                                <span><i class="bi bi-speedometer2"></i> 85k km</span>
-                                <span><i class="bi bi-fuel-pump"></i> Gasolina</span>
-                                <span><i class="bi bi-gear"></i> Automática</span>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var anuncio in Model)
+                    {
+                        <div class="col">
+                            <div class="card anuncio-card h-100">
+                                <div class="card-img-wrapper">
+                                    <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id">
+                                        @if (anuncio.Imagens != null && anuncio.Imagens.Any())
+                                        {
+                                            <img src="@anuncio.Imagens.First().ImagemCaminho" class="card-img-top" alt="@anuncio.Titulo">
+                                        }
+                                        else
+                                        {
+                                            <img src="~/imagens/no-image.jpg" class="card-img-top" alt="@anuncio.Titulo">
+                                        }
+                                    </a>
+                                    <button class="btn-favorito" data-anuncio-id="@anuncio.Id">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <div class="card-header-info mb-2">
+                                        <span class="badge bg-secondary">@(anuncio.Tipo?.Nome ?? "Usado")</span>
+                                        <span class="text-muted small">
+                                            <i class="bi bi-geo-alt me-1"></i>@(anuncio.Localizacao ?? "N/A")
+                                        </span>
+                                    </div>
+                                    <h5 class="card-title">@anuncio.Titulo</h5>
+                                    <div class="card-price">@anuncio.Preco.ToString("C")</div>
+                                    <p class="card-text text-muted small flex-grow-1">
+                                        @anuncio.Marca?.Nome @anuncio.Modelo?.Nome
+                                    </p>
+                                    <div class="anuncio-details-grid mt-auto">
+                                        @if (anuncio.Ano.HasValue)
+                                        {
+                                            <span><i class="bi bi-calendar3"></i> @anuncio.Ano</span>
+                                        }
+                                        @if (anuncio.Quilometragem.HasValue)
+                                        {
+                                            <span><i class="bi bi-speedometer2"></i> @anuncio.Quilometragem.Value.ToString("N0") km</span>
+                                        }
+                                        @if (anuncio.Combustivel != null)
+                                        {
+                                            <span><i class="bi bi-fuel-pump"></i> @anuncio.Combustivel.Tipo</span>
+                                        }
+                                        @if (!string.IsNullOrEmpty(anuncio.Caixa))
+                                        {
+                                            <span><i class="bi bi-gear-fill"></i> @anuncio.Caixa</span>
+                                        }
+                                    </div>
+                                    <div class="card-footer-actions">
+                                        <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-primary w-100">
+                                            <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card-footer">
-                            <div class="d-grid gap-2">
-                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
-                                </a>
-                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(2, 'Audi A3 Sportback', '~/imagens/audiA3.jpg', '22.000 €', '2019', '85000', 'Gasolina', 'Automática', '150', '1984', this)" data-anuncio-id="2">
-                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
-                                </button>
-                            </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <div class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size: 4rem; color: #6c757d;"></i>
+                            <h5 class="text-muted mt-3">Nenhum veículo encontrado</h5>
+                            <p class="text-muted">Tente ajustar os filtros de pesquisa.</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- Anúncio 3 -->
-                <div class="col">
-                    <div class="card anuncio-card h-100">
-                        <div class="card-img-wrapper">
-                            <a asp-controller="Anuncios" asp-action="Details">
-                                <img src="~/imagens/mercedezClassA.jpg" class="card-img-top" alt="Mercedes-Benz Classe A">
-                            </a>
-                            <span class="badge-novo">
-                                <i class="bi bi-lightning-charge-fill me-1"></i>Novo
-                            </span>
-                            <button class="btn-favorito" onclick="toggleFavorito(this)">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <div class="card-header-info mb-2">
-                                <span class="badge bg-success">Certificado</span>
-                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>Braga</span>
-                            </div>
-                            <h5 class="card-title">Mercedes-Benz Classe A</h5>
-                            <div class="card-price">25.750 €</div>
-                            <p class="card-text text-muted small flex-grow-1">
-                                Luxo e performance num formato compacto. Inclui pack AMG Line.
-                            </p>
-                            <div class="anuncio-details-grid mt-auto">
-                                <span><i class="bi bi-calendar3"></i> 2020</span>
-                                <span><i class="bi bi-speedometer2"></i> 60k km</span>
-                                <span><i class="bi bi-fuel-pump"></i> Híbrido</span>
-                                <span><i class="bi bi-gear"></i> Automática</span>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="d-grid gap-2">
-                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
-                                </a>
-                                <button class="btn btn-outline-primary btn-compare" onclick="addToCompare(3, 'Mercedes-Benz Classe A', '~/imagens/mercedezClassA.jpg', '25.750 €', '2020', '60000', 'Híbrido', 'Automática', '163', '1332', this)" data-anuncio-id="3">
-                                    <i class="bi bi-arrow-left-right me-2"></i>Comparar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
-
             <!-- Paginação -->
             <nav aria-label="Navegação de página" class="mt-5">
                 <ul class="pagination justify-content-center">
@@ -406,21 +357,8 @@
         }
 
         function resetFilters() {
-            document.getElementById('filtrosForm').reset();
-            updatePriceLabel(50000);
-        }
-
-        function toggleFavorito(btn) {
-            const icon = btn.querySelector('i');
-            if (icon.classList.contains('bi-heart')) {
-                icon.classList.remove('bi-heart');
-                icon.classList.add('bi-heart-fill');
-                btn.classList.add('active');
-            } else {
-                icon.classList.remove('bi-heart-fill');
-                icon.classList.add('bi-heart');
-                btn.classList.remove('active');
-            }
+            // Redireciona para a página sem filtros
+            window.location.href = '@Url.Action("Index", "Anuncios")';
         }
 
         function saveFilters() {
@@ -664,4 +602,6 @@
             }
         });
     </script>
+
+    <script src="~/js/favoritos.js"></script>
 }

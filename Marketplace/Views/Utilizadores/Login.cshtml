@@ -1,40 +1,215 @@
 ﻿@{
     ViewData["Title"] = "Entrar";
+    Layout = null; // Remove o layout padrão
 }
 
-<div class="auth-container">
-    <div class="card shadow-lg">
-        <div class="card-body p-5">
-            <h2 class="card-title text-center mb-4">Bem-vindo de Volta!</h2>
-            <form>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" required>
-                </div>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 404 Car Marketplace</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo no topo -->
+    <div class="position-absolute top-0 start-0 p-4">
+        <a asp-controller="Home" asp-action="Index">
+            <img src="~/imagens/logo.png" alt="404 Car" style="height: 50px; width: auto;" />
+        </a>
+    </div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Palavra-passe</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">
-                            Lembrar-me
-                        </label>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+            <div class="card shadow-lg border-0" style="border-radius: 1.5rem; overflow: hidden;">
+                <div class="row g-0">
+                    <!-- Coluna da esquerda - Informação visual -->
+                    <div class="col-lg-5 d-none d-lg-flex" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);">
+                        <div class="p-5 text-white d-flex flex-column justify-content-between w-100">
+                            <div>
+                                <img src="~/imagens/logo_branco.png" alt="404 Car" class="mb-4" style="height: 60px; width: auto;" />
+                                <h3 class="fw-bold mb-3">Bem-vindo de Volta!</h3>
+                                <p style="color: rgba(255,255,255,0.8);">Aceda à sua conta para continuar a explorar as melhores ofertas de veículos usados.</p>
+                            </div>
+                            <div>
+                                <div class="mb-3 d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Acesso rápido aos seus favoritos</span>
+                                </div>
+                                <div class="mb-3 d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Gerir anúncios facilmente</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span>Alertas personalizados</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <a href="#">Esqueceu-se da palavra-passe?</a>
-                </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+                    <!-- Coluna da direita - Formulário -->
+                    <div class="col-lg-7">
+                        <div class="p-4 p-lg-5">
+                            <!-- Header mobile -->
+                            <div class="text-center mb-4 d-lg-none">
+                                <img src="~/imagens/logo.png" alt="404 Car" class="mb-3" style="height: 50px; width: auto;" />
+                                <h3 class="fw-bold">Entrar</h3>
+                                <p class="text-muted">Aceda à sua conta</p>
+                            </div>
+
+                            <!-- Header desktop -->
+                            <div class="mb-4 d-none d-lg-block">
+                                <h3 class="fw-bold mb-2">Entrar</h3>
+                                <p class="text-muted">Aceda à sua conta para continuar</p>
+                            </div>
+
+                            @if (TempData["LoginError"] is string loginErr)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    @loginErr
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
+
+                            <form asp-action="Login" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="mb-3">
+                                    <label for="identifier" class="form-label fw-semibold">
+                                        <i class="bi bi-person-badge me-2 text-primary"></i>Email ou Username
+                                    </label>
+                                    <input type="text"
+                                           class="form-control form-control-lg"
+                                           id="identifier"
+                                           name="identifier"
+                                           placeholder="seu.email@exemplo.com ou joaosilva"
+                                           required
+                                           autocomplete="username"
+                                           style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label fw-semibold">
+                                        <i class="bi bi-lock me-2 text-primary"></i>Palavra-passe
+                                    </label>
+                                    <div class="position-relative">
+                                        <input type="password"
+                                               class="form-control form-control-lg pe-5"
+                                               id="password"
+                                               name="password"
+                                               placeholder="••••••••"
+                                               required
+                                               autocomplete="current-password"
+                                               style="border-radius: 0.75rem; border: 2px solid #e2e8f0;">
+                                        <button type="button"
+                                                class="btn btn-link position-absolute text-muted p-0"
+                                                id="togglePassword"
+                                                style="right: 15px; top: 50%; transform: translateY(-50%); text-decoration: none;">
+                                            <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                                        <label class="form-check-label" for="rememberMe">
+                                            Lembrar-me
+                                        </label>
+                                    </div>
+                                    <a href="/Utilizadores/EsqueceuPassword" class="text-primary text-decoration-none fw-semibold small">
+                                        Esqueceu a palavra-passe?
+                                    </a>
+                                </div>
+
+                                <div class="d-grid mb-3">
+                                    <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 0.75rem;">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+                                    </button>
+                                </div>
+
+                                <div class="text-center position-relative my-4">
+                                    <hr class="my-0">
+                                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">ou</span>
+                                </div>
+
+                                <div class="text-center">
+                                    <p class="mb-0 text-muted">
+                                        Ainda não tem uma conta?
+                                        <a asp-controller="Utilizadores"
+                                           asp-action="Registar"
+                                           class="text-primary text-decoration-none fw-bold">
+                                            Criar conta
+                                        </a>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </form>
-            <div class="mt-4 text-center">
-                <p class="mb-0">Ainda não tem uma conta? <a asp-controller="Utilizadores" asp-action="Registar">Crie uma aqui</a></p>
+            </div>
+
+            <!-- Link voltar -->
+            <div class="text-center mt-4">
+                <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none">
+                    <i class="bi bi-arrow-left me-2"></i>Voltar à página inicial
+                </a>
             </div>
         </div>
     </div>
-</div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        if (togglePassword) {
+            togglePassword.addEventListener('click', function () {
+                const passwordInput = document.getElementById('password');
+                const toggleIcon = document.getElementById('togglePasswordIcon');
+
+                if (passwordInput && toggleIcon) {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        toggleIcon.classList.remove('bi-eye');
+                        toggleIcon.classList.add('bi-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        toggleIcon.classList.remove('bi-eye-slash');
+                        toggleIcon.classList.add('bi-eye');
+                    }
+                }
+            });
+        }
+
+        // Form validation feedback
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (!form.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            });
+        }
+    </script>
+</body>
+</html>
 
