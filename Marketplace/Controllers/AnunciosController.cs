@@ -219,6 +219,7 @@ namespace Marketplace.Controllers
             // Log erros de validação
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
             Console.WriteLine("Erros de validação: " + string.Join(", ", errors));
+            System.IO.File.WriteAllText("validation_errors.txt", "Erros: " + string.Join(", ", errors));
 
             ViewData["CategoriaId"] = new SelectList(_context.Set<Categoria>(), "Id", "Nome", anuncio.CategoriaId);
             ViewData["CombustivelId"] = new SelectList(_context.Set<Combustivel>(), "Id", "Tipo", anuncio.CombustivelId);

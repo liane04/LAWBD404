@@ -322,7 +322,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-<script>
         // Username availability (debounced)
         (function(){
             const input = document.getElementById('username');
@@ -331,8 +330,8 @@
             function setState(state, text){
                 if (!input) return;
                 input.classList.remove('is-valid','is-invalid');
-                if (state==='''valid'') input.classList.add('is-valid');
-                if (state==='''invalid'') input.classList.add('is-invalid');
+                if (state==='valid') input.classList.add('is-valid');
+                if (state==='invalid') input.classList.add('is-invalid');
                 if (fb) fb.textContent = text || '';
             }
             function check(){
@@ -347,7 +346,7 @@
                           setState('valid','Disponível');
                       } else {
                           input.setCustomValidity('Username indisponível');
-                          setState('invalid','indisponível');
+                          setState('invalid','Indisponível');
                       }
                   }).catch(()=>{});
             }
@@ -356,6 +355,7 @@
                 input.addEventListener('blur', check);
             }
         })();
+
         document.querySelectorAll('.toggle-password').forEach(button => {
             button.addEventListener('click', function () {
                 const targetId = this.getAttribute('data-target');
@@ -376,7 +376,7 @@
             });
         });
 
-        // Password match validaçãon
+        // Password match validation
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirm-password');
         const username = document.getElementById('username');
@@ -384,7 +384,7 @@
         function validatePassword() {
             if (password && confirmPassword) {
                 if (password.value !== confirmPassword.value) {
-                    confirmPassword.setCustomValidity('As palavras-passe nÃ£o coincidem');
+                    confirmPassword.setCustomValidity('As palavras-passe não coincidem');
                 } else {
                     confirmPassword.setCustomValidity('');
                 }
@@ -394,20 +394,20 @@
         if (password) password.addEventListener('change', validatePassword);
         if (confirmPassword) confirmPassword.addEventListener('keyup', validatePassword);
 
-        // Username live validaçãon
+        // Username live validation
         if (username) {
             username.addEventListener('input', () => {
                 const val = username.value;
                 const re = /^[a-zA-Z0-9_.-]{3,30}$/;
                 if (!re.test(val)) {
-                    username.setCustomValidity('Username invÃ¡lido (3-30; letras, nÃºmeros, ., _, -)');
+                    username.setCustomValidity('Username inválido (3-30; letras, números, ., _, -)');
                 } else {
                     username.setCustomValidity('');
                 }
             });
         }
 
-        // Form validaçãon feedback
+        // Form validation feedback
         const form = document.querySelector('form');
         if (form) {
             form.addEventListener('submit', function (e) {

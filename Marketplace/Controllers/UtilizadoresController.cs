@@ -668,6 +668,18 @@ namespace Marketplace.Controllers
             ViewBag.Email = user.Email;
             return View();
         }
+        public async Task<IActionResult> PromoteMe()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+            if (vendedor != null)
+            {
+                vendedor.Estado = "Ativo";
+                await _context.SaveChangesAsync();
+                return Content("Promoted!");
+            }
+            return Content("Not found");
+        }
     }
 }
 
