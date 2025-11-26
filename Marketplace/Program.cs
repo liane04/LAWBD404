@@ -45,15 +45,20 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// External authentication providers (Google)
-builder.Services
-    .AddAuthentication()
-    .AddGoogle(options =>
-    {
-        options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
-        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
-        options.SignInScheme = IdentityConstants.ExternalScheme;
-    });
+// External authentication providers (Google) - register only if configured
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret))
+{
+    builder.Services
+        .AddAuthentication()
+        .AddGoogle(options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+            options.SignInScheme = IdentityConstants.ExternalScheme;
+        });
+}
 
 // Email sender (SMTP)
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();

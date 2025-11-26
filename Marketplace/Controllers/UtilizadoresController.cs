@@ -82,10 +82,20 @@ namespace Marketplace.Controllers
                         .CountAsync();
                     ViewBag.ReservasRecebidasCount = reservasCount;
 
-                    var visitasCount = await _db.Visitas
+                    var visitasVendedor = await _db.Visitas
+                        .Include(v => v.Comprador)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Imagens)
                         .Where(v => v.VendedorId == vendedor.Id)
-                        .CountAsync();
-                    ViewBag.VisitasAgendadasCount = visitasCount;
+                        .OrderByDescending(v => v.Data)
+                        .ToListAsync();
+
+                    ViewBag.MinhasVisitasVendedor = visitasVendedor;
+                    ViewBag.VisitasAgendadasCount = visitasVendedor.Count;
 
                     ViewBag.Nome = vendedor.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(vendedor.ImagemPerfil) ? null : vendedor.ImagemPerfil;
@@ -117,6 +127,22 @@ namespace Marketplace.Controllers
                 {
                     ViewBag.MeusFavoritos = comprador.AnunciosFavoritos.OrderByDescending(af => af.Id).ToList();
                     ViewBag.FavoritosCount = comprador.AnunciosFavoritos.Count;
+
+                    // Carregar visitas do comprador
+                    var visitasComprador = await _db.Visitas
+                        .Include(v => v.Vendedor)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Where(v => v.CompradorId == comprador.Id)
+                        .OrderByDescending(v => v.Data)
+                        .ToListAsync();
+
+                    ViewBag.MinhasVisitasComprador = visitasComprador;
+
                     ViewBag.Nome = comprador.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(comprador.ImagemPerfil) ? null : comprador.ImagemPerfil;
                 }
@@ -787,11 +813,11 @@ namespace Marketplace.Controllers
         public async Task<IActionResult> PromoteMe()
         {
             var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
-            var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+            var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
             if (vendedor != null)
             {
                 vendedor.Estado = "Ativo";
-                await _context.SaveChangesAsync();
+                await _db.SaveChangesAsync();
                 return Content("Promoted!");
             }
             return Content("Not found");

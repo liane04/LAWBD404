@@ -1,5 +1,6 @@
 ﻿@*@model Marketplace.Models.Utilizador*@
 
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     ViewData["Title"] = "Criar Conta";
     Layout = null; // Remove o layout padrÃ£o
@@ -293,6 +294,19 @@
                                         <hr class="my-0">
                                         <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">ou</span>
                                     </div>
+
+                                    @{ var googleId = Configuration["Authentication:Google:ClientId"]; var googleSecret = Configuration["Authentication:Google:ClientSecret"]; }
+                                    @if (!string.IsNullOrWhiteSpace(googleId) && !string.IsNullOrWhiteSpace(googleSecret))
+                                    {
+                                        <form asp-controller="Utilizadores" asp-action="ExternalLogin" method="post" class="mb-4">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="provider" value="Google" />
+                                            <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                                            <button type="submit" class="btn btn-outline-secondary w-100" style="border-radius: 0.75rem;">
+                                                <i class="bi bi-google me-2"></i> Continuar com Google
+                                            </button>
+                                        </form>
+                                    }
 
                                     <div class="text-center">
                                         <p class="mb-0 text-muted">

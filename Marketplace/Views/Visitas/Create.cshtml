@@ -8,7 +8,7 @@
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div class="card shadow">
+            <div class="card shadow animate-card">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
                         <i class="bi bi-calendar-plus"></i>
@@ -56,7 +56,7 @@
                     }
 
                     <!-- Formulário -->
-                    <form asp-action="Create" method="post">
+                    <form asp-action="Create" method="post" id="agendarVisitaForm">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="AnuncioId" />
 
@@ -88,6 +88,7 @@
                                 <textarea asp-for="Observacoes"
                                           class="form-control"
                                           rows="4"
+                                          maxlength="500"
                                           placeholder="Adicione informações adicionais, perguntas ou pedidos especiais..."></textarea>
                                 <div class="form-text">
                                     Ex: "Gostaria de fazer um test-drive", "Tenho interesse em financiamento", etc.
@@ -115,7 +116,7 @@
                                class="btn btn-outline-secondary btn-lg">
                                 <i class="bi bi-x-circle"></i> Cancelar
                             </a>
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
                                 <i class="bi bi-calendar-check"></i> Agendar Visita
                             </button>
                         </div>
@@ -124,7 +125,7 @@
             </div>
 
             <!-- Dicas -->
-            <div class="card mt-4 border-0 bg-light">
+            <div class="card mt-4 border-0 bg-light animate-card" style="animation-delay: 0.2s">
                 <div class="card-body">
                     <h5 class="card-title">
                         <i class="bi bi-lightbulb text-warning"></i> Dicas para uma Boa Visita
@@ -151,6 +152,111 @@
     </div>
 </div>
 
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="text-center text-white">
+        <div class="spinner mb-3"></div>
+        <h4>A agendar visita...</h4>
+        <p class="text-white-50">Aguarde um momento</p>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Animações */
+        @@keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @@keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-card {
+            animation: slideInUp 0.6s ease-out both;
+        }
+
+        .form-control:focus, .form-select:focus, textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            animation: pulse 0.6s ease-in-out;
+            transform: translateY(-2px);
+        }
+
+        .card {
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Input animations */
+        input[type="datetime-local"], textarea {
+            transition: all 0.3s ease;
+        }
+
+        input[type="datetime-local"]:hover, textarea:hover {
+            border-color: #6c757d;
+        }
+
+        /* Character counter */
+        .char-count {
+            text-align: right;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+}
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
@@ -158,21 +264,67 @@
         const now = new Date();
         now.setHours(now.getHours() + 1);
         const minDate = now.toISOString().slice(0, 16);
-        document.querySelector('input[type="datetime-local"]').min = minDate;
+        const dateInput = document.querySelector('input[type="datetime-local"]');
+        if (dateInput) {
+            dateInput.min = minDate;
+        }
 
         // Sugerir horário comercial (9h-18h)
-        document.querySelector('input[type="datetime-local"]').addEventListener('change', function() {
-            const selected = new Date(this.value);
-            const hour = selected.getHours();
+        if (dateInput) {
+            dateInput.addEventListener('change', function() {
+                const selected = new Date(this.value);
+                const hour = selected.getHours();
 
-            if (hour < 9 || hour >= 18) {
-                if (confirm('A hora selecionada está fora do horário comercial (9h-18h). Deseja continuar?')) {
-                    // OK
-                } else {
-                    this.value = '';
+                if (hour < 9 || hour >= 18) {
+                    if (confirm('A hora selecionada está fora do horário comercial (9h-18h). Deseja continuar?')) {
+                        // OK
+                    } else {
+                        this.value = '';
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        // Animação no submit do formulário
+        const form = document.getElementById('agendarVisitaForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Verificar se o formulário é válido
+                if (!form.checkValidity()) {
+                    return; // Deixar a validação padrão acontecer
+                }
+
+                // Mostrar overlay de loading
+                const overlay = document.getElementById('loadingOverlay');
+                overlay.classList.add('active');
+
+                // Desabilitar o botão de submit
+                const submitBtn = document.getElementById('submitBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A processar...';
+                }
+            });
+        }
+
+        // Contador de caracteres para observações
+        const observacoes = document.querySelector('textarea[name="Observacoes"]');
+        if (observacoes) {
+            // Criar elemento de contador
+            const feedback = document.createElement('div');
+            feedback.className = 'form-text char-count';
+            observacoes.parentElement.appendChild(feedback);
+
+            observacoes.addEventListener('input', function() {
+                const charCount = this.value.length;
+                const maxChars = 500;
+
+                feedback.textContent = `${charCount}/${maxChars} caracteres`;
+                feedback.style.color = charCount > 450 ? (charCount > maxChars ? 'red' : 'orange') : '#6c757d';
+            });
+
+            // Inicializar contador
+            observacoes.dispatchEvent(new Event('input'));
+        }
     </script>
 }
-
