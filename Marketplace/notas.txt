@@ -20,6 +20,7 @@ Update-Database -Context ApplicationDbContext
   dotnet ef database update --context ApplicationDbContext
 
   ---------------------------------------------------------------------------------------------------------------------
+  Remove-Migration -Context ApplicationDbContext
   Add-Migration AddIdentityTables -Context ApplicationDbContext
   Drop-Database -Context ApplicationDbContext
   Update-Database -Context ApplicationDbContext
