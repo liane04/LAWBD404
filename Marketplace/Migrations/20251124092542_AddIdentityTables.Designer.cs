@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marketplace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251124084723_AddIdentityTables")]
+    [Migration("20251124092542_AddIdentityTables")]
     partial class AddIdentityTables
     {
         /// <inheritdoc />
