@@ -1,77 +1,43 @@
-// Programa temporário para criar utilizadores padrão manualmente
-// Execute: dotnet run --project Marketplace.csproj SeedDatabase.cs
+// Console runner opcional para popular a base com dados de desenvolvimento.
+// Executar: dotnet run --project Marketplace.csproj --no-build -- SeedDatabase
 
+using System;
 using Marketplace.Data;
+using Marketplace.Data.Seeders;
 using Marketplace.Models;
-using Marketplace.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 public class SeedDatabase
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MarketplaceDb;Trusted_Connection=True;MultipleActiveResultSets=true");
+        var builder = Host.CreateDefaultBuilder(args)
+            .ConfigureServices((ctx, services) =>
+            {
+                services.AddDbContext<ApplicationDbContext>(opt =>
+                    opt.UseSqlServer(ctx.Configuration.GetConnectionString("DefaultConnection")));
 
-        using var db = new ApplicationDbContext(optionsBuilder.Options);
+                services.AddIdentity<ApplicationUser, IdentityRole<int>>()
+                    .AddEntityFrameworkStores<ApplicationDbContext>()
+                    .AddDefaultTokenProviders();
+            });
 
-        // Verificar se já existem utilizadores
-        if (db.Set<Utilizador>().Any())
-        {
-            Console.WriteLine("❌ Já existem utilizadores na base de dados!");
-            return;
-        }
+        var host = builder.Build();
 
-        Console.WriteLine("🔧 A criar utilizadores padrão...");
+        using var scope = host.Services.CreateScope();
+        var services = scope.ServiceProvider;
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+        var env = services.GetRequiredService<IHostEnvironment>();
 
-        // Hash da password "123" para todos
-        string hashed = PasswordHasher.HashPassword("123");
+        db.Database.Migrate();
 
-        // Criar Administrador
-        var admin = new Administrador
-        {
-            Username = "admin",
-            Email = "admin@email.com",
-            Nome = "Administrador",
-            PasswordHash = hashed,
-            Estado = "Ativo",
-            Tipo = "Administrador",
-            NivelAcesso = "Total"
-        };
-
-        // Criar Vendedor
-        var vendedor = new Vendedor
-        {
-            Username = "vendedor",
-            Email = "vendedor@email.com",
-            Nome = "Vendedor Demo",
-            PasswordHash = hashed,
-            Estado = "Ativo",
-            Tipo = "Vendedor"
-        };
-
-        // Criar Comprador
-        var comprador = new Comprador
-        {
-            Username = "comprador",
-            Email = "comprador@email.com",
-            Nome = "Comprador Demo",
-            PasswordHash = hashed,
-            Estado = "Ativo",
-            Tipo = "Comprador"
-        };
-
-        // Adicionar à base de dados
-        db.Administradores.Add(admin);
-        db.Vendedores.Add(vendedor);
-        db.Compradores.Add(comprador);
-        db.SaveChanges();
-
-        Console.WriteLine("✅ Utilizadores criados com sucesso!");
-        Console.WriteLine();
-        Console.WriteLine("📋 Contas criadas:");
-        Console.WriteLine("   👨‍💼 Admin:     admin@email.com / 123");
-        Console.WriteLine("   🏢 Vendedor:  vendedor@email.com / 123");
-        Console.WriteLine("   🛒 Comprador: comprador@email.com / 123");
+        await ReferenceDataSeeder.SeedAsync(db, env.ContentRootPath, Console.WriteLine);
+        await UserSeeder.SeedAsync(userManager, roleManager, db, env.ContentRootPath, Console.WriteLine);
+        await AnuncioSeeder.SeedAsync(db, env.ContentRootPath, Console.WriteLine);
     }
 }
