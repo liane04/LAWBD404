@@ -1,0 +1,141 @@
+@model Marketplace.Models.Visita
+
+@{
+    ViewData["Title"] = "Editar Visita";
+    var isVendedor = ViewBag.IsVendedor;
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil"></i>
+                        Editar Visita
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Informações do Anúncio -->
+                    <div class="alert alert-info mb-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                @if (Model.Anuncio?.Imagens?.Any() == true)
+                                {
+                                    <img src="@Url.Content(Model.Anuncio.Imagens.First().ImagemCaminho)"
+                                         class="img-fluid rounded"
+                                         alt="@Model.Anuncio.Titulo">
+                                }
+                                else
+                                {
+                                    <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                         style="height: 80px;">
+                                        <i class="bi bi-car-front fs-1 text-muted"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-9">
+                                <h6 class="mb-1">@Model.Anuncio?.Titulo</h6>
+                                <p class="mb-0 small">
+                                    @Model.Anuncio?.Marca?.Nome @Model.Anuncio?.Modelo?.Nome
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário -->
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="AnuncioId" />
+                        <input type="hidden" asp-for="CompradorId" />
+                        <input type="hidden" asp-for="VendedorId" />
+                        <input type="hidden" asp-for="ReservaId" />
+                        <input type="hidden" asp-for="DataCriacao" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="row g-3">
+                            <!-- Data da Visita -->
+                            <div class="col-md-6">
+                                <label asp-for="Data" class="form-label fw-bold">
+                                    <i class="bi bi-calendar3"></i> Data e Hora
+                                </label>
+                                <input asp-for="Data"
+                                       type="datetime-local"
+                                       class="form-control form-control-lg"
+                                       min="@ViewBag.MinDate" />
+                                <span asp-validation-for="Data" class="text-danger"></span>
+                            </div>
+
+                            <!-- Estado (apenas vendedor pode alterar) -->
+                            <div class="col-md-6">
+                                <label asp-for="Estado" class="form-label fw-bold">
+                                    <i class="bi bi-flag"></i> Estado
+                                </label>
+                                @if (isVendedor)
+                                {
+                                    <select asp-for="Estado" class="form-select form-select-lg">
+                                        <option value="Pendente">Pendente</option>
+                                        <option value="Confirmada">Confirmada</option>
+                                        <option value="Concluída">Concluída</option>
+                                        <option value="Cancelada">Cancelada</option>
+                                    </select>
+                                    <span asp-validation-for="Estado" class="text-danger"></span>
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control form-control-lg" value="@Model.Estado" disabled />
+                                    <input type="hidden" asp-for="Estado" />
+                                    <div class="form-text">
+                                        Apenas o vendedor pode alterar o estado
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Observações -->
+                            <div class="col-12">
+                                <label asp-for="Observacoes" class="form-label fw-bold">
+                                    <i class="bi bi-chat-left-text"></i> Observações
+                                </label>
+                                <textarea asp-for="Observacoes"
+                                          class="form-control"
+                                          rows="4"
+                                          placeholder="Adicione ou atualize observações..."></textarea>
+                                <span asp-validation-for="Observacoes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Informações de Auditoria -->
+                        <div class="alert alert-light mt-4">
+                            <small class="text-muted">
+                                <strong>Criada em:</strong> @Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")
+                                @if (Model.DataAtualizacao.HasValue)
+                                {
+                                    <br />
+                                    <strong>Última atualização:</strong> @Model.DataAtualizacao.Value.ToString("dd/MM/yyyy HH:mm")
+                                }
+                            </small>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="@Url.Action("Details", new { id = Model.Id })"
+                               class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Guardar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

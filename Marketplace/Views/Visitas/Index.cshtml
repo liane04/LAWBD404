@@ -1,0 +1,264 @@
+@model IEnumerable<Marketplace.Models.Visita>
+
+@{
+    ViewData["Title"] = ViewBag.UserRole == "Vendedor" ? "Visitas aos Meus Anúncios" : "Minhas Visitas Agendadas";
+}
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h2 mb-0">
+                <i class="bi bi-calendar-check"></i>
+                @ViewData["Title"]
+            </h1>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            @if (ViewBag.UserRole == "Vendedor")
+            {
+                <span>Ainda não há visitas agendadas aos seus anúncios.</span>
+            }
+            else
+            {
+                <span>Ainda não agendou nenhuma visita.</span>
+                <a href="@Url.Action("Index", "Anuncios")" class="alert-link">Explorar veículos</a>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Filtros rápidos -->
+        <div class="mb-3">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active" onclick="filterVisitas('todas')">
+                    Todas (@Model.Count())
+                </button>
+                <button type="button" class="btn btn-outline-warning" onclick="filterVisitas('Pendente')">
+                    Pendentes (@Model.Count(v => v.Estado == "Pendente"))
+                </button>
+                <button type="button" class="btn btn-outline-success" onclick="filterVisitas('Confirmada')">
+                    Confirmadas (@Model.Count(v => v.Estado == "Confirmada"))
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="filterVisitas('Concluída')">
+                    Concluídas (@Model.Count(v => v.Estado == "Concluída"))
+                </button>
+                <button type="button" class="btn btn-outline-danger" onclick="filterVisitas('Cancelada')">
+                    Canceladas (@Model.Count(v => v.Estado == "Cancelada"))
+                </button>
+            </div>
+        </div>
+
+        <!-- Listagem de visitas -->
+        <div class="row g-3">
+            @foreach (var item in Model)
+            {
+                <div class="col-12 visita-card" data-estado="@item.Estado">
+                    <div class="card h-100 shadow-sm border-start border-4 @GetCardBorderClass(item.Estado)">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <!-- Info do Veículo -->
+                                <div class="col-md-3">
+                                    @if (item.Anuncio?.Imagens?.Any() == true)
+                                    {
+                                        <img src="@Url.Content(item.Anuncio.Imagens.First().ImagemCaminho)"
+                                             class="img-fluid rounded"
+                                             alt="@item.Anuncio.Titulo"
+                                             style="max-height: 120px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                             style="height: 120px;">
+                                            <i class="bi bi-car-front fs-1 text-muted"></i>
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Detalhes da Visita -->
+                                <div class="col-md-6">
+                                    <h5 class="card-title mb-2">
+                                        <a href="@Url.Action("Details", "Anuncios", new { id = item.AnuncioId })"
+                                           class="text-decoration-none text-primary">
+                                            @item.Anuncio?.Titulo
+                                        </a>
+                                    </h5>
+                                    <div class="text-muted small mb-2">
+                                        @item.Anuncio?.Marca?.Nome @item.Anuncio?.Modelo?.Nome
+                                        @if (item.Anuncio?.Localizacao != null)
+                                        {
+                                            <span>• @item.Anuncio.Localizacao</span>
+                                        }
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <i class="bi bi-calendar3 text-primary"></i>
+                                        <strong>@item.Data.ToString("dd/MM/yyyy HH:mm")</strong>
+                                    </div>
+
+                                    @if (ViewBag.UserRole == "Vendedor")
+                                    {
+                                        <div class="text-muted small">
+                                            <i class="bi bi-person"></i> @item.Comprador?.Nome
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-muted small">
+                                            <i class="bi bi-shop"></i> @item.Vendedor?.Nome
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrEmpty(item.Observacoes))
+                                    {
+                                        <div class="mt-2 small">
+                                            <i class="bi bi-chat-left-text"></i>
+                                            <em>@item.Observacoes</em>
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Estado e Ações -->
+                                <div class="col-md-3 text-end">
+                                    <div class="mb-3">
+                                        <span class="badge @GetBadgeClass(item.Estado) fs-6">
+                                            @item.Estado
+                                        </span>
+                                    </div>
+
+                                    <div class="btn-group-vertical gap-1 w-100">
+                                        <a href="@Url.Action("Details", "Visitas", new { id = item.Id })"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Detalhes
+                                        </a>
+
+                                        @if (item.Estado == "Pendente" && ViewBag.UserRole == "Vendedor")
+                                        {
+                                            <form asp-action="Confirmar" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-success w-100"
+                                                        onclick="return confirm('Confirmar esta visita?')">
+                                                    <i class="bi bi-check-circle"></i> Confirmar
+                                                </button>
+                                            </form>
+                                        }
+
+                                        @if (item.Estado != "Cancelada" && item.Estado != "Concluída")
+                                        {
+                                            <a href="@Url.Action("Edit", "Visitas", new { id = item.Id })"
+                                               class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </a>
+
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#cancelModal@(item.Id)">
+                                                <i class="bi bi-x-circle"></i> Cancelar
+                                            </button>
+                                        }
+
+                                        @if (item.Estado == "Confirmada" && ViewBag.UserRole == "Vendedor")
+                                        {
+                                            <form asp-action="Concluir" asp-route-id="@item.Id" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-info w-100">
+                                                    <i class="bi bi-check-all"></i> Concluir
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para cancelamento -->
+                <div class="modal fade" id="cancelModal@(item.Id)" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Cancelar Visita</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form asp-action="Cancelar" asp-route-id="@item.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="modal-body">
+                                    <p>Tem certeza que deseja cancelar esta visita?</p>
+                                    <div class="mb-3">
+                                        <label for="motivo@(item.Id)" class="form-label">Motivo (opcional)</label>
+                                        <textarea class="form-control" id="motivo@(item.Id)" name="motivo"
+                                                  rows="3" placeholder="Informe o motivo do cancelamento"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                                    <button type="submit" class="btn btn-danger">Confirmar Cancelamento</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@functions {
+    string GetBadgeClass(string estado)
+    {
+        return estado switch
+        {
+            "Pendente" => "bg-warning text-dark",
+            "Confirmada" => "bg-success",
+            "Concluída" => "bg-secondary",
+            "Cancelada" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetCardBorderClass(string estado)
+    {
+        return estado switch
+        {
+            "Pendente" => "border-warning",
+            "Confirmada" => "border-success",
+            "Concluída" => "border-secondary",
+            "Cancelada" => "border-danger",
+            _ => "border-secondary"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        function filterVisitas(estado) {
+            const cards = document.querySelectorAll('.visita-card');
+            const buttons = document.querySelectorAll('.btn-group button');
+
+            // Atualizar botões ativos
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filtrar cards
+            cards.forEach(card => {
+                if (estado === 'todas' || card.dataset.estado === estado) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+}
+

@@ -149,6 +149,15 @@
                                     <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">ou</span>
                                 </div>
 
+                                <!-- Login com Google -->
+                                <form asp-controller="Utilizadores" asp-action="ExternalLogin" method="post" class="mb-4">
+                                    <input type="hidden" name="provider" value="Google" />
+                                    <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                                    <button type="submit" class="btn btn-outline-secondary w-100" style="border-radius: 0.75rem;">
+                                        <i class="bi bi-google me-2"></i> Entrar com Google
+                                    </button>
+                                </form>
+
                                 <div class="text-center">
                                     <p class="mb-0 text-muted">
                                         Ainda não tem uma conta?

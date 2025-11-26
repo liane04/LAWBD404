@@ -1,0 +1,340 @@
+@model Marketplace.Models.Visita
+
+@{
+    ViewData["Title"] = "Detalhes da Visita";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Cabeçalho -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-calendar-check"></i>
+                    Detalhes da Visita
+                </h1>
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+
+            <!-- Estado da Visita -->
+            <div class="alert @GetAlertClass(Model.Estado) d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h5 class="alert-heading mb-0">
+                        <i class="bi @GetIconClass(Model.Estado)"></i>
+                        Estado: <strong>@Model.Estado</strong>
+                    </h5>
+                </div>
+                <div>
+                    @if (Model.Estado == "Pendente" && User.IsInRole("Vendedor"))
+                    {
+                        <form asp-action="Confirmar" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-success" onclick="return confirm('Confirmar esta visita?')">
+                                <i class="bi bi-check-circle"></i> Confirmar Visita
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Informações da Visita -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-info-circle"></i> Informações da Visita
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-5">
+                                    <i class="bi bi-calendar3"></i> Data e Hora
+                                </dt>
+                                <dd class="col-sm-7">
+                                    <strong class="fs-5">@Model.Data.ToString("dd/MM/yyyy")</strong><br>
+                                    <span class="text-muted">às @Model.Data.ToString("HH:mm")</span>
+                                </dd>
+
+                                <dt class="col-sm-5">
+                                    <i class="bi bi-flag"></i> Estado
+                                </dt>
+                                <dd class="col-sm-7">
+                                    <span class="badge @GetBadgeClass(Model.Estado) fs-6">
+                                        @Model.Estado
+                                    </span>
+                                </dd>
+
+                                @if (Model.Reserva != null)
+                                {
+                                    <dt class="col-sm-5">
+                                        <i class="bi bi-bookmark-check"></i> Reserva
+                                    </dt>
+                                    <dd class="col-sm-7">
+                                        <a href="@Url.Action("Details", "Reservas", new { id = Model.ReservaId })">
+                                            Ver Reserva #@Model.ReservaId
+                                        </a>
+                                    </dd>
+                                }
+
+                                @if (!string.IsNullOrEmpty(Model.Observacoes))
+                                {
+                                    <dt class="col-sm-12 mt-3">
+                                        <i class="bi bi-chat-left-text"></i> Observações
+                                    </dt>
+                                    <dd class="col-sm-12">
+                                        <div class="alert alert-light mb-0">
+                                            <em>@Model.Observacoes</em>
+                                        </div>
+                                    </dd>
+                                }
+
+                                <dt class="col-sm-5 mt-3">
+                                    <i class="bi bi-clock-history"></i> Criada em
+                                </dt>
+                                <dd class="col-sm-7 mt-3">
+                                    @Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")
+                                </dd>
+
+                                @if (Model.DataAtualizacao.HasValue)
+                                {
+                                    <dt class="col-sm-5">
+                                        <i class="bi bi-arrow-clockwise"></i> Atualizada em
+                                    </dt>
+                                    <dd class="col-sm-7">
+                                        @Model.DataAtualizacao.Value.ToString("dd/MM/yyyy HH:mm")
+                                    </dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações do Anúncio -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-car-front"></i> Veículo
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.Anuncio?.Imagens?.Any() == true)
+                            {
+                                <img src="@Url.Content(Model.Anuncio.Imagens.First().ImagemCaminho)"
+                                     class="img-fluid rounded mb-3"
+                                     alt="@Model.Anuncio.Titulo"
+                                     style="max-height: 200px; width: 100%; object-fit: cover;">
+                            }
+
+                            <h5 class="card-title">@Model.Anuncio?.Titulo</h5>
+
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Marca</dt>
+                                <dd class="col-sm-8">@Model.Anuncio?.Marca?.Nome</dd>
+
+                                <dt class="col-sm-4">Modelo</dt>
+                                <dd class="col-sm-8">@Model.Anuncio?.Modelo?.Nome</dd>
+
+                                @if (Model.Anuncio?.Ano != null)
+                                {
+                                    <dt class="col-sm-4">Ano</dt>
+                                    <dd class="col-sm-8">@Model.Anuncio.Ano</dd>
+                                }
+
+                                @if (Model.Anuncio?.Localizacao != null)
+                                {
+                                    <dt class="col-sm-4">
+                                        <i class="bi bi-geo-alt"></i> Local
+                                    </dt>
+                                    <dd class="col-sm-8">
+                                        <strong>@Model.Anuncio.Localizacao</strong>
+                                    </dd>
+                                }
+
+                                <dt class="col-sm-4">Preço</dt>
+                                <dd class="col-sm-8">
+                                    <strong class="text-primary fs-5">
+                                        @Model.Anuncio?.Preco.ToString("C")
+                                    </strong>
+                                </dd>
+                            </dl>
+
+                            <div class="mt-3">
+                                <a href="@Url.Action("Details", "Anuncios", new { id = Model.AnuncioId })"
+                                   class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-eye"></i> Ver Anúncio Completo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comprador -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-person"></i> Comprador
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Nome</dt>
+                                <dd class="col-sm-8">@Model.Comprador?.Nome</dd>
+
+                                <dt class="col-sm-4">Email</dt>
+                                <dd class="col-sm-8">
+                                    <a href="mailto:@Model.Comprador?.Email">@Model.Comprador?.Email</a>
+                                </dd>
+
+                                @if (Model.Comprador?.Username != null)
+                                {
+                                    <dt class="col-sm-4">Username</dt>
+                                    <dd class="col-sm-8">@@@Model.Comprador.Username</dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vendedor -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-shop"></i> Vendedor
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Nome</dt>
+                                <dd class="col-sm-8">@Model.Vendedor?.Nome</dd>
+
+                                <dt class="col-sm-4">Email</dt>
+                                <dd class="col-sm-8">
+                                    <a href="mailto:@Model.Vendedor?.Email">@Model.Vendedor?.Email</a>
+                                </dd>
+
+                                @if (Model.Vendedor?.Username != null)
+                                {
+                                    <dt class="col-sm-4">Username</dt>
+                                    <dd class="col-sm-8">@@@Model.Vendedor.Username</dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações -->
+            @if (Model.Estado != "Cancelada" && Model.Estado != "Concluída")
+            {
+                <div class="card mt-4 border-primary">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-gear"></i> Ações
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <a href="@Url.Action("Edit", "Visitas", new { id = Model.Id })"
+                                   class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-pencil"></i> Editar Visita
+                                </a>
+                            </div>
+
+                            @if (Model.Estado == "Confirmada" && User.IsInRole("Vendedor"))
+                            {
+                                <div class="col-md-4">
+                                    <form asp-action="Concluir" asp-route-id="@Model.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-info w-100">
+                                            <i class="bi bi-check-all"></i> Marcar como Concluída
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-outline-danger w-100"
+                                        data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                    <i class="bi bi-x-circle"></i> Cancelar Visita
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal para cancelamento -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cancelar Visita</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="Cancelar" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <p>Tem certeza que deseja cancelar esta visita?</p>
+                    <div class="mb-3">
+                        <label for="motivo" class="form-label">Motivo (opcional)</label>
+                        <textarea class="form-control" id="motivo" name="motivo"
+                                  rows="3" placeholder="Informe o motivo do cancelamento"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                    <button type="submit" class="btn btn-danger">Confirmar Cancelamento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetBadgeClass(string estado)
+    {
+        return estado switch
+        {
+            "Pendente" => "bg-warning text-dark",
+            "Confirmada" => "bg-success",
+            "Concluída" => "bg-secondary",
+            "Cancelada" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetAlertClass(string estado)
+    {
+        return estado switch
+        {
+            "Pendente" => "alert-warning",
+            "Confirmada" => "alert-success",
+            "Concluída" => "alert-secondary",
+            "Cancelada" => "alert-danger",
+            _ => "alert-secondary"
+        };
+    }
+
+    string GetIconClass(string estado)
+    {
+        return estado switch
+        {
+            "Pendente" => "bi-clock-history",
+            "Confirmada" => "bi-check-circle-fill",
+            "Concluída" => "bi-check-all",
+            "Cancelada" => "bi-x-circle-fill",
+            _ => "bi-question-circle"
+        };
+    }
+}
+

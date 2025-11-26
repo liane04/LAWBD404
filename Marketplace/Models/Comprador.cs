@@ -11,6 +11,7 @@ namespace Marketplace.Models
         public ICollection<ContactosComprador> Contactos { get; set; } = new List<ContactosComprador>();
         public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
         public ICollection<Compra> Compras { get; set; } = new List<Compra>();
+        public ICollection<Visita> Visitas { get; set; } = new List<Visita>();
         public ICollection<PesquisasPassadas> PesquisasPassadas { get; set; } = new List<PesquisasPassadas>();
         public ICollection<Notificacoes> Notificacoes { get; set; } = new List<Notificacoes>();
         public ICollection<FiltrosFav> FiltrosFavoritos { get; set; } = new List<FiltrosFav>();

@@ -433,9 +433,18 @@
                         <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#reservarModal" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
                             <i class="bi bi-bookmark-check-fill me-2"></i>Reservar Veículo
                         </button>
-                        <button class="btn btn-info btn-lg text-white" data-bs-toggle="modal" data-bs-target="#agendarVisitaModal" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
-                            <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
-                        </button>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Comprador"))
+                        {
+                            <a href="@Url.Action("Create", "Visitas", new { anuncioId = Model.Id })" class="btn btn-info btn-lg text-white">
+                                <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                            </a>
+                        }
+                        else if (!User.Identity.IsAuthenticated)
+                        {
+                            <a href="@Url.Action("Login", "Utilizadores", new { returnUrl = Url.Action("Create", "Visitas", new { anuncioId = Model.Id }) })" class="btn btn-info btn-lg text-white">
+                                <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                            </a>
+                        }
                     </div>
                 </div>
                 <div class="card-footer text-center bg-light">

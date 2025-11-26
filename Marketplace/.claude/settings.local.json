@@ -36,7 +36,9 @@
       "Bash(del nul 2)",
       "Bash(del create_default_users.sql CreateDefaultUsers.sql create_test_anuncio.sql fix_combustiveis_encoding.sql fix_encoding.sql fix_tipo_categoria.sql manual_migration.sql seed_reference_data.sql)",
       "Bash(del clean_index.py fix_perfil.py replace_anuncios_estaticos.py replace_gerir_utilizadores.py replace_moderar_anuncios.py)",
-      "Bash(del meus_anuncios_section_fixed.txt anuncios_dinamicos.txt)"
+      "Bash(del meus_anuncios_section_fixed.txt anuncios_dinamicos.txt)",
+      "Bash(timeout /t 3 /nobreak)",
+      "Bash(if not exist \"Views\\Visitas\" mkdir \"Views\\Visitas\")"
     ],
     "deny": [],
     "ask": []

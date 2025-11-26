@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 using Marketplace.Data;
 using Marketplace.Models;
 using Marketplace.Services;
@@ -530,6 +532,90 @@ namespace Marketplace.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        // POST: Utilizadores/ExternalLogin (Google)
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        {
+            if (string.IsNullOrWhiteSpace(provider))
+                return RedirectToAction(nameof(Login));
+
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Utilizadores", new { returnUrl });
+            var props = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(props, provider);
+        }
+
+        // GET: Utilizadores/ExternalLoginCallback
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
+        {
+            if (!string.IsNullOrEmpty(remoteError))
+            {
+                TempData["LoginError"] = $"Falha no login externo: {remoteError}";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                TempData["LoginError"] = "Não foi possível obter informações do login externo.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (signInResult.Succeeded)
+            {
+                return LocalRedirect(returnUrl ?? "/");
+            }
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            var name = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email ?? "Utilizador";
+
+            if (email == null)
+            {
+                TempData["LoginError"] = "A conta externa não forneceu um email válido.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            // Se já existe conta com este email, associar o login externo
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if (existingUser != null)
+            {
+                try { await _userManager.AddLoginAsync(existingUser, info); } catch { /* ignorar se já associado */ }
+                await _signInManager.SignInAsync(existingUser, isPersistent: false);
+                return LocalRedirect(returnUrl ?? "/");
+            }
+
+            // Criar nova conta e entidade de domínio (Comprador)
+            var user = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true };
+            var createRes = await _userManager.CreateAsync(user);
+            if (!createRes.Succeeded)
+            {
+                TempData["LoginError"] = string.Join("; ", createRes.Errors.Select(e => e.Description));
+                return RedirectToAction(nameof(Login));
+            }
+
+            await _userManager.AddLoginAsync(user, info);
+            await _userManager.AddToRoleAsync(user, "Comprador");
+
+            var comprador = new Comprador
+            {
+                Username = user.UserName!,
+                Email = user.Email!,
+                Nome = name,
+                IdentityUserId = user.Id,
+                PasswordHash = "IDENTITY"
+            };
+            _db.Compradores.Add(comprador);
+            await _db.SaveChangesAsync();
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            return LocalRedirect(returnUrl ?? "/");
         }
 
         // GET: Utilizadores/ConfirmarEmail

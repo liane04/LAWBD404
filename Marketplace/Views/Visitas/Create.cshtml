@@ -1,0 +1,178 @@
+@model Marketplace.Models.Visita
+
+@{
+    ViewData["Title"] = "Agendar Visita";
+    var anuncio = ViewBag.Anuncio as Marketplace.Models.Anuncio;
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-calendar-plus"></i>
+                        Agendar Visita
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Informações do Anúncio -->
+                    @if (anuncio != null)
+                    {
+                        <div class="alert alert-info mb-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    @if (anuncio.Imagens?.Any() == true)
+                                    {
+                                        <img src="@Url.Content(anuncio.Imagens.First().ImagemCaminho)"
+                                             class="img-fluid rounded"
+                                             alt="@anuncio.Titulo">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                             style="height: 100px;">
+                                            <i class="bi bi-car-front fs-1 text-muted"></i>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="col-md-9">
+                                    <h5 class="mb-2">@anuncio.Titulo</h5>
+                                    <p class="mb-1">
+                                        <strong>@anuncio.Marca?.Nome @anuncio.Modelo?.Nome</strong>
+                                    </p>
+                                    @if (!string.IsNullOrEmpty(anuncio.Localizacao))
+                                    {
+                                        <p class="mb-1">
+                                            <i class="bi bi-geo-alt"></i> @anuncio.Localizacao
+                                        </p>
+                                    }
+                                    <p class="mb-0">
+                                        <i class="bi bi-person"></i> Vendedor: <strong>@anuncio.Vendedor?.Nome</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Formulário -->
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="AnuncioId" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="row g-3">
+                            <!-- Data da Visita -->
+                            <div class="col-md-6">
+                                <label asp-for="Data" class="form-label fw-bold">
+                                    <i class="bi bi-calendar3"></i> Data e Hora da Visita
+                                </label>
+                                <input asp-for="Data"
+                                       type="datetime-local"
+                                       class="form-control form-control-lg"
+                                       min="@ViewBag.MinDate"
+                                       required />
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle"></i>
+                                    Selecione uma data e hora futura
+                                </div>
+                                <span asp-validation-for="Data" class="text-danger"></span>
+                            </div>
+
+                            <!-- Observações -->
+                            <div class="col-12">
+                                <label asp-for="Observacoes" class="form-label fw-bold">
+                                    <i class="bi bi-chat-left-text"></i> Observações (opcional)
+                                </label>
+                                <textarea asp-for="Observacoes"
+                                          class="form-control"
+                                          rows="4"
+                                          placeholder="Adicione informações adicionais, perguntas ou pedidos especiais..."></textarea>
+                                <div class="form-text">
+                                    Ex: "Gostaria de fazer um test-drive", "Tenho interesse em financiamento", etc.
+                                </div>
+                                <span asp-validation-for="Observacoes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Informações Importantes -->
+                        <div class="alert alert-warning mt-4">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-exclamation-triangle"></i> Informações Importantes
+                            </h6>
+                            <ul class="mb-0">
+                                <li>O vendedor será notificado por email sobre a sua visita</li>
+                                <li>Aguarde a confirmação do vendedor antes de se deslocar</li>
+                                <li>Pode cancelar ou reagendar a visita a qualquer momento</li>
+                                <li>Seja pontual e educado durante a visita</li>
+                            </ul>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="@Url.Action("Details", "Anuncios", new { id = Model.AnuncioId })"
+                               class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-calendar-check"></i> Agendar Visita
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dicas -->
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-lightbulb text-warning"></i> Dicas para uma Boa Visita
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Prepare uma lista de perguntas sobre o veículo</li>
+                                <li>Verifique o estado geral da viatura</li>
+                                <li>Peça para ver os documentos do veículo</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Faça um test-drive, se possível</li>
+                                <li>Verifique o histórico de manutenção</li>
+                                <li>Tire fotos para análise posterior</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Definir data mínima (1 hora no futuro)
+        const now = new Date();
+        now.setHours(now.getHours() + 1);
+        const minDate = now.toISOString().slice(0, 16);
+        document.querySelector('input[type="datetime-local"]').min = minDate;
+
+        // Sugerir horário comercial (9h-18h)
+        document.querySelector('input[type="datetime-local"]').addEventListener('change', function() {
+            const selected = new Date(this.value);
+            const hour = selected.getHours();
+
+            if (hour < 9 || hour >= 18) {
+                if (confirm('A hora selecionada está fora do horário comercial (9h-18h). Deseja continuar?')) {
+                    // OK
+                } else {
+                    this.value = '';
+                }
+            }
+        });
+    </script>
+}
+
