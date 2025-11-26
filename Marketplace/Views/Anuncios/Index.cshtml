@@ -33,7 +33,7 @@
     <div class="row g-4">
         <!-- Coluna de Filtros -->
         <div class="col-lg-3" id="filtersColumn">
-            <div class="filters-sidebar sidebar-sticky-lg" id="mobileFilters">
+            <div class="filters-sidebar" id="mobileFilters">
                 <div class="filters-header">
                     <h5 class="mb-0">
                         <i class="bi bi-sliders me-2"></i>Filtros de Pesquisa
@@ -346,14 +346,6 @@
 </div>
 
 @section Scripts {
-    <style>
-        @media (min-width: 992px) {
-            .sidebar-sticky-lg {
-                position: sticky;
-                top: 90px;
-            }
-        }
-    </style>
     <script>
         function updatePriceLabel(value) {
             const formatted = new Intl.NumberFormat('pt-PT').format(value);
