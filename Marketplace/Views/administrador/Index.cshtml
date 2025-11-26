@@ -254,73 +254,7 @@
                                 </h5>
                             </div>
                             <div class="card-body">
-                                <div class="activity-feed">
-                                    <div class="activity-item border-start border-primary border-3 ps-3 pb-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-primary bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-person-plus-fill text-primary"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Novo vendedor registado</strong></p>
-                                                <small class="text-muted">João Pereira aguarda aprovação</small>
-                                            </div>
-                                            <small class="text-muted">Há 15 min</small>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item border-start border-danger border-3 ps-3 pb-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-danger bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-flag-fill text-danger"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Nova denúncia recebida</strong></p>
-                                                <small class="text-muted">Anúncio #A5543 denunciado por conteúdo enganador</small>
-                                            </div>
-                                            <small class="text-muted">Há 1h</small>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item border-start border-success border-3 ps-3 pb-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-success bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-check-circle-fill text-success"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Anúncio aprovado</strong></p>
-                                                <small class="text-muted">VW Golf 1.6 TDI de Miguel Costa</small>
-                                            </div>
-                                            <small class="text-muted">Há 2h</small>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item border-start border-warning border-3 ps-3 pb-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-warning bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-currency-euro text-warning"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Nova compra realizada</strong></p>
-                                                <small class="text-muted">BMW Série 1 vendido por 15.900€</small>
-                                            </div>
-                                            <small class="text-muted">Há 3h</small>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item border-start border-secondary border-3 ps-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-secondary bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-lock-fill text-secondary"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Utilizador bloqueado</strong></p>
-                                                <small class="text-muted">Bruno Vieira bloqueado por comportamento fraudulento</small>
-                                            </div>
-                                            <small class="text-muted">Há 5h</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-center mt-3">
-                                    <a href="#" class="btn btn-sm btn-outline-primary" data-target="#historico-acoes-content">
-                                        Ver Histórico Completo <i class="bi bi-arrow-right ms-1"></i>
-                                    </a>
-                                </div>
+                                @await Component.InvokeAsync("HistoricoAcoes", new { count = 5, isDashboard = true })
                             </div>
                         </div>
                     </div>
@@ -444,7 +378,7 @@
 
             <!-- ======================= Conteúdo: Histórico de Ações ======================= -->
             <div id="historico-acoes-content" class="admin-content-section" style="display: none;">
-                @await Component.InvokeAsync("HistoricoAcoes")
+                @await Component.InvokeAsync("HistoricoAcoes", new { filter = ViewBag.HistoryFilter })
             </div>
         </div>
     </div>

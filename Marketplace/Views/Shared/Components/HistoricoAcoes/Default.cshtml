@@ -2,9 +2,22 @@
 
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white py-3">
-        <h5 class="card-title mb-0 fw-bold text-primary">
-            <i class="bi bi-clock-history me-2"></i>Histórico de Ações Administrativas
-        </h5>
+        <div class="d-flex justify-content-between align-items-center mb-0">
+            <h5 class="card-title mb-0 fw-bold text-primary">
+                <i class="bi bi-clock-history me-2"></i>Histórico de Ações Administrativas
+            </h5>
+            <div class="btn-group" role="group" aria-label="Filtro de Histórico">
+                <a href="?section=historico-acoes" class="btn btn-sm btn-outline-primary @(string.IsNullOrEmpty(ViewBag.CurrentFilter) ? "active" : "")">
+                    Todos
+                </a>
+                <a href="?section=historico-acoes&historyFilter=users" class="btn btn-sm btn-outline-primary @(ViewBag.CurrentFilter == "users" ? "active" : "")">
+                    <i class="bi bi-people-fill me-1"></i>Utilizadores
+                </a>
+                <a href="?section=historico-acoes&historyFilter=ads" class="btn btn-sm btn-outline-primary @(ViewBag.CurrentFilter == "ads" ? "active" : "")">
+                    <i class="bi bi-megaphone-fill me-1"></i>Anúncios
+                </a>
+            </div>
+        </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">

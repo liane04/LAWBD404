@@ -14,16 +14,37 @@ namespace Marketplace.Components
             _db = db;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(int count = 50, bool isDashboard = false, string? filter = null)
         {
-            var historico = await _db.Set<HistoricoAcao>()
+            var query = _db.Set<HistoricoAcao>()
                 .Include(h => h.Administrador)
                 .Include(h => (h as AcaoUser).Utilizador)
                 .Include(h => (h as AcaoAnuncio).Anuncio)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                if (filter == "users")
+                {
+                    query = query.Where(h => h.TipoAcao == "AcaoUser");
+                }
+                else if (filter == "ads")
+                {
+                    query = query.Where(h => h.TipoAcao == "AcaoAnuncio");
+                }
+            }
+
+            var historico = await query
                 .OrderByDescending(h => h.Data)
-                .Take(50) // Limit to last 50 actions for performance
+                .Take(count)
                 .ToListAsync();
 
+            if (isDashboard)
+            {
+                return View("DashboardWidget", historico);
+            }
+
+            ViewBag.CurrentFilter = filter;
             return View(historico);
         }
     }

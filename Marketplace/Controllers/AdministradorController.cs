@@ -23,7 +23,7 @@ namespace Marketplace.Controllers
             _emailSender = emailSender;
         }
 
-        public async Task<IActionResult> Index(string? section = null)
+        public async Task<IActionResult> Index(string? section = null, string? historyFilter = null)
         {
             // Auto-fix data issues transparently
             try 
@@ -37,6 +37,7 @@ namespace Marketplace.Controllers
             }
 
             ViewBag.ActiveSection = section;
+            ViewBag.HistoryFilter = historyFilter;
             return View();
         }
 
