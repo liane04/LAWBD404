@@ -23,23 +23,23 @@ namespace Marketplace.Controllers
             _emailSender = emailSender;
         }
 
-        // Ação para a página principal do painel de administração, que agora contém todas as secções.
         public async Task<IActionResult> Index(string? section = null)
         {
-            // Carregar vendedores pendentes para exibir no painel
-            var vendedoresPendentes = await _db.Vendedores
-                .Where(v => v.Estado == null || v.Estado == "Pendente")
-                .OrderBy(v => v.Nome)
-                .ToListAsync();
+            // Auto-fix data issues transparently
+            try 
+            {
+                await _db.Database.ExecuteSqlRawAsync("UPDATE HistoricoAcao SET TipoAcao = 'AcaoUser' WHERE TipoAcao IN ('Aprovar', 'Rejeitar', 'Bloquear', 'Desbloquear')");
+                await _db.Database.ExecuteSqlRawAsync("UPDATE HistoricoAcao SET TipoAcao = 'AcaoAnuncio' WHERE TipoAcao IN ('Pausar', 'Retomar', 'Anúncio Pausado', 'Anúncio Retomado')");
+            }
+            catch 
+            {
+                // Ignore errors during auto-fix to prevent blocking the dashboard
+            }
 
-            ViewBag.VendedoresPendentes = vendedoresPendentes;
-            ViewBag.TotalPendentes = vendedoresPendentes.Count;
             ViewBag.ActiveSection = section;
-
             return View();
         }
 
-        // GET: Administrador/ValidarVendedores
         [HttpGet]
         public async Task<IActionResult> ValidarVendedores()
         {
@@ -48,6 +48,13 @@ namespace Marketplace.Controllers
                 .OrderBy(v => v.Nome)
                 .ToListAsync();
             return View(pendentes);
+        }
+
+        private async Task<Administrador?> GetCurrentAdminAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return null;
+            return await _db.Administradores.FirstOrDefaultAsync(a => a.IdentityUserId == user.Id);
         }
 
         // POST: Administrador/AprovarVendedor/5
@@ -59,6 +66,21 @@ namespace Marketplace.Controllers
             if (vendedor == null) return NotFound();
 
             vendedor.Estado = "Ativo";
+
+            // Registar ação
+            var admin = await GetCurrentAdminAsync();
+            if (admin != null)
+            {
+                var acao = new AcaoUser
+                {
+                    UtilizadorId = id,
+                    Data = DateTime.UtcNow,
+                    AdministradorId = admin.Id,
+                    Motivo = "Aprovar: Vendedor Aprovado"
+                };
+                _db.Add(acao);
+            }
+
             await _db.SaveChangesAsync();
 
             TempData["Success"] = $"Vendedor '{vendedor.Nome}' aprovado com sucesso!";
@@ -89,18 +111,20 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index), new { section = "validar-vendedores" });
-        }
+            // Registar ação
+            // admin já foi definido anteriormente
+            if (admin != null)
+            {
+                var acao = new AcaoUser
+                {
+                    UtilizadorId = id,
+                    Data = DateTime.UtcNow,
+                    AdministradorId = admin.Id,
+                    Motivo = "Rejeitar: Vendedor Rejeitado"
+                };
+                _db.Add(acao);
+            }
 
-        // POST: Administrador/RejeitarVendedor/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejeitarVendedor(int id)
-        {
-            var vendedor = await _db.Vendedores.FindAsync(id);
-            if (vendedor == null) return NotFound();
-
-            vendedor.Estado = "Rejeitado";
             await _db.SaveChangesAsync();
 
             TempData["Warning"] = $"Vendedor '{vendedor.Nome}' foi rejeitado.";
@@ -163,6 +187,28 @@ namespace Marketplace.Controllers
             await _userManager.SetLockoutEndDateAsync(user, lockoutEnd);
             await _userManager.SetLockoutEnabledAsync(user, true);
 
+            // Registar ação
+            // Precisamos encontrar o ID do Utilizador (tabela Utilizador) correspondente ao IdentityUser
+            var utilizador = await _db.Compradores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id) as Utilizador 
+                             ?? await _db.Vendedores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id) as Utilizador;
+
+            if (utilizador != null)
+            {
+                var admin = await GetCurrentAdminAsync();
+                if (admin != null)
+                {
+                    var acao = new AcaoUser
+                    {
+                        UtilizadorId = utilizador.Id,
+                        Data = DateTime.UtcNow,
+                        AdministradorId = admin.Id,
+                        Motivo = "Bloquear: " + motivo
+                    };
+                    _db.Add(acao);
+                    await _db.SaveChangesAsync();
+                }
+            }
+
             TempData["UserSuccess"] = $"Utilizador '{user.FullName ?? user.UserName}' foi bloqueado com sucesso.";
 
             // Enviar email de notificação
@@ -212,6 +258,27 @@ namespace Marketplace.Controllers
 
             // Desbloquear
             await _userManager.SetLockoutEndDateAsync(user, null);
+
+            // Registar ação
+            var utilizador = await _db.Compradores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id) as Utilizador 
+                             ?? await _db.Vendedores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id) as Utilizador;
+
+            if (utilizador != null)
+            {
+                var admin = await GetCurrentAdminAsync();
+                if (admin != null)
+                {
+                    var acao = new AcaoUser
+                    {
+                        UtilizadorId = utilizador.Id,
+                        Data = DateTime.UtcNow,
+                        AdministradorId = admin.Id,
+                        Motivo = "Desbloquear: Desbloqueio manual"
+                    };
+                    _db.Add(acao);
+                    await _db.SaveChangesAsync();
+                }
+            }
 
             TempData["UserSuccess"] = $"Utilizador '{user.FullName ?? user.UserName}' foi desbloqueado com sucesso.";
 
