@@ -31,7 +31,7 @@
 <!-- Estatísticas de Moderação -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-warning border-4">
+        <div class="card shadow-sm border-0 border-start border-warning border-4 h-100" style="cursor: pointer; transition: transform 0.2s;" onclick="filterAnuncios('pendente')" id="card-anuncio-pendente">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -48,7 +48,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-success border-4">
+        <div class="card shadow-sm border-0 border-start border-success border-4 h-100" style="cursor: pointer; transition: transform 0.2s;" onclick="filterAnuncios('ativo')" id="card-anuncio-ativo">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -65,7 +65,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-danger border-4">
+        <div class="card shadow-sm border-0 border-start border-danger border-4 h-100" style="cursor: pointer; transition: transform 0.2s;" onclick="filterAnuncios('denuncia')" id="card-anuncio-denuncia">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -82,7 +82,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-secondary border-4">
+        <div class="card shadow-sm border-0 border-start border-secondary border-4 h-100" style="cursor: pointer; transition: transform 0.2s;" onclick="filterAnuncios('pausado')" id="card-anuncio-pausado">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -102,10 +102,13 @@
 
 <!-- Tabela de Anúncios -->
 <div class="card shadow-sm border-0 mb-5">
-    <div class="card-header bg-white border-bottom">
+    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
             <i class="bi bi-card-list text-primary me-2"></i>Todos os Anúncios (@Model.Anuncios.Count)
         </h5>
+        <button class="btn btn-sm btn-outline-secondary" id="btn-reset-anuncio-filter" onclick="filterAnuncios('all')" style="display: none;">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Ver Todos
+        </button>
     </div>
     <div class="card-body p-0">
         @if (Model.Anuncios != null && Model.Anuncios.Any())
@@ -124,7 +127,7 @@
                     <tbody>
                         @foreach (var anuncio in Model.Anuncios)
                         {
-                            <tr>
+                            <tr class="anuncio-row" data-has-denuncias="@anuncio.HasDenuncias.ToString()">
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center">
                                         @if (!string.IsNullOrEmpty(anuncio.PrimeiraImagem))
@@ -212,3 +215,48 @@
         }
     </div>
 </div>
+
+<script>
+    function filterAnuncios(type) {
+        const rows = document.querySelectorAll('.anuncio-row');
+        const btnReset = document.getElementById('btn-reset-anuncio-filter');
+        const cards = {
+            'pendente': document.getElementById('card-anuncio-pendente'),
+            'ativo': document.getElementById('card-anuncio-ativo'),
+            'denuncia': document.getElementById('card-anuncio-denuncia'),
+            'pausado': document.getElementById('card-anuncio-pausado')
+        };
+
+        // Reset all cards styles
+        Object.values(cards).forEach(card => {
+            if(card) {
+                card.classList.remove('bg-light');
+                card.style.transform = 'scale(1)';
+            }
+        });
+
+        if (type === 'all') {
+            rows.forEach(row => row.style.display = '');
+            if(btnReset) btnReset.style.display = 'none';
+        } else {
+            rows.forEach(row => {
+                let show = false;
+                // Como não temos estado real, assumimos que todos são ativos
+                // Pendente e Pausado mostrarão 0 resultados por enquanto
+                
+                if (type === 'ativo') show = true; 
+                else if (type === 'denuncia' && row.dataset.hasDenuncias === 'True') show = true;
+                
+                row.style.display = show ? '' : 'none';
+            });
+            
+            if(btnReset) btnReset.style.display = 'block';
+            
+            // Highlight selected card
+            if(cards[type]) {
+                cards[type].classList.add('bg-light');
+                cards[type].style.transform = 'scale(1.02)';
+            }
+        }
+    }
+</script>
