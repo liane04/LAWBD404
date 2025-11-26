@@ -127,13 +127,13 @@
                     <tbody>
                         @foreach (var anuncio in Model.Anuncios)
                         {
-                            <tr data-status="@(anuncio.HasDenuncias ? "ComDenuncias" : "Ativo")">
+                            <tr data-status="@(anuncio.HasDenuncias ? "ComDenuncias" : (anuncio.IsPausado ? "Pausado" : "Ativo"))">
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center">
                                         @if (!string.IsNullOrEmpty(anuncio.PrimeiraImagem))
                                         {
                                             <img src="@anuncio.PrimeiraImagem" alt="@anuncio.Titulo"
-                                                 class="rounded me-3" style="width: 80px; height: 60px; object-fit: cover;">
+                                                 class="rounded me-3" style="width: 80px; height: 60px; object-fit: cover; @(anuncio.IsPausado ? "filter: grayscale(100%); opacity: 0.7;" : "")">
                                         }
                                         else
                                         {
@@ -143,7 +143,13 @@
                                             </div>
                                         }
                                         <div>
-                                            <div class="fw-bold">@anuncio.Titulo</div>
+                                            <div class="fw-bold @(anuncio.IsPausado ? "text-muted" : "")">
+                                                @anuncio.Titulo
+                                                @if (anuncio.IsPausado)
+                                                {
+                                                    <span class="badge bg-secondary ms-2">Pausado</span>
+                                                }
+                                            </div>
                                             <div class="small text-muted">
                                                 @anuncio.MarcaNome @anuncio.ModeloNome
                                                 @if (anuncio.Ano.HasValue)
@@ -185,6 +191,27 @@
                                            target="_blank">
                                             <i class="bi bi-eye-fill me-1"></i>Ver
                                         </a>
+
+                                        <form method="post" asp-controller="Administrador" asp-action="PausarAnuncio" asp-route-id="@anuncio.Id">
+                                            @Html.AntiForgeryToken()
+                                            @if (anuncio.IsPausado)
+                                            {
+                                                <button type="submit" class="btn btn-outline-warning btn-sm"
+                                                        data-bs-toggle="tooltip" title="Retomar anúncio"
+                                                        onclick="return confirm('Deseja retomar este anúncio? Ele voltará a ficar visível.');">
+                                                    <i class="bi bi-play-fill me-1"></i>Retomar
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-outline-warning btn-sm"
+                                                        data-bs-toggle="tooltip" title="Pausar anúncio"
+                                                        onclick="return confirm('Deseja pausar este anúncio? Ele ficará invisível para os utilizadores.');">
+                                                    <i class="bi bi-pause-fill me-1"></i>Pausar
+                                                </button>
+                                            }
+                                        </form>
+
                                         <form method="post" asp-controller="Administrador" asp-action="EliminarAnuncio" asp-route-id="@anuncio.Id">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="btn btn-outline-danger btn-sm"

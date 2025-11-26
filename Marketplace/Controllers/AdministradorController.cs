@@ -336,6 +336,55 @@ namespace Marketplace.Controllers
             TempData["AnuncioSuccess"] = $"Anúncio '{tituloAnuncio}' foi eliminado com sucesso.";
             return RedirectToAction(nameof(Index));
         }
+
+        // POST: Administrador/PausarAnuncio/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PausarAnuncio(int id)
+        {
+            var anuncio = await _db.Anuncios
+                .Include(a => a.AcoesAnuncio)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (anuncio == null)
+            {
+                TempData["AnuncioWarning"] = "Anúncio não encontrado.";
+                return RedirectToAction(nameof(Index), new { section = "moderar-anuncios" });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            var admin = await _db.Administradores.FirstOrDefaultAsync(a => a.IdentityUserId == user.Id);
+
+            if (admin == null)
+            {
+                TempData["AnuncioWarning"] = "Erro ao identificar administrador.";
+                return RedirectToAction(nameof(Index), new { section = "moderar-anuncios" });
+            }
+
+            // Verificar estado atual
+            var lastAction = anuncio.AcoesAnuncio
+                .OrderByDescending(a => a.Data)
+                .FirstOrDefault();
+
+            bool isPaused = lastAction?.Motivo == "Anúncio Pausado";
+            string message = isPaused ? "retomado" : "pausado";
+
+            // Criar nova ação
+            var acao = new AcaoAnuncio
+            {
+                AnuncioId = id,
+                Data = DateTime.UtcNow,
+                // TipoAcao é o discriminador (AcaoAnuncio), não devemos definir manualmente
+                AdministradorId = admin.Id,
+                Motivo = isPaused ? "Anúncio Retomado" : "Anúncio Pausado"
+            };
+
+            _db.Add(acao);
+            await _db.SaveChangesAsync();
+
+            TempData["AnuncioSuccess"] = $"Anúncio '{anuncio.Titulo}' foi {message} com sucesso.";
+            return RedirectToAction(nameof(Index), new { section = "moderar-anuncios" });
+        }
     }
 }
 
