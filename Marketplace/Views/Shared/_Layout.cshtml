@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="@(ViewData["IsHomePage"] as bool? == true ? "home-page" : "")">
+<body class="@(ViewData["IsHomePage"] as bool? == true ? "home-page" : "")" data-user-role="@(User.IsInRole("Comprador") ? "Comprador" : User.IsInRole("Vendedor") ? "Vendedor" : User.IsInRole("Administrador") ? "Administrador" : "")">
     <header class="sticky-top">
         <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar">
             <div class="container-fluid">
@@ -134,6 +134,11 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownComprador">
                                         <li>
+                                            <a class="dropdown-item" asp-controller="Favoritos" asp-action="Index">
+                                                <i class="bi bi-heart-fill me-2 text-danger"></i>Favoritos
+                                            </a>
+                                        </li>
+                                        <li>
                                             <a class="dropdown-item" asp-controller="Mensagens" asp-action="Index">
                                                 <i class="bi bi-chat-dots me-2"></i>Mensagens
                                             </a>
@@ -156,6 +161,9 @@
 
                                 @* Menu Mobile - Comprador *@
                                 <div class="w-100 d-lg-none mt-3">
+                                    <a class="btn btn-outline-light w-100 mb-2 d-block" asp-controller="Favoritos" asp-action="Index">
+                                        <i class="bi bi-heart-fill me-2"></i>Favoritos
+                                    </a>
                                     <a class="btn btn-outline-light w-100 mb-2 d-block" asp-controller="Mensagens" asp-action="Index">
                                         <i class="bi bi-chat-dots me-2"></i>Mensagens
                                     </a>

@@ -53,7 +53,7 @@
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-link-45deg me-2"></i>Copiar Link</a></li>
                         </ul>
-                        <button class="btn btn-outline-danger" onclick="toggleFavoritoDetails(this)" title="Adicionar aos Favoritos">
+                        <button class="btn btn-outline-danger" data-anuncio-id="@Model.Id" title="Adicionar aos Favoritos">
                             <i class="bi bi-heart"></i>
                         </button>
                     </div>
@@ -984,20 +984,6 @@
         // In production, this would open a modal with larger images
     }
 
-    // Toggle Favorite
-    function toggleFavoritoDetails(button) {
-        const icon = button.querySelector('i');
-        if (icon.classList.contains('bi-heart')) {
-            icon.classList.remove('bi-heart');
-            icon.classList.add('bi-heart-fill');
-            button.classList.add('active');
-        } else {
-            icon.classList.remove('bi-heart-fill');
-            icon.classList.add('bi-heart');
-            button.classList.remove('active');
-        }
-    }
-
     // Mockup: Confirmar Reserva
     document.addEventListener('DOMContentLoaded', function () {
         const btnConfirmarReserva = document.getElementById('btnConfirmarReserva');
@@ -1103,3 +1089,5 @@
         }
     });
 </script>
+
+<script src="~/js/favoritos.js"></script>

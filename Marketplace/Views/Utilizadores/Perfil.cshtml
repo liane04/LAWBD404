@@ -76,7 +76,7 @@
                             <a href="#favoritos" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-heart-fill"></i>
                                 <span>Anúncios Favoritos</span>
-                                <span class="badge bg-danger rounded-pill ms-auto">2</span>
+                                <span class="badge bg-danger rounded-pill ms-auto" id="favoritos-badge-nav">@(ViewBag.FavoritosCount ?? 0)</span>
                             </a>
                         }
                         @if (User.IsInRole("Comprador"))
@@ -1091,6 +1091,11 @@
                 }
 
                 <!-- Aba: Anúncios Favoritos (para Compradores e Vendedores) -->
+                @{
+                    var favoritos = ViewBag.MeusFavoritos as List<Marketplace.Models.AnuncioFav> ?? new List<Marketplace.Models.AnuncioFav>();
+                    var favoritosCount = ViewBag.FavoritosCount ?? 0;
+                    var mediaPreco = favoritos.Any() ? favoritos.Average(f => f.Anuncio.Preco) : 0;
+                }
                 @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
                 {
                     <div class="tab-pane fade" id="favoritos">
@@ -1104,187 +1109,126 @@
                         </div>
                         <div class="favoritos-stats d-flex gap-3">
                             <div class="stat-item text-center">
-                                <div class="stat-value text-primary fw-bold">2</div>
+                                <div class="stat-value text-primary fw-bold" id="favoritos-count-perfil">@favoritosCount</div>
                                 <div class="stat-label text-muted small">Favoritos</div>
                             </div>
-                            <div class="stat-item text-center">
-                                <div class="stat-value text-success fw-bold">15.900€</div>
-                                <div class="stat-label text-muted small">Média de Preço</div>
-                            </div>
+                            @if (favoritos.Any())
+                            {
+                                <div class="stat-item text-center">
+                                    <div class="stat-value text-success fw-bold">@mediaPreco.ToString("N0")€</div>
+                                    <div class="stat-label text-muted small">Média de Preço</div>
+                                </div>
+                            }
                         </div>
                     </div>
 
-                    <!-- Filtros de Ordenação -->
-                    <div class="favoritos-sort-bar mb-4 d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-funnel text-muted"></i>
-                            <span class="text-muted small">Ordenar por:</span>
-                        </div>
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-sm btn-outline-secondary active">
-                                <i class="bi bi-clock me-1"></i>Mais Recentes
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-currency-euro me-1"></i>Menor Preço
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-currency-euro me-1"></i>Maior Preço
-                            </button>
-                        </div>
-                    </div>
+                    @if (favoritos.Any())
+                    {
+                        <!-- Grid de Favoritos -->
+                        <div class="favoritos-grid" id="favoritos-container-perfil">
+                            @foreach (var favorito in favoritos)
+                            {
+                                var anuncio = favorito.Anuncio;
+                                var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "/imagens/default-car.jpg";
+                                var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
 
-                    <!-- Grid de Favoritos -->
-                    <div class="favoritos-grid">
-                        <!-- Favorito 1 -->
-                        <div class="favorito-card card shadow-sm border-0 mb-3">
-                            <div class="card-body p-0">
-                                <div class="row g-0">
-                                    <div class="col-md-5">
-                                        <div class="favorito-image-wrapper">
-                                            <img src="~/imagens/audiA3.jpg" alt="Audi A3 Sportback" class="favorito-image">
-                                            <button class="favorito-heart-btn active" title="Remover dos favoritos">
-                                                <i class="bi bi-heart-fill"></i>
-                                            </button>
-                                            <span class="favorito-badge badge-disponivel">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Disponível
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <div class="favorito-content p-4">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <div>
-                                                    <h5 class="favorito-title mb-1">Audi A3 Sportback</h5>
-                                                    <p class="favorito-subtitle text-muted mb-0">2.0 TDI Sport | 2019</p>
-                                                </div>
-                                                <div class="favorito-price-tag">
-                                                    <span class="price-value">18.500€</span>
+                                <div class="favorito-card card shadow-sm border-0 mb-3" data-favorito-id="@favorito.Id">
+                                    <div class="card-body p-0">
+                                        <div class="row g-0">
+                                            <div class="col-md-5">
+                                                <div class="favorito-image-wrapper">
+                                                    <img src="@imagemPrincipal" alt="@anuncio.Titulo" class="favorito-image">
+                                                    <button class="favorito-heart-btn active btn-favorito"
+                                                            data-anuncio-id="@anuncio.Id"
+                                                            title="Remover dos favoritos">
+                                                        <i class="bi bi-heart-fill"></i>
+                                                    </button>
+                                                    @if (anuncio.Tipo != null)
+                                                    {
+                                                        <span class="favorito-badge badge-disponivel">
+                                                            <i class="bi bi-check-circle-fill me-1"></i>@anuncio.Tipo.Nome
+                                                        </span>
+                                                    }
                                                 </div>
                                             </div>
+                                            <div class="col-md-7">
+                                                <div class="favorito-content p-4">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <div>
+                                                            <h5 class="favorito-title mb-1">@anuncio.Titulo</h5>
+                                                            <p class="favorito-subtitle text-muted mb-0">@marcaModelo @(anuncio.Ano.HasValue ? "| " + anuncio.Ano : "")</p>
+                                                        </div>
+                                                        <div class="favorito-price-tag">
+                                                            <span class="price-value">@anuncio.Preco.ToString("N0")€</span>
+                                                        </div>
+                                                    </div>
 
-                                            <div class="favorito-specs mt-3 mb-3">
-                                                <div class="spec-item">
-                                                    <i class="bi bi-speedometer2 text-primary"></i>
-                                                    <span>85.000 km</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-fuel-pump text-primary"></i>
-                                                    <span>Diesel</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-gear text-primary"></i>
-                                                    <span>Manual</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-geo-alt text-primary"></i>
-                                                    <span>Porto</span>
-                                                </div>
-                                            </div>
+                                                    <div class="favorito-specs mt-3 mb-3">
+                                                        @if (anuncio.Quilometragem.HasValue)
+                                                        {
+                                                            <div class="spec-item">
+                                                                <i class="bi bi-speedometer2 text-primary"></i>
+                                                                <span>@anuncio.Quilometragem.Value.ToString("N0") km</span>
+                                                            </div>
+                                                        }
+                                                        @if (anuncio.Combustivel != null)
+                                                        {
+                                                            <div class="spec-item">
+                                                                <i class="bi bi-fuel-pump text-primary"></i>
+                                                                <span>@anuncio.Combustivel.Tipo</span>
+                                                            </div>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(anuncio.Caixa))
+                                                        {
+                                                            <div class="spec-item">
+                                                                <i class="bi bi-gear text-primary"></i>
+                                                                <span>@anuncio.Caixa</span>
+                                                            </div>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(anuncio.Localizacao))
+                                                        {
+                                                            <div class="spec-item">
+                                                                <i class="bi bi-geo-alt text-primary"></i>
+                                                                <span>@anuncio.Localizacao</span>
+                                                            </div>
+                                                        }
+                                                    </div>
 
-                                            <div class="favorito-meta d-flex align-items-center justify-content-end mb-3">
-                                                <span class="badge bg-success-subtle text-success">
-                                                    <i class="bi bi-arrow-down-circle me-1"></i>Preço reduzido
-                                                </span>
-                                            </div>
-
-                                            <div class="favorito-actions d-flex gap-2">
-                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary flex-grow-1">
-                                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
-                                                </a>
-                                                <button class="btn btn-outline-primary" title="Contactar Vendedor">
-                                                    <i class="bi bi-chat-dots"></i>
-                                                </button>
-                                                <button class="btn btn-outline-danger favorito-remove-btn" title="Remover dos favoritos">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
+                                                    <div class="favorito-actions d-flex gap-2">
+                                                        <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-primary flex-grow-1">
+                                                            <i class="bi bi-eye me-2"></i>Ver Detalhes
+                                                        </a>
+                                                        <button class="btn btn-outline-primary" title="Contactar Vendedor">
+                                                            <i class="bi bi-chat-dots"></i>
+                                                        </button>
+                                                        <form asp-controller="Favoritos" asp-action="Remove" asp-route-id="@favorito.Id" method="post" class="d-inline remove-favorito-form-perfil">
+                                                            <button type="submit" class="btn btn-outline-danger" title="Remover dos favoritos">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Estado Vazio (mostrar quando não houver favoritos) -->
+                        <div class="favoritos-empty text-center py-5">
+                            <div class="mb-4">
+                                <i class="bi bi-heart" style="font-size: 4rem; color: #e2e8f0;"></i>
                             </div>
+                            <h4 class="text-muted mb-2">Ainda não tem favoritos</h4>
+                            <p class="text-muted mb-4">Guarde os anúncios que mais gosta para acesso rápido</p>
+                            <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                <i class="bi bi-search me-2"></i>Explorar Anúncios
+                            </a>
                         </div>
-
-                        <!-- Favorito 2 -->
-                        <div class="favorito-card card shadow-sm border-0 mb-3">
-                            <div class="card-body p-0">
-                                <div class="row g-0">
-                                    <div class="col-md-5">
-                                        <div class="favorito-image-wrapper">
-                                            <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1" class="favorito-image">
-                                            <button class="favorito-heart-btn active" title="Remover dos favoritos">
-                                                <i class="bi bi-heart-fill"></i>
-                                            </button>
-                                            <span class="favorito-badge badge-disponivel">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Disponível
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <div class="favorito-content p-4">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <div>
-                                                    <h5 class="favorito-title mb-1">BMW Série 1 116d</h5>
-                                                    <p class="favorito-subtitle text-muted mb-0">Advantage | 2018</p>
-                                                </div>
-                                                <div class="favorito-price-tag">
-                                                    <span class="price-value">13.300€</span>
-                                                </div>
-                                            </div>
-
-                                            <div class="favorito-specs mt-3 mb-3">
-                                                <div class="spec-item">
-                                                    <i class="bi bi-speedometer2 text-primary"></i>
-                                                    <span>120.000 km</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-fuel-pump text-primary"></i>
-                                                    <span>Diesel</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-gear text-primary"></i>
-                                                    <span>Manual</span>
-                                                </div>
-                                                <div class="spec-item">
-                                                    <i class="bi bi-geo-alt text-primary"></i>
-                                                    <span>Lisboa</span>
-                                                </div>
-                                            </div>
-
-                                            <div class="favorito-meta d-flex align-items-center justify-content-end mb-3">
-                                                <span class="badge bg-primary-subtle text-primary">
-                                                    <i class="bi bi-star-fill me-1"></i>Destaque
-                                                </span>
-                                            </div>
-
-                                            <div class="favorito-actions d-flex gap-2">
-                                                <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary flex-grow-1">
-                                                    <i class="bi bi-eye me-2"></i>Ver Detalhes
-                                                </a>
-                                                <button class="btn btn-outline-primary" title="Contactar Vendedor">
-                                                    <i class="bi bi-chat-dots"></i>
-                                                </button>
-                                                <button class="btn btn-outline-danger favorito-remove-btn" title="Remover dos favoritos">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Estado Vazio (mostrar quando não houver favoritos) -->
-                    <div class="favoritos-empty text-center py-5 d-none">
-                        <div class="mb-4">
-                            <i class="bi bi-heart" style="font-size: 4rem; color: #e2e8f0;"></i>
-                        </div>
-                        <h4 class="text-muted mb-2">Ainda não tem favoritos</h4>
-                        <p class="text-muted mb-4">Guarde os anúncios que mais gosta para acesso rápido</p>
-                        <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
-                            <i class="bi bi-search me-2"></i>Explorar Anúncios
-                        </a>
-                    </div>
+                    }
                     </div>
                 }
 
@@ -2544,5 +2488,77 @@
             })
             .catch(() => { /* ignora erros */ });
     })();
+</script>
+
+<script src="~/js/favoritos.js"></script>
+<script>
+    // JavaScript adicional para manejar remoção de favoritos na página de perfil
+    document.addEventListener('DOMContentLoaded', function () {
+        // Confirmação antes de remover favorito (formulário)
+        document.querySelectorAll('.remove-favorito-form-perfil').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                if (!confirm('Tem certeza que deseja remover este anúncio dos favoritos?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Adicionar evento customizado para atualizar UI quando favorito é removido via AJAX
+        document.addEventListener('favoritoRemoved', function (e) {
+            const anuncioId = e.detail.anuncioId;
+            const card = document.querySelector(`[data-favorito-id] .btn-favorito[data-anuncio-id="${anuncioId}"]`)?.closest('[data-favorito-id]');
+
+            if (card) {
+                // Remove o card com animação
+                card.style.transition = 'opacity 0.3s ease';
+                card.style.opacity = '0';
+
+                setTimeout(() => {
+                    card.remove();
+
+                    // Atualiza contadores
+                    const remainingCards = document.querySelectorAll('#favoritos-container-perfil [data-favorito-id]').length;
+                    document.getElementById('favoritos-badge-nav').textContent = remainingCards;
+                    document.getElementById('favoritos-count-perfil').textContent = remainingCards;
+
+                    // Se não houver mais favoritos, mostra empty state
+                    if (remainingCards === 0) {
+                        const container = document.getElementById('favoritos-container-perfil');
+                        if (container) {
+                            container.innerHTML = `
+                                <div class="favoritos-empty text-center py-5">
+                                    <div class="mb-4">
+                                        <i class="bi bi-heart" style="font-size: 4rem; color: #e2e8f0;"></i>
+                                    </div>
+                                    <h4 class="text-muted mb-2">Ainda não tem favoritos</h4>
+                                    <p class="text-muted mb-4">Guarde os anúncios que mais gosta para acesso rápido</p>
+                                    <a href="/Anuncios" class="btn btn-primary">
+                                        <i class="bi bi-search me-2"></i>Explorar Anúncios
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }
+                }, 300);
+            }
+        });
+
+        // Sobrescrever função de toggle do favoritos.js para disparar evento customizado
+        const originalToggle = window.FavoritosApp?.toggleFavorito;
+        if (originalToggle && typeof originalToggle === 'function') {
+            window.FavoritosApp.toggleFavorito = async function (anuncioId, button) {
+                const result = await originalToggle.call(this, anuncioId, button);
+
+                // Disparar evento customizado quando favorito é removido
+                if (result && !result.adicionado) {
+                    document.dispatchEvent(new CustomEvent('favoritoRemoved', {
+                        detail: { anuncioId: anuncioId }
+                    }));
+                }
+
+                return result;
+            };
+        }
+    });
 </script>
 }

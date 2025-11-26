@@ -51,10 +51,11 @@ namespace Marketplace.Controllers
         [Authorize]
         public async Task<IActionResult> Perfil()
         {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+
             // Se o usuário for vendedor, carregar seus anúncios
             if (User.IsInRole("Vendedor"))
             {
-                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
                 var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
 
                 if (vendedor != null)
@@ -87,6 +88,35 @@ namespace Marketplace.Controllers
                     ViewBag.Nome = vendedor.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(vendedor.ImagemPerfil) ? null : vendedor.ImagemPerfil;
                     ViewBag.VendedorEstado = vendedor.Estado;
+                }
+            }
+            // Se o usuário for comprador, carregar seus favoritos
+            else if (User.IsInRole("Comprador"))
+            {
+                var comprador = await _db.Compradores
+                    .Include(c => c.AnunciosFavoritos)
+                        .ThenInclude(af => af.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                    .Include(c => c.AnunciosFavoritos)
+                        .ThenInclude(af => af.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                    .Include(c => c.AnunciosFavoritos)
+                        .ThenInclude(af => af.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                    .Include(c => c.AnunciosFavoritos)
+                        .ThenInclude(af => af.Anuncio)
+                            .ThenInclude(a => a.Combustivel)
+                    .Include(c => c.AnunciosFavoritos)
+                        .ThenInclude(af => af.Anuncio)
+                            .ThenInclude(a => a.Tipo)
+                    .FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+
+                if (comprador != null)
+                {
+                    ViewBag.MeusFavoritos = comprador.AnunciosFavoritos.OrderByDescending(af => af.Id).ToList();
+                    ViewBag.FavoritosCount = comprador.AnunciosFavoritos.Count;
+                    ViewBag.Nome = comprador.Nome;
+                    ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(comprador.ImagemPerfil) ? null : comprador.ImagemPerfil;
                 }
             }
 

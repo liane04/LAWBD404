@@ -245,7 +245,7 @@
                                             <img src="~/imagens/no-image.jpg" class="card-img-top" alt="@anuncio.Titulo">
                                         }
                                     </a>
-                                    <button class="btn-favorito" onclick="toggleFavorito(this)">
+                                    <button class="btn-favorito" data-anuncio-id="@anuncio.Id">
                                         <i class="bi bi-heart"></i>
                                     </button>
                                 </div>
@@ -359,19 +359,6 @@
         function resetFilters() {
             // Redireciona para a página sem filtros
             window.location.href = '@Url.Action("Index", "Anuncios")';
-        }
-
-        function toggleFavorito(btn) {
-            const icon = btn.querySelector('i');
-            if (icon.classList.contains('bi-heart')) {
-                icon.classList.remove('bi-heart');
-                icon.classList.add('bi-heart-fill');
-                btn.classList.add('active');
-            } else {
-                icon.classList.remove('bi-heart-fill');
-                icon.classList.add('bi-heart');
-                btn.classList.remove('active');
-            }
         }
 
         function saveFilters() {
@@ -615,4 +602,6 @@
             }
         });
     </script>
+
+    <script src="~/js/favoritos.js"></script>
 }
