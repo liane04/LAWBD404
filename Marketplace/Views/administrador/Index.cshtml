@@ -443,7 +443,7 @@
             </div>
         </div>
     </div>
-</div>
+
 
 <!-- ========================= MODAIS ========================= -->
 
@@ -2054,6 +2054,18 @@
             // Aplicar filtro inicial (mostrar pendentes)
             if (filtroDenunciaEstado) {
                 filtrarDenuncias();
+            }
+
+            // Verificar se há uma secção ativa definida pelo servidor (Persistência de Secção)
+            var activeSection = '@ViewBag.ActiveSection';
+            if (activeSection) {
+                var link = $('.admin-sidebar a[data-target="#' + activeSection + '-content"]');
+                if (link.length > 0) {
+                    // Pequeno delay para garantir que o DOM está pronto e eventos anexados
+                    setTimeout(function() {
+                        link.click();
+                    }, 100);
+                }
             }
         });
     </script>

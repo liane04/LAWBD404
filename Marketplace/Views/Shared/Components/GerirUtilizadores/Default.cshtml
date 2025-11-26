@@ -253,15 +253,12 @@
                                         }
                                         else
                                         {
-                                            <form method="post" asp-controller="Administrador" asp-action="BloquearUtilizador" asp-route-id="@user.Id">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-warning btn-sm rounded-pill px-3"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Bloquear acesso à plataforma"
-                                                        onclick="return confirm('Tem certeza que deseja bloquear este utilizador?');"
-                                                        style="min-width: 90px;">
-                                                    <i class="bi bi-lock-fill me-1"></i>Bloquear
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-warning btn-sm rounded-pill px-3"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Bloquear acesso à plataforma"
+                                                    onclick="openBlockModal(@user.Id, '@(user.Nome ?? user.UserName)')"
+                                                    style="min-width: 90px;">
+                                                <i class="bi bi-lock-fill me-1"></i>Bloquear
+                                            </button>
                                         }
                                         @if (!user.IsAdministrador)
                                         {
@@ -337,4 +334,65 @@
             badge.innerText = 'Total: ' + visibleCount;
         }
     }
+
+    function openBlockModal(userId, userName) {
+        document.getElementById('blockUserId').value = userId;
+        document.getElementById('blockUserName').innerText = userName;
+        var modal = new bootstrap.Modal(document.getElementById('bloquearUtilizadorModal'));
+        modal.show();
+    }
 </script>
+
+<!-- Modal: Bloquear Utilizador -->
+<div class="modal fade" id="bloquearUtilizadorModal" tabindex="-1" aria-labelledby="bloquearUtilizadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" asp-controller="Administrador" asp-action="BloquearUtilizador">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="blockUserId" />
+                
+                <div class="modal-header bg-danger text-white border-0">
+                    <h5 class="modal-title fw-bold" id="bloquearUtilizadorModalLabel">
+                        <i class="bi bi-lock-fill me-2"></i>Bloquear Utilizador
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="mb-3">
+                            <i class="bi bi-person-lock text-danger" style="font-size: 4rem;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Bloquear Acesso</h5>
+                        <p class="text-muted mb-0">
+                            Pretende bloquear o utilizador <strong class="text-dark" id="blockUserName"></strong>?
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="motivoBloqueio" class="form-label">Motivo do Bloqueio <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="motivoBloqueio" name="motivo" rows="3" required placeholder="Explique o motivo do bloqueio..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dataFimBloqueio" class="form-label">Bloqueado Até (Opcional)</label>
+                        <input type="date" class="form-control" id="dataFimBloqueio" name="dataFim">
+                        <div class="form-text">Deixe em branco para bloqueio permanente (100 anos).</div>
+                    </div>
+
+                    <div class="alert alert-warning d-flex align-items-start" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 mt-1"></i>
+                        <div class="small">
+                            O utilizador receberá um email com o motivo e a duração do bloqueio.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-lock-fill me-1"></i>Confirmar Bloqueio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

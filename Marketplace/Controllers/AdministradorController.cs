@@ -24,7 +24,7 @@ namespace Marketplace.Controllers
         }
 
         // Ação para a página principal do painel de administração, que agora contém todas as secções.
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? section = null)
         {
             // Carregar vendedores pendentes para exibir no painel
             var vendedoresPendentes = await _db.Vendedores
@@ -34,6 +34,7 @@ namespace Marketplace.Controllers
 
             ViewBag.VendedoresPendentes = vendedoresPendentes;
             ViewBag.TotalPendentes = vendedoresPendentes.Count;
+            ViewBag.ActiveSection = section;
 
             return View();
         }
@@ -88,7 +89,7 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "validar-vendedores" });
         }
 
         // POST: Administrador/RejeitarVendedor/5
@@ -130,19 +131,19 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "validar-vendedores" });
         }
 
         // POST: Administrador/BloquearUtilizador/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BloquearUtilizador(int id)
+        public async Task<IActionResult> BloquearUtilizador(int id, string motivo, DateTime? dataFim)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
                 TempData["UserWarning"] = "Utilizador não encontrado.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
             // Não permitir bloquear administradores
@@ -150,11 +151,16 @@ namespace Marketplace.Controllers
             if (isAdmin)
             {
                 TempData["UserWarning"] = "Não é possível bloquear um administrador.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
-            // Bloquear por 100 anos (permanente)
-            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(100));
+            // Definir data de fim do bloqueio (default: 100 anos se não especificado)
+            var lockoutEnd = dataFim.HasValue 
+                ? new DateTimeOffset(dataFim.Value) 
+                : DateTimeOffset.UtcNow.AddYears(100);
+
+            // Bloquear
+            await _userManager.SetLockoutEndDateAsync(user, lockoutEnd);
             await _userManager.SetLockoutEnabledAsync(user, true);
 
             TempData["UserSuccess"] = $"Utilizador '{user.FullName ?? user.UserName}' foi bloqueado com sucesso.";
@@ -164,6 +170,10 @@ namespace Marketplace.Controllers
             {
                 if (_emailSender != null && !string.IsNullOrEmpty(user.Email))
                 {
+                    var duracaoTexto = dataFim.HasValue 
+                        ? $"até {dataFim.Value:dd/MM/yyyy}" 
+                        : "permanentemente";
+
                     await _emailSender.SendAsync(
                         user.Email,
                         "Conta Bloqueada - 404 Ride",
@@ -171,7 +181,8 @@ namespace Marketplace.Controllers
                         <body style='font-family: Arial, sans-serif;'>
                             <h2 style='color: #dc3545;'>Conta Bloqueada</h2>
                             <p>Olá <strong>{user.FullName ?? user.UserName}</strong>,</p>
-                            <p>A sua conta na plataforma <strong>404 Ride</strong> foi <span style='color: #dc3545;'>bloqueada</span> pelo administrador.</p>
+                            <p>A sua conta na plataforma <strong>404 Ride</strong> foi <span style='color: #dc3545;'>bloqueada</span> {duracaoTexto}.</p>
+                            <p><strong>Motivo:</strong> {motivo}</p>
                             <p>Se acredita que isto é um erro, por favor contacte o nosso suporte.</p>
                             <hr>
                             <p style='color: #666; font-size: 12px;'>Esta é uma mensagem automática. Por favor não responda a este email.</p>
@@ -184,7 +195,7 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
         }
 
         // POST: Administrador/DesbloquearUtilizador/5
@@ -196,7 +207,7 @@ namespace Marketplace.Controllers
             if (user == null)
             {
                 TempData["UserWarning"] = "Utilizador não encontrado.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
             // Desbloquear
@@ -229,7 +240,7 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
         }
 
         // POST: Administrador/EliminarUtilizador/5
@@ -241,7 +252,7 @@ namespace Marketplace.Controllers
             if (user == null)
             {
                 TempData["UserWarning"] = "Utilizador não encontrado.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
             // Não permitir eliminar administradores
@@ -249,7 +260,7 @@ namespace Marketplace.Controllers
             if (isAdmin)
             {
                 TempData["UserWarning"] = "Não é possível eliminar um administrador.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
             var userName = user.FullName ?? user.UserName;
@@ -292,7 +303,7 @@ namespace Marketplace.Controllers
                 TempData["UserWarning"] = $"Erro ao eliminar utilizador: {string.Join(", ", result.Errors.Select(e => e.Description))}";
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
         }
 
         // POST: Administrador/EliminarAnuncio/5
