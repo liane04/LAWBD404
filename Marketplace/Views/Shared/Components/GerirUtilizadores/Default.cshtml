@@ -8,6 +8,11 @@
         </h3>
         <p class="text-muted mb-0">Administrar compradores, vendedores e administradores da plataforma</p>
     </div>
+    <div>
+        <button class="btn btn-outline-secondary btn-sm" onclick="filterUsers('all')">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Resetar Filtros
+        </button>
+    </div>
 </div>
 
 <!-- Mensagens de Feedback -->
@@ -28,19 +33,19 @@
     </div>
 }
 
-<!-- Estatísticas de Utilizadores -->
-<div class="row g-3 mb-4">
+<!-- Estatísticas de Utilizadores (Filtros) -->
+<div class="row g-3 mb-4" id="userFilters">
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-primary border-4">
+        <div class="card shadow-sm border-0 border-start border-primary border-4 filter-card cursor-pointer h-100" onclick="filterUsers('comprador', this)">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 icon-box transition-icon">
                             <i class="bi bi-cart-check-fill fs-4 text-primary"></i>
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1 small">Compradores</h6>
+                        <h6 class="text-muted mb-1 small text-uppercase fw-bold">Compradores</h6>
                         <h4 class="mb-0 fw-bold text-primary">@Model.TotalCompradores</h4>
                     </div>
                 </div>
@@ -48,16 +53,16 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-info border-4">
+        <div class="card shadow-sm border-0 border-start border-info border-4 filter-card cursor-pointer h-100" onclick="filterUsers('vendedor', this)">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
-                        <div class="bg-info bg-opacity-10 rounded-circle p-2">
+                        <div class="bg-info bg-opacity-10 rounded-circle p-2 icon-box transition-icon">
                             <i class="bi bi-shop-window fs-4 text-info"></i>
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1 small">Vendedores</h6>
+                        <h6 class="text-muted mb-1 small text-uppercase fw-bold">Vendedores</h6>
                         <h4 class="mb-0 fw-bold text-info">@Model.TotalVendedores</h4>
                     </div>
                 </div>
@@ -65,16 +70,16 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-secondary border-4">
+        <div class="card shadow-sm border-0 border-start border-secondary border-4 filter-card cursor-pointer h-100" onclick="filterUsers('admin', this)">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
-                        <div class="bg-secondary bg-opacity-10 rounded-circle p-2">
+                        <div class="bg-secondary bg-opacity-10 rounded-circle p-2 icon-box transition-icon">
                             <i class="bi bi-shield-fill-check fs-4 text-secondary"></i>
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1 small">Administradores</h6>
+                        <h6 class="text-muted mb-1 small text-uppercase fw-bold">Administradores</h6>
                         <h4 class="mb-0 fw-bold text-secondary">@Model.TotalAdministradores</h4>
                     </div>
                 </div>
@@ -82,16 +87,16 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-danger border-4">
+        <div class="card shadow-sm border-0 border-start border-danger border-4 filter-card cursor-pointer h-100" onclick="filterUsers('bloqueado', this)">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
-                        <div class="bg-danger bg-opacity-10 rounded-circle p-2">
+                        <div class="bg-danger bg-opacity-10 rounded-circle p-2 icon-box transition-icon">
                             <i class="bi bi-lock-fill fs-4 text-danger"></i>
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1 small">Bloqueados</h6>
+                        <h6 class="text-muted mb-1 small text-uppercase fw-bold">Bloqueados</h6>
                         <h4 class="mb-0 fw-bold text-danger">@Model.TotalBloqueados</h4>
                     </div>
                 </div>
@@ -100,18 +105,41 @@
     </div>
 </div>
 
+<style>
+    .cursor-pointer {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .filter-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    .filter-card.active {
+        background-color: #f8f9fa;
+        border-color: #0d6efd !important; /* Highlight border */
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    .transition-icon {
+        transition: transform 0.3s ease;
+    }
+    .filter-card:hover .transition-icon {
+        transform: scale(1.1);
+    }
+</style>
+
 <!-- Tabela de Utilizadores -->
 <div class="card shadow-sm border-0 mb-5">
-    <div class="card-header bg-white border-bottom">
+    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
-            <i class="bi bi-people text-primary me-2"></i>Todos os Utilizadores
+            <i class="bi bi-people text-primary me-2"></i>Lista de Utilizadores
         </h5>
+        <span class="badge bg-light text-dark border" id="userCountBadge">Total: @(Model.Utilizadores?.Count ?? 0)</span>
     </div>
     <div class="card-body p-0">
         @if (Model.Utilizadores != null && Model.Utilizadores.Any())
         {
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table table-hover align-middle mb-0" id="usersTable">
                     <thead class="table-light">
                         <tr>
                             <th scope="col" class="ps-4">Utilizador</th>
@@ -124,7 +152,13 @@
                     <tbody>
                         @foreach (var user in Model.Utilizadores)
                         {
-                            <tr>
+                            var rowClass = "";
+                            if (user.IsComprador) rowClass += " type-comprador";
+                            if (user.IsVendedor) rowClass += " type-vendedor";
+                            if (user.IsAdministrador) rowClass += " type-admin";
+                            if (user.EstaBloqueado) rowClass += " status-bloqueado";
+
+                            <tr class="user-row @rowClass">
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center">
                                         @if (!string.IsNullOrEmpty(user.ImagemPerfil))
@@ -261,3 +295,46 @@
         }
     </div>
 </div>
+
+<script>
+    function filterUsers(type, element) {
+        // 1. Update Active State on Cards
+        if (element) {
+            // Remove active class from all cards
+            document.querySelectorAll('.filter-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            // Add active class to clicked card
+            element.classList.add('active');
+        } else if (type === 'all') {
+             // Reset active state if 'all' is selected (e.g. via reset button)
+             document.querySelectorAll('.filter-card').forEach(card => {
+                card.classList.remove('active');
+            });
+        }
+
+        // 2. Filter Table Rows
+        const rows = document.querySelectorAll('.user-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            if (type === 'all') {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                if (row.classList.contains('type-' + type) || row.classList.contains('status-' + type)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+
+        // 3. Update Counter
+        const badge = document.getElementById('userCountBadge');
+        if(badge) {
+            badge.innerText = 'Total: ' + visibleCount;
+        }
+    }
+</script>
