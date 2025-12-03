@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Minhas Mensagens";
     Layout = null;
+    var currentUserId = ViewBag.CurrentUserId;
 }
 <!DOCTYPE html>
 <html lang="pt">
@@ -544,14 +545,14 @@
 
                 <!-- Filtros -->
                 <div class="filter-tabs">
-                    <button class="filter-tab active" data-filter="todos">
-                        Todas <span class="badge bg-white text-primary ms-1" id="countTodos">4</span>
+                    <button class="filter-tab active" data-filter="todos" onclick="filtrarConversas('todos')">
+                        Todas
                     </button>
-                    <button class="filter-tab" data-filter="comprar">
-                        <i class="bi bi-cart-check"></i> A comprar <span class="badge bg-white text-success ms-1" id="countComprar">2</span>
+                    <button class="filter-tab" data-filter="comprar" onclick="filtrarConversas('comprar')">
+                        <i class="bi bi-cart-check"></i> A comprar
                     </button>
-                    <button class="filter-tab" data-filter="vender">
-                        <i class="bi bi-shop"></i> A vender <span class="badge bg-white text-success ms-1" id="countVender">2</span>
+                    <button class="filter-tab" data-filter="vender" onclick="filtrarConversas('vender')">
+                        <i class="bi bi-shop"></i> A vender
                     </button>
                 </div>
 
@@ -564,226 +565,58 @@
 
             <!-- Lista de Conversas -->
             <div class="chat-list-container" id="chatList">
-                <!-- Conversa 1 - Ana Silva (Ativa) -->
-                <a href="#" class="chat-item active"
-                   data-name="Ana Silva"
-                   data-avatar="https://i.pravatar.cc/150?img=5"
-                   data-car="BMW Série 1 116d EfficientDynamics"
-                   data-type="comprar"
-                   data-online="true"
-                   data-search="ana silva bmw serie 1 comprar">
-                    <div class="d-flex align-items-start gap-3">
-                        <div style="position: relative;">
-                            <img src="https://i.pravatar.cc/150?img=5" alt="Ana Silva" class="chat-item-avatar" />
-                            <span class="online-indicator"></span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                <div>
-                                    <div class="chat-item-name">Ana Silva</div>
-                                    <span class="type-badge comprar">
-                                        <i class="bi bi-cart-check"></i> A comprar
-                                    </span>
-                                </div>
-                                <div class="text-end">
-                                    <div class="chat-item-time">Agora</div>
-                                    <span class="unread-badge mt-1">2</span>
-                                </div>
-                            </div>
-                            <div class="chat-item-preview">Perfeito. Amanhã às 18h funciona para mim...</div>
-                            <div class="small text-muted mt-1">
-                                <i class="bi bi-car-front me-1"></i>BMW Série 1 116d
-                            </div>
-                        </div>
+                <!-- Carregado via JS -->
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">A carregar...</span>
                     </div>
-                </a>
-
-                <!-- Conversa 2 - Bruno Vieira -->
-                <a href="#" class="chat-item"
-                   data-name="Bruno Vieira"
-                   data-avatar="https://i.pravatar.cc/150?img=12"
-                   data-car="Audi A3 Sportback 2.0 TDI"
-                   data-type="vender"
-                   data-online="false"
-                   data-search="bruno vieira audi a3 vender">
-                    <div class="d-flex align-items-start gap-3">
-                        <div style="position: relative;">
-                            <img src="https://i.pravatar.cc/150?img=12" alt="Bruno Vieira" class="chat-item-avatar" />
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                <div>
-                                    <div class="chat-item-name">Bruno Vieira</div>
-                                    <span class="type-badge vender">
-                                        <i class="bi bi-shop"></i> A vender
-                                    </span>
-                                </div>
-                                <div class="text-end">
-                                    <div class="chat-item-time">2h</div>
-                                    <span class="unread-badge mt-1">1</span>
-                                </div>
-                            </div>
-                            <div class="chat-item-preview">Qual é o mínimo que aceita pelo Audi?</div>
-                            <div class="small text-muted mt-1">
-                                <i class="bi bi-car-front me-1"></i>Audi A3 Sportback
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Conversa 3 - Carla Ribeiro -->
-                <a href="#" class="chat-item"
-                   data-name="Carla Ribeiro"
-                   data-avatar="https://i.pravatar.cc/150?img=32"
-                   data-car="Mercedes Classe A 180d AMG"
-                   data-type="vender"
-                   data-online="true"
-                   data-search="carla ribeiro mercedes classe a vender">
-                    <div class="d-flex align-items-start gap-3">
-                        <div style="position: relative;">
-                            <img src="https://i.pravatar.cc/150?img=32" alt="Carla Ribeiro" class="chat-item-avatar" />
-                            <span class="online-indicator"></span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                <div>
-                                    <div class="chat-item-name">Carla Ribeiro</div>
-                                    <span class="type-badge vender">
-                                        <i class="bi bi-shop"></i> A vender
-                                    </span>
-                                </div>
-                                <div class="text-end">
-                                    <div class="chat-item-time">Ontem</div>
-                                </div>
-                            </div>
-                            <div class="chat-item-preview">Obrigada pela visita!</div>
-                            <div class="small text-muted mt-1">
-                                <i class="bi bi-car-front me-1"></i>Mercedes Classe A
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Conversa 4 - João Pereira -->
-                <a href="#" class="chat-item"
-                   data-name="João Pereira"
-                   data-avatar="https://i.pravatar.cc/150?img=68"
-                   data-car="VW Golf 1.6 TDI Confortline"
-                   data-type="comprar"
-                   data-online="false"
-                   data-search="joao pereira vw golf comprar">
-                    <div class="d-flex align-items-start gap-3">
-                        <div style="position: relative;">
-                            <img src="https://i.pravatar.cc/150?img=68" alt="João Pereira" class="chat-item-avatar" />
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                <div>
-                                    <div class="chat-item-name">João Pereira</div>
-                                    <span class="type-badge comprar">
-                                        <i class="bi bi-cart-check"></i> A comprar
-                                    </span>
-                                </div>
-                                <div class="text-end">
-                                    <div class="chat-item-time">3 dias</div>
-                                </div>
-                            </div>
-                            <div class="chat-item-preview">Combinado então. Muito obrigado!</div>
-                            <div class="small text-muted mt-1">
-                                <i class="bi bi-car-front me-1"></i>VW Golf 1.6 TDI
-                            </div>
-                        </div>
-                    </div>
-                </a>
+                </div>
             </div>
         </div>
 
         <!-- ===== ÁREA DE CONVERSA ===== -->
-        <div class="chat-conversation-area">
-            <!-- Header da Conversa -->
-            <div class="chat-header" id="chatHeader">
-                <img src="https://i.pravatar.cc/150?img=5" alt="Avatar" class="chat-header-avatar" id="chatAvatar" />
-                <div class="chat-header-info">
-                    <div class="chat-header-name" id="chatName">Ana Silva</div>
-                    <div class="chat-header-status">
-                        <span class="status-online" id="chatStatusIndicator"></span>
-                        <span id="chatStatus">Online</span>
-                        <span class="mx-2">•</span>
-                        <i class="bi bi-car-front me-1"></i>
-                        <span id="chatCar">BMW Série 1 116d</span>
-                    </div>
-                </div>
-                <div class="chat-header-actions">
-                    <button class="btn-icon" title="Ver Anúncio">
-                        <i class="bi bi-car-front"></i>
-                    </button>
-                    <button class="btn-icon" title="Mais Opções">
-                        <i class="bi bi-three-dots-vertical"></i>
-                    </button>
-                </div>
+        <div class="chat-conversation-area" id="conversationArea">
+            <!-- Estado Vazio Inicial -->
+            <div class="empty-state" id="emptyState">
+                <i class="bi bi-chat-square-text"></i>
+                <h3>Selecione uma conversa</h3>
+                <p>Escolha uma conversa da lista para ver as mensagens.</p>
             </div>
 
-            <!-- Corpo das Mensagens -->
-            <div class="chat-body" id="chatBody">
-                <div class="date-divider">
-                    <span>Hoje</span>
-                </div>
-
-                <!-- Mensagem Enviada -->
-                <div class="message-wrapper sent">
-                    <div class="message">
-                        <div class="message-text">Olá! O BMW ainda está disponível? Aceita trocas?</div>
-                        <div class="message-time">10:30</div>
+            <!-- Conteúdo da Conversa (Oculto inicialmente) -->
+            <div id="chatContent" style="display: none; height: 100%; flex-direction: column;">
+                <!-- Header da Conversa -->
+                <div class="chat-header" id="chatHeader">
+                    <img src="" alt="Avatar" class="chat-header-avatar" id="chatAvatar" />
+                    <div class="chat-header-info">
+                        <div class="chat-header-name" id="chatName">Nome</div>
+                        <div class="chat-header-status">
+                            <i class="bi bi-car-front me-1"></i>
+                            <span id="chatCar">Veículo</span>
+                        </div>
+                    </div>
+                    <div class="chat-header-actions">
+                        <a href="#" class="btn-icon" title="Ver Anúncio" id="btnVerAnuncio">
+                            <i class="bi bi-car-front"></i>
+                        </a>
                     </div>
                 </div>
 
-                <!-- Mensagem Recebida -->
-                <div class="message-wrapper received">
-                    <div class="message">
-                        <div class="message-text">Olá! Sim, ainda está disponível. Gostaria de ver o carro? Quanto às trocas, infelizmente não estou interessado neste momento.</div>
-                        <div class="message-time">10:31</div>
-                    </div>
+                <!-- Corpo das Mensagens -->
+                <div class="chat-body" id="chatBody">
+                    <!-- Mensagens carregadas via JS -->
                 </div>
 
-                <!-- Mensagem Enviada -->
-                <div class="message-wrapper sent">
-                    <div class="message">
-                        <div class="message-text">Gostaria sim! É possível amanhã ao final da tarde? Por volta das 18h?</div>
-                        <div class="message-time">10:32</div>
+                <!-- Caixa de Envio -->
+                <div class="chat-footer">
+                    <div class="message-input-container">
+                        <div class="message-input-wrapper">
+                            <textarea id="chatInputBox" class="message-input" placeholder="Escreva a sua mensagem..." rows="1"></textarea>
+                        </div>
+                        <button id="chatSendBtn" class="send-btn" title="Enviar" onclick="enviarMensagem()">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
                     </div>
-                </div>
-
-                <!-- Mensagem Recebida -->
-                <div class="message-wrapper received">
-                    <div class="message">
-                        <div class="message-text">Perfeito. Amanhã às 18h funciona para mim. Envio-lhe a morada por mensagem.</div>
-                        <div class="message-time">10:35</div>
-                    </div>
-                </div>
-
-                <div class="date-divider">
-                    <span>Ontem</span>
-                </div>
-
-                <!-- Mensagem Enviada -->
-                <div class="message-wrapper sent">
-                    <div class="message">
-                        <div class="message-text">Ok, muito obrigado pela rápida resposta!</div>
-                        <div class="message-time">17:45</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Caixa de Envio -->
-            <div class="chat-footer">
-                <div class="message-input-container">
-                    <div class="message-input-wrapper">
-                        <textarea id="chatInputBox" class="message-input" placeholder="Escreva a sua mensagem..." rows="1"></textarea>
-                        <button class="emoji-btn" title="Adicionar emoji">😊</button>
-                    </div>
-                    <button id="chatSendBtn" class="send-btn" title="Enviar">
-                        <i class="bi bi-send-fill"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -793,185 +626,203 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        let currentConversaId = null;
+        let currentFilter = 'todos';
+        const currentUserId = @currentUserId;
+
         document.addEventListener('DOMContentLoaded', function () {
-            // Elementos
-            const chatList = document.getElementById('chatList');
-            const chatItems = document.querySelectorAll('.chat-item');
-            const chatHeader = document.getElementById('chatHeader');
-            const chatAvatar = document.getElementById('chatAvatar');
-            const chatName = document.getElementById('chatName');
-            const chatStatus = document.getElementById('chatStatus');
-            const chatStatusIndicator = document.getElementById('chatStatusIndicator');
-            const chatCar = document.getElementById('chatCar');
-            const chatBody = document.getElementById('chatBody');
-            const chatInputBox = document.getElementById('chatInputBox');
-            const chatSendBtn = document.getElementById('chatSendBtn');
-            const chatSearch = document.getElementById('chatSearch');
-            const filterTabs = document.querySelectorAll('.filter-tab');
+            carregarConversas();
 
-            // Auto-resize textarea
-            chatInputBox.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-            });
-
-            // Scroll to bottom
-            function scrollToBottom() {
-                chatBody.scrollTop = chatBody.scrollHeight;
+            // Verificar se há uma conversa para abrir automaticamente (query string)
+            const urlParams = new URLSearchParams(window.location.search);
+            const conversaId = urlParams.get('conversaId');
+            if (conversaId) {
+                abrirConversa(conversaId);
             }
 
-            scrollToBottom();
-
-            // Trocar de conversa
-            chatItems.forEach(item => {
-                item.addEventListener('click', function(e) {
+            // Enter para enviar
+            document.getElementById('chatInputBox').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
+                    enviarMensagem();
+                }
+            });
+        });
 
-                    // Remove active de todos
-                    chatItems.forEach(i => i.classList.remove('active'));
+        function filtrarConversas(filtro) {
+            currentFilter = filtro;
+            
+            // Atualizar UI das tabs
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-filter="${filtro}"]`).classList.add('active');
 
-                    // Adiciona active ao clicado
-                    this.classList.add('active');
+            carregarConversas();
+        }
 
-                    // Remove badge de não lidas
-                    const badge = this.querySelector('.unread-badge');
-                    if (badge) badge.remove();
+        function carregarConversas() {
+            fetch(`/Mensagens/GetConversas?filtro=${currentFilter}`)
+                .then(response => response.json())
+                .then(data => {
+                    const listContainer = document.getElementById('chatList');
+                    listContainer.innerHTML = '';
 
-                    // Atualiza header
-                    const name = this.dataset.name;
-                    const avatar = this.dataset.avatar;
-                    const car = this.dataset.car;
-                    const online = this.dataset.online === 'true';
-
-                    chatAvatar.src = avatar;
-                    chatName.textContent = name;
-                    chatCar.textContent = car;
-
-                    if (online) {
-                        chatStatusIndicator.style.display = 'block';
-                        chatStatus.textContent = 'Online';
-                    } else {
-                        chatStatusIndicator.style.display = 'none';
-                        chatStatus.textContent = 'Offline';
+                    if (data.length === 0) {
+                        listContainer.innerHTML = `
+                            <div class="text-center py-5 text-muted">
+                                <p>Nenhuma conversa encontrada.</p>
+                            </div>
+                        `;
+                        return;
                     }
 
-                    // Simula carregamento de mensagens
-                    chatBody.innerHTML = `
-                        <div class="empty-state">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">A carregar...</span>
-                            </div>
-                            <p class="mt-3">A carregar mensagens com ${name}...</p>
-                        </div>
-                    `;
+                    data.forEach(conversa => {
+                        const activeClass = currentConversaId == conversa.id ? 'active' : '';
+                        const unreadBadge = conversa.naoLidas > 0 
+                            ? `<span class="unread-badge mt-1">${conversa.naoLidas}</span>` 
+                            : '';
+                        
+                        const typeBadge = conversa.tipo === 'vender'
+                            ? `<span class="type-badge vender"><i class="bi bi-shop"></i> A vender</span>`
+                            : `<span class="type-badge comprar"><i class="bi bi-cart-check"></i> A comprar</span>`;
 
-                    setTimeout(() => {
-                        chatBody.innerHTML = `
-                            <div class="date-divider">
-                                <span>Hoje</span>
-                            </div>
-                            <div class="message-wrapper received">
-                                <div class="message">
-                                    <div class="message-text">Olá! Esta é uma conversa com ${name}.</div>
-                                    <div class="message-time">16:00</div>
+                        const html = `
+                            <a href="#" class="chat-item ${activeClass}" onclick="abrirConversa(${conversa.id})">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div style="position: relative;">
+                                        <img src="${conversa.outroParticipanteImagem}" alt="${conversa.outroParticipanteNome}" class="chat-item-avatar" />
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div>
+                                                <div class="chat-item-name">${conversa.outroParticipanteNome}</div>
+                                                ${typeBadge}
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="chat-item-time">${formatDate(conversa.ultimaMensagemData)}</div>
+                                                ${unreadBadge}
+                                            </div>
+                                        </div>
+                                        <div class="chat-item-preview">${conversa.ultimaMensagem || '<i>Sem mensagens</i>'}</div>
+                                        <div class="small text-muted mt-1">
+                                            <i class="bi bi-car-front me-1"></i>${conversa.tituloAnuncio}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="message-wrapper sent">
-                                <div class="message">
-                                    <div class="message-text">Olá! Obrigado por responder.</div>
-                                    <div class="message-time">16:01</div>
+                            </a>
+                        `;
+                        listContainer.innerHTML += html;
+                    });
+                })
+                .catch(err => console.error('Erro ao carregar conversas:', err));
+        }
+
+        function abrirConversa(id) {
+            currentConversaId = id;
+            
+            // Atualizar seleção visual na lista
+            document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+            // (Idealmente re-renderizariamos a lista para marcar o ativo, mas por agora ok)
+            
+            // Mostrar loading ou limpar área
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('chatContent').style.display = 'flex';
+            
+            fetch(`/Mensagens/GetMensagens?conversaId=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Preencher Header
+                    document.getElementById('chatName').textContent = data.outroParticipanteNome;
+                    document.getElementById('chatCar').textContent = data.anuncioTitulo;
+                    document.getElementById('chatAvatar').src = data.outroParticipanteImagem;
+                    document.getElementById('btnVerAnuncio').href = `/Anuncios/Details/${data.anuncioId || '#'}`; // Nota: API precisa retornar anuncioId
+
+                    // Preencher Mensagens
+                    const body = document.getElementById('chatBody');
+                    body.innerHTML = '';
+
+                    let lastDate = null;
+
+                    data.mensagens.forEach(msg => {
+                        const msgDate = new Date(msg.dataEnvio).toLocaleDateString();
+                        if (msgDate !== lastDate) {
+                            body.innerHTML += `
+                                <div class="date-divider">
+                                    <span>${msgDate}</span>
+                                </div>
+                            `;
+                            lastDate = msgDate;
+                        }
+
+                        const type = msg.enviadaPorMim ? 'sent' : 'received';
+                        const time = new Date(msg.dataEnvio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                        body.innerHTML += `
+                            <div class="message-wrapper ${type}">
+                                <div class="message ${type}">
+                                    <div class="message-text">${msg.conteudo}</div>
+                                    <div class="message-time">${time}</div>
                                 </div>
                             </div>
                         `;
-                        scrollToBottom();
-                    }, 500);
-                });
-            });
-
-            // Enviar mensagem
-            function sendMessage() {
-                const text = chatInputBox.value.trim();
-                if (!text) return;
-
-                const time = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-
-                const messageHTML = `
-                    <div class="message-wrapper sent">
-                        <div class="message">
-                            <div class="message-text">${text}</div>
-                            <div class="message-time">${time}</div>
-                        </div>
-                    </div>
-                `;
-
-                chatBody.insertAdjacentHTML('beforeend', messageHTML);
-                chatInputBox.value = '';
-                chatInputBox.style.height = 'auto';
-                scrollToBottom();
-                chatInputBox.focus();
-            }
-
-            chatSendBtn.addEventListener('click', sendMessage);
-
-            chatInputBox.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-
-            // Filtros
-            filterTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Remove active de todos
-                    filterTabs.forEach(t => t.classList.remove('active'));
-
-                    // Adiciona active ao clicado
-                    this.classList.add('active');
-
-                    const filter = this.dataset.filter;
-
-                    chatItems.forEach(item => {
-                        const type = item.dataset.type;
-
-                        if (filter === 'todos' || type === filter) {
-                            item.style.display = 'block';
-                        } else {
-                            item.style.display = 'none';
-                        }
                     });
-                });
-            });
 
-            // Pesquisa
-            chatSearch.addEventListener('input', function() {
-                const query = this.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    // Scroll para o fundo
+                    body.scrollTop = body.scrollHeight;
 
-                chatItems.forEach(item => {
-                    const searchText = item.dataset.search.toLowerCase();
+                    // Recarregar lista para limpar não lidas
+                    carregarConversas();
+                })
+                .catch(err => console.error('Erro ao carregar mensagens:', err));
+        }
 
-                    if (searchText.includes(query)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
+        function enviarMensagem() {
+            if (!currentConversaId) return;
 
-            // Atualizar contadores
-            function updateCounts() {
-                const todos = chatItems.length;
-                const comprar = document.querySelectorAll('[data-type="comprar"]').length;
-                const vender = document.querySelectorAll('[data-type="vender"]').length;
+            const input = document.getElementById('chatInputBox');
+            const conteudo = input.value.trim();
+            if (!conteudo) return;
 
-                document.getElementById('countTodos').textContent = todos;
-                document.getElementById('countComprar').textContent = comprar;
-                document.getElementById('countVender').textContent = vender;
+            const formData = new FormData();
+            formData.append('conversaId', currentConversaId);
+            formData.append('conteudo', conteudo);
+
+            fetch('/Mensagens/EnviarMensagem', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    input.value = '';
+                    // Recarregar mensagens (ou adicionar manualmente para ser mais rápido)
+                    abrirConversa(currentConversaId);
+                    // Atualizar lista lateral
+                    carregarConversas();
+                }
+            })
+            .catch(err => console.error('Erro ao enviar mensagem:', err));
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            
+            // Se for hoje, mostrar hora
+            if (date.toDateString() === now.toDateString()) {
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            
+            // Se for ontem
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (date.toDateString() === yesterday.toDateString()) {
+                return 'Ontem';
             }
 
-            updateCounts();
-        });
+            // Caso contrário, data curta
+            return date.toLocaleDateString();
+        }
     </script>
-
 </body>
 </html>
