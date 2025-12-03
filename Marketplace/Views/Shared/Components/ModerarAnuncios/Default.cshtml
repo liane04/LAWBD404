@@ -31,7 +31,7 @@
 <!-- Estatísticas de Moderação -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-warning border-4">
+        <div class="card shadow-sm border-0 border-start border-warning border-4 cursor-pointer" id="card-pendentes" onclick="filterAnuncios('Pendentes', this)" style="cursor: pointer; transition: transform 0.2s;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -48,7 +48,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-success border-4">
+        <div class="card shadow-sm border-0 border-start border-success border-4 cursor-pointer" id="card-ativos" onclick="filterAnuncios('Ativo', this)" style="cursor: pointer; transition: transform 0.2s;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -65,7 +65,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-danger border-4">
+        <div class="card shadow-sm border-0 border-start border-danger border-4 cursor-pointer" id="card-denuncias" onclick="filterAnuncios('ComDenuncias', this)" style="cursor: pointer; transition: transform 0.2s;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -82,7 +82,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-secondary border-4">
+        <div class="card shadow-sm border-0 border-start border-secondary border-4 cursor-pointer" id="card-pausados" onclick="filterAnuncios('Pausado', this)" style="cursor: pointer; transition: transform 0.2s;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -102,16 +102,19 @@
 
 <!-- Tabela de Anúncios -->
 <div class="card shadow-sm border-0 mb-5">
-    <div class="card-header bg-white border-bottom">
+    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
-            <i class="bi bi-card-list text-primary me-2"></i>Todos os Anúncios (@Model.Anuncios.Count)
+            <i class="bi bi-card-list text-primary me-2"></i>Todos os Anúncios (<span id="anuncios-counter">@Model.Anuncios.Count</span>)
         </h5>
+        <button class="btn btn-outline-secondary btn-sm" onclick="resetAnuncioFilters()" id="btn-reset-anuncio-filters" style="display: none;">
+            <i class="bi bi-x-circle me-1"></i>Resetar Filtros
+        </button>
     </div>
     <div class="card-body p-0">
         @if (Model.Anuncios != null && Model.Anuncios.Any())
         {
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table table-hover align-middle mb-0" id="tabela-anuncios">
                     <thead class="table-light">
                         <tr>
                             <th scope="col" class="ps-4">Anúncio</th>
@@ -124,13 +127,13 @@
                     <tbody>
                         @foreach (var anuncio in Model.Anuncios)
                         {
-                            <tr>
+                            <tr data-status="@(anuncio.HasDenuncias ? "ComDenuncias" : (anuncio.IsPausado ? "Pausado" : "Ativo"))">
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center">
                                         @if (!string.IsNullOrEmpty(anuncio.PrimeiraImagem))
                                         {
                                             <img src="@anuncio.PrimeiraImagem" alt="@anuncio.Titulo"
-                                                 class="rounded me-3" style="width: 80px; height: 60px; object-fit: cover;">
+                                                 class="rounded me-3" style="width: 80px; height: 60px; object-fit: cover; @(anuncio.IsPausado ? "filter: grayscale(100%); opacity: 0.7;" : "")">
                                         }
                                         else
                                         {
@@ -140,7 +143,13 @@
                                             </div>
                                         }
                                         <div>
-                                            <div class="fw-bold">@anuncio.Titulo</div>
+                                            <div class="fw-bold @(anuncio.IsPausado ? "text-muted" : "")">
+                                                @anuncio.Titulo
+                                                @if (anuncio.IsPausado)
+                                                {
+                                                    <span class="badge bg-secondary ms-2">Pausado</span>
+                                                }
+                                            </div>
                                             <div class="small text-muted">
                                                 @anuncio.MarcaNome @anuncio.ModeloNome
                                                 @if (anuncio.Ano.HasValue)
@@ -177,18 +186,37 @@
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
                                         <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id"
-                                           class="btn btn-info btn-sm rounded-pill px-3"
+                                           class="btn btn-outline-info btn-sm"
                                            data-bs-toggle="tooltip" title="Ver detalhes"
-                                           target="_blank"
-                                           style="min-width: 80px;">
+                                           target="_blank">
                                             <i class="bi bi-eye-fill me-1"></i>Ver
                                         </a>
+
+                                        <form method="post" asp-controller="Administrador" asp-action="PausarAnuncio" asp-route-id="@anuncio.Id">
+                                            @Html.AntiForgeryToken()
+                                            @if (anuncio.IsPausado)
+                                            {
+                                                <button type="submit" class="btn btn-outline-warning btn-sm"
+                                                        data-bs-toggle="tooltip" title="Retomar anúncio"
+                                                        onclick="return confirm('Deseja retomar este anúncio? Ele voltará a ficar visível.');">
+                                                    <i class="bi bi-play-fill me-1"></i>Retomar
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-outline-warning btn-sm"
+                                                        data-bs-toggle="tooltip" title="Pausar anúncio"
+                                                        onclick="return confirm('Deseja pausar este anúncio? Ele ficará invisível para os utilizadores.');">
+                                                    <i class="bi bi-pause-fill me-1"></i>Pausar
+                                                </button>
+                                            }
+                                        </form>
+
                                         <form method="post" asp-controller="Administrador" asp-action="EliminarAnuncio" asp-route-id="@anuncio.Id">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-danger btn-sm rounded-pill px-3"
+                                            <button type="submit" class="btn btn-outline-danger btn-sm"
                                                     data-bs-toggle="tooltip" title="Eliminar anúncio"
-                                                    onclick="return confirm('Tem certeza que deseja eliminar este anúncio? Esta ação é irreversível.');"
-                                                    style="min-width: 80px;">
+                                                    onclick="return confirm('Tem certeza que deseja eliminar este anúncio? Esta ação é irreversível.');">
                                                 <i class="bi bi-trash-fill me-1"></i>Eliminar
                                             </button>
                                         </form>
@@ -212,3 +240,56 @@
         }
     </div>
 </div>
+
+<script>
+    function filterAnuncios(status, element) {
+        // 1. Update Active State on Cards
+        if (element) {
+            // Remove active class from all cards
+            document.querySelectorAll('.card[onclick^="filterAnuncios"]').forEach(card => {
+                card.classList.remove('border-primary', 'bg-light');
+                card.style.transform = 'scale(1)';
+            });
+
+            // Add active class to clicked card
+            element.classList.add('border-primary', 'bg-light');
+            element.style.transform = 'scale(1.02)';
+        }
+
+        // 2. Filter Table Rows
+        const rows = document.querySelectorAll('#tabela-anuncios tbody tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            if (status === 'All' || rowStatus === status) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // 3. Update Counter
+        document.getElementById('anuncios-counter').textContent = visibleCount;
+
+        // 4. Show/Hide Reset Button
+        const resetButton = document.getElementById('btn-reset-anuncio-filters');
+        if (status !== 'All') {
+            resetButton.style.display = 'block';
+        } else {
+            resetButton.style.display = 'none';
+        }
+    }
+
+    function resetAnuncioFilters() {
+        // Reset Cards
+        document.querySelectorAll('.card[onclick^="filterAnuncios"]').forEach(card => {
+            card.classList.remove('border-primary', 'bg-light');
+            card.style.transform = 'scale(1)';
+        });
+
+        // Show all rows
+        filterAnuncios('All', null);
+    }
+</script>

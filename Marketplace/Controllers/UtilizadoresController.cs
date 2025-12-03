@@ -537,6 +537,14 @@ namespace Marketplace.Controllers
             // NOTA: EmailConfirmed não é verificado aqui porque RequireConfirmedEmail = false no Program.cs
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, password, rememberMe, lockoutOnFailure: true);
+            if (result.IsLockedOut)
+            {
+                var lockoutEnd = user.LockoutEnd.HasValue ? user.LockoutEnd.Value.LocalDateTime.ToString("dd/MM/yyyy HH:mm") : "indefinidamente";
+                
+                TempData["LoginError"] = $"A sua conta encontra-se bloqueada até {lockoutEnd}.";
+                return View();
+            }
+
             if (!result.Succeeded)
             {
                 TempData["LoginError"] = "Credenciais incorretas.";

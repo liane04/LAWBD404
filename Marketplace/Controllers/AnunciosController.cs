@@ -76,7 +76,10 @@ namespace Marketplace.Controllers
                 "preco-desc" => query.OrderByDescending(a => a.Preco),
                 "ano-desc" => query.OrderByDescending(a => a.Ano),
                 "km-asc" => query.OrderBy(a => a.Quilometragem),
-                _ => query.OrderByDescending(a => a.Id) // Relevância (mais recentes primeiro)
+
+                "relevancia" => query.OrderByDescending(a => a.NVisualizacoes).ThenByDescending(a => a.Id),
+
+                _ => query.OrderByDescending(a => a.Id)
             };
 
             var anuncios = await query.ToListAsync();

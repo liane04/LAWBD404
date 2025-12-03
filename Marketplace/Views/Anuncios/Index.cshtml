@@ -1,4 +1,4 @@
-@model IEnumerable<Marketplace.Models.Anuncio>
+﻿@model IEnumerable<Marketplace.Models.Anuncio>
 
 @{
     ViewData["Title"] = "Comprar Carros";
@@ -33,12 +33,12 @@
     <div class="row g-4">
         <!-- Coluna de Filtros -->
         <div class="col-lg-3" id="filtersColumn">
-            <div class="filters-sidebar sticky-top" style="top: 90px;" id="mobileFilters">
+            <div class="filters-sidebar" id="mobileFilters">
                 <div class="filters-header">
                     <h5 class="mb-0">
                         <i class="bi bi-sliders me-2"></i>Filtros de Pesquisa
                     </h5>
-                    <button class="btn btn-sm btn-link text-danger" onclick="resetFilters()">
+                    <button type="button" class="btn btn-sm btn-link text-danger" onclick="resetFilters()">
                         <i class="bi bi-arrow-clockwise me-1"></i>Limpar
                     </button>
                 </div>
@@ -82,10 +82,10 @@
                             <i class="bi bi-currency-euro me-2"></i>Preço Máximo
                         </label>
                         <div class="price-range-container">
-                            <input type="range" class="form-range" min="0" max="100000" step="1000" id="preco" value="50000" oninput="updatePriceLabel(this.value)">
+                            <input type="range" class="form-range" name="precoMax" min="0" max="100000" step="1000" id="preco" value="@(ViewBag.PrecoMax ?? 50000)" oninput="updatePriceLabel(this.value)">
                             <div class="d-flex justify-content-between mt-2">
                                 <span class="text-muted small">0 €</span>
-                                <span class="price-value fw-bold text-primary" id="precoValue">50.000 €</span>
+                                <span class="price-value fw-bold text-primary" id="precoValue">@(ViewBag.PrecoMax != null ? ((decimal)ViewBag.PrecoMax).ToString("N0") : "50.000") €</span>
                                 <span class="text-muted small">100k €</span>
                             </div>
                         </div>
@@ -98,10 +98,10 @@
                         </label>
                         <div class="row g-2">
                             <div class="col-6">
-                                <input type="number" id="ano-min" class="form-control" placeholder="Min" min="1960" max="2025">
+                                <input type="number" name="anoMin" id="ano-min" class="form-control" placeholder="Min" min="1960" max="2025" value="@ViewBag.AnoMin">
                             </div>
                             <div class="col-6">
-                                <input type="number" id="ano-max" class="form-control" placeholder="Max" min="1960" max="2025">
+                                <input type="number" name="anoMax" id="ano-max" class="form-control" placeholder="Max" min="1960" max="2025" value="@ViewBag.AnoMax">
                             </div>
                         </div>
                     </div>
@@ -112,51 +112,42 @@
                             <i class="bi bi-speedometer2 me-2"></i>Quilometragem (km)
                         </label>
                         <div class="row g-2">
-                            <div class="col-6">
-                                <input type="number" id="km-min" class="form-control" placeholder="Mín" step="1000">
-                            </div>
-                            <div class="col-6">
-                                <input type="number" id="km-max" class="form-control" placeholder="Máx" step="1000">
+                            <div class="col-12">
+                                <input type="number" name="kmMax" id="km-max" class="form-control" placeholder="Máximo" step="1000" value="@ViewBag.KmMax">
                             </div>
                         </div>
                     </div>
 
                     <!-- Filtro de Categoria -->
                     <div class="filter-group">
-                        <label for="categoria" class="filter-label">
+                        <label for="tipoId" class="filter-label">
                             <i class="bi bi-grid-3x3-gap me-2"></i>Categoria
                         </label>
-                        <select id="categoria" class="form-select">
-                            <option value="" selected>Todas</option>
-                            <option value="suv">SUV</option>
-                            <option value="sedan">Sedan</option>
-                            <option value="hatchback">Hatchback</option>
-                            <option value="carrinha">Carrinha</option>
-                            <option value="desportivo">Desportivo</option>
-                            <option value="citadino">Citadino</option>
+                        <select name="tipoId" id="tipoId" class="form-select">
+                            <option value="">Todas</option>
+                            @foreach (var tipo in tipos)
+                            {
+                                <option value="@tipo.Id" selected="@(ViewBag.TipoIdSelecionado == tipo.Id)">
+                                    @tipo.Nome
+                                </option>
+                            }
                         </select>
                     </div>
 
                     <!-- Filtro de Combustível -->
                     <div class="filter-group">
-                        <label for="combustivel" class="filter-label">
+                        <label class="filter-label">
                             <i class="bi bi-fuel-pump me-2"></i>Combustível
                         </label>
                         <div class="btn-group-vertical w-100" role="group">
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-todos" value="" checked>
+                            <input type="radio" class="btn-check" name="combustivelId" id="comb-todos" value="" @(ViewBag.CombustivelIdSelecionado == null ? "checked" : "")>
                             <label class="btn btn-outline-secondary" for="comb-todos">Todos</label>
 
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-gasolina" value="gasolina">
-                            <label class="btn btn-outline-secondary" for="comb-gasolina">Gasolina</label>
-
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-diesel" value="diesel">
-                            <label class="btn btn-outline-secondary" for="comb-diesel">Diesel</label>
-
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-eletrico" value="eletrico">
-                            <label class="btn btn-outline-secondary" for="comb-eletrico">Elétrico</label>
-
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-hibrido" value="hibrido">
-                            <label class="btn btn-outline-secondary" for="comb-hibrido">Híbrido</label>
+                            @foreach (var combustivel in combustiveis)
+                            {
+                                <input type="radio" class="btn-check" name="combustivelId" id="comb-@combustivel.Id" value="@combustivel.Id" @(ViewBag.CombustivelIdSelecionado == combustivel.Id ? "checked" : "")>
+                                <label class="btn btn-outline-secondary" for="comb-@combustivel.Id">@combustivel.Tipo</label>
+                            }
                         </div>
                     </div>
 
@@ -165,10 +156,10 @@
                         <label for="caixa" class="filter-label">
                             <i class="bi bi-gear-fill me-2"></i>Transmissão
                         </label>
-                        <select id="caixa" class="form-select">
-                            <option value="" selected>Todas</option>
-                            <option value="manual">Manual</option>
-                            <option value="automatica">Automática</option>
+                        <select name="caixa" id="caixa" class="form-select">
+                            <option value="">Todas</option>
+                            <option value="manual" selected="@(ViewBag.Caixa == "manual")">Manual</option>
+                            <option value="automatica" selected="@(ViewBag.Caixa == "automatica")">Automática</option>
                         </select>
                     </div>
 
@@ -177,7 +168,7 @@
                         <label for="localizacao" class="filter-label">
                             <i class="bi bi-geo-alt-fill me-2"></i>Localização
                         </label>
-                        <input type="text" id="localizacao" class="form-control" placeholder="Cidade ou distrito">
+                        <input type="text" name="localizacao" id="localizacao" class="form-control" placeholder="Cidade ou distrito" value="@ViewBag.Localizacao">
                     </div>
 
                     <!-- Botão Aplicar -->
@@ -215,13 +206,18 @@
                         </div>
                     </div>
                     <div class="sort-dropdown">
-                        <select id="ordenar" class="form-select form-select-sm">
-                            <option value="relevancia" selected>Relevância</option>
-                            <option value="preco-asc">Preço: Menor para Maior</option>
-                            <option value="preco-desc">Preço: Maior para Menor</option>
-                            <option value="ano-desc">Ano: Mais Recente</option>
-                            <option value="km-asc">Quilometragem: Menor</option>
-                        </select>
+						<select name="ordenacao"
+								id="ordenar"
+								form="filtrosForm"
+								class="form-select form-select-sm"
+								onchange="this.form.submit()">
+
+							<option value="relevancia" selected="@(ViewBag.Ordenacao == "relevancia" || ViewBag.Ordenacao == null)">Relevância</option>
+							<option value="preco-asc" selected="@(ViewBag.Ordenacao == "preco-asc")">Preço: Menor para Maior</option>
+							<option value="preco-desc" selected="@(ViewBag.Ordenacao == "preco-desc")">Preço: Maior para Menor</option>
+							<option value="ano-desc" selected="@(ViewBag.Ordenacao == "ano-desc")">Ano: Mais Recente</option>
+							<option value="km-asc" selected="@(ViewBag.Ordenacao == "km-asc")">Quilometragem: Menor</option>
+						</select>
                     </div>
                 </div>
             </div>
