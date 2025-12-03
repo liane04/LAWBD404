@@ -76,6 +76,7 @@ namespace Marketplace.Data.Seeders
             // Utilizadores base mínimos
             var adminUser = await EnsureUserAsync("admin@email.com", "admin", "Administrador", "Administrador", "Admin123");
             var vendedorUser = await EnsureUserAsync("vendedor@email.com", "vendedor", "Vendedor Demo", "Vendedor", "Vende123");
+            var vendedorPendenteUser = await EnsureUserAsync("vendedor.pendente@email.com", "vendedor.pendente", "Vendedor Pendente", "Vendedor", "Vende123");
             var compradorUser = await EnsureUserAsync("comprador@email.com", "comprador", "Comprador Demo", "Comprador", "Compr123");
 
             // Entidades de domínio associadas aos mínimos
@@ -89,7 +90,7 @@ namespace Marketplace.Data.Seeders
                     PasswordHash = "IDENTITY",
                     Estado = "Ativo",
                     Tipo = "Administrador",
-                    NivelAcesso = "Total",
+                    NivelAcesso = "Nivel 1",
                     IdentityUserId = adminUser.Id
                 });
             }
@@ -105,6 +106,20 @@ namespace Marketplace.Data.Seeders
                     Estado = "Ativo",
                     Tipo = "Vendedor",
                     IdentityUserId = vendedorUser.Id
+                });
+            }
+
+            if (vendedorPendenteUser != null && !db.Vendedores.Any(v => v.IdentityUserId == vendedorPendenteUser.Id))
+            {
+                db.Vendedores.Add(new Vendedor
+                {
+                    Username = vendedorPendenteUser.UserName!,
+                    Email = vendedorPendenteUser.Email!,
+                    Nome = vendedorPendenteUser.FullName ?? "Vendedor Pendente",
+                    PasswordHash = "IDENTITY",
+                    Estado = "Pendente",
+                    Tipo = "Vendedor",
+                    IdentityUserId = vendedorPendenteUser.Id
                 });
             }
 

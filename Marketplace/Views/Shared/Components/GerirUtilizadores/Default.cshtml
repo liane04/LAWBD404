@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-info border-4">
+        <div class="card shadow-sm border-0 border-start border-info border-4 h-100" style="cursor: pointer; transition: transform 0.2s;" onclick="filterUsers('vendedor')" id="card-vendedor">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -396,46 +396,6 @@
     </div>
 </div>
 
-<script>
-    function filterUsers(type) {
-        const rows = document.querySelectorAll('.user-row');
-        const btnReset = document.getElementById('btn-reset-filter');
-        const cards = {
-            'comprador': document.getElementById('card-comprador'),
-            'vendedor': document.getElementById('card-vendedor'),
-            'admin': document.getElementById('card-admin'),
-            'bloqueado': document.getElementById('card-bloqueado')
-        };
 
-        // Reset all cards styles
-        Object.values(cards).forEach(card => {
-            if(card) {
-                card.classList.remove('bg-light');
-                card.style.transform = 'scale(1)';
-            }
-        });
 
-        if (type === 'all') {
-            rows.forEach(row => row.style.display = '');
-            if(btnReset) btnReset.style.display = 'none';
-        } else {
-            rows.forEach(row => {
-                let show = false;
-                if (type === 'comprador' && row.dataset.isComprador === 'True') show = true;
-                else if (type === 'vendedor' && row.dataset.isVendedor === 'True') show = true;
-                else if (type === 'admin' && row.dataset.isAdmin === 'True') show = true;
-                else if (type === 'bloqueado' && row.dataset.isBlocked === 'True') show = true;
-                
-                row.style.display = show ? '' : 'none';
-            });
-            
-            if(btnReset) btnReset.style.display = 'block';
-            
-            // Highlight selected card
-            if(cards[type]) {
-                cards[type].classList.add('bg-light');
-                cards[type].style.transform = 'scale(1.02)';
-            }
-        }
-    }
-</script>
+

@@ -38,6 +38,10 @@ namespace Marketplace.Controllers
 
             ViewBag.ActiveSection = section;
             ViewBag.HistoryFilter = historyFilter;
+
+            var currentAdmin = await GetCurrentAdminAsync();
+            ViewBag.NivelAcesso = currentAdmin?.NivelAcesso ?? "Nivel 2"; // Default to restricted if not found
+
             return View();
         }
 
@@ -157,6 +161,189 @@ namespace Marketplace.Controllers
             }
 
             return RedirectToAction(nameof(Index), new { section = "validar-vendedores" });
+        }
+
+        // POST: Administrador/RejeitarVendedor/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejeitarVendedor(int id)
+        {
+            var vendedor = await _db.Vendedores.FindAsync(id);
+            if (vendedor == null) return NotFound();
+
+            vendedor.Estado = "Rejeitado";
+
+            // Registar ação
+            var admin = await GetCurrentAdminAsync();
+            if (admin != null)
+            {
+                var acao = new AcaoUser
+                {
+                    UtilizadorId = id,
+                    Data = DateTime.UtcNow,
+                    AdministradorId = admin.Id,
+                    Motivo = "Rejeitar: Vendedor Rejeitado"
+                };
+                _db.Add(acao);
+            }
+
+            await _db.SaveChangesAsync();
+
+            TempData["Warning"] = $"Vendedor '{vendedor.Nome}' foi rejeitado.";
+
+            // Notificar vendedor por email
+            try
+            {
+                if (_emailSender != null && !string.IsNullOrEmpty(vendedor.Email))
+                {
+                    await _emailSender.SendAsync(
+                        vendedor.Email,
+                        "Pedido de Vendedor - 404 Ride",
+                        $@"<html>
+                        <body style='font-family: Arial, sans-serif;'>
+                            <h2 style='color: #dc3545;'>Pedido não aprovado</h2>
+                            <p>Olá <strong>{vendedor.Nome}</strong>,</p>
+                            <p>Lamentamos informar que o seu pedido para se tornar vendedor na plataforma <strong>404 Ride</strong> não foi aprovado neste momento.</p>
+                            <p>Se necessitar de esclarecimentos adicionais, por favor contacte o nosso suporte.</p>
+                            <hr>
+                            <p style='color: #666; font-size: 12px;'>Esta é uma mensagem automática. Por favor não responda a este email.</p>
+                        </body>
+                        </html>");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao enviar email: {ex.Message}");
+            }
+
+            return RedirectToAction(nameof(Index), new { section = "validar-vendedores" });
+        }
+
+
+
+        // POST: Administrador/CriarUtilizador
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CriarUtilizador(string nome, string email, string password, string tipo, string? nif, string? nivelAcesso)
+        {
+            if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(tipo))
+            {
+                TempData["UserWarning"] = "Todos os campos obrigatórios devem ser preenchidos.";
+                return RedirectToAction(nameof(Index), new { section = "criar-utilizador" });
+            }
+
+            // Verificar permissões para criar Administrador
+            if (tipo == "Administrador")
+            {
+                var checkingAdmin = await GetCurrentAdminAsync();
+                if (checkingAdmin == null || checkingAdmin.NivelAcesso != "Nivel 1")
+                {
+                    TempData["UserWarning"] = "Apenas administradores de Nível 1 podem criar novos administradores.";
+                    return RedirectToAction(nameof(Index), new { section = "criar-utilizador" });
+                }
+            }
+
+            // Verificar se email já existe
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if (existingUser != null)
+            {
+                TempData["UserWarning"] = "Já existe um utilizador com este email.";
+                return RedirectToAction(nameof(Index), new { section = "criar-utilizador" });
+            }
+
+            // Criar IdentityUser
+            var user = new ApplicationUser
+            {
+                UserName = email.Split('@')[0], // Username simples baseado no email
+                Email = email,
+                FullName = nome,
+                EmailConfirmed = true
+            };
+
+            var result = await _userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                TempData["UserWarning"] = $"Erro ao criar utilizador: {string.Join(", ", result.Errors.Select(e => e.Description))}";
+                return RedirectToAction(nameof(Index), new { section = "criar-utilizador" });
+            }
+
+            // Adicionar Role
+            await _userManager.AddToRoleAsync(user, tipo);
+
+            // Criar Entidade de Domínio
+            if (tipo == "Comprador")
+            {
+                var comprador = new Comprador
+                {
+                    IdentityUserId = user.Id,
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Nome = nome,
+                    Estado = "Ativo",
+                    Tipo = "Comprador",
+                    PasswordHash = "IDENTITY" // Placeholder
+                };
+                _db.Compradores.Add(comprador);
+            }
+            else if (tipo == "Vendedor")
+            {
+                var vendedor = new Vendedor
+                {
+                    IdentityUserId = user.Id,
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Nome = nome,
+                    Nif = nif,
+                    Estado = "Ativo", // Vendedores criados por admin já nascem ativos
+                    Tipo = "Vendedor",
+                    PasswordHash = "IDENTITY"
+                };
+                _db.Vendedores.Add(vendedor);
+            }
+            else if (tipo == "Administrador")
+            {
+                var admin = new Administrador
+                {
+                    IdentityUserId = user.Id,
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Nome = nome,
+                    Estado = "Ativo",
+                    Tipo = "Administrador",
+                    NivelAcesso = nivelAcesso ?? "Nivel 2", // Default to Nivel 2 if not specified
+                    PasswordHash = "IDENTITY"
+                };
+                _db.Administradores.Add(admin);
+            }
+
+            await _db.SaveChangesAsync();
+
+            // Registar ação
+            var currentAdmin = await GetCurrentAdminAsync();
+            if (currentAdmin != null)
+            {
+                // Obter ID do novo utilizador (da tabela de domínio)
+                int novoUserId = 0;
+                if (tipo == "Comprador") novoUserId = (await _db.Compradores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id))?.Id ?? 0;
+                else if (tipo == "Vendedor") novoUserId = (await _db.Vendedores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id))?.Id ?? 0;
+                else if (tipo == "Administrador") novoUserId = (await _db.Administradores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id))?.Id ?? 0;
+
+                if (novoUserId > 0)
+                {
+                    var acao = new AcaoUser
+                    {
+                        UtilizadorId = novoUserId,
+                        Data = DateTime.UtcNow,
+                        AdministradorId = currentAdmin.Id,
+                        Motivo = $"Criar: Novo {tipo} criado manualmente"
+                    };
+                    _db.Add(acao);
+                    await _db.SaveChangesAsync();
+                }
+            }
+
+            TempData["UserSuccess"] = $"Utilizador '{nome}' ({tipo}) criado com sucesso.";
+            return RedirectToAction(nameof(Index), new { section = "criar-utilizador" });
         }
 
         // POST: Administrador/BloquearUtilizador/5

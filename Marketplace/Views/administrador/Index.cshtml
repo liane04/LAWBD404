@@ -28,6 +28,9 @@
                     <a href="#" class="list-group-item list-group-item-action" data-target="#gerir-utilizadores-content">
                         <i class="bi bi-people-fill me-2"></i>Gerir Utilizadores
                     </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-target="#criar-utilizador-content">
+                        <i class="bi bi-person-plus-fill me-2"></i>Criar Utilizador
+                    </a>
                     <a href="#" class="list-group-item list-group-item-action" data-target="#moderar-anuncios-content">
                         <i class="bi bi-megaphone-fill me-2"></i>Moderar Anúncios
                     </a>
@@ -369,6 +372,11 @@
             <!-- ======================= Conteúdo: Gerir Utilizadores ======================= -->
             <div id="gerir-utilizadores-content" class="admin-content-section" style="display: none;">
                 @await Component.InvokeAsync("GerirUtilizadores")
+            </div>
+
+            <!-- ======================= Conteúdo: Criar Utilizador ======================= -->
+            <div id="criar-utilizador-content" class="admin-content-section" style="display: none;">
+                @await Component.InvokeAsync("CriarUtilizador")
             </div>
 
             <!-- ======================= Conteúdo: Moderar Anúncios ======================= -->
