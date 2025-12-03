@@ -76,7 +76,10 @@ namespace Marketplace.Controllers
                 "preco-desc" => query.OrderByDescending(a => a.Preco),
                 "ano-desc" => query.OrderByDescending(a => a.Ano),
                 "km-asc" => query.OrderBy(a => a.Quilometragem),
-                _ => query.OrderByDescending(a => a.Id) // Relevância (mais recentes primeiro)
+
+                "relevancia" => query.OrderByDescending(a => a.NVisualizacoes).ThenByDescending(a => a.Id),
+
+                _ => query.OrderByDescending(a => a.Id)
             };
 
             var anuncios = await query.ToListAsync();
@@ -219,6 +222,7 @@ namespace Marketplace.Controllers
             // Log erros de validação
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
             Console.WriteLine("Erros de validação: " + string.Join(", ", errors));
+            System.IO.File.WriteAllText("validation_errors.txt", "Erros: " + string.Join(", ", errors));
 
             ViewData["CategoriaId"] = new SelectList(_context.Set<Categoria>(), "Id", "Nome", anuncio.CategoriaId);
             ViewData["CombustivelId"] = new SelectList(_context.Set<Combustivel>(), "Id", "Tipo", anuncio.CombustivelId);

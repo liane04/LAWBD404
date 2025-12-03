@@ -175,11 +175,26 @@ namespace Marketplace.Data
                 .WithMany(a => a.Reservas)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Visitas - desativa cascade para Reserva
+            // Visitas - configurações de relacionamentos
             modelBuilder.Entity<Visita>()
                 .HasOne(v => v.Reserva)
                 .WithMany(r => r.Visitas)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Visita>()
+                .HasOne(v => v.Comprador)
+                .WithMany(c => c.Visitas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Visita>()
+                .HasOne(v => v.Anuncio)
+                .WithMany(a => a.Visitas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Visita>()
+                .HasOne(v => v.Vendedor)
+                .WithMany(v => v.Visitas)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configurações de precisão
             modelBuilder.Entity<Anuncio>()

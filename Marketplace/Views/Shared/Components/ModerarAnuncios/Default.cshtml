@@ -104,7 +104,7 @@
 <div class="card shadow-sm border-0 mb-5">
     <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
-            <i class="bi bi-card-list text-primary me-2"></i>Todos os Anúncios (@Model.Anuncios.Count)
+            <i class="bi bi-card-list text-primary me-2"></i>Todos os Anúncios (<span id="anuncios-counter">@Model.Anuncios.Count</span>)
         </h5>
         <button class="btn btn-sm btn-outline-secondary" id="btn-reset-anuncio-filter" onclick="filterAnuncios('all')" style="display: none;">
             <i class="bi bi-arrow-counterclockwise me-1"></i>Ver Todos
@@ -114,7 +114,7 @@
         @if (Model.Anuncios != null && Model.Anuncios.Any())
         {
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table table-hover align-middle mb-0" id="tabela-anuncios">
                     <thead class="table-light">
                         <tr>
                             <th scope="col" class="ps-4">Anúncio</th>
@@ -133,7 +133,7 @@
                                         @if (!string.IsNullOrEmpty(anuncio.PrimeiraImagem))
                                         {
                                             <img src="@anuncio.PrimeiraImagem" alt="@anuncio.Titulo"
-                                                 class="rounded me-3" style="width: 80px; height: 60px; object-fit: cover;">
+                                                 class="rounded me-3" style="width: 80px; height: 60px; object-fit: cover; @(anuncio.IsPausado ? "filter: grayscale(100%); opacity: 0.7;" : "")">
                                         }
                                         else
                                         {
@@ -143,7 +143,13 @@
                                             </div>
                                         }
                                         <div>
-                                            <div class="fw-bold">@anuncio.Titulo</div>
+                                            <div class="fw-bold @(anuncio.IsPausado ? "text-muted" : "")">
+                                                @anuncio.Titulo
+                                                @if (anuncio.IsPausado)
+                                                {
+                                                    <span class="badge bg-secondary ms-2">Pausado</span>
+                                                }
+                                            </div>
                                             <div class="small text-muted">
                                                 @anuncio.MarcaNome @anuncio.ModeloNome
                                                 @if (anuncio.Ano.HasValue)
@@ -180,18 +186,37 @@
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
                                         <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id"
-                                           class="btn btn-info btn-sm rounded-pill px-3"
+                                           class="btn btn-outline-info btn-sm"
                                            data-bs-toggle="tooltip" title="Ver detalhes"
-                                           target="_blank"
-                                           style="min-width: 80px;">
+                                           target="_blank">
                                             <i class="bi bi-eye-fill me-1"></i>Ver
                                         </a>
+
+                                        <form method="post" asp-controller="Administrador" asp-action="PausarAnuncio" asp-route-id="@anuncio.Id">
+                                            @Html.AntiForgeryToken()
+                                            @if (anuncio.IsPausado)
+                                            {
+                                                <button type="submit" class="btn btn-outline-warning btn-sm"
+                                                        data-bs-toggle="tooltip" title="Retomar anúncio"
+                                                        onclick="return confirm('Deseja retomar este anúncio? Ele voltará a ficar visível.');">
+                                                    <i class="bi bi-play-fill me-1"></i>Retomar
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-outline-warning btn-sm"
+                                                        data-bs-toggle="tooltip" title="Pausar anúncio"
+                                                        onclick="return confirm('Deseja pausar este anúncio? Ele ficará invisível para os utilizadores.');">
+                                                    <i class="bi bi-pause-fill me-1"></i>Pausar
+                                                </button>
+                                            }
+                                        </form>
+
                                         <form method="post" asp-controller="Administrador" asp-action="EliminarAnuncio" asp-route-id="@anuncio.Id">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-danger btn-sm rounded-pill px-3"
+                                            <button type="submit" class="btn btn-outline-danger btn-sm"
                                                     data-bs-toggle="tooltip" title="Eliminar anúncio"
-                                                    onclick="return confirm('Tem certeza que deseja eliminar este anúncio? Esta ação é irreversível.');"
-                                                    style="min-width: 80px;">
+                                                    onclick="return confirm('Tem certeza que deseja eliminar este anúncio? Esta ação é irreversível.');">
                                                 <i class="bi bi-trash-fill me-1"></i>Eliminar
                                             </button>
                                         </form>
@@ -217,46 +242,54 @@
 </div>
 
 <script>
-    function filterAnuncios(type) {
-        const rows = document.querySelectorAll('.anuncio-row');
-        const btnReset = document.getElementById('btn-reset-anuncio-filter');
-        const cards = {
-            'pendente': document.getElementById('card-anuncio-pendente'),
-            'ativo': document.getElementById('card-anuncio-ativo'),
-            'denuncia': document.getElementById('card-anuncio-denuncia'),
-            'pausado': document.getElementById('card-anuncio-pausado')
-        };
-
-        // Reset all cards styles
-        Object.values(cards).forEach(card => {
-            if(card) {
-                card.classList.remove('bg-light');
+    function filterAnuncios(status, element) {
+        // 1. Update Active State on Cards
+        if (element) {
+            // Remove active class from all cards
+            document.querySelectorAll('.card[onclick^="filterAnuncios"]').forEach(card => {
+                card.classList.remove('border-primary', 'bg-light');
                 card.style.transform = 'scale(1)';
+            });
+
+            // Add active class to clicked card
+            element.classList.add('border-primary', 'bg-light');
+            element.style.transform = 'scale(1.02)';
+        }
+
+        // 2. Filter Table Rows
+        const rows = document.querySelectorAll('#tabela-anuncios tbody tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            if (status === 'All' || rowStatus === status) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
             }
         });
 
-        if (type === 'all') {
-            rows.forEach(row => row.style.display = '');
-            if(btnReset) btnReset.style.display = 'none';
+        // 3. Update Counter
+        document.getElementById('anuncios-counter').textContent = visibleCount;
+
+        // 4. Show/Hide Reset Button
+        const resetButton = document.getElementById('btn-reset-anuncio-filters');
+        if (status !== 'All') {
+            resetButton.style.display = 'block';
         } else {
-            rows.forEach(row => {
-                let show = false;
-                // Como não temos estado real, assumimos que todos são ativos
-                // Pendente e Pausado mostrarão 0 resultados por enquanto
-                
-                if (type === 'ativo') show = true; 
-                else if (type === 'denuncia' && row.dataset.hasDenuncias === 'True') show = true;
-                
-                row.style.display = show ? '' : 'none';
-            });
-            
-            if(btnReset) btnReset.style.display = 'block';
-            
-            // Highlight selected card
-            if(cards[type]) {
-                cards[type].classList.add('bg-light');
-                cards[type].style.transform = 'scale(1.02)';
-            }
+            resetButton.style.display = 'none';
         }
+    }
+
+    function resetAnuncioFilters() {
+        // Reset Cards
+        document.querySelectorAll('.card[onclick^="filterAnuncios"]').forEach(card => {
+            card.classList.remove('border-primary', 'bg-light');
+            card.style.transform = 'scale(1)';
+        });
+
+        // Show all rows
+        filterAnuncios('All', null);
     }
 </script>

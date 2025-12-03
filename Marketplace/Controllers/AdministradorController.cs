@@ -23,22 +23,24 @@ namespace Marketplace.Controllers
             _emailSender = emailSender;
         }
 
-        // Ação para a página principal do painel de administração, que agora contém todas as secções.
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? section = null, string? historyFilter = null)
         {
-            // Carregar vendedores pendentes para exibir no painel
-            var vendedoresPendentes = await _db.Vendedores
-                .Where(v => v.Estado == null || v.Estado == "Pendente")
-                .OrderBy(v => v.Nome)
-                .ToListAsync();
+            // Auto-fix data issues transparently
+            try 
+            {
+                await _db.Database.ExecuteSqlRawAsync("UPDATE HistoricoAcao SET TipoAcao = 'AcaoUser' WHERE TipoAcao IN ('Aprovar', 'Rejeitar', 'Bloquear', 'Desbloquear')");
+                await _db.Database.ExecuteSqlRawAsync("UPDATE HistoricoAcao SET TipoAcao = 'AcaoAnuncio' WHERE TipoAcao IN ('Pausar', 'Retomar', 'Anúncio Pausado', 'Anúncio Retomado')");
+            }
+            catch 
+            {
+                // Ignore errors during auto-fix to prevent blocking the dashboard
+            }
 
-            ViewBag.VendedoresPendentes = vendedoresPendentes;
-            ViewBag.TotalPendentes = vendedoresPendentes.Count;
-
+            ViewBag.ActiveSection = section;
+            ViewBag.HistoryFilter = historyFilter;
             return View();
         }
 
-        // GET: Administrador/ValidarVendedores
         [HttpGet]
         public async Task<IActionResult> ValidarVendedores()
         {
@@ -47,6 +49,13 @@ namespace Marketplace.Controllers
                 .OrderBy(v => v.Nome)
                 .ToListAsync();
             return View(pendentes);
+        }
+
+        private async Task<Administrador?> GetCurrentAdminAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return null;
+            return await _db.Administradores.FirstOrDefaultAsync(a => a.IdentityUserId == user.Id);
         }
 
         // POST: Administrador/AprovarVendedor/5
@@ -58,6 +67,21 @@ namespace Marketplace.Controllers
             if (vendedor == null) return NotFound();
 
             vendedor.Estado = "Ativo";
+
+            // Registar ação
+            var admin = await GetCurrentAdminAsync();
+            if (admin != null)
+            {
+                var acao = new AcaoUser
+                {
+                    UtilizadorId = id,
+                    Data = DateTime.UtcNow,
+                    AdministradorId = admin.Id,
+                    Motivo = "Aprovar: Vendedor Aprovado"
+                };
+                _db.Add(acao);
+            }
+
             await _db.SaveChangesAsync();
 
             TempData["Success"] = $"Vendedor '{vendedor.Nome}' aprovado com sucesso!";
@@ -88,18 +112,20 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index));
-        }
+            // Registar ação
+            // admin já foi definido anteriormente
+            if (admin != null)
+            {
+                var acao = new AcaoUser
+                {
+                    UtilizadorId = id,
+                    Data = DateTime.UtcNow,
+                    AdministradorId = admin.Id,
+                    Motivo = "Rejeitar: Vendedor Rejeitado"
+                };
+                _db.Add(acao);
+            }
 
-        // POST: Administrador/RejeitarVendedor/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejeitarVendedor(int id)
-        {
-            var vendedor = await _db.Vendedores.FindAsync(id);
-            if (vendedor == null) return NotFound();
-
-            vendedor.Estado = "Rejeitado";
             await _db.SaveChangesAsync();
 
             TempData["Warning"] = $"Vendedor '{vendedor.Nome}' foi rejeitado.";
@@ -130,19 +156,19 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "validar-vendedores" });
         }
 
         // POST: Administrador/BloquearUtilizador/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BloquearUtilizador(int id)
+        public async Task<IActionResult> BloquearUtilizador(int id, string motivo, DateTime? dataFim)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
                 TempData["UserWarning"] = "Utilizador não encontrado.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
             // Não permitir bloquear administradores
@@ -150,12 +176,39 @@ namespace Marketplace.Controllers
             if (isAdmin)
             {
                 TempData["UserWarning"] = "Não é possível bloquear um administrador.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
-            // Bloquear por 100 anos (permanente)
-            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(100));
+            // Definir data de fim do bloqueio (default: 100 anos se não especificado)
+            var lockoutEnd = dataFim.HasValue 
+                ? new DateTimeOffset(dataFim.Value) 
+                : DateTimeOffset.UtcNow.AddYears(100);
+
+            // Bloquear
+            await _userManager.SetLockoutEndDateAsync(user, lockoutEnd);
             await _userManager.SetLockoutEnabledAsync(user, true);
+
+            // Registar ação
+            // Precisamos encontrar o ID do Utilizador (tabela Utilizador) correspondente ao IdentityUser
+            var utilizador = await _db.Compradores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id) as Utilizador 
+                             ?? await _db.Vendedores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id) as Utilizador;
+
+            if (utilizador != null)
+            {
+                var admin = await GetCurrentAdminAsync();
+                if (admin != null)
+                {
+                    var acao = new AcaoUser
+                    {
+                        UtilizadorId = utilizador.Id,
+                        Data = DateTime.UtcNow,
+                        AdministradorId = admin.Id,
+                        Motivo = "Bloquear: " + motivo
+                    };
+                    _db.Add(acao);
+                    await _db.SaveChangesAsync();
+                }
+            }
 
             TempData["UserSuccess"] = $"Utilizador '{user.FullName ?? user.UserName}' foi bloqueado com sucesso.";
 
@@ -164,6 +217,10 @@ namespace Marketplace.Controllers
             {
                 if (_emailSender != null && !string.IsNullOrEmpty(user.Email))
                 {
+                    var duracaoTexto = dataFim.HasValue 
+                        ? $"até {dataFim.Value:dd/MM/yyyy}" 
+                        : "permanentemente";
+
                     await _emailSender.SendAsync(
                         user.Email,
                         "Conta Bloqueada - 404 Ride",
@@ -171,7 +228,8 @@ namespace Marketplace.Controllers
                         <body style='font-family: Arial, sans-serif;'>
                             <h2 style='color: #dc3545;'>Conta Bloqueada</h2>
                             <p>Olá <strong>{user.FullName ?? user.UserName}</strong>,</p>
-                            <p>A sua conta na plataforma <strong>404 Ride</strong> foi <span style='color: #dc3545;'>bloqueada</span> pelo administrador.</p>
+                            <p>A sua conta na plataforma <strong>404 Ride</strong> foi <span style='color: #dc3545;'>bloqueada</span> {duracaoTexto}.</p>
+                            <p><strong>Motivo:</strong> {motivo}</p>
                             <p>Se acredita que isto é um erro, por favor contacte o nosso suporte.</p>
                             <hr>
                             <p style='color: #666; font-size: 12px;'>Esta é uma mensagem automática. Por favor não responda a este email.</p>
@@ -184,7 +242,7 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
         }
 
         // POST: Administrador/DesbloquearUtilizador/5
@@ -196,11 +254,32 @@ namespace Marketplace.Controllers
             if (user == null)
             {
                 TempData["UserWarning"] = "Utilizador não encontrado.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
             // Desbloquear
             await _userManager.SetLockoutEndDateAsync(user, null);
+
+            // Registar ação
+            var utilizador = await _db.Compradores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id) as Utilizador 
+                             ?? await _db.Vendedores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id) as Utilizador;
+
+            if (utilizador != null)
+            {
+                var admin = await GetCurrentAdminAsync();
+                if (admin != null)
+                {
+                    var acao = new AcaoUser
+                    {
+                        UtilizadorId = utilizador.Id,
+                        Data = DateTime.UtcNow,
+                        AdministradorId = admin.Id,
+                        Motivo = "Desbloquear: Desbloqueio manual"
+                    };
+                    _db.Add(acao);
+                    await _db.SaveChangesAsync();
+                }
+            }
 
             TempData["UserSuccess"] = $"Utilizador '{user.FullName ?? user.UserName}' foi desbloqueado com sucesso.";
 
@@ -229,7 +308,7 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
         }
 
         // POST: Administrador/EliminarUtilizador/5
@@ -241,7 +320,7 @@ namespace Marketplace.Controllers
             if (user == null)
             {
                 TempData["UserWarning"] = "Utilizador não encontrado.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
             // Não permitir eliminar administradores
@@ -249,7 +328,7 @@ namespace Marketplace.Controllers
             if (isAdmin)
             {
                 TempData["UserWarning"] = "Não é possível eliminar um administrador.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
             var userName = user.FullName ?? user.UserName;
@@ -292,7 +371,7 @@ namespace Marketplace.Controllers
                 TempData["UserWarning"] = $"Erro ao eliminar utilizador: {string.Join(", ", result.Errors.Select(e => e.Description))}";
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
         }
 
         // POST: Administrador/EliminarAnuncio/5
@@ -324,6 +403,55 @@ namespace Marketplace.Controllers
 
             TempData["AnuncioSuccess"] = $"Anúncio '{tituloAnuncio}' foi eliminado com sucesso.";
             return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Administrador/PausarAnuncio/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PausarAnuncio(int id)
+        {
+            var anuncio = await _db.Anuncios
+                .Include(a => a.AcoesAnuncio)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (anuncio == null)
+            {
+                TempData["AnuncioWarning"] = "Anúncio não encontrado.";
+                return RedirectToAction(nameof(Index), new { section = "moderar-anuncios" });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            var admin = await _db.Administradores.FirstOrDefaultAsync(a => a.IdentityUserId == user.Id);
+
+            if (admin == null)
+            {
+                TempData["AnuncioWarning"] = "Erro ao identificar administrador.";
+                return RedirectToAction(nameof(Index), new { section = "moderar-anuncios" });
+            }
+
+            // Verificar estado atual
+            var lastAction = anuncio.AcoesAnuncio
+                .OrderByDescending(a => a.Data)
+                .FirstOrDefault();
+
+            bool isPaused = lastAction?.Motivo == "Anúncio Pausado";
+            string message = isPaused ? "retomado" : "pausado";
+
+            // Criar nova ação
+            var acao = new AcaoAnuncio
+            {
+                AnuncioId = id,
+                Data = DateTime.UtcNow,
+                // TipoAcao é o discriminador (AcaoAnuncio), não devemos definir manualmente
+                AdministradorId = admin.Id,
+                Motivo = isPaused ? "Anúncio Retomado" : "Anúncio Pausado"
+            };
+
+            _db.Add(acao);
+            await _db.SaveChangesAsync();
+
+            TempData["AnuncioSuccess"] = $"Anúncio '{anuncio.Titulo}' foi {message} com sucesso.";
+            return RedirectToAction(nameof(Index), new { section = "moderar-anuncios" });
         }
     }
 }

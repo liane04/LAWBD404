@@ -1,0 +1,142 @@
+@model IEnumerable<Marketplace.Models.HistoricoAcao>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+        <div class="d-flex justify-content-between align-items-center mb-0">
+            <h5 class="card-title mb-0 fw-bold text-primary">
+                <i class="bi bi-clock-history me-2"></i>Histórico de Ações Administrativas
+            </h5>
+            <div class="btn-group" role="group" aria-label="Filtro de Histórico">
+                <a href="?section=historico-acoes" class="btn btn-sm btn-outline-primary @(string.IsNullOrEmpty(ViewBag.CurrentFilter) ? "active" : "")">
+                    Todos
+                </a>
+                <a href="?section=historico-acoes&historyFilter=users" class="btn btn-sm btn-outline-primary @(ViewBag.CurrentFilter == "users" ? "active" : "")">
+                    <i class="bi bi-people-fill me-1"></i>Utilizadores
+                </a>
+                <a href="?section=historico-acoes&historyFilter=ads" class="btn btn-sm btn-outline-primary @(ViewBag.CurrentFilter == "ads" ? "active" : "")">
+                    <i class="bi bi-megaphone-fill me-1"></i>Anúncios
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Data/Hora</th>
+                        <th>Administrador</th>
+                        <th>Ação</th>
+                        <th>Alvo</th>
+                        <th>Motivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Não existem ações registadas no histórico.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var acao in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 text-nowrap">
+                                    <div class="fw-bold">@acao.Data.ToString("dd/MM/yyyy")</div>
+                                    <div class="small text-muted">@acao.Data.ToString("HH:mm")</div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                                            <i class="bi bi-person-badge-fill text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">@(acao.Administrador?.Nome ?? "Sistema")</div>
+                                            <div class="small text-muted">Admin</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @{
+                                        var badgeClass = "bg-secondary";
+                                        var iconClass = "bi-activity";
+                                        var actionType = acao.TipoAcao; // Fallback to discriminator if needed
+                                        var motivoText = acao.Motivo ?? "Sem motivo";
+
+                                        // Parse Action from Motivo if present (Format: "Action: Reason")
+                                        if (motivoText.Contains(":"))
+                                        {
+                                            var parts = motivoText.Split(':', 2);
+                                            actionType = parts[0].Trim();
+                                            motivoText = parts[1].Trim();
+                                        }
+                                        else if (acao.Motivo == "Anúncio Pausado" || acao.Motivo == "Anúncio Retomado")
+                                        {
+                                            actionType = acao.Motivo.Contains("Pausado") ? "Pausar" : "Retomar";
+                                        }
+
+                                        if (actionType.Contains("Bloquear") || actionType.Contains("Rejeitar") || actionType.Contains("Eliminar"))
+                                        {
+                                            badgeClass = "bg-danger";
+                                            iconClass = "bi-x-circle";
+                                        }
+                                        else if (actionType.Contains("Aprovar") || actionType.Contains("Desbloquear") || actionType.Contains("Retomar"))
+                                        {
+                                            badgeClass = "bg-success";
+                                            iconClass = "bi-check-circle";
+                                        }
+                                        else if (actionType.Contains("Pausar"))
+                                        {
+                                            badgeClass = "bg-warning text-dark";
+                                            iconClass = "bi-pause-circle";
+                                        }
+                                    }
+                                    <span class="badge @badgeClass rounded-pill">
+                                        <i class="bi @iconClass me-1"></i>@actionType
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (acao is Marketplace.Models.AcaoUser acaoUser)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-person me-2 text-muted"></i>
+                                            <div>
+                                                <div class="fw-bold">@(acaoUser.Utilizador?.Nome ?? "Utilizador Removido")</div>
+                                                <div class="small text-muted">ID: @acaoUser.UtilizadorId</div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (acao is Marketplace.Models.AcaoAnuncio acaoAnuncio)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-car-front me-2 text-muted"></i>
+                                            <div>
+                                                <div class="fw-bold">@(acaoAnuncio.Anuncio?.Titulo ?? "Anúncio Removido")</div>
+                                                <div class="small text-muted">ID: @acaoAnuncio.AnuncioId</div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="text-muted">@motivoText</span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-white text-center py-3">
+        <small class="text-muted">A mostrar as últimas 50 ações</small>
+    </div>
+</div>
