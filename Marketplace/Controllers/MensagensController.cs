@@ -121,6 +121,7 @@ namespace Marketplace.Controllers
             return Json(new
             {
                 conversaId = conversa.Id,
+                anuncioId = conversa.AnuncioId,
                 anuncioTitulo = conversa.Anuncio.Titulo,
                 anuncioPreco = conversa.Anuncio.Preco,
                 outroParticipanteNome = conversa.Vendedor.IdentityUserId == userId ? conversa.Comprador.Nome : conversa.Vendedor.Nome,
@@ -131,7 +132,7 @@ namespace Marketplace.Controllers
 
         // API: Enviar mensagem
         [HttpPost]
-        public async Task<IActionResult> EnviarMensagem(int conversaId, string conteudo)
+        public async Task<IActionResult> EnviarMensagem([FromForm] int conversaId, [FromForm] string conteudo)
         {
             if (string.IsNullOrWhiteSpace(conteudo)) return BadRequest("Mensagem vazia");
 
@@ -158,7 +159,18 @@ namespace Marketplace.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, mensagem });
+            return Json(new 
+            { 
+                success = true, 
+                mensagem = new 
+                {
+                    id = mensagem.Id,
+                    conteudo = mensagem.Conteudo,
+                    dataEnvio = mensagem.DataEnvio,
+                    enviadaPorMim = true,
+                    lida = mensagem.Lida
+                } 
+            });
         }
 
         // Action: Iniciar conversa a partir de um anúncio

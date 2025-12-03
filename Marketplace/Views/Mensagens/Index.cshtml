@@ -779,8 +779,38 @@
             if (!currentConversaId) return;
 
             const input = document.getElementById('chatInputBox');
+            const btn = document.getElementById('chatSendBtn');
             const conteudo = input.value.trim();
+            
             if (!conteudo) return;
+
+            // 1. Disable UI immediately to prevent double-submit
+            input.disabled = true;
+            btn.disabled = true;
+
+            // 2. Optimistic UI: Append message immediately
+            const body = document.getElementById('chatBody');
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Check if we need a date divider (simplified check against last message in DOM)
+            // For simplicity in optimistic UI, we skip date divider check or assume same day
+            
+            const tempId = 'temp-' + Date.now();
+            
+            const optimisticHtml = `
+                <div class="message-wrapper sent" id="${tempId}">
+                    <div class="message sent" style="opacity: 0.7">
+                        <div class="message-text">${conteudo}</div>
+                        <div class="message-time">${time} <i class="bi bi-clock"></i></div>
+                    </div>
+                </div>
+            `;
+            body.insertAdjacentHTML('beforeend', optimisticHtml);
+            body.scrollTop = body.scrollHeight;
+
+            // Clear input immediately
+            input.value = '';
 
             const formData = new FormData();
             formData.append('conversaId', currentConversaId);
@@ -790,17 +820,45 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(async response => {
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`Server error: ${response.status} ${text}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    input.value = '';
-                    // Recarregar mensagens (ou adicionar manualmente para ser mais rápido)
-                    abrirConversa(currentConversaId);
-                    // Atualizar lista lateral
+                    // Replace optimistic message with real one or just update status
+                    const tempMsg = document.getElementById(tempId);
+                    if (tempMsg) {
+                        tempMsg.querySelector('.message').style.opacity = '1';
+                        tempMsg.querySelector('.message-time').innerHTML = `${time}`;
+                    }
+                    
+                    // Update sidebar without full reload if possible, or just silent reload
                     carregarConversas();
+                } else {
+                    // Error handling
+                    console.error('Server returned success: false', data);
+                    alert('Erro ao enviar mensagem: ' + (data.message || 'Erro desconhecido'));
+                    document.getElementById(tempId).remove();
+                    input.value = conteudo; // Restore text
                 }
             })
-            .catch(err => console.error('Erro ao enviar mensagem:', err));
+            .catch(err => {
+                console.error('Erro detalhado:', err);
+                alert('Erro de conexão ou servidor: ' + err.message);
+                const tempMsg = document.getElementById(tempId);
+                if (tempMsg) tempMsg.remove();
+                input.value = conteudo;
+            })
+            .finally(() => {
+                // Re-enable UI
+                input.disabled = false;
+                btn.disabled = false;
+                input.focus();
+            });
         }
 
         function formatDate(dateString) {
