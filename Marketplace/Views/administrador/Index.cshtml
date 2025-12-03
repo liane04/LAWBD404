@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Marketplace.Controllers.AdministradorController.DashboardStatsVM
+
+@{
     ViewData["Title"] = "Painel de Administração";
 }
 
@@ -11,8 +13,11 @@
             <div class="card shadow-sm mb-3 admin-profile-card">
                 <div class="card-body text-center">
                     <img src="https://placehold.co/100x100/343a40/ffffff?text=Admin" alt="Foto do Administrador" class="rounded-circle mb-3">
-                    <h5 class="card-title mb-0">Adminstrador Principal</h5>
-                    <p class="card-text text-muted small">admin@marketplace404.pt</p>
+                    <h5 class="card-title mb-2">@ViewBag.AdminName</h5>
+                    <p class="card-text text-muted small mb-2">@ViewBag.AdminEmail</p>
+                    <span class="badge @(ViewBag.NivelAcesso == "Nivel 1" ? "bg-danger" : "bg-warning text-dark")">
+                        <i class="bi bi-shield-lock-fill me-1"></i>@ViewBag.NivelAcesso
+                    </span>
                 </div>
             </div>
 
@@ -65,7 +70,7 @@
                     </div>
                     <div class="text-end">
                         <small class="text-muted d-block">Última atualização</small>
-                        <strong class="text-primary">24/10/2025 14:30</strong>
+                        <strong class="text-primary">@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</strong>
                     </div>
                 </div>
 
@@ -78,13 +83,9 @@
                                     <div class="stat-icon bg-primary-subtle text-primary rounded-3 p-3">
                                         <i class="bi bi-cart-check-fill fs-4"></i>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success">
-                                        <i class="bi bi-arrow-up"></i> 12%
-                                    </span>
                                 </div>
                                 <h6 class="text-muted mb-1 fw-normal">Compradores</h6>
-                                <h3 class="mb-0 fw-bold">847</h3>
-                                <small class="text-muted">+94 este mês</small>
+                                <h3 class="mb-0 fw-bold">@Model.TotalCompradores</h3>
                             </div>
                         </div>
                     </div>
@@ -95,13 +96,9 @@
                                     <div class="stat-icon bg-info-subtle text-info rounded-3 p-3">
                                         <i class="bi bi-shop-window fs-4"></i>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success">
-                                        <i class="bi bi-arrow-up"></i> 8%
-                                    </span>
                                 </div>
                                 <h6 class="text-muted mb-1 fw-normal">Vendedores</h6>
-                                <h3 class="mb-0 fw-bold">407</h3>
-                                <small class="text-muted">+31 este mês</small>
+                                <h3 class="mb-0 fw-bold">@Model.TotalVendedores</h3>
                             </div>
                         </div>
                     </div>
@@ -112,13 +109,9 @@
                                     <div class="stat-icon bg-success-subtle text-success rounded-3 p-3">
                                         <i class="bi bi-megaphone-fill fs-4"></i>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success">
-                                        <i class="bi bi-arrow-up"></i> 15%
-                                    </span>
                                 </div>
                                 <h6 class="text-muted mb-1 fw-normal">Anúncios Ativos</h6>
-                                <h3 class="mb-0 fw-bold">832</h3>
-                                <small class="text-muted">+112 este mês</small>
+                                <h3 class="mb-0 fw-bold">@Model.TotalAnunciosAtivos</h3>
                             </div>
                         </div>
                     </div>
@@ -129,13 +122,10 @@
                                     <div class="stat-icon bg-warning-subtle text-warning rounded-3 p-3">
                                         <i class="bi bi-currency-euro fs-4"></i>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success">
-                                        <i class="bi bi-arrow-up"></i> 23%
-                                    </span>
                                 </div>
                                 <h6 class="text-muted mb-1 fw-normal">Vendas no Mês</h6>
-                                <h3 class="mb-0 fw-bold">156</h3>
-                                <small class="text-muted">Volume: 2,8M€</small>
+                                <h3 class="mb-0 fw-bold">@Model.VendasMes</h3>
+                                <small class="text-muted">Volume: @Model.VolumeVendasMes.ToString("C0")</small>
                             </div>
                         </div>
                     </div>
@@ -154,7 +144,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="text-muted mb-1">Vendedores a Validar</h6>
-                                        <h4 class="mb-0 fw-bold text-warning">12</h4>
+                                        <h4 class="mb-0 fw-bold text-warning">@Model.VendedoresPendentes</h4>
                                     </div>
                                 </div>
                             </div>
@@ -171,7 +161,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="text-muted mb-1">Denúncias Abertas</h6>
-                                        <h4 class="mb-0 fw-bold text-danger">7</h4>
+                                        <h4 class="mb-0 fw-bold text-danger">@Model.DenunciasAbertas</h4>
                                     </div>
                                 </div>
                             </div>
@@ -188,7 +178,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="text-muted mb-1">Anúncios Pendentes</h6>
-                                        <h4 class="mb-0 fw-bold text-primary">5</h4>
+                                        <h4 class="mb-0 fw-bold text-primary">@Model.AnunciosPendentes</h4>
                                     </div>
                                 </div>
                             </div>
@@ -205,7 +195,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="text-muted mb-1">Destaques Ativos</h6>
-                                        <h4 class="mb-0 fw-bold text-secondary">43</h4>
+                                        <h4 class="mb-0 fw-bold text-secondary">@Model.DestaquesAtivos</h4>
                                     </div>
                                 </div>
                             </div>
@@ -273,51 +263,25 @@
                                 </h5>
                             </div>
                             <div class="card-body">
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">BMW</span>
-                                        <span class="badge bg-primary-subtle text-primary">42 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">Mercedes-Benz</span>
-                                        <span class="badge bg-primary-subtle text-primary">38 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 90%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">Audi</span>
-                                        <span class="badge bg-primary-subtle text-primary">35 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 83%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">Volkswagen</span>
-                                        <span class="badge bg-primary-subtle text-primary">29 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 69%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-0">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">Peugeot</span>
-                                        <span class="badge bg-primary-subtle text-primary">24 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 57%"></div>
-                                    </div>
-                                </div>
+                                @if (Model.TopMarcas.Any())
+                                {
+                                    @foreach (var marca in Model.TopMarcas)
+                                    {
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="fw-semibold">@marca.Nome</span>
+                                                <span class="badge bg-primary-subtle text-primary">@marca.Vendas vendas</span>
+                                            </div>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar bg-primary" role="progressbar" style="width: @marca.Percentagem%"></div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted text-center py-4">Ainda não existem dados de vendas suficientes.</p>
+                                }
                             </div>
                         </div>
                     </div>
@@ -333,28 +297,28 @@
                                     <div class="col-6">
                                         <div class="text-center p-3 bg-light rounded">
                                             <i class="bi bi-eye-fill fs-3 text-primary mb-2"></i>
-                                            <h4 class="mb-0 fw-bold">127K</h4>
-                                            <small class="text-muted">Visualizações no Mês</small>
+                                            <h4 class="mb-0 fw-bold">@Model.TotalVisualizacoes</h4>
+                                            <small class="text-muted">Visualizações Totais</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="text-center p-3 bg-light rounded">
                                             <i class="bi bi-heart-fill fs-3 text-danger mb-2"></i>
-                                            <h4 class="mb-0 fw-bold">3.4K</h4>
+                                            <h4 class="mb-0 fw-bold">@Model.TotalFavoritos</h4>
                                             <small class="text-muted">Anúncios Favoritados</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="text-center p-3 bg-light rounded">
                                             <i class="bi bi-calendar-check-fill fs-3 text-info mb-2"></i>
-                                            <h4 class="mb-0 fw-bold">542</h4>
+                                            <h4 class="mb-0 fw-bold">@Model.TotalReservasAtivas</h4>
                                             <small class="text-muted">Reservas Ativas</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="text-center p-3 bg-light rounded">
                                             <i class="bi bi-chat-dots-fill fs-3 text-warning mb-2"></i>
-                                            <h4 class="mb-0 fw-bold">1.8K</h4>
+                                            <h4 class="mb-0 fw-bold">@Model.TotalMensagens</h4>
                                             <small class="text-muted">Mensagens Trocadas</small>
                                         </div>
                                     </div>

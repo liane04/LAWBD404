@@ -11,7 +11,7 @@ namespace Marketplace.Data.Seeders
 {
     public static class UserSeeder
     {
-        private record UserSeed(string fullName, string email, string username, string role, string? password);
+        private record UserSeed(string fullName, string email, string username, string role, string? accessLevel, string? password);
 
         public static async Task SeedAsync(
             UserManager<ApplicationUser> userManager,
@@ -20,6 +20,7 @@ namespace Marketplace.Data.Seeders
             string contentRootPath,
             Action<string>? log = null)
         {
+
             log ??= _ => { };
 
             // Roles
@@ -75,6 +76,7 @@ namespace Marketplace.Data.Seeders
 
             // Utilizadores base mínimos
             var adminUser = await EnsureUserAsync("admin@email.com", "admin", "Administrador", "Administrador", "Admin123");
+            var admin2User = await EnsureUserAsync("admin2@email.com", "admin2", "Administrador Nivel 2", "Administrador", "Admin123");
             var vendedorUser = await EnsureUserAsync("vendedor@email.com", "vendedor", "Vendedor Demo", "Vendedor", "Vende123");
             var vendedorPendenteUser = await EnsureUserAsync("vendedor.pendente@email.com", "vendedor.pendente", "Vendedor Pendente", "Vendedor", "Vende123");
             var compradorUser = await EnsureUserAsync("comprador@email.com", "comprador", "Comprador Demo", "Comprador", "Compr123");
@@ -92,6 +94,21 @@ namespace Marketplace.Data.Seeders
                     Tipo = "Administrador",
                     NivelAcesso = "Nivel 1",
                     IdentityUserId = adminUser.Id
+                });
+            }
+
+            if (admin2User != null && !db.Administradores.Any(a => a.IdentityUserId == admin2User.Id))
+            {
+                db.Administradores.Add(new Administrador
+                {
+                    Username = admin2User.UserName!,
+                    Email = admin2User.Email!,
+                    Nome = admin2User.FullName ?? "Administrador Nivel 2",
+                    PasswordHash = "IDENTITY",
+                    Estado = "Ativo",
+                    Tipo = "Administrador",
+                    NivelAcesso = "Nivel 2",
+                    IdentityUserId = admin2User.Id
                 });
             }
 
@@ -179,7 +196,7 @@ namespace Marketplace.Data.Seeders
                         PasswordHash = "IDENTITY",
                         Estado = "Ativo",
                         Tipo = "Administrador",
-                        NivelAcesso = "Total",
+                        NivelAcesso = u.accessLevel ?? "Nivel 2",
                         IdentityUserId = created.Id
                     });
                 }

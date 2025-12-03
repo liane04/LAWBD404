@@ -30,6 +30,7 @@ namespace Marketplace.Controllers
             {
                 await _db.Database.ExecuteSqlRawAsync("UPDATE HistoricoAcao SET TipoAcao = 'AcaoUser' WHERE TipoAcao IN ('Aprovar', 'Rejeitar', 'Bloquear', 'Desbloquear')");
                 await _db.Database.ExecuteSqlRawAsync("UPDATE HistoricoAcao SET TipoAcao = 'AcaoAnuncio' WHERE TipoAcao IN ('Pausar', 'Retomar', 'Anúncio Pausado', 'Anúncio Retomado')");
+                await _db.Database.ExecuteSqlRawAsync("UPDATE Administradores SET NivelAcesso = 'Nivel 1' WHERE NivelAcesso = 'Total'");
             }
             catch 
             {
@@ -40,9 +41,87 @@ namespace Marketplace.Controllers
             ViewBag.HistoryFilter = historyFilter;
 
             var currentAdmin = await GetCurrentAdminAsync();
-            ViewBag.NivelAcesso = currentAdmin?.NivelAcesso ?? "Nivel 2"; // Default to restricted if not found
+            ViewBag.NivelAcesso = currentAdmin?.NivelAcesso ?? "Nivel 2"; 
+            ViewBag.AdminName = currentAdmin?.Nome ?? "Administrador";
+            ViewBag.AdminEmail = currentAdmin?.Email ?? "admin@marketplace404.pt";
 
-            return View();
+            // Calculate Dashboard Stats
+            var now = DateTime.UtcNow;
+            var startOfMonth = new DateTime(now.Year, now.Month, 1);
+
+            // Top 5 Marcas Mais Vendidas
+            var topMarcas = await _db.Compras
+                .Include(c => c.Anuncio)
+                .ThenInclude(a => a.Marca)
+                .Where(c => c.Anuncio.Marca != null)
+                .GroupBy(c => c.Anuncio.Marca!.Nome)
+                .Select(g => new TopMarcaVM
+                {
+                    Nome = g.Key,
+                    Vendas = g.Count()
+                })
+                .OrderByDescending(m => m.Vendas)
+                .Take(5)
+                .ToListAsync();
+
+            // Calculate percentages for progress bars
+            var maxVendas = topMarcas.Any() ? topMarcas.Max(m => m.Vendas) : 1;
+            foreach (var marca in topMarcas)
+            {
+                marca.Percentagem = (int)((double)marca.Vendas / maxVendas * 100);
+            }
+
+            var stats = new DashboardStatsVM
+            {
+                TotalCompradores = await _db.Compradores.CountAsync(),
+                TotalVendedores = await _db.Vendedores.CountAsync(),
+                TotalAnunciosAtivos = await _db.Anuncios.CountAsync(), 
+                VendasMes = await _db.Compras.CountAsync(c => c.Data >= startOfMonth),
+                VolumeVendasMes = await _db.Compras
+                    .Where(c => c.Data >= startOfMonth)
+                    .Include(c => c.Anuncio)
+                    .SumAsync(c => (decimal?)c.Anuncio.Preco) ?? 0,
+                
+                VendedoresPendentes = await _db.Vendedores.CountAsync(v => v.Estado == "Pendente"),
+                DenunciasAbertas = (await _db.DenunciasAnuncio.CountAsync(d => d.Estado == "Pendente" || d.Estado == "Em Análise")) +
+                                   (await _db.DenunciasUser.CountAsync(d => d.Estado == "Pendente" || d.Estado == "Em Análise")),
+                AnunciosPendentes = 0, // Not implemented yet
+                DestaquesAtivos = 0,   // Not implemented yet
+
+                TopMarcas = topMarcas,
+                TotalVisualizacoes = await _db.Anuncios.SumAsync(a => a.NVisualizacoes),
+                TotalFavoritos = await _db.AnunciosFavoritos.CountAsync(),
+                TotalReservasAtivas = await _db.Reservas.CountAsync(r => r.Estado == "Pendente" || r.Estado == "Aceite"),
+                TotalMensagens = await _db.Mensagens.CountAsync()
+            };
+
+            return View(stats);
+        }
+
+        public class DashboardStatsVM
+        {
+            public int TotalCompradores { get; set; }
+            public int TotalVendedores { get; set; }
+            public int TotalAnunciosAtivos { get; set; }
+            public int VendasMes { get; set; }
+            public decimal VolumeVendasMes { get; set; }
+            public int VendedoresPendentes { get; set; }
+            public int DenunciasAbertas { get; set; }
+            public int AnunciosPendentes { get; set; }
+            public int DestaquesAtivos { get; set; }
+
+            public List<TopMarcaVM> TopMarcas { get; set; } = new();
+            public int TotalVisualizacoes { get; set; }
+            public int TotalFavoritos { get; set; }
+            public int TotalReservasAtivas { get; set; }
+            public int TotalMensagens { get; set; }
+        }
+
+        public class TopMarcaVM
+        {
+            public string Nome { get; set; } = string.Empty;
+            public int Vendas { get; set; }
+            public int Percentagem { get; set; }
         }
 
         [HttpGet]

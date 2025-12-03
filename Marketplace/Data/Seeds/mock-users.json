@@ -5,6 +5,7 @@
             "email": "maria.silva@demo.com",
             "username": "maria.admin",
             "role": "Administrador",
+            "accessLevel": "Nivel 2",
             "password": "Demo123!"
         },
         {
@@ -12,6 +13,7 @@
             "email": "jose.sousa@demo.com",
             "username": "jose.admin",
             "role": "Administrador",
+            "accessLevel": "Nivel 2",
             "password": "Demo123!"
         },
         {
@@ -19,6 +21,7 @@
             "email": "ana.martins@demo.com",
             "username": "ana.admin",
             "role": "Administrador",
+            "accessLevel": "Nivel 1",
             "password": "Demo123!"
         },
 
