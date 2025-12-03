@@ -176,7 +176,7 @@
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="bi bi-search me-2"></i>Aplicar Filtros
                         </button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="saveFilters()">
+                        <button type="button" class="btn btn-outline-secondary" onclick="saveFiltersPost()">
                             <i class="bi bi-bookmark-heart me-2"></i>Guardar Pesquisa
                         </button>
                     </div>
@@ -359,6 +359,36 @@
 
         function saveFilters() {
             alert('Pesquisa guardada com sucesso! Receberá notificações quando surgirem novos anúncios que correspondam aos seus critérios.');
+        }
+
+        // Função de POST para guardar pesquisa atual
+        function saveFiltersPost() {
+            const form = document.getElementById('filtrosForm');
+            const data = new FormData();
+            data.append('marcaId', form.elements['marcaId'] ? form.elements['marcaId'].value : '');
+            data.append('modeloId', form.elements['modeloId'] ? form.elements['modeloId'].value : '');
+            data.append('tipoId', form.elements['tipoId'] ? form.elements['tipoId'].value : '');
+            const combSel = form.querySelector('input[name="combustivelId"]:checked');
+            data.append('combustivelId', combSel ? combSel.value : '');
+            data.append('precoMax', form.elements['precoMax'] ? form.elements['precoMax'].value : '');
+            data.append('anoMin', form.elements['anoMin'] ? form.elements['anoMin'].value : '');
+            data.append('anoMax', form.elements['anoMax'] ? form.elements['anoMax'].value : '');
+            data.append('kmMax', form.elements['kmMax'] ? form.elements['kmMax'].value : '');
+            data.append('caixa', form.elements['caixa'] ? form.elements['caixa'].value : '');
+            data.append('localizacao', form.elements['localizacao'] ? form.elements['localizacao'].value : '');
+            data.append('ordenacao', form.elements['ordenacao'] ? form.elements['ordenacao'].value : '');
+            const marcaSel = form.elements['marcaId'];
+            const modeloSel = form.elements['modeloId'];
+            const marcaNome = marcaSel && marcaSel.selectedIndex > 0 ? marcaSel.options[marcaSel.selectedIndex].text : '';
+            const modeloNome = modeloSel && modeloSel.selectedIndex > 0 ? modeloSel.options[modeloSel.selectedIndex].text : '';
+            const preco = form.elements['precoMax'] ? form.elements['precoMax'].value : '';
+            const sugerido = `${marcaNome} ${modeloNome} ${preco ? '≤ ' + new Intl.NumberFormat('pt-PT').format(preco) + '€' : ''}`.trim();
+            const nome = prompt('Nome da pesquisa para guardar:', sugerido || 'Pesquisa');
+            if (nome === null) return;
+            data.append('nome', nome);
+            fetch('@Url.Action("GuardarFiltro","Anuncios")', { method: 'POST', body: data, credentials: 'same-origin' })
+                .then(res => { if (res.redirected) { window.location.href = res.url; } else { alert('Pesquisa guardada.'); window.location.reload(); } })
+                .catch(() => alert('Não foi possível guardar a pesquisa.'));
         }
 
         // ========== COMPARISON FUNCTIONALITY ==========

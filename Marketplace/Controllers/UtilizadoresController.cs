@@ -145,6 +145,13 @@ namespace Marketplace.Controllers
 
                     ViewBag.Nome = comprador.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(comprador.ImagemPerfil) ? null : comprador.ImagemPerfil;
+
+                    // Pesquisas guardadas (Filtros Favoritos)
+                    var filtros = await _db.FiltrosFavoritos
+                        .Where(f => f.CompradorId == comprador.Id)
+                        .OrderByDescending(f => f.CreatedAt)
+                        .ToListAsync();
+                    ViewBag.SavedFilters = filtros;
                 }
             }
 
