@@ -3,121 +3,173 @@
 @{
     ViewData["Title"] = "Agendar Visita";
     var anuncio = ViewBag.Anuncio as Marketplace.Models.Anuncio;
+    var minDate = ViewBag.MinDate as string;
+    var primeiraImagem = anuncio?.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "/imagens/no-image.jpg";
 }
 
-<div class="container py-4">
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="bg-light border-bottom">
+    <div class="container">
+        <ol class="breadcrumb py-3 mb-0">
+            <li class="breadcrumb-item"><a href="/"><i class="bi bi-house-door-fill me-1"></i>Início</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Anuncios" asp-action="Index">Anúncios</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio?.Id">@anuncio?.Titulo</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Agendar Visita</li>
+        </ol>
+    </div>
+</nav>
+
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow animate-card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">
-                        <i class="bi bi-calendar-plus"></i>
-                        Agendar Visita
-                    </h4>
+        <div class="col-lg-8">
+            <!-- Cabeçalho -->
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <i class="bi bi-calendar-check-fill text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <h1 class="h2 fw-bold text-primary mb-2">Agendar Visita</h1>
+                <p class="text-muted">Marque uma data e hora para ver o veículo pessoalmente</p>
+            </div>
+
+            <!-- Informações -->
+            <div class="alert alert-info border-info d-flex align-items-start mb-4">
+                <i class="bi bi-info-circle-fill me-3 fs-4 flex-shrink-0"></i>
+                <div>
+                    <h6 class="alert-heading fw-bold mb-2">Como funciona?</h6>
+                    <ul class="mb-0 small ps-3">
+                        <li>Escolha uma data e hora convenientes para si</li>
+                        <li>O vendedor receberá uma notificação e confirmará a disponibilidade</li>
+                        <li>Receberá uma confirmação por email com todos os detalhes</li>
+                        <li>Aproveite para fazer test-drive e verificar a documentação</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Resumo do Veículo -->
+            <div class="card shadow-sm border-primary mb-4">
+                <div class="card-header bg-primary bg-opacity-10 border-primary">
+                    <h5 class="mb-0 text-primary">
+                        <i class="bi bi-car-front-fill me-2"></i>Veículo Selecionado
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <!-- Informações do Anúncio -->
-                    @if (anuncio != null)
-                    {
-                        <div class="alert alert-info mb-4">
-                            <div class="row align-items-center">
-                                <div class="col-md-3">
-                                    @if (anuncio.Imagens?.Any() == true)
-                                    {
-                                        <img src="@Url.Content(anuncio.Imagens.First().ImagemCaminho)"
-                                             class="img-fluid rounded"
-                                             alt="@anuncio.Titulo">
-                                    }
-                                    else
-                                    {
-                                        <div class="bg-light rounded d-flex align-items-center justify-content-center"
-                                             style="height: 100px;">
-                                            <i class="bi bi-car-front fs-1 text-muted"></i>
-                                        </div>
-                                    }
-                                </div>
-                                <div class="col-md-9">
-                                    <h5 class="mb-2">@anuncio.Titulo</h5>
-                                    <p class="mb-1">
-                                        <strong>@anuncio.Marca?.Nome @anuncio.Modelo?.Nome</strong>
-                                    </p>
-                                    @if (!string.IsNullOrEmpty(anuncio.Localizacao))
-                                    {
-                                        <p class="mb-1">
-                                            <i class="bi bi-geo-alt"></i> @anuncio.Localizacao
-                                        </p>
-                                    }
-                                    <p class="mb-0">
-                                        <i class="bi bi-person"></i> Vendedor: <strong>@anuncio.Vendedor?.Nome</strong>
-                                    </p>
-                                </div>
-                            </div>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <img src="@primeiraImagem" alt="@anuncio?.Titulo" class="rounded shadow-sm"
+                                 style="width: 120px; height: 90px; object-fit: cover;">
                         </div>
-                    }
+                        <div class="col">
+                            <h5 class="mb-2 fw-bold">@anuncio?.Titulo</h5>
+                            <p class="text-muted mb-2 small">
+                                <i class="bi bi-calendar3 me-1"></i>@anuncio?.Ano •
+                                <i class="bi bi-speedometer2 me-1"></i>@(anuncio?.Quilometragem?.ToString("N0") ?? "N/A") km •
+                                <i class="bi bi-fuel-pump-fill me-1"></i>@anuncio?.Combustivel?.Tipo •
+                                <i class="bi bi-gear-fill me-1"></i>@anuncio?.Caixa
+                            </p>
+                            <p class="text-success fw-bold fs-4 mb-0">
+                                <i class="bi bi-currency-euro me-1"></i>@anuncio?.Preco.ToString("N0")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- Formulário -->
-                    <form asp-action="Create" method="post" id="agendarVisitaForm">
+            <!-- Informações do Vendedor -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-person-badge text-primary me-2"></i>Vendedor
+                    </h6>
+                    <div class="d-flex align-items-center">
+                        @if (!string.IsNullOrEmpty(anuncio?.Vendedor?.ImagemPerfil))
+                        {
+                            <img src="@anuncio.Vendedor.ImagemPerfil" class="rounded-circle me-3"
+                                 style="width: 60px; height: 60px; object-fit: cover;" alt="@anuncio.Vendedor.Nome">
+                        }
+                        else
+                        {
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                 style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">
+                                @(anuncio?.Vendedor?.Nome?.Substring(0, 1) ?? "V")
+                            </div>
+                        }
+                        <div>
+                            <h6 class="mb-1">@(anuncio?.Vendedor?.Nome ?? "Vendedor")</h6>
+                            <p class="text-muted mb-0 small">
+                                @if (!string.IsNullOrEmpty(anuncio?.Localizacao))
+                                {
+                                    <i class="bi bi-geo-alt-fill text-primary me-1"></i>@anuncio.Localizacao
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulário -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar2-week text-primary me-2"></i>Detalhes da Visita
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="AnuncioId" />
 
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                        <div class="row g-3">
-                            <!-- Data da Visita -->
-                            <div class="col-md-6">
-                                <label asp-for="Data" class="form-label fw-bold">
-                                    <i class="bi bi-calendar3"></i> Data e Hora da Visita
-                                </label>
-                                <input asp-for="Data"
-                                       type="datetime-local"
-                                       class="form-control form-control-lg"
-                                       min="@ViewBag.MinDate"
-                                       required />
-                                <div class="form-text">
-                                    <i class="bi bi-info-circle"></i>
-                                    Selecione uma data e hora futura
-                                </div>
-                                <span asp-validation-for="Data" class="text-danger"></span>
+                        <!-- Data e Hora -->
+                        <div class="mb-4">
+                            <label asp-for="Data" class="form-label fw-semibold">
+                                <i class="bi bi-calendar-event me-1"></i>Data e Hora da Visita
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Data" type="datetime-local" class="form-control form-control-lg"
+                                   min="@minDate" required />
+                            <span asp-validation-for="Data" class="text-danger small"></span>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Escolha uma data com pelo menos 1 hora de antecedência. O vendedor confirmará a disponibilidade.
                             </div>
+                        </div>
 
-                            <!-- Observações -->
-                            <div class="col-12">
-                                <label asp-for="Observacoes" class="form-label fw-bold">
-                                    <i class="bi bi-chat-left-text"></i> Observações (opcional)
-                                </label>
-                                <textarea asp-for="Observacoes"
-                                          class="form-control"
-                                          rows="4"
-                                          maxlength="500"
-                                          placeholder="Adicione informações adicionais, perguntas ou pedidos especiais..."></textarea>
-                                <div class="form-text">
-                                    Ex: "Gostaria de fazer um test-drive", "Tenho interesse em financiamento", etc.
-                                </div>
-                                <span asp-validation-for="Observacoes" class="text-danger"></span>
+                        <!-- Observações -->
+                        <div class="mb-4">
+                            <label asp-for="Observacoes" class="form-label fw-semibold">
+                                <i class="bi bi-chat-left-text me-1"></i>Observações (Opcional)
+                            </label>
+                            <textarea asp-for="Observacoes" class="form-control" rows="4"
+                                      placeholder="Ex: Gostaria de fazer test-drive. Tenho interesse em verificar toda a documentação do veículo."></textarea>
+                            <span asp-validation-for="Observacoes" class="text-danger small"></span>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Deixe uma mensagem para o vendedor (ex: interesse em test-drive, verificar documentação, etc.)
                             </div>
                         </div>
 
                         <!-- Informações Importantes -->
-                        <div class="alert alert-warning mt-4">
-                            <h6 class="alert-heading">
-                                <i class="bi bi-exclamation-triangle"></i> Informações Importantes
+                        <div class="alert alert-warning border-warning mb-4">
+                            <h6 class="alert-heading fw-bold mb-2">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>Importante
                             </h6>
-                            <ul class="mb-0">
-                                <li>O vendedor será notificado por email sobre a sua visita</li>
-                                <li>Aguarde a confirmação do vendedor antes de se deslocar</li>
-                                <li>Pode cancelar ou reagendar a visita a qualquer momento</li>
-                                <li>Seja pontual e educado durante a visita</li>
+                            <ul class="mb-0 small">
+                                <li>Esta visita está sujeita a confirmação do vendedor</li>
+                                <li>Receberá um email de confirmação quando o vendedor aprovar</li>
+                                <li>Pode cancelar ou reagendar a visita a qualquer momento no seu perfil</li>
+                                <li>Leve um documento de identificação válido</li>
                             </ul>
                         </div>
 
                         <!-- Botões -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            <a href="@Url.Action("Details", "Anuncios", new { id = Model.AnuncioId })"
-                               class="btn btn-outline-secondary btn-lg">
-                                <i class="bi bi-x-circle"></i> Cancelar
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio?.Id"
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Voltar ao Anúncio
                             </a>
-                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-                                <i class="bi bi-calendar-check"></i> Agendar Visita
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="bi bi-calendar-check-fill me-2"></i>Confirmar Agendamento
                             </button>
                         </div>
                     </form>
@@ -125,25 +177,35 @@
             </div>
 
             <!-- Dicas -->
-            <div class="card mt-4 border-0 bg-light animate-card" style="animation-delay: 0.2s">
+            <div class="card shadow-sm border-0 bg-light mt-4">
                 <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-lightbulb text-warning"></i> Dicas para uma Boa Visita
-                    </h5>
-                    <div class="row">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-lightbulb text-warning me-2"></i>Dicas para a Visita
+                    </h6>
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <ul>
-                                <li>Prepare uma lista de perguntas sobre o veículo</li>
-                                <li>Verifique o estado geral da viatura</li>
-                                <li>Peça para ver os documentos do veículo</li>
-                            </ul>
+                            <div class="d-flex">
+                                <i class="bi bi-check-circle-fill text-success me-2 flex-shrink-0"></i>
+                                <small>Verifique o estado geral da carroçaria e pintura</small>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <ul>
-                                <li>Faça um test-drive, se possível</li>
-                                <li>Verifique o histórico de manutenção</li>
-                                <li>Tire fotos para análise posterior</li>
-                            </ul>
+                            <div class="d-flex">
+                                <i class="bi bi-check-circle-fill text-success me-2 flex-shrink-0"></i>
+                                <small>Peça para ver o livro de revisões</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <i class="bi bi-check-circle-fill text-success me-2 flex-shrink-0"></i>
+                                <small>Faça test-drive em diferentes condições de estrada</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <i class="bi bi-check-circle-fill text-success me-2 flex-shrink-0"></i>
+                                <small>Confirme que o número de chassis corresponde à documentação</small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -152,179 +214,6 @@
     </div>
 </div>
 
-<!-- Loading Overlay -->
-<div class="loading-overlay" id="loadingOverlay">
-    <div class="text-center text-white">
-        <div class="spinner mb-3"></div>
-        <h4>A agendar visita...</h4>
-        <p class="text-white-50">Aguarde um momento</p>
-    </div>
-</div>
-
-@section Styles {
-    <style>
-        /* Animações */
-        @@keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @@keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        @@keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .animate-card {
-            animation: slideInUp 0.6s ease-out both;
-        }
-
-        .form-control:focus, .form-select:focus, textarea:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
-            transform: scale(1.01);
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            animation: pulse 0.6s ease-in-out;
-            transform: translateY(-2px);
-        }
-
-        .card {
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
-        }
-
-        /* Loading overlay */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .loading-overlay.active {
-            display: flex;
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 6px solid rgba(255, 255, 255, 0.3);
-            border-top-color: #2563eb;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        /* Input animations */
-        input[type="datetime-local"], textarea {
-            transition: all 0.3s ease;
-        }
-
-        input[type="datetime-local"]:hover, textarea:hover {
-            border-color: #6c757d;
-        }
-
-        /* Character counter */
-        .char-count {
-            text-align: right;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-    </style>
-}
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        // Definir data mínima (1 hora no futuro)
-        const now = new Date();
-        now.setHours(now.getHours() + 1);
-        const minDate = now.toISOString().slice(0, 16);
-        const dateInput = document.querySelector('input[type="datetime-local"]');
-        if (dateInput) {
-            dateInput.min = minDate;
-        }
-
-        // Sugerir horário comercial (9h-18h)
-        if (dateInput) {
-            dateInput.addEventListener('change', function() {
-                const selected = new Date(this.value);
-                const hour = selected.getHours();
-
-                if (hour < 9 || hour >= 18) {
-                    if (confirm('A hora selecionada está fora do horário comercial (9h-18h). Deseja continuar?')) {
-                        // OK
-                    } else {
-                        this.value = '';
-                    }
-                }
-            });
-        }
-
-        // Animação no submit do formulário
-        const form = document.getElementById('agendarVisitaForm');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                // Verificar se o formulário é válido
-                if (!form.checkValidity()) {
-                    return; // Deixar a validação padrão acontecer
-                }
-
-                // Mostrar overlay de loading
-                const overlay = document.getElementById('loadingOverlay');
-                overlay.classList.add('active');
-
-                // Desabilitar o botão de submit
-                const submitBtn = document.getElementById('submitBtn');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A processar...';
-                }
-            });
-        }
-
-        // Contador de caracteres para observações
-        const observacoes = document.querySelector('textarea[name="Observacoes"]');
-        if (observacoes) {
-            // Criar elemento de contador
-            const feedback = document.createElement('div');
-            feedback.className = 'form-text char-count';
-            observacoes.parentElement.appendChild(feedback);
-
-            observacoes.addEventListener('input', function() {
-                const charCount = this.value.length;
-                const maxChars = 500;
-
-                feedback.textContent = `${charCount}/${maxChars} caracteres`;
-                feedback.style.color = charCount > 450 ? (charCount > maxChars ? 'red' : 'orange') : '#6c757d';
-            });
-
-            // Inicializar contador
-            observacoes.dispatchEvent(new Event('input'));
-        }
-    </script>
 }

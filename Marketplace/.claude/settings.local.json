@@ -40,7 +40,8 @@
       "Bash(timeout /t 3 /nobreak)",
       "Bash(if not exist \"Views\\Visitas\" mkdir \"Views\\Visitas\")",
       "Bash(powershell Get-Content 'Views\\Utilizadores\\Perfil.cshtml' -TotalCount 1351 -Tail 3)",
-      "Bash(del ViewsVisitasminhas_visitas_section.txt ViewsVisitasvisitas_vendedor_section.txt replace_minhas_visitas.py replace_visitas_vendedor.py fix_razor_syntax.py)"
+      "Bash(del ViewsVisitasminhas_visitas_section.txt ViewsVisitasvisitas_vendedor_section.txt replace_minhas_visitas.py replace_visitas_vendedor.py fix_razor_syntax.py)",
+      "Bash(touch:*)"
     ],
     "deny": [],
     "ask": []

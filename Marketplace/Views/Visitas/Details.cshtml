@@ -2,339 +2,384 @@
 
 @{
     ViewData["Title"] = "Detalhes da Visita";
+    var primeiraImagem = Model.Anuncio?.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "/imagens/no-image.jpg";
+    var isVendedor = User.IsInRole("Vendedor") && Model.VendedorId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var isComprador = User.IsInRole("Comprador") && Model.CompradorId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var isPendente = Model.Estado == "Pendente";
+    var isConfirmada = Model.Estado == "Confirmada";
+    var isCancelada = Model.Estado == "Cancelada";
+    var isConcluida = Model.Estado == "Conclu�da";
+    var visitaPassou = Model.Data < DateTime.Now;
 }
 
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <!-- Cabeçalho -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h2 mb-0">
-                    <i class="bi bi-calendar-check"></i>
-                    Detalhes da Visita
-                </h1>
-                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Voltar
-                </a>
-            </div>
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="bg-light border-bottom">
+    <div class="container">
+        <ol class="breadcrumb py-3 mb-0">
+            <li class="breadcrumb-item"><a href="/"><i class="bi bi-house-door-fill me-1"></i>In�cio</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Visitas" asp-action="Index">Minhas Visitas</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Detalhes da Visita</li>
+        </ol>
+    </div>
+</nav>
 
-            <!-- Estado da Visita -->
-            <div class="alert @GetAlertClass(Model.Estado) d-flex align-items-center justify-content-between mb-4">
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Cabe�alho com Status -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h5 class="alert-heading mb-0">
-                        <i class="bi @GetIconClass(Model.Estado)"></i>
-                        Estado: <strong>@Model.Estado</strong>
-                    </h5>
+                    <h1 class="h2 fw-bold text-primary mb-2">
+                        <i class="bi bi-calendar-event-fill me-2"></i>Detalhes da Visita
+                    </h1>
+                    <p class="text-muted mb-0">ID da Visita: #@Model.Id</p>
                 </div>
                 <div>
-                    @if (Model.Estado == "Pendente" && User.IsInRole("Vendedor"))
+                    @if (isPendente)
                     {
-                        <form asp-action="Confirmar" asp-route-id="@Model.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-success" onclick="return confirm('Confirmar esta visita?')">
-                                <i class="bi bi-check-circle"></i> Confirmar Visita
-                            </button>
-                        </form>
+                        <span class="badge bg-warning text-dark fs-6 px-4 py-2">
+                            <i class="bi bi-clock-history me-1"></i>Pendente
+                        </span>
+                    }
+                    else if (isConfirmada)
+                    {
+                        <span class="badge bg-success fs-6 px-4 py-2">
+                            <i class="bi bi-check-circle-fill me-1"></i>Confirmada
+                        </span>
+                    }
+                    else if (isCancelada)
+                    {
+                        <span class="badge bg-danger fs-6 px-4 py-2">
+                            <i class="bi bi-x-circle-fill me-1"></i>Cancelada
+                        </span>
+                    }
+                    else if (isConcluida)
+                    {
+                        <span class="badge bg-primary fs-6 px-4 py-2">
+                            <i class="bi bi-check-all me-1"></i>Conclu�da
+                        </span>
                     }
                 </div>
             </div>
 
-            <div class="row g-4">
-                <!-- Informações da Visita -->
-                <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-info-circle"></i> Informações da Visita
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <dl class="row mb-0">
-                                <dt class="col-sm-5">
-                                    <i class="bi bi-calendar3"></i> Data e Hora
-                                </dt>
-                                <dd class="col-sm-7">
-                                    <strong class="fs-5">@Model.Data.ToString("dd/MM/yyyy")</strong><br>
-                                    <span class="text-muted">às @Model.Data.ToString("HH:mm")</span>
-                                </dd>
-
-                                <dt class="col-sm-5">
-                                    <i class="bi bi-flag"></i> Estado
-                                </dt>
-                                <dd class="col-sm-7">
-                                    <span class="badge @GetBadgeClass(Model.Estado) fs-6">
-                                        @Model.Estado
-                                    </span>
-                                </dd>
-
-                                @if (Model.Reserva != null)
-                                {
-                                    <dt class="col-sm-5">
-                                        <i class="bi bi-bookmark-check"></i> Reserva
-                                    </dt>
-                                    <dd class="col-sm-7">
-                                        <a href="@Url.Action("Details", "Reservas", new { id = Model.ReservaId })">
-                                            Ver Reserva #@Model.ReservaId
-                                        </a>
-                                    </dd>
-                                }
-
-                                @if (!string.IsNullOrEmpty(Model.Observacoes))
-                                {
-                                    <dt class="col-sm-12 mt-3">
-                                        <i class="bi bi-chat-left-text"></i> Observações
-                                    </dt>
-                                    <dd class="col-sm-12">
-                                        <div class="alert alert-light mb-0">
-                                            <em>@Model.Observacoes</em>
-                                        </div>
-                                    </dd>
-                                }
-
-                                <dt class="col-sm-5 mt-3">
-                                    <i class="bi bi-clock-history"></i> Criada em
-                                </dt>
-                                <dd class="col-sm-7 mt-3">
-                                    @Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")
-                                </dd>
-
-                                @if (Model.DataAtualizacao.HasValue)
-                                {
-                                    <dt class="col-sm-5">
-                                        <i class="bi bi-arrow-clockwise"></i> Atualizada em
-                                    </dt>
-                                    <dd class="col-sm-7">
-                                        @Model.DataAtualizacao.Value.ToString("dd/MM/yyyy HH:mm")
-                                    </dd>
-                                }
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Informações do Anúncio -->
-                <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-header bg-dark text-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-car-front"></i> Veículo
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            @if (Model.Anuncio?.Imagens?.Any() == true)
-                            {
-                                <img src="@Url.Content(Model.Anuncio.Imagens.First().ImagemCaminho)"
-                                     class="img-fluid rounded mb-3"
-                                     alt="@Model.Anuncio.Titulo"
-                                     style="max-height: 200px; width: 100%; object-fit: cover;">
-                            }
-
-                            <h5 class="card-title">@Model.Anuncio?.Titulo</h5>
-
-                            <dl class="row mb-0">
-                                <dt class="col-sm-4">Marca</dt>
-                                <dd class="col-sm-8">@Model.Anuncio?.Marca?.Nome</dd>
-
-                                <dt class="col-sm-4">Modelo</dt>
-                                <dd class="col-sm-8">@Model.Anuncio?.Modelo?.Nome</dd>
-
-                                @if (Model.Anuncio?.Ano != null)
-                                {
-                                    <dt class="col-sm-4">Ano</dt>
-                                    <dd class="col-sm-8">@Model.Anuncio.Ano</dd>
-                                }
-
-                                @if (Model.Anuncio?.Localizacao != null)
-                                {
-                                    <dt class="col-sm-4">
-                                        <i class="bi bi-geo-alt"></i> Local
-                                    </dt>
-                                    <dd class="col-sm-8">
-                                        <strong>@Model.Anuncio.Localizacao</strong>
-                                    </dd>
-                                }
-
-                                <dt class="col-sm-4">Preço</dt>
-                                <dd class="col-sm-8">
-                                    <strong class="text-primary fs-5">
-                                        @Model.Anuncio?.Preco.ToString("C")
-                                    </strong>
-                                </dd>
-                            </dl>
-
-                            <div class="mt-3">
-                                <a href="@Url.Action("Details", "Anuncios", new { id = Model.AnuncioId })"
-                                   class="btn btn-outline-primary w-100">
-                                    <i class="bi bi-eye"></i> Ver Anúncio Completo
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Comprador -->
-                <div class="col-md-6">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-info text-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-person"></i> Comprador
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <dl class="row mb-0">
-                                <dt class="col-sm-4">Nome</dt>
-                                <dd class="col-sm-8">@Model.Comprador?.Nome</dd>
-
-                                <dt class="col-sm-4">Email</dt>
-                                <dd class="col-sm-8">
-                                    <a href="mailto:@Model.Comprador?.Email">@Model.Comprador?.Email</a>
-                                </dd>
-
-                                @if (Model.Comprador?.Username != null)
-                                {
-                                    <dt class="col-sm-4">Username</dt>
-                                    <dd class="col-sm-8">@@@Model.Comprador.Username</dd>
-                                }
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vendedor -->
-                <div class="col-md-6">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-shop"></i> Vendedor
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <dl class="row mb-0">
-                                <dt class="col-sm-4">Nome</dt>
-                                <dd class="col-sm-8">@Model.Vendedor?.Nome</dd>
-
-                                <dt class="col-sm-4">Email</dt>
-                                <dd class="col-sm-8">
-                                    <a href="mailto:@Model.Vendedor?.Email">@Model.Vendedor?.Email</a>
-                                </dd>
-
-                                @if (Model.Vendedor?.Username != null)
-                                {
-                                    <dt class="col-sm-4">Username</dt>
-                                    <dd class="col-sm-8">@@@Model.Vendedor.Username</dd>
-                                }
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ações -->
-            @if (Model.Estado != "Cancelada" && Model.Estado != "Concluída")
+            <!-- Alertas de Estado -->
+            @if (isPendente)
             {
-                <div class="card mt-4 border-primary">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">
-                            <i class="bi bi-gear"></i> Ações
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-2">
-                            <div class="col-md-4">
-                                <a href="@Url.Action("Edit", "Visitas", new { id = Model.Id })"
-                                   class="btn btn-outline-primary w-100">
-                                    <i class="bi bi-pencil"></i> Editar Visita
-                                </a>
+                <div class="alert alert-warning border-warning mb-4">
+                    <h6 class="alert-heading fw-bold mb-2">
+                        <i class="bi bi-hourglass-split me-2"></i>Aguardando Confirma��o
+                    </h6>
+                    <p class="mb-0 small">
+                        @if (isVendedor)
+                        {
+                            <text>Esta visita est� pendente de sua confirma��o. Por favor, confirme ou recuse o agendamento.</text>
+                        }
+                        else
+                        {
+                            <text>O vendedor foi notificado e ir� confirmar a disponibilidade em breve.</text>
+                        }
+                    </p>
+                </div>
+            }
+            else if (isConfirmada && !visitaPassou)
+            {
+                <div class="alert alert-success border-success mb-4">
+                    <h6 class="alert-heading fw-bold mb-2">
+                        <i class="bi bi-check-circle-fill me-2"></i>Visita Confirmada
+                    </h6>
+                    <p class="mb-0 small">
+                        A visita foi confirmada pelo vendedor. N�o se esque�a de levar um documento de identifica��o v�lido.
+                    </p>
+                </div>
+            }
+            else if (isConfirmada && visitaPassou)
+            {
+                <div class="alert alert-info border-info mb-4">
+                    <h6 class="alert-heading fw-bold mb-2">
+                        <i class="bi bi-info-circle-fill me-2"></i>Visita Realizada
+                    </h6>
+                    <p class="mb-0 small">
+                        @if (isVendedor)
+                        {
+                            <text>A data da visita j� passou. Se a visita foi realizada, marque-a como conclu�da.</text>
+                        }
+                        else
+                        {
+                            <text>A data da visita j� passou. Esperamos que tenha corrido tudo bem!</text>
+                        }
+                    </p>
+                </div>
+            }
+            else if (isCancelada)
+            {
+                <div class="alert alert-danger border-danger mb-4">
+                    <h6 class="alert-heading fw-bold mb-2">
+                        <i class="bi bi-x-circle-fill me-2"></i>Visita Cancelada
+                    </h6>
+                    <p class="mb-0 small">Esta visita foi cancelada. Pode agendar uma nova visita se ainda tiver interesse.</p>
+                </div>
+            }
+            else if (isConcluida)
+            {
+                <div class="alert alert-primary border-primary mb-4">
+                    <h6 class="alert-heading fw-bold mb-2">
+                        <i class="bi bi-check-all me-2"></i>Visita Conclu�da
+                    </h6>
+                    <p class="mb-0 small">Esta visita foi conclu�da com sucesso. Obrigado!</p>
+                </div>
+            }
+
+            <div class="row g-4">
+                <!-- Coluna Principal -->
+                <div class="col-lg-8">
+                    <!-- Informa��es da Visita -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary bg-opacity-10 border-primary">
+                            <h5 class="mb-0 text-primary">
+                                <i class="bi bi-info-circle-fill me-2"></i>Informa��es da Visita
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="text-muted small mb-2">
+                                            <i class="bi bi-calendar-event text-primary me-1"></i>Data e Hora
+                                        </h6>
+                                        <p class="mb-0 fw-bold fs-5">
+                                            @Model.Data.ToString("dd/MM/yyyy '�s' HH:mm")
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="text-muted small mb-2">
+                                            <i class="bi bi-clock text-primary me-1"></i>Estado
+                                        </h6>
+                                        <p class="mb-0 fw-bold fs-5">
+                                            @if (isPendente)
+                                            {
+                                                <span class="text-warning">Pendente</span>
+                                            }
+                                            else if (isConfirmada)
+                                            {
+                                                <span class="text-success">Confirmada</span>
+                                            }
+                                            else if (isCancelada)
+                                            {
+                                                <span class="text-danger">Cancelada</span>
+                                            }
+                                            else if (isConcluida)
+                                            {
+                                                <span class="text-primary">Conclu�da</span>
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
-                            @if (Model.Estado == "Confirmada" && User.IsInRole("Vendedor"))
+                            @if (!string.IsNullOrEmpty(Model.Observacoes))
                             {
-                                <div class="col-md-4">
-                                    <form asp-action="Concluir" asp-route-id="@Model.Id" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-info w-100">
-                                            <i class="bi bi-check-all"></i> Marcar como Concluída
-                                        </button>
-                                    </form>
+                                <hr class="my-3">
+                                <div>
+                                    <h6 class="text-muted small mb-2">
+                                        <i class="bi bi-chat-left-text text-primary me-1"></i>Observa��es
+                                    </h6>
+                                    <p class="mb-0">@Model.Observacoes</p>
                                 </div>
                             }
 
-                            <div class="col-md-4">
-                                <button type="button" class="btn btn-outline-danger w-100"
-                                        data-bs-toggle="modal" data-bs-target="#cancelModal">
-                                    <i class="bi bi-x-circle"></i> Cancelar Visita
-                                </button>
+                            <hr class="my-3">
+                            <div class="row g-2 small text-muted">
+                                <div class="col-md-6">
+                                    <i class="bi bi-calendar-plus me-1"></i>
+                                    <strong>Criada em:</strong> @Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+                                @if (Model.DataAtualizacao.HasValue)
+                                {
+                                    <div class="col-md-6">
+                                        <i class="bi bi-pencil-square me-1"></i>
+                                        <strong>Atualizada em:</strong> @Model.DataAtualizacao.Value.ToString("dd/MM/yyyy HH:mm")
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informa��es do Ve�culo -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="bi bi-car-front-fill text-primary me-2"></i>Ve�culo
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-auto">
+                                    <img src="@primeiraImagem" alt="@Model.Anuncio?.Titulo" class="rounded shadow-sm"
+                                         style="width: 150px; height: 110px; object-fit: cover;">
+                                </div>
+                                <div class="col">
+                                    <h5 class="mb-2 fw-bold">@Model.Anuncio?.Titulo</h5>
+                                    <p class="text-muted mb-2 small">
+                                        <i class="bi bi-calendar3 me-1"></i>@Model.Anuncio?.Ano "
+                                        <i class="bi bi-speedometer2 me-1"></i>@(Model.Anuncio?.Quilometragem?.ToString("N0") ?? "N/A") km "
+                                        <i class="bi bi-fuel-pump-fill me-1"></i>@Model.Anuncio?.Combustivel?.Tipo "
+                                        <i class="bi bi-gear-fill me-1"></i>@Model.Anuncio?.Caixa
+                                    </p>
+                                    <p class="text-success fw-bold fs-4 mb-2">
+                                        <i class="bi bi-currency-euro me-1"></i>@Model.Anuncio?.Preco.ToString("N0")
+                                    </p>
+                                    @if (!string.IsNullOrEmpty(Model.Anuncio?.Localizacao))
+                                    {
+                                        <p class="mb-0 small">
+                                            <i class="bi bi-geo-alt-fill text-primary me-1"></i>@Model.Anuncio.Localizacao
+                                        </p>
+                                    }
+                                </div>
+                                <div class="col-12">
+                                    <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@Model.AnuncioId"
+                                       class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="bi bi-eye me-1"></i>Ver An�ncio Completo
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            }
-        </div>
-    </div>
-</div>
 
-<!-- Modal para cancelamento -->
-<div class="modal fade" id="cancelModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Cancelar Visita</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form asp-action="Cancelar" asp-route-id="@Model.Id" method="post">
-                @Html.AntiForgeryToken()
-                <div class="modal-body">
-                    <p>Tem certeza que deseja cancelar esta visita?</p>
-                    <div class="mb-3">
-                        <label for="motivo" class="form-label">Motivo (opcional)</label>
-                        <textarea class="form-control" id="motivo" name="motivo"
-                                  rows="3" placeholder="Informe o motivo do cancelamento"></textarea>
+                <!-- Coluna Lateral -->
+                <div class="col-lg-4">
+                    <!-- Informa��es do Comprador -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="bi bi-person-circle text-primary me-2"></i>Comprador
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                @if (!string.IsNullOrEmpty(Model.Comprador?.ImagemPerfil))
+                                {
+                                    <img src="@Model.Comprador.ImagemPerfil" class="rounded-circle mb-3"
+                                         style="width: 80px; height: 80px; object-fit: cover;" alt="@Model.Comprador.Nome">
+                                }
+                                else
+                                {
+                                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                         style="width: 80px; height: 80px; font-size: 2rem; font-weight: bold;">
+                                        @(Model.Comprador?.Nome?.Substring(0, 1) ?? "C")
+                                    </div>
+                                }
+                                <h6 class="fw-bold mb-1">@(Model.Comprador?.Nome ?? "Comprador")</h6>
+                                @if (!string.IsNullOrEmpty(Model.Comprador?.Email))
+                                {
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-envelope me-1"></i>@Model.Comprador.Email
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informa��es do Vendedor -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="bi bi-person-badge text-primary me-2"></i>Vendedor
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                @if (!string.IsNullOrEmpty(Model.Vendedor?.ImagemPerfil))
+                                {
+                                    <img src="@Model.Vendedor.ImagemPerfil" class="rounded-circle mb-3"
+                                         style="width: 80px; height: 80px; object-fit: cover;" alt="@Model.Vendedor.Nome">
+                                }
+                                else
+                                {
+                                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                         style="width: 80px; height: 80px; font-size: 2rem; font-weight: bold;">
+                                        @(Model.Vendedor?.Nome?.Substring(0, 1) ?? "V")
+                                    </div>
+                                }
+                                <h6 class="fw-bold mb-1">@(Model.Vendedor?.Nome ?? "Vendedor")</h6>
+                                @if (!string.IsNullOrEmpty(Model.Vendedor?.Email))
+                                {
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-envelope me-1"></i>@Model.Vendedor.Email
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- A��es -->
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="bi bi-gear-fill text-primary me-2"></i>A��es
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <!-- A��es do Vendedor -->
+                                @if (isVendedor)
+                                {
+                                    @if (isPendente)
+                                    {
+                                        <form asp-action="Confirmar" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@Model.Id" />
+                                            <button type="submit" class="btn btn-success w-100">
+                                                <i class="bi bi-check-circle-fill me-2"></i>Confirmar Visita
+                                            </button>
+                                        </form>
+                                        <form asp-action="Cancelar" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@Model.Id" />
+                                            <button type="submit" class="btn btn-danger w-100"
+                                                    onclick="return confirm('Tem certeza que deseja cancelar esta visita?')">
+                                                <i class="bi bi-x-circle-fill me-2"></i>Recusar Visita
+                                            </button>
+                                        </form>
+                                    }
+                                    @if (isConfirmada && visitaPassou)
+                                    {
+                                        <form asp-action="Concluir" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@Model.Id" />
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="bi bi-check-all me-2"></i>Marcar como Conclu�da
+                                            </button>
+                                        </form>
+                                    }
+                                }
+
+                                <!-- A��es do Comprador -->
+                                @if (isComprador && (isPendente || isConfirmada) && !visitaPassou)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                                        <i class="bi bi-pencil-square me-2"></i>Editar Visita
+                                    </a>
+                                    <form asp-action="Cancelar" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-outline-danger w-100"
+                                                onclick="return confirm('Tem certeza que deseja cancelar esta visita?')">
+                                            <i class="bi bi-x-circle me-2"></i>Cancelar Visita
+                                        </button>
+                                    </form>
+                                }
+
+                                <a asp-action="Index" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>Voltar � Lista
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
-                    <button type="submit" class="btn btn-danger">Confirmar Cancelamento</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
-
-@functions {
-    string GetBadgeClass(string estado)
-    {
-        return estado switch
-        {
-            "Pendente" => "bg-warning text-dark",
-            "Confirmada" => "bg-success",
-            "Concluída" => "bg-secondary",
-            "Cancelada" => "bg-danger",
-            _ => "bg-secondary"
-        };
-    }
-
-    string GetAlertClass(string estado)
-    {
-        return estado switch
-        {
-            "Pendente" => "alert-warning",
-            "Confirmada" => "alert-success",
-            "Concluída" => "alert-secondary",
-            "Cancelada" => "alert-danger",
-            _ => "alert-secondary"
-        };
-    }
-
-    string GetIconClass(string estado)
-    {
-        return estado switch
-        {
-            "Pendente" => "bi-clock-history",
-            "Confirmada" => "bi-check-circle-fill",
-            "Concluída" => "bi-check-all",
-            "Cancelada" => "bi-x-circle-fill",
-            _ => "bi-question-circle"
-        };
-    }
-}
-
