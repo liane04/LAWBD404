@@ -520,7 +520,12 @@
                     </div>
                 </div>
 
-                <!-- Aba: Visitas Agendadas Vendedor (para Vendedores) -->
+                    var visitasVendedor = ViewBag.MinhasVisitasVendedor as List<Marketplace.Models.Visita> ?? new List<Marketplace.Models.Visita>();
+                    var totalVisitasVend = visitasVendedor.Count;
+                    var visitasPendentesVend = visitasVendedor.Count(v => v.Estado == "Pendente");
+                    var visitasConfirmadasVend = visitasVendedor.Count(v => v.Estado == "Confirmada");
+                    var visitasConcluidasVend = visitasVendedor.Count(v => v.Estado == "Concluída");
+                    <!-- Aba: Visitas Agendadas Vendedor (para Vendedores) -->
                 <div class="tab-pane fade" id="visitas-agendadas-vendedor">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -532,294 +537,223 @@
                         </div>
                         <div class="visitas-vendedor-stats d-flex gap-3">
                             <div class="stat-item text-center">
-                                <div class="stat-value text-warning fw-bold">1</div>
+                                <div class="stat-value text-warning fw-bold">@visitasPendentesVend</div>
                                 <div class="stat-label text-muted small">Pendente</div>
                             </div>
                             <div class="stat-item text-center">
-                                <div class="stat-value text-success fw-bold">1</div>
+                                <div class="stat-value text-success fw-bold">@visitasConfirmadasVend</div>
                                 <div class="stat-label text-muted small">Confirmada</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Filtros de Status - Horizontal -->
-                    <div class="d-flex gap-2 mb-4 flex-wrap">
-                        <button class="btn btn-outline-primary active" data-filter-visitas-vendedor="todas">
-                            <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">2</span>
-                        </button>
-                        <button class="btn btn-outline-warning" data-filter-visitas-vendedor="pendentes">
-                            <i class="bi bi-clock-fill me-1"></i>Aguardam Confirmação <span class="badge bg-warning ms-1">1</span>
-                        </button>
-                        <button class="btn btn-outline-success" data-filter-visitas-vendedor="confirmadas">
-                            <i class="bi bi-check-circle-fill me-1"></i>Confirmadas <span class="badge bg-success ms-1">1</span>
-                        </button>
-                        <button class="btn btn-outline-secondary" data-filter-visitas-vendedor="concluidas">
-                            <i class="bi bi-archive-fill me-1"></i>Concluídas <span class="badge bg-secondary ms-1">0</span>
-                        </button>
-                    </div>
+                    @if (visitasVendedor.Any())
+                    {
+                        <!-- Filtros de Status - Horizontal -->
+                        <div class="d-flex gap-2 mb-4 flex-wrap">
+                            <button class="btn btn-outline-primary active" data-filter-visitas-vendedor="todas">
+                                <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">@totalVisitasVend</span>
+                            </button>
+                            <button class="btn btn-outline-warning" data-filter-visitas-vendedor="Pendente">
+                                <i class="bi bi-clock-fill me-1"></i>Aguardam Confirmação <span class="badge bg-warning ms-1">@visitasPendentesVend</span>
+                            </button>
+                            <button class="btn btn-outline-success" data-filter-visitas-vendedor="Confirmada">
+                                <i class="bi bi-check-circle-fill me-1"></i>Confirmadas <span class="badge bg-success ms-1">@visitasConfirmadasVend</span>
+                            </button>
+                            <button class="btn btn-outline-secondary" data-filter-visitas-vendedor="Concluída">
+                                <i class="bi bi-archive-fill me-1"></i>Concluídas <span class="badge bg-secondary ms-1">@visitasConcluidasVend</span>
+                            </button>
+                        </div>
 
-                    <!-- Lista de Visitas -->
-                    <div class="visitas-vendedor-list">
-                        <!-- Visita Pendente -->
-                        <div class="card shadow-sm border-warning mb-3" data-status-visita-vendedor="pendente">
-                            <div class="card-body p-4">
-                                <div class="row g-3">
-                                    <div class="col-auto">
-                                        <img src="~/imagens/mercedesBenz.jpg" alt="Mercedes Classe A" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
-                                    </div>
-                                    <div class="col">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="mb-1 fw-bold">Visita: Mercedes-Benz Classe A</h5>
-                                                <p class="text-muted mb-2 small">Seu anúncio • Preço: 22.500€</p>
-                                            </div>
-                                            <span class="badge bg-warning text-dark fs-6">
-                                                <i class="bi bi-clock-fill me-1"></i>Aguarda Confirmação
-                                            </span>
-                                        </div>
+                        <!-- Lista de Visitas -->
+                        <div class="visitas-vendedor-list">
+                            @foreach (var visita in visitasVendedor)
+                            {
+                                var anuncio = visita.Anuncio;
+                                var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
+                                var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
+                                var badgeClass = visita.Estado switch
+                                {
+                                    "Confirmada" => "bg-success",
+                                    "Pendente" => "bg-warning text-dark",
+                                    "Concluída" => "bg-secondary",
+                                    "Cancelada" => "bg-danger",
+                                    _ => "bg-info"
+                                };
+                                var borderClass = visita.Estado switch
+                                {
+                                    "Confirmada" => "border-success",
+                                    "Pendente" => "border-warning",
+                                    "Concluída" => "border-secondary",
+                                    "Cancelada" => "border-danger",
+                                    _ => "border-info"
+                                };
 
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0 small">Data Solicitada:</p>
-                                                <p class="mb-0 fw-bold text-primary">
-                                                    <i class="bi bi-calendar-event me-1"></i>27/10/2025 às 10:00
-                                                </p>
+                                <div class="card shadow-sm @borderClass mb-3" data-status-visita-vendedor="@visita.Estado">
+                                    <div class="card-body p-4">
+                                        <div class="row g-3">
+                                            <div class="col-auto">
+                                                <img src="@imagemPrincipal" alt="@anuncio.Titulo" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
                                             </div>
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0 small">Local Sugerido:</p>
-                                                <p class="mb-0 fw-semibold">Rua Dr. Manuel Cardona, 45 - Vila Real</p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0 small">Interesses:</p>
-                                                <p class="mb-0">
-                                                    <span class="badge bg-light text-dark me-1">Test Drive</span>
-                                                    <span class="badge bg-light text-dark">Financiamento</span>
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div class="alert alert-warning mb-3 small">
-                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                            <strong>Ação necessária:</strong> Confirme ou proponha uma data alternativa para a visita.
-                                        </div>
-
-                                        <!-- Histórico de Ações -->
-                                        <div class="mb-3">
-                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#historicoVisitaVendedor1" aria-expanded="false">
-                                                <i class="bi bi-clock-history me-1"></i>Ver Histórico de Ações
-                                            </button>
-                                            <div class="collapse mt-2" id="historicoVisitaVendedor1">
-                                                <div class="card card-body p-3 bg-light">
-                                                    <div class="timeline-visita">
-                                                        <div class="timeline-item-visita mb-2">
-                                                            <div class="d-flex">
-                                                                <div class="timeline-dot bg-warning"></div>
-                                                                <div class="flex-grow-1 ms-2">
-                                                                    <div class="d-flex justify-content-between">
-                                                                        <small class="fw-semibold">Aguarda sua Confirmação</small>
-                                                                        <small class="text-muted">Agora</small>
-                                                                    </div>
-                                                                    <small class="text-muted">Necessita confirmar ou propor nova data</small>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="timeline-item-visita">
-                                                            <div class="d-flex">
-                                                                <div class="timeline-dot bg-info"></div>
-                                                                <div class="flex-grow-1 ms-2">
-                                                                    <div class="d-flex justify-content-between">
-                                                                        <small class="fw-semibold">Pedido Recebido</small>
-                                                                        <small class="text-muted">26/10/2025 16:35</small>
-                                                                    </div>
-                                                                    <small class="text-muted">Maria Fernandes solicitou visita para 27/10/2025 às 10:00</small>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="visita-comprador-info mb-3 p-3 bg-light rounded">
-                                            <h6 class="mb-2 small fw-bold">
-                                                <i class="bi bi-person-badge me-1"></i>Interessado
-                                            </h6>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://placehold.co/50x50/0d6efd/ffffff?text=MF" class="rounded-circle me-3" alt="Maria Fernandes">
+                                            <div class="col">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
                                                     <div>
-                                                        <p class="mb-0 fw-semibold">Maria Fernandes</p>
-                                                        <p class="mb-0 small text-muted">
-                                                            <i class="bi bi-envelope me-1"></i>maria.fernandes@exemplo.com •
-                                                            <i class="bi bi-telephone-fill me-1"></i>+351 935 678 912
+                                                        <h5 class="mb-1 fw-bold">Visita: @anuncio.Titulo</h5>
+                                                        <p class="text-muted mb-2 small">
+                                                            Seu anúncio • @marcaModelo • Preço: @anuncio.Preco.ToString("N0")€
                                                         </p>
                                                     </div>
+                                                    <span class="badge @badgeClass fs-6">
+                                                        @if (visita.Estado == "Confirmada")
+                                                        {
+                                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                                        }
+                                                        else if (visita.Estado == "Pendente")
+                                                        {
+                                                            <i class="bi bi-clock-fill me-1"></i><text>Aguarda Confirmação</text>
+                                                        }
+                                                        else if (visita.Estado == "Concluída")
+                                                        {
+                                                            <i class="bi bi-check-all me-1"></i>
+                                                        }
+                                                        else if (visita.Estado == "Cancelada")
+                                                        {
+                                                            <i class="bi bi-x-circle-fill me-1"></i>
+                                                        }
+                                                        @if (visita.Estado != "Pendente")
+                                                        {
+                                                            @visita.Estado
+                                                        }
+                                                    </span>
                                                 </div>
-                                            </div>
-                                            <div class="mt-2 p-2 bg-white rounded border">
-                                                <p class="mb-0 small"><strong>Observações:</strong></p>
-                                                <p class="mb-0 small text-muted">"Gostaria de realizar test drive e saber mais sobre opções de financiamento. Tenho disponibilidade de manhã."</p>
-                                            </div>
-                                        </div>
 
-                                        <div class="d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                                <i class="bi bi-eye me-1"></i>Ver Anúncio
-                                            </a>
-                                            <button class="btn btn-success">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Confirmar Visita
-                                            </button>
-                                            <button class="btn btn-outline-info">
-                                                <i class="bi bi-calendar-x me-1"></i>Propor Outra Data
-                                            </button>
-                                            <button class="btn btn-outline-danger ms-auto">
-                                                <i class="bi bi-x-circle me-1"></i>Recusar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Visita Confirmada -->
-                        <div class="card shadow-sm border-success mb-3" data-status-visita-vendedor="confirmada">
-                            <div class="card-body p-4">
-                                <div class="row g-3">
-                                    <div class="col-auto">
-                                        <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
-                                    </div>
-                                    <div class="col">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="mb-1 fw-bold">Visita: BMW Série 1 116d</h5>
-                                                <p class="text-muted mb-2 small">Seu anúncio • Preço: 15.900€</p>
-                                            </div>
-                                            <span class="badge bg-success fs-6">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Confirmada
-                                            </span>
-                                        </div>
-
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0 small">Data e Hora:</p>
-                                                <p class="mb-0 fw-bold text-success">
-                                                    <i class="bi bi-calendar-event me-1"></i>26/10/2025 às 15:00
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0 small">Local:</p>
-                                                <p class="mb-0 fw-semibold">Rua do Carmo, 45 - Porto</p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0 small">Interesses:</p>
-                                                <p class="mb-0">
-                                                    <span class="badge bg-light text-dark me-1">Test Drive</span>
-                                                    <span class="badge bg-light text-dark">Documentação</span>
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div class="alert alert-success mb-3 small">
-                                            <i class="bi bi-check-circle-fill me-2"></i>
-                                            <strong>Visita confirmada.</strong> Prepare toda a documentação do veículo e esteja disponível no local combinado.
-                                        </div>
-
-                                        <!-- Histórico de Ações -->
-                                        <div class="mb-3">
-                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#historicoVisitaVendedor2" aria-expanded="false">
-                                                <i class="bi bi-clock-history me-1"></i>Ver Histórico de Ações
-                                            </button>
-                                            <div class="collapse mt-2" id="historicoVisitaVendedor2">
-                                                <div class="card card-body p-3 bg-light">
-                                                    <div class="timeline-visita">
-                                                        <div class="timeline-item-visita mb-2">
-                                                            <div class="d-flex">
-                                                                <div class="timeline-dot bg-success"></div>
-                                                                <div class="flex-grow-1 ms-2">
-                                                                    <div class="d-flex justify-content-between">
-                                                                        <small class="fw-semibold">Visita Confirmada</small>
-                                                                        <small class="text-muted">25/10/2025 18:30</small>
-                                                                    </div>
-                                                                    <small class="text-muted">Confirmou a visita para 26/10/2025 às 15:00</small>
-                                                                </div>
-                                                            </div>
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-md-4">
+                                                        <p class="text-muted mb-0 small">@(visita.Estado == "Pendente" ? "Data Solicitada:" : "Data e Hora:")</p>
+                                                        <p class="mb-0 fw-bold @(visita.Estado == "Confirmada" ? "text-success" : "text-primary")">
+                                                            <i class="bi bi-calendar-event me-1"></i>@visita.Data.ToString("dd/MM/yyyy 'às' HH:mm")
+                                                        </p>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(anuncio.Localizacao))
+                                                    {
+                                                        <div class="col-md-8">
+                                                            <p class="text-muted mb-0 small">Local @(visita.Estado == "Pendente" ? "Sugerido" : ""):</p>
+                                                            <p class="mb-0 fw-semibold">@anuncio.Localizacao</p>
                                                         </div>
-                                                        <div class="timeline-item-visita mb-2">
-                                                            <div class="d-flex">
-                                                                <div class="timeline-dot bg-info"></div>
-                                                                <div class="flex-grow-1 ms-2">
-                                                                    <div class="d-flex justify-content-between">
-                                                                        <small class="fw-semibold">Pedido Recebido</small>
-                                                                        <small class="text-muted">25/10/2025 14:20</small>
-                                                                    </div>
-                                                                    <small class="text-muted">João Silva solicitou visita</small>
+                                                    }
+                                                </div>
+
+                                                @if (visita.Estado == "Pendente")
+                                                {
+                                                    <div class="alert alert-warning mb-3 small">
+                                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                        <strong>Ação necessária:</strong> Confirme ou proponha uma data alternativa para a visita.
+                                                    </div>
+                                                }
+                                                else if (visita.Estado == "Confirmada")
+                                                {
+                                                    <div class="alert alert-success mb-3 small">
+                                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                                        <strong>Visita confirmada.</strong> Prepare toda a documentação do veículo e esteja disponível no local combinado.
+                                                    </div>
+                                                }
+
+                                                <div class="visita-comprador-info mb-3 p-3 bg-light rounded">
+                                                    <h6 class="mb-2 small fw-bold">
+                                                        <i class="bi bi-person-badge me-1"></i>Interessado
+                                                    </h6>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="d-flex align-items-center">
+                                                            @if (!string.IsNullOrEmpty(visita.Comprador?.ImagemPerfil))
+                                                            {
+                                                                <img src="@visita.Comprador.ImagemPerfil" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="@visita.Comprador.Nome">
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                                    <i class="bi bi-person-fill fs-4"></i>
                                                                 </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="timeline-item-visita">
-                                                            <div class="d-flex">
-                                                                <div class="timeline-dot bg-primary"></div>
-                                                                <div class="flex-grow-1 ms-2">
-                                                                    <div class="d-flex justify-content-between">
-                                                                        <small class="fw-semibold">Notificação Enviada</small>
-                                                                        <small class="text-muted">25/10/2025 14:20</small>
-                                                                    </div>
-                                                                    <small class="text-muted">Comprador foi notificado da confirmação</small>
-                                                                </div>
+                                                            }
+                                                            <div>
+                                                                <p class="mb-0 fw-semibold">@visita.Comprador?.Nome</p>
+                                                                <p class="mb-0 small text-muted">
+                                                                    @if (!string.IsNullOrEmpty(visita.Comprador?.Email))
+                                                                    {
+                                                                        <i class="bi bi-envelope me-1"></i>@visita.Comprador.Email
+                                                                    }
+                                                                </p>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @if (!string.IsNullOrEmpty(visita.Observacoes))
+                                                    {
+                                                        <div class="mt-2 p-2 bg-white rounded border">
+                                                            <p class="mb-0 small"><strong>Observações:</strong></p>
+                                                            <p class="mb-0 small text-muted">"@visita.Observacoes"</p>
+                                                        </div>
+                                                    }
+                                                </div>
+
+                                                <div class="d-flex gap-2 flex-wrap">
+                                                    <a asp-controller="Visitas" asp-action="Details" asp-route-id="@visita.Id" class="btn btn-sm btn-info text-white">
+                                                        <i class="bi bi-eye me-1"></i>Ver Detalhes
+                                                    </a>
+                                                    <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-sm btn-primary">
+                                                        <i class="bi bi-car-front me-1"></i>Ver Anúncio
+                                                    </a>
+                                                    @if (visita.Estado == "Pendente")
+                                                    {
+                                                        <form asp-controller="Visitas" asp-action="Confirmar" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@visita.Id" />
+                                                            <button type="submit" class="btn btn-sm btn-success">
+                                                                <i class="bi bi-check-circle-fill me-1"></i>Confirmar Visita
+                                                            </button>
+                                                        </form>
+                                                        <a asp-controller="Visitas" asp-action="Edit" asp-route-id="@visita.Id" class="btn btn-sm btn-outline-info">
+                                                            <i class="bi bi-calendar-x me-1"></i>Propor Outra Data
+                                                        </a>
+                                                        <form asp-controller="Visitas" asp-action="Cancelar" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja recusar esta visita?')">
+                                                            <input type="hidden" name="id" value="@visita.Id" />
+                                                            <input type="hidden" name="motivo" value="Recusado pelo vendedor" />
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-x-circle me-1"></i>Recusar
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    else if (visita.Estado == "Confirmada")
+                                                    {
+                                                        <a asp-controller="Visitas" asp-action="Edit" asp-route-id="@visita.Id" class="btn btn-sm btn-outline-warning">
+                                                            <i class="bi bi-calendar-x me-1"></i>Remarcar
+                                                        </a>
+                                                        <form asp-controller="Visitas" asp-action="Concluir" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@visita.Id" />
+                                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                                <i class="bi bi-check-all me-1"></i>Marcar como Concluída
+                                                            </button>
+                                                        </form>
+                                                    }
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="visita-comprador-info mb-3 p-3 bg-light rounded">
-                                            <h6 class="mb-2 small fw-bold">
-                                                <i class="bi bi-person-badge me-1"></i>Interessado
-                                            </h6>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/50x50/0d6efd/ffffff?text=JS" class="rounded-circle me-3" alt="João Silva">
-                                                <div>
-                                                    <p class="mb-0 fw-semibold">João Duarte Silva</p>
-                                                    <p class="mb-0 small text-muted">
-                                                        <i class="bi bi-envelope me-1"></i>joao.silva@exemplo.com •
-                                                        <i class="bi bi-telephone-fill me-1"></i>+351 912 345 678
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                                <i class="bi bi-eye me-1"></i>Ver Anúncio
-                                            </a>
-                                            <button class="btn btn-success">
-                                                <i class="bi bi-chat-dots-fill me-1"></i>Mensagem
-                                            </button>
-                                            <button class="btn btn-outline-info">
-                                                <i class="bi bi-calendar-plus me-1"></i>Adicionar ao Calendário
-                                            </button>
-                                            <button class="btn btn-outline-warning ms-auto">
-                                                <i class="bi bi-calendar-x me-1"></i>Remarcar
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Estado Vazio -->
+                        <div class="visitas-vendedor-empty text-center py-5">
+                            <div class="mb-4">
+                                <i class="bi bi-calendar-x" style="font-size: 4rem; color: #e2e8f0;"></i>
                             </div>
+                            <h4 class="text-muted mb-2">Sem visitas agendadas</h4>
+                            <p class="text-muted mb-4">Quando alguém agendar uma visita aos seus anúncios, aparecerá aqui</p>
+                            <a href="#meus-anuncios" class="btn btn-primary perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-grid-3x3-gap me-2"></i>Ver Meus Anúncios
+                            </a>
                         </div>
-                    </div>
-
-                    <!-- Estado Vazio -->
-                    <div class="visitas-vendedor-empty text-center py-5 d-none">
-                        <div class="mb-4">
-                            <i class="bi bi-calendar-x" style="font-size: 4rem; color: #e2e8f0;"></i>
-                        </div>
-                        <h4 class="text-muted mb-2">Sem visitas agendadas</h4>
-                        <p class="text-muted mb-4">Quando alguém agendar uma visita aos seus anúncios, aparecerá aqui</p>
-                        <a href="#meus-anuncios" class="btn btn-primary perfil-nav-item" data-bs-toggle="tab">
-                            <i class="bi bi-grid-3x3-gap me-2"></i>Ver Meus Anúncios
-                        </a>
-                    </div>
+                    }
                 </div>
 
                 <!-- Aba: Dados Bancários (para Vendedores) -->
@@ -1347,7 +1281,12 @@
                     </div>
                 </div>
 
-                <!-- Aba: Minhas Visitas (para Compradores) -->
+                    var visitasComprador = ViewBag.MinhasVisitasComprador as List<Marketplace.Models.Visita> ?? new List<Marketplace.Models.Visita>();
+                    var totalVisitas = visitasComprador.Count;
+                    var visitasPendentes = visitasComprador.Count(v => v.Estado == "Pendente");
+                    var visitasConfirmadas = visitasComprador.Count(v => v.Estado == "Confirmada");
+                    var visitasConcluidas = visitasComprador.Count(v => v.Estado == "Concluída");
+                    <!-- Aba: Minhas Visitas (para Compradores) -->
                 <div class="tab-pane fade" id="minhas-visitas">
                     <!-- Cabeçalho da Página -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -1359,168 +1298,195 @@
                         </div>
                         <div class="visitas-stats d-flex gap-3">
                             <div class="stat-item text-center">
-                                <div class="stat-value text-info fw-bold">1</div>
-                                <div class="stat-label text-muted small">Agendada</div>
+                                <div class="stat-value text-info fw-bold">@totalVisitas</div>
+                                <div class="stat-label text-muted small">Total</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Filtros de Status - Horizontal -->
-                    <div class="d-flex gap-2 mb-4 flex-wrap">
-                        <button class="btn btn-outline-primary active" data-filter-visitas="todas">
-                            <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">1</span>
-                        </button>
-                        <button class="btn btn-outline-warning" data-filter-visitas="pendentes">
-                            <i class="bi bi-clock-fill me-1"></i>Pendentes <span class="badge bg-warning ms-1">0</span>
-                        </button>
-                        <button class="btn btn-outline-success" data-filter-visitas="confirmadas">
-                            <i class="bi bi-check-circle-fill me-1"></i>Confirmadas <span class="badge bg-success ms-1">1</span>
-                        </button>
-                        <button class="btn btn-outline-secondary" data-filter-visitas="concluidas">
-                            <i class="bi bi-archive-fill me-1"></i>Concluídas <span class="badge bg-secondary ms-1">0</span>
-                        </button>
-                    </div>
+                    @if (visitasComprador.Any())
+                    {
+                        <!-- Filtros de Status - Horizontal -->
+                        <div class="d-flex gap-2 mb-4 flex-wrap">
+                            <button class="btn btn-outline-primary active" data-filter-visitas="todas">
+                                <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">@totalVisitas</span>
+                            </button>
+                            <button class="btn btn-outline-warning" data-filter-visitas="Pendente">
+                                <i class="bi bi-clock-fill me-1"></i>Pendentes <span class="badge bg-warning ms-1">@visitasPendentes</span>
+                            </button>
+                            <button class="btn btn-outline-success" data-filter-visitas="Confirmada">
+                                <i class="bi bi-check-circle-fill me-1"></i>Confirmadas <span class="badge bg-success ms-1">@visitasConfirmadas</span>
+                            </button>
+                            <button class="btn btn-outline-secondary" data-filter-visitas="Concluída">
+                                <i class="bi bi-archive-fill me-1"></i>Concluídas <span class="badge bg-secondary ms-1">@visitasConcluidas</span>
+                            </button>
+                        </div>
 
-                    <!-- Lista de Visitas -->
-                    <div class="visitas-list">
-                        <!-- Visita Confirmada -->
-                        <div class="card shadow-sm border-success mb-3" data-status-visita="confirmada">
-                            <div class="card-body p-4">
-                                <div class="row g-3">
-                                    <div class="col-auto">
-                                        <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 3" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
-                                    </div>
-                                    <div class="col">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="mb-1 fw-bold">BMW Série 3 320d Pack M</h5>
-                                                <p class="text-muted mb-2 small">2019 • 85.000 km • Diesel • Manual • Porto</p>
-                                            </div>
-                                            <span class="badge bg-success fs-6">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Confirmada
-                                            </span>
-                                        </div>
+                        <!-- Lista de Visitas -->
+                        <div class="visitas-list">
+                            @foreach (var visita in visitasComprador)
+                            {
+                                var anuncio = visita.Anuncio;
+                                var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
+                                var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
+                                var badgeClass = visita.Estado switch
+                                {
+                                    "Confirmada" => "bg-success",
+                                    "Pendente" => "bg-warning",
+                                    "Concluída" => "bg-secondary",
+                                    "Cancelada" => "bg-danger",
+                                    _ => "bg-info"
+                                };
+                                var borderClass = visita.Estado switch
+                                {
+                                    "Confirmada" => "border-success",
+                                    "Pendente" => "border-warning",
+                                    "Concluída" => "border-secondary",
+                                    "Cancelada" => "border-danger",
+                                    _ => "border-info"
+                                };
 
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0 small">Data e Hora:</p>
-                                                <p class="mb-0 fw-bold text-primary">
-                                                    <i class="bi bi-calendar-event me-1"></i>26/10/2025 às 15:00
-                                                </p>
+                                <div class="card shadow-sm @borderClass mb-3" data-status-visita="@visita.Estado">
+                                    <div class="card-body p-4">
+                                        <div class="row g-3">
+                                            <div class="col-auto">
+                                                <img src="@imagemPrincipal" alt="@anuncio.Titulo" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
                                             </div>
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0 small">Local:</p>
-                                                <p class="mb-0 fw-semibold">Rua do Carmo, 45 - Porto</p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0 small">Interesses:</p>
-                                                <p class="mb-0">
-                                                    <span class="badge bg-light text-dark me-1">Test Drive</span>
-                                                    <span class="badge bg-light text-dark">Documentação</span>
-                                                </p>
-                                            </div>
-                                        </div>
+                                            <div class="col">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <h5 class="mb-1 fw-bold">@anuncio.Titulo</h5>
+                                                        <p class="text-muted mb-2 small">
+                                                            @marcaModelo
+                                                            @if (!string.IsNullOrEmpty(anuncio.Localizacao))
+                                                            {
+                                                                <span> • @anuncio.Localizacao</span>
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                    <span class="badge @badgeClass fs-6">
+                                                        @if (visita.Estado == "Confirmada")
+                                                        {
+                                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                                        }
+                                                        else if (visita.Estado == "Pendente")
+                                                        {
+                                                            <i class="bi bi-clock-fill me-1"></i>
+                                                        }
+                                                        else if (visita.Estado == "Concluída")
+                                                        {
+                                                            <i class="bi bi-check-all me-1"></i>
+                                                        }
+                                                        else if (visita.Estado == "Cancelada")
+                                                        {
+                                                            <i class="bi bi-x-circle-fill me-1"></i>
+                                                        }
+                                                        @visita.Estado
+                                                    </span>
+                                                </div>
 
-                                        <div class="alert alert-success mb-3 small">
-                                            <i class="bi bi-check-circle-fill me-2"></i>
-                                            <strong>Visita confirmada pelo vendedor.</strong> Compareça no local na data e hora agendadas.
-                                        </div>
-
-                                        <!-- Histórico de Ações -->
-                                        <div class="mb-3">
-                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#historicoVisita1" aria-expanded="false">
-                                                <i class="bi bi-clock-history me-1"></i>Ver Histórico de Ações
-                                            </button>
-                                            <div class="collapse mt-2" id="historicoVisita1">
-                                                <div class="card card-body p-3 bg-light">
-                                                    <div class="timeline-visita">
-                                                        <div class="timeline-item-visita mb-2">
-                                                            <div class="d-flex">
-                                                                <div class="timeline-dot bg-success"></div>
-                                                                <div class="flex-grow-1 ms-2">
-                                                                    <div class="d-flex justify-content-between">
-                                                                        <small class="fw-semibold">Visita Confirmada</small>
-                                                                        <small class="text-muted">25/10/2025 18:45</small>
-                                                                    </div>
-                                                                    <small class="text-muted">Vendedor confirmou a visita para 26/10/2025 às 15:00</small>
-                                                                </div>
-                                                            </div>
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-md-6">
+                                                        <p class="text-muted mb-0 small">Data e Hora:</p>
+                                                        <p class="mb-0 fw-bold text-primary">
+                                                            <i class="bi bi-calendar-event me-1"></i>@visita.Data.ToString("dd/MM/yyyy 'às' HH:mm")
+                                                        </p>
+                                                    </div>
+                                                    @if (!string.IsNullOrEmpty(anuncio.Localizacao))
+                                                    {
+                                                        <div class="col-md-6">
+                                                            <p class="text-muted mb-0 small">Local:</p>
+                                                            <p class="mb-0 fw-semibold">@anuncio.Localizacao</p>
                                                         </div>
-                                                        <div class="timeline-item-visita mb-2">
-                                                            <div class="d-flex">
-                                                                <div class="timeline-dot bg-info"></div>
-                                                                <div class="flex-grow-1 ms-2">
-                                                                    <div class="d-flex justify-content-between">
-                                                                        <small class="fw-semibold">Pedido Enviado</small>
-                                                                        <small class="text-muted">25/10/2025 14:20</small>
-                                                                    </div>
-                                                                    <small class="text-muted">Solicitou visita ao veículo</small>
-                                                                </div>
+                                                    }
+                                                </div>
+
+                                                @if (!string.IsNullOrEmpty(visita.Observacoes))
+                                                {
+                                                    <div class="alert alert-info mb-3 small">
+                                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                                        <strong>Observações:</strong> @visita.Observacoes
+                                                    </div>
+                                                }
+
+                                                @if (visita.Estado == "Confirmada")
+                                                {
+                                                    <div class="alert alert-success mb-3 small">
+                                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                                        <strong>Visita confirmada pelo vendedor.</strong> Compareça no local na data e hora agendadas.
+                                                    </div>
+                                                }
+                                                else if (visita.Estado == "Pendente")
+                                                {
+                                                    <div class="alert alert-warning mb-3 small">
+                                                        <i class="bi bi-clock-fill me-2"></i>
+                                                        <strong>Aguardando confirmação do vendedor.</strong>
+                                                    </div>
+                                                }
+
+                                                <div class="visita-vendedor mb-3 p-3 bg-light rounded">
+                                                    <h6 class="mb-2 small fw-bold">
+                                                        <i class="bi bi-person-badge me-1"></i>Vendedor
+                                                    </h6>
+                                                    <div class="d-flex align-items-center">
+                                                        @if (!string.IsNullOrEmpty(visita.Vendedor?.ImagemPerfil))
+                                                        {
+                                                            <img src="@visita.Vendedor.ImagemPerfil" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="@visita.Vendedor.Nome">
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                                <i class="bi bi-person-fill fs-4"></i>
                                                             </div>
-                                                        </div>
-                                                        <div class="timeline-item-visita">
-                                                            <div class="d-flex">
-                                                                <div class="timeline-dot bg-primary"></div>
-                                                                <div class="flex-grow-1 ms-2">
-                                                                    <div class="d-flex justify-content-between">
-                                                                        <small class="fw-semibold">Visita Criada</small>
-                                                                        <small class="text-muted">25/10/2025 14:20</small>
-                                                                    </div>
-                                                                    <small class="text-muted">Pedido de visita registado no sistema</small>
-                                                                </div>
-                                                            </div>
+                                                        }
+                                                        <div>
+                                                            <p class="mb-0 fw-semibold">@visita.Vendedor?.Nome</p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="visita-vendedor mb-3 p-3 bg-light rounded">
-                                            <h6 class="mb-2 small fw-bold">
-                                                <i class="bi bi-person-badge me-1"></i>Vendedor
-                                            </h6>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/50x50/0d6efd/ffffff?text=PC" class="rounded-circle me-3" alt="Pedro Costa">
-                                                <div>
-                                                    <p class="mb-0 fw-semibold">Pedro Costa</p>
-                                                    <p class="mb-0 small text-muted">
-                                                        <i class="bi bi-telephone-fill me-1"></i>+351 912 345 678
-                                                    </p>
+                                                <div class="d-flex gap-2 flex-wrap">
+                                                    <a asp-controller="Visitas" asp-action="Details" asp-route-id="@visita.Id" class="btn btn-sm btn-info text-white">
+                                                        <i class="bi bi-eye me-1"></i>Ver Detalhes
+                                                    </a>
+                                                    <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-sm btn-primary">
+                                                        <i class="bi bi-car-front me-1"></i>Ver Anúncio
+                                                    </a>
+                                                    @if (visita.Estado == "Pendente" || visita.Estado == "Confirmada")
+                                                    {
+                                                        <a asp-controller="Visitas" asp-action="Edit" asp-route-id="@visita.Id" class="btn btn-sm btn-outline-secondary">
+                                                            <i class="bi bi-pencil me-1"></i>Editar
+                                                        </a>
+                                                        <form asp-controller="Visitas" asp-action="Cancelar" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja cancelar esta visita?')">
+                                                            <input type="hidden" name="id" value="@visita.Id" />
+                                                            <input type="hidden" name="motivo" value="Cancelado pelo comprador" />
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-x-circle me-1"></i>Cancelar
+                                                            </button>
+                                                        </form>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                                <i class="bi bi-eye me-1"></i>Ver Anúncio
-                                            </a>
-                                            <button class="btn btn-success">
-                                                <i class="bi bi-chat-dots-fill me-1"></i>Mensagem
-                                            </button>
-                                            <button class="btn btn-outline-info">
-                                                <i class="bi bi-calendar-plus me-1"></i>Adicionar ao Calendário
-                                            </button>
-                                            <button class="btn btn-outline-danger ms-auto">
-                                                <i class="bi bi-x-circle me-1"></i>Cancelar
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Estado Vazio -->
+                        <div class="visitas-empty text-center py-5">
+                            <div class="mb-4">
+                                <i class="bi bi-calendar-x" style="font-size: 4rem; color: #e2e8f0;"></i>
                             </div>
+                            <h4 class="text-muted mb-2">Sem visitas agendadas</h4>
+                            <p class="text-muted mb-4">Agende uma visita para conhecer o veículo pessoalmente</p>
+                            <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                <i class="bi bi-search me-2"></i>Explorar Anúncios
+                            </a>
                         </div>
-                    </div>
-
-                    <!-- Estado Vazio -->
-                    <div class="visitas-empty text-center py-5 d-none">
-                        <div class="mb-4">
-                            <i class="bi bi-calendar-x" style="font-size: 4rem; color: #e2e8f0;"></i>
-                        </div>
-                        <h4 class="text-muted mb-2">Sem visitas agendadas</h4>
-                        <p class="text-muted mb-4">Agende uma visita para conhecer o veículo pessoalmente</p>
-                        <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
-                            <i class="bi bi-search me-2"></i>Explorar Anúncios
-                        </a>
-                    </div>
+                    }
                     </div>
                 }
 

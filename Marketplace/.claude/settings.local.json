@@ -38,7 +38,9 @@
       "Bash(del clean_index.py fix_perfil.py replace_anuncios_estaticos.py replace_gerir_utilizadores.py replace_moderar_anuncios.py)",
       "Bash(del meus_anuncios_section_fixed.txt anuncios_dinamicos.txt)",
       "Bash(timeout /t 3 /nobreak)",
-      "Bash(if not exist \"Views\\Visitas\" mkdir \"Views\\Visitas\")"
+      "Bash(if not exist \"Views\\Visitas\" mkdir \"Views\\Visitas\")",
+      "Bash(powershell Get-Content 'Views\\Utilizadores\\Perfil.cshtml' -TotalCount 1351 -Tail 3)",
+      "Bash(del ViewsVisitasminhas_visitas_section.txt ViewsVisitasvisitas_vendedor_section.txt replace_minhas_visitas.py replace_visitas_vendedor.py fix_razor_syntax.py)"
     ],
     "deny": [],
     "ask": []
