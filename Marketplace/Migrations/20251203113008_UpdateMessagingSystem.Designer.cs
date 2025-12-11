@@ -4,6 +4,7 @@ using Marketplace.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marketplace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251203113008_UpdateMessagingSystem")]
+    partial class UpdateMessagingSystem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -883,29 +886,12 @@ namespace Marketplace.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AnuncioId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CompradorId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DataAtualizacao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Estado")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Observacoes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("ReservaId")
                         .HasColumnType("int");
@@ -914,10 +900,6 @@ namespace Marketplace.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AnuncioId");
-
-                    b.HasIndex("CompradorId");
 
                     b.HasIndex("ReservaId");
 
@@ -1485,18 +1467,6 @@ namespace Marketplace.Migrations
 
             modelBuilder.Entity("Marketplace.Models.Visita", b =>
                 {
-                    b.HasOne("Marketplace.Models.Anuncio", "Anuncio")
-                        .WithMany("Visitas")
-                        .HasForeignKey("AnuncioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Marketplace.Models.Comprador", "Comprador")
-                        .WithMany("Visitas")
-                        .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Marketplace.Models.Reserva", "Reserva")
                         .WithMany("Visitas")
                         .HasForeignKey("ReservaId")
@@ -1505,12 +1475,8 @@ namespace Marketplace.Migrations
                     b.HasOne("Marketplace.Models.Vendedor", "Vendedor")
                         .WithMany("Visitas")
                         .HasForeignKey("VendedorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Anuncio");
-
-                    b.Navigation("Comprador");
 
                     b.Navigation("Reserva");
 
@@ -1633,8 +1599,6 @@ namespace Marketplace.Migrations
                     b.Navigation("Imagens");
 
                     b.Navigation("Reservas");
-
-                    b.Navigation("Visitas");
                 });
 
             modelBuilder.Entity("Marketplace.Models.AnuncioFav", b =>
@@ -1737,8 +1701,6 @@ namespace Marketplace.Migrations
                     b.Navigation("PesquisasPassadas");
 
                     b.Navigation("Reservas");
-
-                    b.Navigation("Visitas");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Vendedor", b =>

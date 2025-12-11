@@ -17,6 +17,12 @@ namespace Marketplace.Models
         [Required]
         public DateTime DataEnvio { get; set; }
 
+        public bool Lida { get; set; } = false;
+
+        public int RemetenteId { get; set; }
+        [ForeignKey("RemetenteId")]
+        public ApplicationUser Remetente { get; set; } = null!;
+
         public int ConversaId { get; set; }
         [ForeignKey("ConversaId")]
         public Conversa Conversa { get; set; } = null!;
