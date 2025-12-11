@@ -11,10 +11,12 @@ namespace Marketplace.Controllers
     public class MensagensController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly Marketplace.Services.IEmailSender _emailSender;
 
-        public MensagensController(ApplicationDbContext context)
+        public MensagensController(ApplicationDbContext context, Marketplace.Services.IEmailSender emailSender)
         {
             _context = context;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index()
@@ -158,6 +160,40 @@ namespace Marketplace.Controllers
             _context.Conversas.Update(conversa);
 
             await _context.SaveChangesAsync();
+
+            // Enviar notificação por email (Fire and forget para não bloquear)
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    // Determinar destinatário
+                    var destinatarioId = conversa.Vendedor.IdentityUserId == userId ? conversa.Comprador.IdentityUserId : conversa.Vendedor.IdentityUserId;
+                    var destinatarioUser = await _context.Users.FindAsync(destinatarioId);
+
+                    if (destinatarioUser != null && !string.IsNullOrEmpty(destinatarioUser.Email))
+                    {
+                        var remetenteNome = User.Identity?.Name ?? "Alguém";
+                        var assunto = $"Nova mensagem de {remetenteNome} - 404 Car Marketplace";
+                        var corpo = $@"
+                            <h2>Nova Mensagem Recebida</h2>
+                            <p>Recebeu uma nova mensagem sobre o anúncio <strong>{conversa.Anuncio?.Titulo ?? "Veículo"}</strong>.</p>
+                            <p><strong>De:</strong> {remetenteNome}</p>
+                            <p><strong>Mensagem:</strong></p>
+                            <blockquote style='background: #f9f9f9; border-left: 10px solid #ccc; margin: 1.5em 10px; padding: 0.5em 10px;'>
+                                {conteudo}
+                            </blockquote>
+                            <p><a href='http://localhost:5184/Mensagens?conversaId={conversaId}'>Clique aqui para responder</a></p>
+                        ";
+
+                        await _emailSender.SendAsync(destinatarioUser.Email, assunto, corpo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Logar erro silenciosamente ou ignorar para não afetar o user
+                    Console.WriteLine($"Erro ao enviar email de notificação: {ex.Message}");
+                }
+            });
 
             return Json(new 
             { 

@@ -647,6 +647,18 @@
                     enviarMensagem();
                 }
             });
+
+            // Polling para lista de conversas (a cada 10 segundos)
+            setInterval(() => {
+                carregarConversas(true); // true = silencioso (sem limpar lista)
+            }, 10000);
+
+            // Polling para mensagens da conversa atual (a cada 3 segundos)
+            setInterval(() => {
+                if (currentConversaId) {
+                    atualizarMensagens(currentConversaId);
+                }
+            }, 3000);
         });
 
         function filtrarConversas(filtro) {
@@ -659,22 +671,35 @@
             carregarConversas();
         }
 
-        function carregarConversas() {
+        function carregarConversas(silent = false) {
             fetch(`/Mensagens/GetConversas?filtro=${currentFilter}`)
                 .then(response => response.json())
                 .then(data => {
                     const listContainer = document.getElementById('chatList');
-                    listContainer.innerHTML = '';
+                    
+                    if (!silent) {
+                        listContainer.innerHTML = '';
+                    }
 
                     if (data.length === 0) {
-                        listContainer.innerHTML = `
-                            <div class="text-center py-5 text-muted">
-                                <p>Nenhuma conversa encontrada.</p>
-                            </div>
-                        `;
+                        if (!silent) {
+                            listContainer.innerHTML = `
+                                <div class="text-center py-5 text-muted">
+                                    <p>Nenhuma conversa encontrada.</p>
+                                </div>
+                            `;
+                        }
                         return;
                     }
 
+                    // Se for silencioso, idealmente faríamos diff, mas para simplificar vamos reconstruir
+                    // se o user não estiver a interagir com a lista. 
+                    // Como é uma lista simples, reconstruir não é terrível, mas perde scroll.
+                    // Vamos reconstruir apenas se não for silencioso OU se o conteúdo mudou (simplificado: sempre reconstrói por agora, mas tenta manter scroll)
+                    
+                    const currentScroll = listContainer.scrollTop;
+                    
+                    let html = '';
                     data.forEach(conversa => {
                         const activeClass = currentConversaId == conversa.id ? 'active' : '';
                         const unreadBadge = conversa.naoLidas > 0 
@@ -685,7 +710,7 @@
                             ? `<span class="type-badge vender"><i class="bi bi-shop"></i> A vender</span>`
                             : `<span class="type-badge comprar"><i class="bi bi-cart-check"></i> A comprar</span>`;
 
-                        const html = `
+                        html += `
                             <a href="#" class="chat-item ${activeClass}" onclick="abrirConversa(${conversa.id})">
                                 <div class="d-flex align-items-start gap-3">
                                     <div style="position: relative;">
@@ -710,10 +735,60 @@
                                 </div>
                             </a>
                         `;
-                        listContainer.innerHTML += html;
                     });
+                    
+                    listContainer.innerHTML = html;
+                    if (silent) {
+                        listContainer.scrollTop = currentScroll;
+                    }
                 })
                 .catch(err => console.error('Erro ao carregar conversas:', err));
+        }
+
+        function atualizarMensagens(conversaId) {
+            fetch(`/Mensagens/GetMensagens?conversaId=${conversaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (currentConversaId !== conversaId) return; // Mudou de conversa entretanto
+
+                    const body = document.getElementById('chatBody');
+                    // Estratégia simples: contar mensagens e adicionar se houver novas
+                    // Ou limpar e reconstruir (perde scroll se user estiver a ler histórico)
+                    
+                    // Vamos comparar o número de mensagens
+                    const currentCount = body.querySelectorAll('.message-wrapper').length;
+                    // Nota: GetMensagens marca como lida, o que é bom.
+                    
+                    if (data.mensagens.length > currentCount) {
+                        // Há novas mensagens!
+                        // Adicionar apenas as novas
+                        const novas = data.mensagens.slice(currentCount);
+                        
+                        novas.forEach(msg => {
+                            const type = msg.enviadaPorMim ? 'sent' : 'received';
+                            const time = new Date(msg.dataEnvio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                            // Remover mensagem otimista se existir (verificação simples)
+                            // (Na implementação anterior usámos IDs temporários, aqui simplificamos)
+                            
+                            body.innerHTML += `
+                                <div class="message-wrapper ${type}">
+                                    <div class="message ${type}">
+                                        <div class="message-text">${msg.conteudo}</div>
+                                        <div class="message-time">${time}</div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        // Scroll para o fundo apenas se estava no fundo ou se é mensagem minha
+                        body.scrollTop = body.scrollHeight;
+                        
+                        // Atualizar lista lateral também para limpar badge
+                        carregarConversas(true);
+                    }
+                })
+                .catch(err => console.error('Erro ao atualizar mensagens:', err));
         }
 
         function abrirConversa(id) {
