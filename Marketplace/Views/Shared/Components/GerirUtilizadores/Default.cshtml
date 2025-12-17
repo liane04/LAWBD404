@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-info border-4">
+        <div class="card shadow-sm border-0 border-start border-info border-4 h-100" style="cursor: pointer; transition: transform 0.2s;" onclick="filterUsers('vendedor')" id="card-vendedor">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
@@ -192,6 +192,12 @@
                                         <span class="badge bg-secondary">
                                             <i class="bi bi-shield-check me-1"></i>Administrador
                                         </span>
+                                        @if (!string.IsNullOrEmpty(user.NivelAcesso))
+                                        {
+                                            <span class="badge @(user.NivelAcesso == "Nivel 1" ? "bg-danger" : "bg-warning text-dark") ms-1">
+                                                @user.NivelAcesso
+                                            </span>
+                                        }
                                     }
                                     @if (user.IsVendedor)
                                     {
@@ -242,26 +248,48 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
-                                        @if (user.EstaBloqueado)
+                                        @{
+                                            bool canManage = false;
+                                            string currentLevel = ViewBag.NivelAcesso as string;
+                                            
+                                            if (!user.IsAdministrador) 
+                                            {
+                                                canManage = true; 
+                                            }
+                                            else 
+                                            {
+                                                if (currentLevel == "Nivel 0") 
+                                                {
+                                                    canManage = true;
+                                                }
+                                                else if (currentLevel == "Nivel 1" && user.NivelAcesso == "Nivel 2") 
+                                                {
+                                                    canManage = true;
+                                                }
+                                            }
+                                        }
+
+                                        @if (canManage)
                                         {
-                                            <form method="post" asp-controller="Administrador" asp-action="DesbloquearUtilizador" asp-route-id="@user.Id">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-outline-success btn-sm"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Desbloquear utilizador">
-                                                    <i class="bi bi-unlock-fill me-1"></i>Desbloquear
+                                            @if (user.EstaBloqueado)
+                                            {
+                                                <form method="post" asp-controller="Administrador" asp-action="DesbloquearUtilizador" asp-route-id="@user.Id">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-outline-success btn-sm"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Desbloquear utilizador">
+                                                        <i class="bi bi-unlock-fill me-1"></i>Desbloquear
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="btn btn-outline-warning btn-sm"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Bloquear acesso à plataforma"
+                                                        onclick="openBlockModal(@user.Id, '@(user.Nome ?? user.UserName)')">
+                                                    <i class="bi bi-lock-fill me-1"></i>Bloquear
                                                 </button>
-                                            </form>
-                                        }
-                                        else
-                                        {
-                                            <button type="button" class="btn btn-outline-warning btn-sm"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Bloquear acesso à plataforma"
-                                                    onclick="openBlockModal(@user.Id, '@(user.Nome ?? user.UserName)')">
-                                                <i class="bi bi-lock-fill me-1"></i>Bloquear
-                                            </button>
-                                        }
-                                        @if (!user.IsAdministrador)
-                                        {
+                                            }
+                                            
                                             <form method="post" asp-controller="Administrador" asp-action="EliminarUtilizador" asp-route-id="@user.Id">
                                                 @Html.AntiForgeryToken()
                                                 <button type="submit" class="btn btn-outline-danger btn-sm"
@@ -270,6 +298,12 @@
                                                     <i class="bi bi-trash-fill me-1"></i>Eliminar
                                                 </button>
                                             </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small align-self-center">
+                                                <i class="bi bi-shield-lock me-1"></i>Protegido
+                                            </span>
                                         }
                                     </div>
                                 </td>
@@ -346,7 +380,7 @@
 <div class="modal fade" id="bloquearUtilizadorModal" tabindex="-1" aria-labelledby="bloquearUtilizadorModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="post" asp-controller="Administrador" asp-action="BloquearUtilizador">
+            <form method="post" asp-controller="Administrador" asp-action="BloquearUtilizador" onsubmit="return disableBlockButton(this);">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" id="blockUserId" />
                 
@@ -387,55 +421,25 @@
                 </div>
                 <div class="modal-footer border-0 bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">
+                    <button type="submit" class="btn btn-danger" id="btnConfirmBlock">
                         <i class="bi bi-lock-fill me-1"></i>Confirmar Bloqueio
                     </button>
                 </div>
             </form>
+            <script>
+                function disableBlockButton(form) {
+                    var btn = form.querySelector('#btnConfirmBlock');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>A processar...';
+                    }
+                    return true;
+                }
+            </script>
         </div>
     </div>
 </div>
 
-<script>
-    function filterUsers(type) {
-        const rows = document.querySelectorAll('.user-row');
-        const btnReset = document.getElementById('btn-reset-filter');
-        const cards = {
-            'comprador': document.getElementById('card-comprador'),
-            'vendedor': document.getElementById('card-vendedor'),
-            'admin': document.getElementById('card-admin'),
-            'bloqueado': document.getElementById('card-bloqueado')
-        };
 
-        // Reset all cards styles
-        Object.values(cards).forEach(card => {
-            if(card) {
-                card.classList.remove('bg-light');
-                card.style.transform = 'scale(1)';
-            }
-        });
 
-        if (type === 'all') {
-            rows.forEach(row => row.style.display = '');
-            if(btnReset) btnReset.style.display = 'none';
-        } else {
-            rows.forEach(row => {
-                let show = false;
-                if (type === 'comprador' && row.dataset.isComprador === 'True') show = true;
-                else if (type === 'vendedor' && row.dataset.isVendedor === 'True') show = true;
-                else if (type === 'admin' && row.dataset.isAdmin === 'True') show = true;
-                else if (type === 'bloqueado' && row.dataset.isBlocked === 'True') show = true;
-                
-                row.style.display = show ? '' : 'none';
-            });
-            
-            if(btnReset) btnReset.style.display = 'block';
-            
-            // Highlight selected card
-            if(cards[type]) {
-                cards[type].classList.add('bg-light');
-                cards[type].style.transform = 'scale(1.02)';
-            }
-        }
-    }
-</script>
+
