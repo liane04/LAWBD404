@@ -58,7 +58,7 @@
                                 <option value="" selected disabled>Selecione o tipo...</option>
                                 <option value="Comprador">Comprador</option>
                                 <option value="Vendedor">Vendedor</option>
-                                @if (ViewBag.NivelAcesso == "Nivel 1")
+                                @if (ViewBag.NivelAcesso == "Nivel 0" || ViewBag.NivelAcesso == "Nivel 1")
                                 {
                                     <option value="Administrador">Administrador</option>
                                 }
@@ -71,7 +71,7 @@
                             <div class="form-text">O NIF é opcional para compradores e administradores.</div>
                         </div>
 
-                        @if (ViewBag.NivelAcesso == "Nivel 1")
+                        @if (ViewBag.NivelAcesso == "Nivel 0" || ViewBag.NivelAcesso == "Nivel 1")
                         {
                             <div class="col-12 mt-3" id="adminLevelSection" style="display: none;">
                                 <div class="alert alert-warning">
@@ -84,12 +84,15 @@
                                             <strong>Nível 2</strong> - Gestão de utilizadores, denúncias e validação.
                                         </label>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="nivelAcesso" id="nivel1" value="Nivel 1">
-                                        <label class="form-check-label" for="nivel1">
-                                            <strong>Nível 1</strong> - Acesso total, incluindo criar novos administradores.
-                                        </label>
-                                    </div>
+                                    @if (ViewBag.NivelAcesso == "Nivel 0")
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="nivelAcesso" id="nivel1" value="Nivel 1">
+                                            <label class="form-check-label" for="nivel1">
+                                                <strong>Nível 1</strong> - Acesso total, incluindo criar novos administradores.
+                                            </label>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         }

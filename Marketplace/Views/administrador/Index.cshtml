@@ -12,7 +12,7 @@
             <!-- Cartão de Perfil do Admin -->
             <div class="card shadow-sm mb-3 admin-profile-card">
                 <div class="card-body text-center">
-                    <img src="https://placehold.co/100x100/343a40/ffffff?text=Admin" alt="Foto do Administrador" class="rounded-circle mb-3">
+                    <img src="@(string.IsNullOrEmpty(ViewBag.AdminFoto) ? "https://placehold.co/100x100/343a40/ffffff?text=Admin" : ViewBag.AdminFoto)" alt="Foto do Administrador" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
                     <h5 class="card-title mb-2">@ViewBag.AdminName</h5>
                     <p class="card-text text-muted small mb-2">@ViewBag.AdminEmail</p>
                     <span class="badge @(ViewBag.NivelAcesso == "Nivel 1" ? "bg-danger" : "bg-warning text-dark")">

@@ -248,7 +248,28 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
-                                        @if (!user.IsAdministrador || ViewBag.NivelAcesso == "Nivel 1")
+                                        @{
+                                            bool canManage = false;
+                                            string currentLevel = ViewBag.NivelAcesso as string;
+                                            
+                                            if (!user.IsAdministrador) 
+                                            {
+                                                canManage = true; 
+                                            }
+                                            else 
+                                            {
+                                                if (currentLevel == "Nivel 0") 
+                                                {
+                                                    canManage = true;
+                                                }
+                                                else if (currentLevel == "Nivel 1" && user.NivelAcesso == "Nivel 2") 
+                                                {
+                                                    canManage = true;
+                                                }
+                                            }
+                                        }
+
+                                        @if (canManage)
                                         {
                                             @if (user.EstaBloqueado)
                                             {

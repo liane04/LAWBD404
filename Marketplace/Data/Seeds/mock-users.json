@@ -24,9 +24,14 @@
             "accessLevel": "Nivel 1",
             "password": "Demo123!"
         },
-
-
-
+        {
+            "fullName": "Root Admin",
+            "email": "root.admin@demo.com",
+            "username": "root.admin",
+            "role": "Administrador",
+            "accessLevel": "Nivel 0",
+            "password": "Demo123!"
+        },
         {
             "fullName": "pedrinho",
             "email": "pm7703125@gmail.com",
@@ -34,9 +39,6 @@
             "role": "Vendedor",
             "password": "Demo123!"
         },
-
-
-
         {
             "fullName": "Jorge Pires",
             "email": "jorge.pires@demo.com",
@@ -177,7 +179,6 @@
             "role": "Vendedor",
             "password": "Demo123!"
         },
-
         {
             "fullName": "Letícia Faria",
             "email": "leticia.faria@demo.com",

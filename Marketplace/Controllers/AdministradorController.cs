@@ -44,6 +44,7 @@ namespace Marketplace.Controllers
             ViewBag.NivelAcesso = currentAdmin?.NivelAcesso ?? "Nivel 2"; 
             ViewBag.AdminName = currentAdmin?.Nome ?? "Administrador";
             ViewBag.AdminEmail = currentAdmin?.Email ?? "admin@marketplace404.pt";
+            ViewBag.AdminFoto = currentAdmin?.ImagemPerfil;
 
             // Calculate Dashboard Stats
             var now = DateTime.UtcNow;
@@ -85,7 +86,7 @@ namespace Marketplace.Controllers
                 VendedoresPendentes = await _db.Vendedores.CountAsync(v => v.Estado == "Pendente"),
                 DenunciasAbertas = (await _db.DenunciasAnuncio.CountAsync(d => d.Estado == "Pendente" || d.Estado == "Em Análise")) +
                                    (await _db.DenunciasUser.CountAsync(d => d.Estado == "Pendente" || d.Estado == "Em Análise")),
-                AnunciosPendentes = 0, // Not implemented yet
+                AnunciosPendentes = await _db.Anuncios.CountAsync(a => !a.AcoesAnuncio.Any()), // Ads with no actions are considered pending
                 DestaquesAtivos = 0,   // Not implemented yet
 
                 TopMarcas = topMarcas,
@@ -315,9 +316,18 @@ namespace Marketplace.Controllers
             if (tipo == "Administrador")
             {
                 var checkingAdmin = await GetCurrentAdminAsync();
-                if (checkingAdmin == null || checkingAdmin.NivelAcesso != "Nivel 1")
+                if (checkingAdmin == null) return Forbid();
+
+                if (checkingAdmin.NivelAcesso == "Nivel 2")
                 {
-                    TempData["UserWarning"] = "Apenas administradores de Nível 1 podem criar novos administradores.";
+                    TempData["UserWarning"] = "Administradores de Nível 2 não podem criar outros administradores.";
+                    return RedirectToAction(nameof(Index), new { section = "criar-utilizador" });
+                }
+
+                // Nivel 1 só pode criar Nivel 2
+                if (checkingAdmin.NivelAcesso == "Nivel 1" && nivelAcesso == "Nivel 1")
+                {
+                    TempData["UserWarning"] = "Administradores de Nível 1 só podem criar administradores de Nível 2.";
                     return RedirectToAction(nameof(Index), new { section = "criar-utilizador" });
                 }
             }
@@ -437,12 +447,22 @@ namespace Marketplace.Controllers
                 return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
-            // Não permitir bloquear administradores
+            // Verificar hierarquia para bloquear administradores
             var isAdmin = await _userManager.IsInRoleAsync(user, "Administrador");
             if (isAdmin)
             {
-                TempData["UserWarning"] = "Não é possível bloquear um administrador.";
-                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
+                var currentAdmin = await GetCurrentAdminAsync();
+                var targetAdmin = await _db.Administradores.FirstOrDefaultAsync(a => a.IdentityUserId == user.Id);
+                
+                bool canBlock = false;
+                if (currentAdmin?.NivelAcesso == "Nivel 0") canBlock = true; // Root can block anyone
+                else if (currentAdmin?.NivelAcesso == "Nivel 1" && targetAdmin?.NivelAcesso == "Nivel 2") canBlock = true; // Level 1 can block Level 2
+
+                if (!canBlock)
+                {
+                    TempData["UserWarning"] = "Não tem permissão para bloquear este administrador.";
+                    return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
+                }
             }
 
             // Definir data de fim do bloqueio (default: 100 anos se não especificado)
@@ -589,12 +609,22 @@ namespace Marketplace.Controllers
                 return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
             }
 
-            // Não permitir eliminar administradores
+            // Verificar hierarquia para eliminar administradores
             var isAdmin = await _userManager.IsInRoleAsync(user, "Administrador");
             if (isAdmin)
             {
-                TempData["UserWarning"] = "Não é possível eliminar um administrador.";
-                return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
+                var currentAdmin = await GetCurrentAdminAsync();
+                var targetAdmin = await _db.Administradores.FirstOrDefaultAsync(a => a.IdentityUserId == user.Id);
+                
+                bool canDelete = false;
+                if (currentAdmin?.NivelAcesso == "Nivel 0") canDelete = true; // Root can delete anyone
+                else if (currentAdmin?.NivelAcesso == "Nivel 1" && targetAdmin?.NivelAcesso == "Nivel 2") canDelete = true; // Level 1 can delete Level 2
+
+                if (!canDelete)
+                {
+                    TempData["UserWarning"] = "Não tem permissão para eliminar este administrador.";
+                    return RedirectToAction(nameof(Index), new { section = "gerir-utilizadores" });
+                }
             }
 
             var userName = user.FullName ?? user.UserName;
