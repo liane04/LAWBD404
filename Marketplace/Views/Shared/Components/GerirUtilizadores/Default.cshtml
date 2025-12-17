@@ -380,7 +380,7 @@
 <div class="modal fade" id="bloquearUtilizadorModal" tabindex="-1" aria-labelledby="bloquearUtilizadorModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="post" asp-controller="Administrador" asp-action="BloquearUtilizador">
+            <form method="post" asp-controller="Administrador" asp-action="BloquearUtilizador" onsubmit="return disableBlockButton(this);">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" id="blockUserId" />
                 
@@ -421,11 +421,21 @@
                 </div>
                 <div class="modal-footer border-0 bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">
+                    <button type="submit" class="btn btn-danger" id="btnConfirmBlock">
                         <i class="bi bi-lock-fill me-1"></i>Confirmar Bloqueio
                     </button>
                 </div>
             </form>
+            <script>
+                function disableBlockButton(form) {
+                    var btn = form.querySelector('#btnConfirmBlock');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>A processar...';
+                    }
+                    return true;
+                }
+            </script>
         </div>
     </div>
 </div>

@@ -1970,8 +1970,11 @@
             // Verificar se há uma secção ativa definida pelo servidor (Persistência de Secção)
             var activeSection = '@ViewBag.ActiveSection';
             if (activeSection) {
-                var link = $('.admin-sidebar a[data-target="#' + activeSection + '-content"]');
-                if (link.length > 0) {
+                // Use vanilla JS instead of jQuery for better reliability
+                var selector = '.admin-sidebar a[data-target="#' + activeSection + '-content"]';
+                var link = document.querySelector(selector);
+                
+                if (link) {
                     // Pequeno delay para garantir que o DOM está pronto e eventos anexados
                     setTimeout(function() {
                         link.click();
@@ -1979,6 +1982,28 @@
                 }
             }
         });
+
+        // Global function to disable form submit buttons
+        function disableFormButton(form) {
+            const btn = form.querySelector('button[type="submit"]');
+            if (btn) {
+                // Store original text/html
+                if (!btn.dataset.originalHtml) {
+                    btn.dataset.originalHtml = btn.innerHTML;
+                }
+                
+                // Disable and show spinner
+                btn.disabled = true;
+                btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A processar...';
+                
+                // Re-enable after 5 seconds (safety timeout in case of error/no navigation)
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = btn.dataset.originalHtml;
+                }, 5000);
+            }
+            return true; // Allow form submission
+        }
     </script>
     <style>
         /* Estilos para Timeline */

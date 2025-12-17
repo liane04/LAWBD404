@@ -156,14 +156,18 @@ namespace Marketplace.Controllers
             var admin = await GetCurrentAdminAsync();
             if (admin != null)
             {
-                var acao = new AcaoUser
+                string motivo = "Aprovar: Vendedor Aprovado";
+                if (!await IsDuplicateUserAction(id, admin.Id, motivo))
                 {
-                    UtilizadorId = id,
-                    Data = DateTime.UtcNow,
-                    AdministradorId = admin.Id,
-                    Motivo = "Aprovar: Vendedor Aprovado"
-                };
-                _db.Add(acao);
+                    var acao = new AcaoUser
+                    {
+                        UtilizadorId = id,
+                        Data = DateTime.UtcNow,
+                        AdministradorId = admin.Id,
+                        Motivo = motivo
+                    };
+                    _db.Add(acao);
+                }
             }
 
             await _db.SaveChangesAsync();
@@ -196,49 +200,7 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"Erro ao enviar email: {ex.Message}");
             }
 
-            // Registar ação
-            // admin já foi definido anteriormente
-            if (admin != null)
-            {
-                var acao = new AcaoUser
-                {
-                    UtilizadorId = id,
-                    Data = DateTime.UtcNow,
-                    AdministradorId = admin.Id,
-                    Motivo = "Rejeitar: Vendedor Rejeitado"
-                };
-                _db.Add(acao);
-            }
 
-            await _db.SaveChangesAsync();
-
-            TempData["Warning"] = $"Vendedor '{vendedor.Nome}' foi rejeitado.";
-
-            // Notificar vendedor por email
-            try
-            {
-                if (_emailSender != null && !string.IsNullOrEmpty(vendedor.Email))
-                {
-                    await _emailSender.SendAsync(
-                        vendedor.Email,
-                        "Pedido de Vendedor - 404 Ride",
-                        $@"<html>
-                        <body style='font-family: Arial, sans-serif;'>
-                            <h2 style='color: #dc3545;'>Pedido não aprovado</h2>
-                            <p>Olá <strong>{vendedor.Nome}</strong>,</p>
-                            <p>Lamentamos informar que o seu pedido para se tornar vendedor na plataforma <strong>404 Ride</strong> não foi aprovado neste momento.</p>
-                            <p>Se necessitar de esclarecimentos adicionais, por favor contacte o nosso suporte.</p>
-                            <hr>
-                            <p style='color: #666; font-size: 12px;'>Esta é uma mensagem automática. Por favor não responda a este email.</p>
-                        </body>
-                        </html>");
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log error but don't fail the rejection
-                Console.WriteLine($"Erro ao enviar email: {ex.Message}");
-            }
 
             return RedirectToAction(nameof(Index), new { section = "validar-vendedores" });
         }
@@ -257,14 +219,18 @@ namespace Marketplace.Controllers
             var admin = await GetCurrentAdminAsync();
             if (admin != null)
             {
-                var acao = new AcaoUser
+                string motivo = "Rejeitar: Vendedor Rejeitado";
+                if (!await IsDuplicateUserAction(id, admin.Id, motivo))
                 {
-                    UtilizadorId = id,
-                    Data = DateTime.UtcNow,
-                    AdministradorId = admin.Id,
-                    Motivo = "Rejeitar: Vendedor Rejeitado"
-                };
-                _db.Add(acao);
+                    var acao = new AcaoUser
+                    {
+                        UtilizadorId = id,
+                        Data = DateTime.UtcNow,
+                        AdministradorId = admin.Id,
+                        Motivo = motivo
+                    };
+                    _db.Add(acao);
+                }
             }
 
             await _db.SaveChangesAsync();
@@ -484,15 +450,19 @@ namespace Marketplace.Controllers
                 var admin = await GetCurrentAdminAsync();
                 if (admin != null)
                 {
-                    var acao = new AcaoUser
+                    string motivoCompleto = "Bloquear: " + motivo;
+                    if (!await IsDuplicateUserAction(utilizador.Id, admin.Id, motivoCompleto))
                     {
-                        UtilizadorId = utilizador.Id,
-                        Data = DateTime.UtcNow,
-                        AdministradorId = admin.Id,
-                        Motivo = "Bloquear: " + motivo
-                    };
-                    _db.Add(acao);
-                    await _db.SaveChangesAsync();
+                        var acao = new AcaoUser
+                        {
+                            UtilizadorId = utilizador.Id,
+                            Data = DateTime.UtcNow,
+                            AdministradorId = admin.Id,
+                            Motivo = motivoCompleto
+                        };
+                        _db.Add(acao);
+                        await _db.SaveChangesAsync();
+                    }
                 }
             }
 
@@ -555,15 +525,19 @@ namespace Marketplace.Controllers
                 var admin = await GetCurrentAdminAsync();
                 if (admin != null)
                 {
-                    var acao = new AcaoUser
+                    string motivo = "Desbloquear: Desbloqueio manual";
+                    if (!await IsDuplicateUserAction(utilizador.Id, admin.Id, motivo))
                     {
-                        UtilizadorId = utilizador.Id,
-                        Data = DateTime.UtcNow,
-                        AdministradorId = admin.Id,
-                        Motivo = "Desbloquear: Desbloqueio manual"
-                    };
-                    _db.Add(acao);
-                    await _db.SaveChangesAsync();
+                        var acao = new AcaoUser
+                        {
+                            UtilizadorId = utilizador.Id,
+                            Data = DateTime.UtcNow,
+                            AdministradorId = admin.Id,
+                            Motivo = motivo
+                        };
+                        _db.Add(acao);
+                        await _db.SaveChangesAsync();
+                    }
                 }
             }
 
@@ -698,7 +672,7 @@ namespace Marketplace.Controllers
             await _db.SaveChangesAsync();
 
             TempData["AnuncioSuccess"] = $"Anúncio '{tituloAnuncio}' foi eliminado com sucesso.";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { section = "moderar-anuncios" });
         }
 
         // POST: Administrador/PausarAnuncio/5
@@ -734,20 +708,47 @@ namespace Marketplace.Controllers
             string message = isPaused ? "retomado" : "pausado";
 
             // Criar nova ação
-            var acao = new AcaoAnuncio
+            string motivoAcao = isPaused ? "Anúncio Retomado" : "Anúncio Pausado";
+            
+            if (!await IsDuplicateAnuncioAction(id, admin.Id, motivoAcao))
             {
-                AnuncioId = id,
-                Data = DateTime.UtcNow,
-                // TipoAcao é o discriminador (AcaoAnuncio), não devemos definir manualmente
-                AdministradorId = admin.Id,
-                Motivo = isPaused ? "Anúncio Retomado" : "Anúncio Pausado"
-            };
+                var acao = new AcaoAnuncio
+                {
+                    AnuncioId = id,
+                    Data = DateTime.UtcNow,
+                    AdministradorId = admin.Id,
+                    Motivo = motivoAcao
+                };
 
-            _db.Add(acao);
-            await _db.SaveChangesAsync();
+                _db.Add(acao);
+                await _db.SaveChangesAsync();
+            }
 
             TempData["AnuncioSuccess"] = $"Anúncio '{anuncio.Titulo}' foi {message} com sucesso.";
             return RedirectToAction(nameof(Index), new { section = "moderar-anuncios" });
+        }
+        // ====================================================================================
+        // HELPERS PARA DEDUPLICAÇÃO DE AÇÕES
+        // ====================================================================================
+
+        private async Task<bool> IsDuplicateUserAction(int userId, int adminId, string motivo)
+        {
+            var thirtySecondsAgo = DateTime.UtcNow.AddSeconds(-30);
+            return await _db.AcoesUser.AnyAsync(a =>
+                a.UtilizadorId == userId &&
+                a.AdministradorId == adminId &&
+                a.Motivo == motivo &&
+                a.Data >= thirtySecondsAgo);
+        }
+
+        private async Task<bool> IsDuplicateAnuncioAction(int anuncioId, int adminId, string motivo)
+        {
+            var thirtySecondsAgo = DateTime.UtcNow.AddSeconds(-30);
+            return await _db.AcoesAnuncio.AnyAsync(a =>
+                a.AnuncioId == anuncioId &&
+                a.AdministradorId == adminId &&
+                a.Motivo == motivo &&
+                a.Data >= thirtySecondsAgo);
         }
     }
 }
