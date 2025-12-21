@@ -62,6 +62,8 @@ if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(goo
 
 // Email sender (SMTP)
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+// Background service para notificações de filtros guardados
+builder.Services.AddHostedService<SavedFiltersNotificationService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

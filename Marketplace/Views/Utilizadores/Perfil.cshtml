@@ -91,6 +91,11 @@
                                 <span>Minhas Visitas</span>
                                 <span class="badge bg-info rounded-pill ms-auto">1</span>
                             </a>
+                            <a href="#pesquisas-guardadas" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-bookmark-heart"></i>
+                                <span>Pesquisas Guardadas</span>
+                                <i class="bi bi-chevron-right ms-auto"></i>
+                            </a>
                         }
                         <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab">
                             <i class="bi bi-gear-fill"></i>
@@ -1491,6 +1496,49 @@
                 }
 
                 <!-- Aba: Definições -->
+
+                <!-- Aba: Pesquisas Guardadas (Comprador) -->
+                <div class="tab-pane fade" id="pesquisas-guardadas">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0"><i class="bi bi-bookmark-heart me-2"></i>Pesquisas Guardadas</h4>
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Anuncios" asp-action="Index">Ir para Anúncios</a>
+                    </div>
+                    @if (User.IsInRole("Comprador"))
+                    {
+                        var saved = ViewBag.SavedFilters as List<Marketplace.Models.FiltrosFav> ?? new List<Marketplace.Models.FiltrosFav>();
+                        if (saved.Count == 0)
+                        {
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>Ainda não tem pesquisas guardadas. Vá a <a asp-controller="Anuncios" asp-action="Index">Anúncios</a> e clique em "Guardar Pesquisa".
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="list-group">
+                                @foreach (var f in saved)
+                                {
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-semibold">@f.Nome</div>
+                                            <div class="text-muted small">Criado: @f.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <form asp-controller="Anuncios" asp-action="ToggleFiltro" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@f.Id" />
+                                                <input type="hidden" name="ativo" value="@(!f.Ativo)" />
+                                                <button type="submit" class="btn btn-sm @(f.Ativo ? "btn-outline-secondary" : "btn-outline-primary")">@(f.Ativo ? "Desativar" : "Ativar")</button>
+                                            </form>
+                                            <form asp-controller="Anuncios" asp-action="DeleteFiltro" method="post" class="d-inline" onsubmit="return confirm('Remover esta pesquisa?');">
+                                                <input type="hidden" name="id" value="@f.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Apagar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
                 <div class="tab-pane fade" id="definicoes">
                     <!-- Cabeçalho da Página -->
                     <div class="mb-4">

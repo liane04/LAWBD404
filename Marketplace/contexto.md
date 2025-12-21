@@ -1,7 +1,7 @@
 # CONTEXTO DO PROJETO - DriveDeal (404 Car Marketplace)
 
 > **Ficheiro de contexto para sessões futuras com Claude Code**
-> **Última atualização:** 2025-11-19 (Atualização Fase 3 - Progresso Recente)
+> **Última atualização:** 2025-12-03 (Atualização Fase 3 - Filtros guardados + Notificações)
 > **Fase atual:** Fase 3 (em desenvolvimento ativo - Sprint final)
 > **Prazo de entrega:** 5 de janeiro de 2026 (47 dias restantes)
 
@@ -72,6 +72,18 @@ Marketplace de veículos usados inspirado em plataformas como StandVirtual e Aut
 
 ## 3. ARQUITETURA E ESTRUTURA
 
+### 3.3 Novidades Fase 3 (implementado nesta iteração)
+- Filtros guardados (Pesquisa): comprador pode guardar a pesquisa atual a partir de `Anúncios/Index`.
+- Alertas/Notificações automáticas: serviço em background verifica periodicamente novos anúncios que correspondam aos filtros e cria notificações.
+- Endpoints de gestão: guardar, ativar/desativar e apagar filtros (mínimo viável; UI de gestão completa a melhorar).
+
+Componentes alterados/criados:
+- `Models/FiltrosFav.cs`: adicionados campos de critérios (marca, modelo, tipo, combustível, preço, ano, km, caixa, localização), controlo de alertas (`Ativo`, `LastCheckedAt`, `MaxAnuncioIdNotificado`) e `Nome`.
+- `Services/SavedFiltersNotificationService.cs`: BackgroundService que gera `Notificacoes` para filtros ativos.
+- `Program.cs`: registo do hosted service (`AddHostedService<SavedFiltersNotificationService>()`).
+- `Controllers/AnunciosController.cs`: novos endpoints `GuardarFiltro`, `ToggleFiltro`, `DeleteFiltro` e exposição de filtros guardados via `ViewBag.SavedFilters`.
+- `Views/Anuncios/Index.cshtml`: botão “Guardar Pesquisa” agora efetua POST para guardar o filtro atual.
+ - `Views/Utilizadores/Perfil.cshtml`: nova aba "Pesquisas Guardadas" (apenas compradores) para ativar/desativar e apagar pesquisas.
 ### 3.1 Padrão Arquitetural
 - **Padrão MVC** (Model-View-Controller)
 - **Code-First** (EF Core)
