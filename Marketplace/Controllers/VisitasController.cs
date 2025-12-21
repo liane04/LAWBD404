@@ -134,18 +134,64 @@ namespace Marketplace.Controllers
             if (comprador == null)
                 return Forbid();
 
+            // Buscar disponibilidades do vendedor
+            var disponibilidades = await _context.DisponibilidadesVendedor
+                .Where(d => d.VendedorId == anuncio.VendedorId && d.Ativo)
+                .OrderBy(d => d.DiaSemana)
+                .ThenBy(d => d.HoraInicio)
+                .ToListAsync();
+
+            // Gerar slots de horários disponíveis para os próximos 30 dias
+            var slotsDisponiveis = new List<DateTime>();
+            var dataInicio = DateTime.Now.AddHours(1);
+            var dataFim = DateTime.Now.AddDays(30);
+
+            for (var data = dataInicio.Date; data <= dataFim; data = data.AddDays(1))
+            {
+                var diaSemana = (int)data.DayOfWeek;
+                var disponibilidadesDoDia = disponibilidades.Where(d => d.DiaSemana == diaSemana).ToList();
+
+                foreach (var disp in disponibilidadesDoDia)
+                {
+                    var horaAtual = disp.HoraInicio;
+                    while (horaAtual < disp.HoraFim)
+                    {
+                        var slotDateTime = data.Add(horaAtual);
+
+                        // Apenas adicionar slots futuros
+                        if (slotDateTime > DateTime.Now)
+                        {
+                            // Verificar se já existe visita agendada neste horário
+                            var temConflito = await _context.Visitas
+                                .AnyAsync(v => v.VendedorId == anuncio.VendedorId
+                                            && v.Data == slotDateTime
+                                            && v.Estado != "Cancelada");
+
+                            if (!temConflito)
+                            {
+                                slotsDisponiveis.Add(slotDateTime);
+                            }
+                        }
+
+                        horaAtual = horaAtual.Add(TimeSpan.FromMinutes(disp.IntervaloMinutos));
+                    }
+                }
+            }
+
             var visita = new Visita
             {
                 AnuncioId = anuncio.Id,
                 Anuncio = anuncio,
                 CompradorId = comprador.Id,
                 VendedorId = anuncio.VendedorId,
-                Data = DateTime.Now.AddDays(1), // Data padrão: amanhã
+                Data = slotsDisponiveis.FirstOrDefault() != default ? slotsDisponiveis.First() : DateTime.Now.AddDays(1),
                 Estado = "Pendente"
             };
 
             ViewBag.Anuncio = anuncio;
             ViewBag.MinDate = DateTime.Now.AddHours(1).ToString("yyyy-MM-ddTHH:mm");
+            ViewBag.SlotsDisponiveis = slotsDisponiveis;
+            ViewBag.TemDisponibilidades = disponibilidades.Any();
 
             return View(visita);
         }
@@ -222,7 +268,8 @@ namespace Marketplace.Controllers
                     Console.WriteLine($"Erro ao enviar email: {ex.Message}");
                 }
 
-                TempData["SuccessMessage"] = "Visita agendada com sucesso! O vendedor será notificado.";
+                TempData["SuccessMessage"] = $"Visita agendada com sucesso para {visita.Data:dd/MM/yyyy} às {visita.Data:HH:mm}! O vendedor {anuncio.Vendedor.Nome} será notificado por email.";
+                TempData["VisitaId"] = visita.Id;
                 return RedirectToAction(nameof(Index));
             }
 

@@ -70,6 +70,11 @@
                                 <span>Visitas Agendadas</span>
                                 <span class="badge bg-info rounded-pill ms-auto">@((ViewBag.VisitasAgendadasCount ?? 0))</span>
                             </a>
+                            <a href="#disponibilidade" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-clock-history"></i>
+                                <span>Disponibilidade</span>
+                                <span class="badge bg-primary rounded-pill ms-auto">@((ViewBag.DisponibilidadesCount ?? 0))</span>
+                            </a>
                         }
                         @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
                         {
@@ -757,6 +762,151 @@
                             <a href="#meus-anuncios" class="btn btn-primary perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-grid-3x3-gap me-2"></i>Ver Meus Anúncios
                             </a>
+                        </div>
+                    }
+                </div>
+
+                <!-- Aba: Disponibilidade (para Vendedores) -->
+                <div class="tab-pane fade" id="disponibilidade">
+                    <!-- Cabeçalho da Página -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="mb-1 fw-bold">
+                                <i class="bi bi-clock-history text-primary me-2"></i>Horários de Disponibilidade
+                            </h3>
+                            <p class="text-muted mb-0">Configure os dias e horários em que está disponível para receber visitas</p>
+                        </div>
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdicionarDisponibilidade">
+                            <i class="bi bi-plus-circle me-2"></i>Adicionar Horário
+                        </a>
+                    </div>
+
+                    <!-- Alert Informativo -->
+                    <div class="alert alert-info border-info mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <strong>Como funciona?</strong> Os compradores só poderão agendar visitas nos dias e horários que você definir aqui.
+                        Certifique-se de manter sua disponibilidade atualizada.
+                    </div>
+
+                    @{
+                        var disponibilidades = ViewBag.Disponibilidades as List<Marketplace.Models.DisponibilidadeVendedor> ?? new List<Marketplace.Models.DisponibilidadeVendedor>();
+                    }
+
+                    @if (disponibilidades.Any())
+                    {
+                        <!-- Tabela de Disponibilidades -->
+                        <div class="card shadow-sm">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th class="border-0 ps-4">Dia da Semana</th>
+                                                <th class="border-0">Horário</th>
+                                                <th class="border-0">Intervalo</th>
+                                                <th class="border-0">Estado</th>
+                                                <th class="border-0 text-end pe-4">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in disponibilidades.OrderBy(d => d.DiaSemana).ThenBy(d => d.HoraInicio))
+                                            {
+                                                <tr>
+                                                    <td class="ps-4 align-middle">
+                                                        <span class="fw-semibold">@item.NomeDia</span>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <i class="bi bi-clock text-primary me-1"></i>
+                                                        @item.HoraInicio.ToString(@"hh\:mm") - @item.HoraFim.ToString(@"hh\:mm")
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        @item.IntervaloMinutos min
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        @if (item.Ativo)
+                                                        {
+                                                            <span class="badge bg-success">
+                                                                <i class="bi bi-check-circle me-1"></i>Ativo
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-secondary">
+                                                                <i class="bi bi-x-circle me-1"></i>Inativo
+                                                            </span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-end pe-4 align-middle">
+                                                        <button class="btn btn-sm btn-outline-primary me-1"
+                                                                onclick="editarDisponibilidade(@item.Id, '@item.NomeDia', '@item.DiaSemana', '@item.HoraInicio.ToString(@"hh\:mm")', '@item.HoraFim.ToString(@"hh\:mm")', @item.IntervaloMinutos, @(item.Ativo ? "true" : "false"), @item.VendedorId, '@item.DataCriacao.ToString("o")')">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <form asp-controller="Disponibilidade" asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline"
+                                                              onsubmit="return confirm('Tem certeza que deseja remover esta disponibilidade?');">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dicas -->
+                        <div class="card shadow-sm border-0 bg-light mt-4">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-lightbulb text-warning me-2"></i>Dicas
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="bi bi-check-circle-fill text-success me-2 flex-shrink-0"></i>
+                                            <small>Configure horários regulares para facilitar o agendamento</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="bi bi-check-circle-fill text-success me-2 flex-shrink-0"></i>
+                                            <small>Deixe intervalos suficientes entre visitas (recomendado: 60 min)</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="bi bi-check-circle-fill text-success me-2 flex-shrink-0"></i>
+                                            <small>Desative temporariamente horários se não estiver disponível</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="bi bi-check-circle-fill text-success me-2 flex-shrink-0"></i>
+                                            <small>Mantenha sua disponibilidade atualizada para evitar conflitos</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Estado Vazio -->
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="bi bi-calendar-x text-muted" style="font-size: 5rem;"></i>
+                            </div>
+                            <h3 class="h4 fw-bold mb-3">Nenhuma Disponibilidade Configurada</h3>
+                            <p class="text-muted mb-4">
+                                Configure seus horários de disponibilidade para que os compradores possam agendar visitas
+                                apenas nos dias e horários que lhe são convenientes.
+                            </p>
+                            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalAdicionarDisponibilidade">
+                                <i class="bi bi-plus-circle me-2"></i>Adicionar Primeiro Horário
+                            </button>
                         </div>
                     }
                 </div>
@@ -1924,6 +2074,147 @@
     </div>
 </div>
 
+<!-- Modal: Adicionar Disponibilidade -->
+<div class="modal fade" id="modalAdicionarDisponibilidade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formAdicionarDisponibilidade" asp-controller="Disponibilidade" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-calendar-plus me-2"></i>Adicionar Disponibilidade
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-calendar-day me-1"></i>Dia da Semana <span class="text-danger">*</span>
+                        </label>
+                        <select name="DiaSemana" class="form-select" required>
+                            <option value="">Selecione...</option>
+                            <option value="0">Domingo</option>
+                            <option value="1">Segunda-feira</option>
+                            <option value="2">Terça-feira</option>
+                            <option value="3">Quarta-feira</option>
+                            <option value="4">Quinta-feira</option>
+                            <option value="5">Sexta-feira</option>
+                            <option value="6">Sábado</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-clock me-1"></i>Hora de Início <span class="text-danger">*</span>
+                        </label>
+                        <input type="time" name="HoraInicio" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-clock-fill me-1"></i>Hora de Fim <span class="text-danger">*</span>
+                        </label>
+                        <input type="time" name="HoraFim" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-hourglass-split me-1"></i>Intervalo entre Visitas <span class="text-danger">*</span>
+                        </label>
+                        <select name="IntervaloMinutos" class="form-select" required>
+                            <option value="">Selecione...</option>
+                            <option value="15">15 minutos</option>
+                            <option value="30">30 minutos</option>
+                            <option value="60" selected>60 minutos (recomendado)</option>
+                            <option value="90">90 minutos</option>
+                            <option value="120">120 minutos</option>
+                        </select>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input type="checkbox" name="Ativo" class="form-check-input" checked />
+                        <label class="form-check-label">Ativo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Adicionar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Editar Disponibilidade -->
+<div class="modal fade" id="modalEditarDisponibilidade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formEditarDisponibilidade" asp-controller="Disponibilidade" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" id="editId" />
+                <input type="hidden" name="VendedorId" id="editVendedorId" />
+                <input type="hidden" name="DataCriacao" id="editDataCriacao" />
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil-square me-2"></i>Editar Disponibilidade
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-calendar-day me-1"></i>Dia da Semana <span class="text-danger">*</span>
+                        </label>
+                        <select name="DiaSemana" id="editDiaSemana" class="form-select" required>
+                            <option value="">Selecione...</option>
+                            <option value="0">Domingo</option>
+                            <option value="1">Segunda-feira</option>
+                            <option value="2">Terça-feira</option>
+                            <option value="3">Quarta-feira</option>
+                            <option value="4">Quinta-feira</option>
+                            <option value="5">Sexta-feira</option>
+                            <option value="6">Sábado</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-clock me-1"></i>Hora de Início <span class="text-danger">*</span>
+                        </label>
+                        <input type="time" name="HoraInicio" id="editHoraInicio" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-clock-fill me-1"></i>Hora de Fim <span class="text-danger">*</span>
+                        </label>
+                        <input type="time" name="HoraFim" id="editHoraFim" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-hourglass-split me-1"></i>Intervalo entre Visitas <span class="text-danger">*</span>
+                        </label>
+                        <select name="IntervaloMinutos" id="editIntervaloMinutos" class="form-select" required>
+                            <option value="">Selecione...</option>
+                            <option value="15">15 minutos</option>
+                            <option value="30">30 minutos</option>
+                            <option value="60">60 minutos (recomendado)</option>
+                            <option value="90">90 minutos</option>
+                            <option value="120">120 minutos</option>
+                        </select>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input type="checkbox" name="Ativo" id="editAtivo" class="form-check-input" />
+                        <label class="form-check-label">Ativo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Atualizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         // Sistema de Tabs do Perfil
@@ -2574,5 +2865,23 @@
             };
         }
     });
+</script>
+
+<script>
+    // Função para editar disponibilidade
+    function editarDisponibilidade(id, nomeDia, diaSemana, horaInicio, horaFim, intervalo, ativo, vendedorId, dataCriacao) {
+        document.getElementById('editId').value = id;
+        document.getElementById('editDiaSemana').value = diaSemana;
+        document.getElementById('editHoraInicio').value = horaInicio;
+        document.getElementById('editHoraFim').value = horaFim;
+        document.getElementById('editIntervaloMinutos').value = intervalo;
+        document.getElementById('editAtivo').checked = ativo;
+        document.getElementById('editVendedorId').value = vendedorId;
+        document.getElementById('editDataCriacao').value = dataCriacao;
+
+        // Mostrar modal
+        var modal = new bootstrap.Modal(document.getElementById('modalEditarDisponibilidade'));
+        modal.show();
+    }
 </script>
 }

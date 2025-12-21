@@ -126,13 +126,63 @@
                                 <i class="bi bi-calendar-event me-1"></i>Data e Hora da Visita
                                 <span class="text-danger">*</span>
                             </label>
-                            <input asp-for="Data" type="datetime-local" class="form-control form-control-lg"
-                                   min="@minDate" required />
-                            <span asp-validation-for="Data" class="text-danger small"></span>
-                            <div class="form-text">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Escolha uma data com pelo menos 1 hora de antecedência. O vendedor confirmará a disponibilidade.
-                            </div>
+
+                            @{
+                                var temDisponibilidades = ViewBag.TemDisponibilidades as bool? ?? false;
+                                var slotsDisponiveis = ViewBag.SlotsDisponiveis as List<DateTime> ?? new List<DateTime>();
+                            }
+
+                            @if (temDisponibilidades && slotsDisponiveis.Any())
+                            {
+                                <select asp-for="Data" class="form-select form-select-lg" required>
+                                    <option value="">Selecione uma data e hora...</option>
+                                    @foreach (var slot in slotsDisponiveis.Take(50))
+                                    {
+                                        var dataFormatada = slot.ToString("dd/MM/yyyy");
+                                        var horaFormatada = slot.ToString("HH:mm");
+                                        var diaSemana = slot.ToString("dddd", new System.Globalization.CultureInfo("pt-PT"));
+                                        <option value="@slot.ToString("yyyy-MM-ddTHH:mm")">
+                                            @diaSemana, @dataFormatada às @horaFormatada
+                                        </option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Data" class="text-danger small"></span>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    @if (slotsDisponiveis.Count > 50)
+                                    {
+                                        <text>Mostrando os próximos 50 horários disponíveis de @slotsDisponiveis.Count no total.</text>
+                                    }
+                                    else
+                                    {
+                                        <text>@slotsDisponiveis.Count horário(s) disponível(is) nos próximos 30 dias.</text>
+                                    }
+                                </div>
+                            }
+                            else if (!temDisponibilidades)
+                            {
+                                <div class="alert alert-warning mb-3">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    O vendedor ainda não configurou seus horários de disponibilidade. Por favor, escolha uma data e hora e aguarde a confirmação do vendedor.
+                                </div>
+                                <input asp-for="Data" type="datetime-local" class="form-control form-control-lg"
+                                       min="@minDate" required />
+                                <span asp-validation-for="Data" class="text-danger small"></span>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Escolha uma data com pelo menos 1 hora de antecedência. O vendedor confirmará a disponibilidade.
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mb-3">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                    Não há horários disponíveis nos próximos 30 dias. Por favor, contacte o vendedor diretamente.
+                                </div>
+                                <input asp-for="Data" type="datetime-local" class="form-control form-control-lg"
+                                       min="@minDate" required />
+                                <span asp-validation-for="Data" class="text-danger small"></span>
+                            }
                         </div>
 
                         <!-- Observações -->

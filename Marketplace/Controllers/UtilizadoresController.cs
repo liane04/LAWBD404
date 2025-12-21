@@ -97,6 +97,15 @@ namespace Marketplace.Controllers
                     ViewBag.MinhasVisitasVendedor = visitasVendedor;
                     ViewBag.VisitasAgendadasCount = visitasVendedor.Count;
 
+                    // Carregar disponibilidades do vendedor
+                    var disponibilidades = await _db.DisponibilidadesVendedor
+                        .Where(d => d.VendedorId == vendedor.Id)
+                        .OrderBy(d => d.DiaSemana)
+                        .ThenBy(d => d.HoraInicio)
+                        .ToListAsync();
+                    ViewBag.Disponibilidades = disponibilidades;
+                    ViewBag.DisponibilidadesCount = disponibilidades.Count;
+
                     ViewBag.Nome = vendedor.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(vendedor.ImagemPerfil) ? null : vendedor.ImagemPerfil;
                     ViewBag.VendedorEstado = vendedor.Estado;

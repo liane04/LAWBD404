@@ -4,6 +4,7 @@ using Marketplace.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marketplace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251221213732_UpdateFiltrosFavoritosTable")]
+    partial class UpdateFiltrosFavoritosTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -433,42 +436,6 @@ namespace Marketplace.Migrations
                     b.HasDiscriminator<string>("TipoDenuncia").HasValue("Denuncia");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Marketplace.Models.DisponibilidadeVendedor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DiaSemana")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("HoraFim")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan>("HoraInicio")
-                        .HasColumnType("time");
-
-                    b.Property<int>("IntervaloMinutos")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VendedorId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VendedorId");
-
-                    b.ToTable("DisponibilidadesVendedor");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Extra", b =>
@@ -1395,17 +1362,6 @@ namespace Marketplace.Migrations
                     b.Navigation("Administrador");
 
                     b.Navigation("Comprador");
-                });
-
-            modelBuilder.Entity("Marketplace.Models.DisponibilidadeVendedor", b =>
-                {
-                    b.HasOne("Marketplace.Models.Vendedor", "Vendedor")
-                        .WithMany()
-                        .HasForeignKey("VendedorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Vendedor");
                 });
 
             modelBuilder.Entity("Marketplace.Models.FiltrosFav", b =>
