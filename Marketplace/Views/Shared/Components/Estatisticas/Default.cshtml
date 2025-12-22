@@ -1,0 +1,136 @@
+@model Marketplace.Components.EstatisticasVM
+
+<div class="row g-4 mb-4">
+    <!-- Vendas Chart -->
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title fw-bold mb-0">
+                    <i class="bi bi-graph-up-arrow text-primary me-2"></i>Evolução de Vendas
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="salesChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categorias Chart -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title fw-bold mb-0">
+                    <i class="bi bi-pie-chart-fill text-info me-2"></i>Top Categorias
+                </h5>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <canvas id="categoriesChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Resumo Cards (Optional extra touch) -->
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm bg-primary text-white">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-2 text-white-50">Total de Vendas (Últimos 6 Meses)</h6>
+                        <h2 class="fw-bold mb-0">@Model.SalesValueData.Sum().ToString("C")</h2>
+                    </div>
+                     <div>
+                        <h6 class="mb-2 text-white-50">Total Transações</h6>
+                        <h2 class="fw-bold mb-0">@Model.SalesCountData.Sum()</h2>
+                    </div>
+                    <i class="bi bi-wallet2 fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Sales Chart
+        const ctxSales = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctxSales, {
+            type: 'line',
+            data: {
+                labels: @Json.Serialize(Model.Labels),
+                datasets: [
+                    {
+                        label: 'Volume de Vendas (€)',
+                        data: @Json.Serialize(Model.SalesValueData),
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Nº de Vendas',
+                        data: @Json.Serialize(Model.SalesCountData),
+                        borderColor: '#198754',
+                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        beginAtZero: true
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                         beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Categories Chart
+        const ctxCategories = document.getElementById('categoriesChart').getContext('2d');
+        new Chart(ctxCategories, {
+            type: 'doughnut',
+            data: {
+                labels: @Json.Serialize(Model.CategoryLabels),
+                datasets: [{
+                    data: @Json.Serialize(Model.CategoryData),
+                    backgroundColor: [
+                        '#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                 responsive: true,
+                 plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    });
+</script>

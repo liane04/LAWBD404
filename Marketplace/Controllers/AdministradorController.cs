@@ -86,7 +86,13 @@ namespace Marketplace.Controllers
                 VendedoresPendentes = await _db.Vendedores.CountAsync(v => v.Estado == "Pendente"),
                 DenunciasAbertas = (await _db.DenunciasAnuncio.CountAsync(d => d.Estado == "Pendente" || d.Estado == "Em Análise")) +
                                    (await _db.DenunciasUser.CountAsync(d => d.Estado == "Pendente" || d.Estado == "Em Análise")),
-                AnunciosPendentes = await _db.Anuncios.CountAsync(a => !a.AcoesAnuncio.Any()), // Ads with no actions are considered pending
+                AnunciosSuspensos = (await _db.Anuncios
+                                    .Select(a => new { 
+                                        a.Id, 
+                                        LastAction = a.AcoesAnuncio.OrderByDescending(ac => ac.Data).Select(ac => ac.Motivo).FirstOrDefault() 
+                                    })
+                                    .ToListAsync())
+                                    .Count(x => x.LastAction == "Anúncio Pausado"),
                 DestaquesAtivos = 0,   // Not implemented yet
 
                 TopMarcas = topMarcas,
@@ -108,7 +114,7 @@ namespace Marketplace.Controllers
             public decimal VolumeVendasMes { get; set; }
             public int VendedoresPendentes { get; set; }
             public int DenunciasAbertas { get; set; }
-            public int AnunciosPendentes { get; set; }
+            public int AnunciosSuspensos { get; set; }
             public int DestaquesAtivos { get; set; }
 
             public List<TopMarcaVM> TopMarcas { get; set; } = new();
@@ -401,6 +407,110 @@ namespace Marketplace.Controllers
             return RedirectToAction(nameof(Index), new { section = "criar-utilizador" });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateAdminLevel(int id, string nivel)
+        {
+            var currentUser = await GetCurrentAdminAsync();
+            if (currentUser == null || currentUser.NivelAcesso != "Nivel 0")
+            {
+                return Forbid();
+            }
+
+            var adminToUpdate = await _db.Administradores.FindAsync(id);
+            if (adminToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            // Prevent changing own level to lock oneself out (or allow it if intended, but let's warn)
+            if (adminToUpdate.Id == currentUser.Id && nivel != "Nivel 0")
+            {
+                TempData["UserWarning"] = "Não pode alterar o seu próprio nível de acesso para um nível inferior.";
+                return RedirectToAction(nameof(Index), new { section = "gerir-admins" });
+            }
+
+            var oldLevel = adminToUpdate.NivelAcesso;
+            adminToUpdate.NivelAcesso = nivel;
+            
+            // Registar ação no histórico
+            var acao = new AcaoUser
+            {
+                UtilizadorId = adminToUpdate.Id,
+                Data = DateTime.UtcNow,
+                AdministradorId = currentUser.Id,
+                Motivo = $"Alteração de Nível: {oldLevel} -> {nivel}",
+                TipoAcao = "AcaoUser" // Explicitly setting discriminator if needed, though EF handles it usually. Keeping consistent with previous fixes.
+            };
+            _db.AcoesUser.Add(acao);
+            
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Nível de acesso atualizado com sucesso.";
+            return RedirectToAction(nameof(Index), new { section = "gerir-admins" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoverPermissoesAdmin(int id)
+        {
+            var currentUser = await GetCurrentAdminAsync();
+            if (currentUser == null || currentUser.NivelAcesso != "Nivel 0")
+            {
+                return Forbid();
+            }
+
+            // Using NoTracking or just finding entity.
+            // Note: If we change discriminator via SQL, EF Core context tracking might get confused if we reused 'adminToUpdate'.
+            // But here we just need ID and IdentityUserId.
+            var adminToUpdate = await _db.Administradores.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+            
+            if (adminToUpdate == null) return NotFound();
+
+            if (adminToUpdate.Id == currentUser.Id)
+            {
+                TempData["ErrorMessage"] = "Não pode remover as suas próprias permissões.";
+                return RedirectToAction(nameof(Index), new { section = "gerir-admins" });
+            }
+
+            // 1. Update Identity Roles
+            var identityUser = await _userManager.FindByIdAsync(adminToUpdate.IdentityUserId.ToString());
+            if (identityUser != null)
+            {
+                if (await _userManager.IsInRoleAsync(identityUser, "Administrador"))
+                {
+                    await _userManager.RemoveFromRoleAsync(identityUser, "Administrador");
+                }
+                if (!await _userManager.IsInRoleAsync(identityUser, "Comprador"))
+                {
+                    await _userManager.AddToRoleAsync(identityUser, "Comprador");
+                }
+            }
+
+            // 2. Update Domain Entity (Raw SQL to change Discriminator)
+            // Assumes table name is "Utilizador" (verified in snapshot).
+            // Also clearing NivelAcesso to NULL as Compradores don't use it.
+            await _db.Database.ExecuteSqlRawAsync(
+                "UPDATE Utilizador SET Discriminator = 'Comprador', NivelAcesso = NULL WHERE Id = {0}", 
+                id
+            );
+
+            // 3. Log History
+            var acao = new AcaoUser
+            {
+                UtilizadorId = id, // ID remains valid
+                Data = DateTime.UtcNow,
+                AdministradorId = currentUser.Id,
+                Motivo = "Despromoção: Permissões de administrador removidas",
+                TipoAcao = "AcaoUser"
+            };
+            _db.AcoesUser.Add(acao);
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Administrador removido com sucesso. O utilizador é agora um Comprador.";
+            return RedirectToAction(nameof(Index), new { section = "gerir-admins" });
+        }
+
         // POST: Administrador/BloquearUtilizador/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -437,8 +547,10 @@ namespace Marketplace.Controllers
                 : DateTimeOffset.UtcNow.AddYears(100);
 
             // Bloquear
-            await _userManager.SetLockoutEndDateAsync(user, lockoutEnd);
-            await _userManager.SetLockoutEnabledAsync(user, true);
+            // Bloquear
+            user.LockoutEnd = lockoutEnd;
+            user.LockoutEnabled = true; // Forçar ativação do lockout
+            await _userManager.UpdateAsync(user);
 
             // Registar ação
             // Precisamos encontrar o ID do Utilizador (tabela Utilizador) correspondente ao IdentityUser
@@ -514,7 +626,9 @@ namespace Marketplace.Controllers
             }
 
             // Desbloquear
-            await _userManager.SetLockoutEndDateAsync(user, null);
+            // Desbloquear
+            user.LockoutEnd = null;
+            await _userManager.UpdateAsync(user);
 
             // Registar ação
             var utilizador = await _db.Compradores.FirstOrDefaultAsync(u => u.IdentityUserId == user.Id) as Utilizador 
