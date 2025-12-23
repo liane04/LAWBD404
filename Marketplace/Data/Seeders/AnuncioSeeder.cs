@@ -35,21 +35,21 @@ namespace Marketplace.Data.Seeders
 
             if (db.Anuncios.Any())
             {
-                log("[seed] anúncios já existem, a ignorar");
+                log("[seed] anÇ§ncios jÇ­ existem, a ignorar");
                 return;
             }
 
             var vendedores = db.Vendedores.ToList();
             if (vendedores.Count == 0)
             {
-                log("[seed] sem vendedor disponível; correr UserSeeder primeiro");
+                log("[seed] sem vendedor disponÇðvel; correr UserSeeder primeiro");
                 return;
             }
 
             var path = Path.Combine(contentRootPath, "Data", "Seeds", "anuncios-demo.json");
             if (!File.Exists(path))
             {
-                log("[seed] anuncios-demo.json não encontrado, a ignorar anúncios demo");
+                log("[seed] anuncios-demo.json nÇœo encontrado, a ignorar anÇ§ncios demo");
                 return;
             }
 
@@ -61,6 +61,7 @@ namespace Marketplace.Data.Seeders
             var seeds = doc != null && doc.TryGetValue("anuncios", out var list) ? list : new List<AnuncioSeed>();
 
             int vendedorIndex = 0;
+            var anunciosCriados = new List<Anuncio>();
             foreach (var a in seeds)
             {
                 if (string.IsNullOrWhiteSpace(a.titulo) || a.preco <= 0 || string.IsNullOrWhiteSpace(a.marca) || string.IsNullOrWhiteSpace(a.modelo))
@@ -75,7 +76,7 @@ namespace Marketplace.Data.Seeders
                 var vendedor = vendedores[vendedorIndex % vendedores.Count];
                 vendedorIndex++;
 
-                // evitar duplicados por título e vendedor
+                // evitar duplicados por tÇðtulo e vendedor
                 if (db.Anuncios.Any(x => x.Titulo == a.titulo && x.VendedorId == vendedor.Id))
                     continue;
 
@@ -102,12 +103,87 @@ namespace Marketplace.Data.Seeders
                     NVisualizacoes = 0,
                     ValorSinal = 0
                 };
-
                 db.Anuncios.Add(anuncio);
+                anunciosCriados.Add(anuncio);
             }
 
             await db.SaveChangesAsync();
-            log($"[seed] inseridos {seeds.Count} anúncios demo (quando válidos)");
+            await SeedImagensAsync(db, contentRootPath, anunciosCriados, log);
+            log($"[seed] inseridos {anunciosCriados.Count} anÇ§ncios demo (quando vÇ­lidos)");
+        }
+
+        private static async Task SeedImagensAsync(ApplicationDbContext db, string contentRootPath, List<Anuncio> anuncios, Action<string> log)
+        {
+            if (anuncios.Count == 0)
+                return;
+
+            var imagensOrigem = GetSeedImagePool(contentRootPath);
+            if (imagensOrigem.Count == 0)
+            {
+                log("[seed] anÇ§ncios inseridos mas sem imagens demo (nenhuma imagem de origem encontrada em Data/Seeds/images/anuncios ou wwwroot/imagens)");
+                return;
+            }
+
+            var destinoRoot = Path.Combine(contentRootPath, "wwwroot", "images", "anuncios");
+            Directory.CreateDirectory(destinoRoot);
+
+            int offset = 0;
+            foreach (var anuncio in anuncios)
+            {
+                var destinoAnuncio = Path.Combine(destinoRoot, anuncio.Id.ToString());
+                Directory.CreateDirectory(destinoAnuncio);
+
+                // Selecionar 3 imagens rotativas (ou menos se a pool for pequena)
+                var selecionadas = Enumerable.Range(0, Math.Min(3, imagensOrigem.Count))
+                    .Select(i => imagensOrigem[(offset + i) % imagensOrigem.Count])
+                    .ToList();
+
+                int idx = 1;
+                foreach (var origem in selecionadas)
+                {
+                    var ext = Path.GetExtension(origem);
+                    var nome = $"foto-{idx:00}{ext}";
+                    var destino = Path.Combine(destinoAnuncio, nome);
+
+                    File.Copy(origem, destino, overwrite: true);
+
+                    db.Imagens.Add(new Imagem
+                    {
+                        AnuncioId = anuncio.Id,
+                        ImagemCaminho = $"/images/anuncios/{anuncio.Id}/{nome}"
+                    });
+
+                    idx++;
+                }
+
+                offset++;
+            }
+
+            await db.SaveChangesAsync();
+            log($"[seed] adicionadas imagens demo a {anuncios.Count} anÇ§ncios");
+        }
+
+        private static List<string> GetSeedImagePool(string contentRootPath)
+        {
+            var extensoesPermitidas = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png", ".webp" };
+
+            // 1) Tentar Data/Seeds/images/anuncios (se existir uma pasta com imagens dedicadas)
+            var seedsDir = Path.Combine(contentRootPath, "Data", "Seeds", "images", "anuncios");
+            if (Directory.Exists(seedsDir))
+            {
+                var files = Directory.GetFiles(seedsDir).Where(f => extensoesPermitidas.Contains(Path.GetExtension(f))).ToList();
+                if (files.Count > 0) return files;
+            }
+
+            // 2) Fallback: usar imagens existentes em wwwroot/imagens (jÇ­ no repositÇürio)
+            var wwwrootImagens = Path.Combine(contentRootPath, "wwwroot", "imagens");
+            if (Directory.Exists(wwwrootImagens))
+            {
+                var files = Directory.GetFiles(wwwrootImagens).Where(f => extensoesPermitidas.Contains(Path.GetExtension(f))).ToList();
+                if (files.Count > 0) return files;
+            }
+
+            return new List<string>();
         }
 
         private static Tipo EnsureTipo(ApplicationDbContext db, string nome)
