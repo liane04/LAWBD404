@@ -12,6 +12,8 @@ using System.Security.Claims;
 using Marketplace.Data;
 using Marketplace.Models;
 using Marketplace.Services;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace Marketplace.Controllers
 {
@@ -410,6 +412,157 @@ namespace Marketplace.Controllers
             await _db.SaveChangesAsync();
             TempData["PerfilSucesso"] = "Perfil atualizado com sucesso.";
             return RedirectToAction("Perfil");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> SecurityStatus()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var is2FaEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
+            var recoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user);
+            var hasAuthenticator = !string.IsNullOrWhiteSpace(await _userManager.GetAuthenticatorKeyAsync(user));
+
+            return Json(new
+            {
+                email = user.Email,
+                twoFactorEnabled = is2FaEnabled,
+                recoveryCodes = recoveryCodesLeft,
+                hasAuthenticator
+            });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> TwoFactorSetup()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var key = await _userManager.GetAuthenticatorKeyAsync(user);
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                key = await _userManager.GetAuthenticatorKeyAsync(user);
+            }
+
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return BadRequest(new { error = "Não foi possível gerar uma chave de autenticação. Tente novamente." });
+            }
+
+            var sharedKey = FormatKey(key);
+            var authenticatorUri = GenerateQrCodeUri(user.Email ?? user.UserName ?? "DriveDeal", key);
+
+            return Json(new { sharedKey, authenticatorUri });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnableTwoFactor([FromForm] EnableTwoFactorRequest request)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var code = (request.Code ?? string.Empty).Replace(" ", string.Empty).Replace("-", string.Empty);
+            var isValid = await _userManager.VerifyTwoFactorTokenAsync(
+                user,
+                _userManager.Options.Tokens.AuthenticatorTokenProvider,
+                code);
+
+            if (!isValid)
+            {
+                return BadRequest(new { error = "Código de verificação inválido. Confirme o valor na app de autenticação." });
+            }
+
+            var enableResult = await _userManager.SetTwoFactorEnabledAsync(user, true);
+            if (!enableResult.Succeeded)
+            {
+                return BadRequest(new { error = "Não foi possível ativar a autenticação de dois fatores. Tente novamente." });
+            }
+
+            var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 5);
+            await _signInManager.RefreshSignInAsync(user);
+
+            return Json(new { success = true, recoveryCodes });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DisableTwoFactor()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var result = await _userManager.SetTwoFactorEnabledAsync(user, false);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { error = "Não foi possível desativar a autenticação de dois fatores." });
+            }
+
+            await _userManager.ResetAuthenticatorKeyAsync(user);
+            await _signInManager.RefreshSignInAsync(user);
+            return Json(new { success = true });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlterarPassword([FromForm] ChangePasswordRequest request)
+        {
+            if (request == null ||
+                string.IsNullOrWhiteSpace(request.PasswordAtual) ||
+                string.IsNullOrWhiteSpace(request.PasswordNova) ||
+                string.IsNullOrWhiteSpace(request.PasswordNovaConfirmacao))
+            {
+                return BadRequest(new { error = "Preencha todos os campos." });
+            }
+
+            if (!string.Equals(request.PasswordNova, request.PasswordNovaConfirmacao, StringComparison.Ordinal))
+            {
+                return BadRequest(new { error = "As palavras-passe novas não coincidem." });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            IdentityResult result;
+            if (await _userManager.HasPasswordAsync(user))
+            {
+                result = await _userManager.ChangePasswordAsync(user, request.PasswordAtual, request.PasswordNova);
+            }
+            else
+            {
+                result = await _userManager.AddPasswordAsync(user, request.PasswordNova);
+            }
+
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToArray();
+                return BadRequest(new { errors });
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+
+            if (!string.IsNullOrWhiteSpace(user.Email))
+            {
+                try
+                {
+                    await _emailSender.SendAsync(
+                        user.Email,
+                        "Password alterada - DriveDeal",
+                        "<p>A sua password foi alterada com sucesso.</p><p>Se não reconhece esta alteração, reponha a sua palavra-passe imediatamente.</p>");
+                }
+                catch
+                {
+                }
+            }
+
+            return Json(new { success = true, message = "Password alterada com sucesso." });
         }
 
         private bool IsValidNif(string? nif)
@@ -833,6 +986,42 @@ namespace Marketplace.Controllers
             ViewBag.Sucesso = true;
             ViewBag.Email = user.Email;
             return View();
+        }
+
+        private static string FormatKey(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key)) return string.Empty;
+            var result = new StringBuilder();
+            int current = 0;
+            while (current + 4 < key.Length)
+            {
+                result.Append(key.AsSpan(current, 4)).Append(' ');
+                current += 4;
+            }
+            if (current < key.Length)
+            {
+                result.Append(key[current..]);
+            }
+            return result.ToString().Trim().ToUpperInvariant();
+        }
+
+        private string GenerateQrCodeUri(string email, string unformattedKey)
+        {
+            var issuer = UrlEncoder.Default.Encode("DriveDeal");
+            var encodedEmail = UrlEncoder.Default.Encode(email);
+            return $"otpauth://totp/{issuer}:{encodedEmail}?secret={unformattedKey}&issuer={issuer}&digits=6";
+        }
+
+        public class ChangePasswordRequest
+        {
+            public string PasswordAtual { get; set; } = string.Empty;
+            public string PasswordNova { get; set; } = string.Empty;
+            public string PasswordNovaConfirmacao { get; set; } = string.Empty;
+        }
+
+        public class EnableTwoFactorRequest
+        {
+            public string Code { get; set; } = string.Empty;
         }
         public async Task<IActionResult> PromoteMe()
         {

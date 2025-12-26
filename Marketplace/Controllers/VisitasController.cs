@@ -113,9 +113,13 @@ namespace Marketplace.Controllers
         }
 
         // GET: Visitas/Create?anuncioId=5
-        [Authorize(Roles = "Comprador,Vendedor")]
+        [Authorize] // Removida restrição de role para debug
         public async Task<IActionResult> Create(int? anuncioId)
         {
+            var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
+            Console.WriteLine($"[DEBUG] User: {user.UserName}, Roles: {string.Join(", ", roles)}");
+
             if (anuncioId == null)
                 return BadRequest("ID do anúncio é obrigatório");
 
@@ -128,28 +132,16 @@ namespace Marketplace.Controllers
             if (anuncio == null)
                 return NotFound("Anúncio não encontrado");
 
-            var user = await _userManager.GetUserAsync(User);
-
-            // Buscar Comprador ou Vendedor (TPH - ambos são Utilizador)
-            int? compradorId = null;
+            // Buscar Comprador
             var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
-            if (comprador != null)
+            if (comprador == null)
             {
-                compradorId = comprador.Id;
-            }
-            else if (User.IsInRole("Vendedor"))
-            {
-                // Vendedor pode agendar visitas - usar o ID do Vendedor (é um Utilizador)
-                var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
-                if (vendedor != null)
-                {
-                    compradorId = vendedor.Id; // TPH: Vendedor e Comprador são Utilizador
-                }
+                Console.WriteLine($"[ERRO] Comprador não encontrado para IdentityUserId: {user.Id}");
+                return Forbid();
             }
 
-            if (compradorId == null)
-                return Forbid();
+            Console.WriteLine($"[DEBUG] Comprador encontrado: ID={comprador.Id}, Nome={comprador.Nome}");
 
             // Buscar disponibilidades do vendedor
             var disponibilidades = await _context.DisponibilidadesVendedor
@@ -199,7 +191,7 @@ namespace Marketplace.Controllers
             {
                 AnuncioId = anuncio.Id,
                 Anuncio = anuncio,
-                CompradorId = compradorId.Value,
+                CompradorId = comprador.Id,
                 VendedorId = anuncio.VendedorId,
                 Data = slotsDisponiveis.FirstOrDefault() != default ? slotsDisponiveis.First() : DateTime.Now.AddDays(1),
                 Estado = "Pendente"
@@ -216,35 +208,24 @@ namespace Marketplace.Controllers
         // POST: Visitas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Comprador,Vendedor")]
+        [Authorize] // Removida restrição de role para debug
         public async Task<IActionResult> Create([Bind("AnuncioId,Data,Observacoes")] Visita visita)
         {
             var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
+            Console.WriteLine($"[DEBUG POST] User: {user.UserName}, Roles: {string.Join(", ", roles)}");
 
-            // Buscar Comprador ou Vendedor (TPH - ambos são Utilizador)
-            int? compradorId = null;
-            string nomeUtilizador = user.UserName ?? "Utilizador";
-
+            // Buscar Comprador
             var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
-            if (comprador != null)
+            if (comprador == null)
             {
-                compradorId = comprador.Id;
-                nomeUtilizador = comprador.Nome;
-            }
-            else if (User.IsInRole("Vendedor"))
-            {
-                // Vendedor pode agendar visitas - usar o ID do Vendedor (é um Utilizador)
-                var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
-                if (vendedor != null)
-                {
-                    compradorId = vendedor.Id; // TPH: Vendedor e Comprador são Utilizador
-                    nomeUtilizador = vendedor.Nome;
-                }
+                Console.WriteLine($"[ERRO] Comprador não encontrado para IdentityUserId: {user.Id}");
+                return Forbid();
             }
 
-            if (compradorId == null)
-                return Forbid();
+            Console.WriteLine($"[DEBUG POST] Comprador encontrado: ID={comprador.Id}, Nome={comprador.Nome}");
+            string nomeUtilizador = comprador.Nome;
 
             var anuncio = await _context.Anuncios
                 .Include(a => a.Vendedor)
@@ -271,15 +252,49 @@ namespace Marketplace.Controllers
                 ModelState.AddModelError("Data", "Já existe uma visita agendada para esta data/hora com este vendedor");
             }
 
+            // DEBUG: Log para ver se há erros de validação
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                Console.WriteLine($"[DEBUG] ModelState inválido. Erros: {string.Join(", ", errors)}");
+            }
+
             if (ModelState.IsValid)
             {
-                visita.CompradorId = compradorId.Value;
+                visita.CompradorId = comprador.Id;
                 visita.VendedorId = anuncio.VendedorId;
                 visita.Estado = "Pendente";
                 visita.DataCriacao = DateTime.Now;
 
-                _context.Add(visita);
-                await _context.SaveChangesAsync();
+                Console.WriteLine($"[DEBUG] Tentando guardar visita - CompradorId: {visita.CompradorId}, VendedorId: {visita.VendedorId}, AnuncioId: {visita.AnuncioId}, Data: {visita.Data}");
+
+                try
+                {
+                    _context.Add(visita);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"[DEBUG] Visita guardada com sucesso! ID: {visita.Id}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ERRO] Falha ao guardar visita: {ex.Message}");
+                    Console.WriteLine($"[ERRO] InnerException: {ex.InnerException?.Message}");
+                    ModelState.AddModelError("", $"Erro ao guardar visita: {ex.Message}");
+
+                    // Recarregar view com dados necessários
+                    ViewBag.Anuncio = anuncio;
+                    ViewBag.MinDate = DateTime.Now.AddHours(1).ToString("yyyy-MM-ddTHH:mm");
+
+                    var disponibs = await _context.DisponibilidadesVendedor
+                        .Where(d => d.VendedorId == anuncio.VendedorId && d.Ativo)
+                        .OrderBy(d => d.DiaSemana)
+                        .ThenBy(d => d.HoraInicio)
+                        .ToListAsync();
+
+                    ViewBag.SlotsDisponiveis = new List<DateTime>();
+                    ViewBag.TemDisponibilidades = disponibs.Any();
+
+                    return View(visita);
+                }
 
                 // Enviar email ao vendedor
                 try

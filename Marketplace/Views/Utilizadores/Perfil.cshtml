@@ -1706,6 +1706,8 @@
                             </h5>
                         </div>
                         <div class="card-body p-4">
+                            <div id="security-alerts"></div>
+
                             <!-- Alterar Password -->
                             <div class="definicao-item">
                                 <div class="definicao-info">
@@ -1737,6 +1739,7 @@
                                         <p class="definicao-description text-muted mb-0">
                                             Adicione uma camada extra de segurança à sua conta.
                                         </p>
+                                        <div class="text-muted small" id="twofaStatusHelper">Estado: a verificar...</div>
                                     </div>
                                 </div>
                                 <div class="form-check form-switch">
@@ -1982,6 +1985,94 @@
         </div>
     </div>
 </div>
+
+<!-- Modal: Alterar Password -->
+<div class="modal fade" id="alterarPasswordModal" tabindex="-1" aria-labelledby="alterarPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="formAlterarPassword" method="post" action="@Url.Action("AlterarPassword", "Utilizadores")">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alterarPasswordModalLabel"><i class="bi bi-key-fill me-2"></i>Alterar Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger d-none" id="alterarPasswordErro"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Password atual</label>
+                        <input type="password" name="PasswordAtual" class="form-control" required autocomplete="current-password" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nova password</label>
+                        <input type="password" name="PasswordNova" class="form-control" required minlength="8" autocomplete="new-password" />
+                        <div class="form-text">Mínimo 8 caracteres, com maiúsculas, minúsculas e números.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirmar nova password</label>
+                        <input type="password" name="PasswordNovaConfirmacao" class="form-control" required autocomplete="new-password" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Configurar 2FA -->
+<div class="modal fade" id="twofaSetupModal" tabindex="-1" aria-labelledby="twofaSetupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="formTwoFactor" method="post" action="@Url.Action("EnableTwoFactor", "Utilizadores")">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="twofaSetupModalLabel"><i class="bi bi-shield-check me-2"></i>Ativar Autenticação de Dois Fatores</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger d-none" id="twofaError"></div>
+                    <ol class="ps-3">
+                        <li class="mb-3">
+                            Abra a sua app de autenticação (Google Authenticator, Microsoft Authenticator, etc.) e adicione uma nova conta.
+                        </li>
+                        <li class="mb-3">
+                            Utilize a chave ou o QR Code abaixo:
+                            <div class="bg-light border rounded p-3 mt-2">
+                                <div class="fw-semibold mb-1" id="twofaSharedKey">---</div>
+                                <small class="text-muted d-block" id="twofaUriText"></small>
+                                <img id="twofaQrImage" class="img-fluid mt-3 d-none" alt="QR Code para 2FA" style="max-width: 220px;">
+                            </div>
+                        </li>
+                        <li class="mb-3">
+                            Introduza o código de 6 dígitos gerado:
+                            <div class="mt-2">
+                                <input type="text" name="Code" class="form-control" placeholder="000000" maxlength="8" required autocomplete="one-time-code" inputmode="numeric">
+                            </div>
+                        </li>
+                    </ol>
+                    <div class="alert alert-info d-none" id="twofaRecoveryContainer">
+                        <div class="fw-semibold mb-2">Guarde estes códigos de recuperação em local seguro:</div>
+                        <ul id="twofaRecoveryList" class="mb-0 ps-3 small"></ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-shield-lock me-1"></i>Ativar 2FA
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form id="securityAntiForgery" class="d-none">
+    @Html.AntiForgeryToken()
+</form>
 
 <!-- Modal: Destacar Anúncio -->
 <div class="modal fade" id="destacarModal" tabindex="-1" aria-labelledby="destacarModalLabel" aria-hidden="true">
@@ -2798,6 +2889,189 @@
 </script>
 
 <script src="~/js/favoritos.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const securityAlerts = document.getElementById('security-alerts');
+        const switch2FA = document.getElementById('switch2FA');
+        const twofaLabel = document.querySelector('#switch2FA + label span');
+        const twofaHelper = document.getElementById('twofaStatusHelper');
+        const twofaKeyEl = document.getElementById('twofaSharedKey');
+        const twofaUriEl = document.getElementById('twofaUriText');
+        const twofaRecoveryContainer = document.getElementById('twofaRecoveryContainer');
+        const twofaRecoveryList = document.getElementById('twofaRecoveryList');
+        const twofaForm = document.getElementById('formTwoFactor');
+        const twofaError = document.getElementById('twofaError');
+        const changePwdForm = document.getElementById('formAlterarPassword');
+        const changePwdError = document.getElementById('alterarPasswordErro');
+        const tokenField = () => document.querySelector('#securityAntiForgery input[name="__RequestVerificationToken"]')?.value;
+
+        let twofaEnabled = false;
+
+        const showSecurityAlert = (type, message) => {
+            if (!securityAlerts) return;
+            securityAlerts.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>`;
+        };
+
+        const update2faUI = (enabled, recoveryCount) => {
+            twofaEnabled = enabled;
+            if (switch2FA) switch2FA.checked = enabled;
+            if (twofaLabel) {
+                twofaLabel.innerHTML = `<span class="badge ${enabled ? 'bg-success' : 'bg-secondary'}">${enabled ? 'Ativo' : 'Desativado'}</span>`;
+            }
+            if (twofaHelper) {
+                twofaHelper.textContent = enabled
+                    ? `Ativo. Códigos de recuperação disponíveis: ${recoveryCount ?? 0}.`
+                    : 'Desativado. Recomendamos ativar a verificação em 2 passos.';
+            }
+        };
+
+        const loadSecurityStatus = async () => {
+            try {
+                const res = await fetch('/Utilizadores/SecurityStatus');
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                update2faUI(!!data.twoFactorEnabled, data.recoveryCodes ?? 0);
+            } catch {
+                update2faUI(false, 0);
+                showSecurityAlert('warning', 'Não foi possível verificar o estado de segurança neste momento.');
+            }
+        };
+
+        const openTwoFaSetup = async () => {
+            const twofaModalEl = document.getElementById('twofaSetupModal');
+            if (!twofaModalEl) return;
+            const twofaModal = bootstrap.Modal.getOrCreateInstance(twofaModalEl);
+
+            try {
+                const res = await fetch('/Utilizadores/TwoFactorSetup');
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                if (twofaKeyEl) twofaKeyEl.textContent = data.sharedKey || '---';
+                if (twofaUriEl) twofaUriEl.textContent = data.authenticatorUri || '';
+
+                // Não carregar QR externo em ambientes restritos; mostrar apenas URI e chave
+                if (twofaRecoveryContainer) twofaRecoveryContainer.classList.add('d-none');
+                if (twofaRecoveryList) twofaRecoveryList.innerHTML = '';
+                if (twofaError) {
+                    twofaError.classList.add('d-none');
+                    twofaError.textContent = '';
+                }
+                twofaForm?.reset();
+                twofaModal.show();
+            } catch {
+                showSecurityAlert('danger', 'Não foi possível iniciar a configuração de 2FA. Tente novamente.');
+            }
+        };
+
+        const disableTwoFa = async () => {
+            const token = tokenField();
+            const formData = new FormData();
+            if (token) formData.append('__RequestVerificationToken', token);
+            const res = await fetch('/Utilizadores/DisableTwoFactor', {
+                method: 'POST',
+                body: formData
+            });
+            if (!res.ok) {
+                showSecurityAlert('danger', 'Não foi possível desativar o 2FA. Tente novamente.');
+                update2faUI(true, 0);
+                return;
+            }
+            update2faUI(false, 0);
+            showSecurityAlert('success', 'Autenticação de dois fatores desativada.');
+        };
+
+        changePwdForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (changePwdError) {
+                changePwdError.classList.add('d-none');
+                changePwdError.textContent = '';
+            }
+            const formData = new FormData(changePwdForm);
+            const res = await fetch(changePwdForm.action, {
+                method: 'POST',
+                body: formData
+            });
+            let data = {};
+            try { data = await res.json(); } catch { }
+
+            if (res.ok && data.success) {
+                showSecurityAlert('success', data.message || 'Password alterada com sucesso.');
+                changePwdForm.reset();
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById('alterarPasswordModal'));
+                modalInstance?.hide();
+            } else {
+                const msg = data.error || (data.errors ? data.errors.join('; ') : 'Não foi possível alterar a password.');
+                if (changePwdError) {
+                    changePwdError.textContent = msg;
+                    changePwdError.classList.remove('d-none');
+                } else {
+                    showSecurityAlert('danger', msg);
+                }
+            }
+        });
+
+        twofaForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (twofaError) {
+                twofaError.classList.add('d-none');
+                twofaError.textContent = '';
+            }
+            const formData = new FormData(twofaForm);
+            const res = await fetch(twofaForm.action, { method: 'POST', body: formData });
+            let data = {};
+            try { data = await res.json(); } catch { }
+
+            if (res.ok && data.success) {
+                update2faUI(true, data.recoveryCodes?.length ?? 0);
+                if (Array.isArray(data.recoveryCodes) && data.recoveryCodes.length > 0) {
+                    if (twofaRecoveryList) {
+                        twofaRecoveryList.innerHTML = data.recoveryCodes.map(c => `<li>${c}</li>`).join('');
+                    }
+                    if (twofaRecoveryContainer) {
+                        twofaRecoveryContainer.classList.remove('d-none');
+                    }
+                }
+                showSecurityAlert('success', 'Autenticação de dois fatores ativada.');
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById('twofaSetupModal'));
+                modalInstance?.hide();
+            } else {
+                const msg = data.error || 'Código inválido. Volte a tentar.';
+                if (twofaError) {
+                    twofaError.textContent = msg;
+                    twofaError.classList.remove('d-none');
+                } else {
+                    showSecurityAlert('danger', msg);
+                }
+            }
+        });
+
+        if (switch2FA) {
+            switch2FA.addEventListener('change', async () => {
+                if (switch2FA.checked && !twofaEnabled) {
+                    switch2FA.checked = false;
+                    await openTwoFaSetup();
+                } else if (!switch2FA.checked && twofaEnabled) {
+                    if (confirm('Deseja mesmo desativar a autenticação de dois fatores?')) {
+                        await disableTwoFa();
+                    } else {
+                        switch2FA.checked = true;
+                    }
+                }
+            });
+        }
+
+        document.getElementById('twofaSetupModal')?.addEventListener('shown.bs.modal', () => {
+            const codeInput = twofaForm?.querySelector('input[name="Code"]');
+            codeInput?.focus();
+        });
+
+        loadSecurityStatus();
+    });
+</script>
 <script>
     // JavaScript adicional para manejar remoção de favoritos na página de perfil
     document.addEventListener('DOMContentLoaded', function () {
