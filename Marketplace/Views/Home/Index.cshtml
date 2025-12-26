@@ -68,8 +68,9 @@
     <div class="container">
         <h2 class="section-title">Explorar por Categoria</h2>
         <div class="row g-4 justify-content-center">
-            <div class="col-6 col-md-4 col-lg">
-                <a href="#" class="text-decoration-none">
+            <!-- SUV -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Anuncios", new { categoria = "SUV" })" class="text-decoration-none">
                     <div class="categoria-card">
                         <div class="icon">
                             <i class="bi bi-truck-front fs-1"></i>
@@ -78,8 +79,9 @@
                     </div>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg">
-                <a href="#" class="text-decoration-none">
+            <!-- Sedan -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Anuncios", new { categoria = "Sedan" })" class="text-decoration-none">
                     <div class="categoria-card">
                         <div class="icon">
                             <i class="bi bi-car-front-fill fs-1"></i>
@@ -88,18 +90,20 @@
                     </div>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg">
-                <a href="#" class="text-decoration-none">
+            <!-- Hatchback -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Anuncios", new { categoria = "Hatchback" })" class="text-decoration-none">
                     <div class="categoria-card">
                         <div class="icon">
-                            <i class="bi bi-speedometer fs-1"></i>
+                            <i class="bi bi-car-front fs-1"></i>
                         </div>
-                        <h5 class="mb-0">Desportivo</h5>
+                        <h5 class="mb-0">Hatchback</h5>
                     </div>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg">
-                <a href="#" class="text-decoration-none">
+            <!-- Carrinha -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Anuncios", new { categoria = "Carrinha" })" class="text-decoration-none">
                     <div class="categoria-card">
                         <div class="icon">
                             <i class="bi bi-minecart-loaded fs-1"></i>
@@ -108,8 +112,20 @@
                     </div>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg">
-                <a href="#" class="text-decoration-none">
+            <!-- Coupe -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Anuncios", new { categoria = "Coupe" })" class="text-decoration-none">
+                    <div class="categoria-card">
+                        <div class="icon">
+                            <i class="bi bi-speedometer fs-1"></i>
+                        </div>
+                        <h5 class="mb-0">Coupe</h5>
+                    </div>
+                </a>
+            </div>
+            <!-- Citadino -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Anuncios", new { categoria = "Citadino" })" class="text-decoration-none">
                     <div class="categoria-card">
                         <div class="icon">
                             <i class="bi bi-car-front fs-1"></i>
@@ -118,6 +134,31 @@
                     </div>
                 </a>
             </div>
+            <!-- Cabrio -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Anuncios", new { categoria = "Cabrio" })" class="text-decoration-none">
+                    <div class="categoria-card">
+                        <div class="icon">
+                            <i class="bi bi-sun fs-1"></i>
+                        </div>
+                        <h5 class="mb-0">Cabrio</h5>
+                    </div>
+                </a>
+            </div>
+            <!-- Pick-up -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Anuncios", new { categoria = "Pick-up" })" class="text-decoration-none">
+                    <div class="categoria-card">
+                        <div class="icon">
+                            <i class="bi bi-truck fs-1"></i>
+                        </div>
+                        <h5 class="mb-0">Pick-up</h5>
+                    </div>
+                </a>
+            </div>
+            <!-- Elétrico (Opcional, mas comum em seeds hoje em dia, vou deixar apenas os 3 principais se não houver mais) -->
+            <!-- Verificando seeds: Combustivel: Elétrico existe, mas Categoria: Sedan/Hatchback. -->
+            <!-- Vou manter apenas as categorias explícitas: Sedan, Hatchback, SUV -->
         </div>
     </div>
 </section>

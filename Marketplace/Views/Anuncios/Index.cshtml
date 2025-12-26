@@ -5,6 +5,7 @@
     var marcas = ViewBag.Marcas as List<Marketplace.Models.Marca> ?? new List<Marketplace.Models.Marca>();
     var modelos = ViewBag.Modelos as List<Marketplace.Models.Modelo> ?? new List<Marketplace.Models.Modelo>();
     var tipos = ViewBag.Tipos as List<Marketplace.Models.Tipo> ?? new List<Marketplace.Models.Tipo>();
+    var categorias = ViewBag.Categorias as List<Marketplace.Models.Categoria> ?? new List<Marketplace.Models.Categoria>();
     var combustiveis = ViewBag.Combustiveis as List<Marketplace.Models.Combustivel> ?? new List<Marketplace.Models.Combustivel>();
 }
 
@@ -118,17 +119,33 @@
                         </div>
                     </div>
 
-                    <!-- Filtro de Categoria -->
+                    <!-- Filtro de Tipo de Veículo -->
                     <div class="filter-group">
                         <label for="tipoId" class="filter-label">
-                            <i class="bi bi-grid-3x3-gap me-2"></i>Categoria
+                            <i class="bi bi-bicycle me-2"></i>Tipo de Veículo
                         </label>
                         <select name="tipoId" id="tipoId" class="form-select">
-                            <option value="">Todas</option>
+                            <option value="">Todos</option>
                             @foreach (var tipo in tipos)
                             {
                                 <option value="@tipo.Id" selected="@(ViewBag.TipoIdSelecionado == tipo.Id)">
                                     @tipo.Nome
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Filtro de Categoria (SUV, Sedan, etc) -->
+                    <div class="filter-group">
+                        <label for="categoriaId" class="filter-label">
+                            <i class="bi bi-grid-3x3-gap me-2"></i>Categoria
+                        </label>
+                        <select name="categoriaId" id="categoriaId" class="form-select">
+                            <option value="">Todas</option>
+                            @foreach (var cat in categorias)
+                            {
+                                <option value="@cat.Id" selected="@(ViewBag.CategoriaIdSelecionada == cat.Id)">
+                                    @cat.Nome
                                 </option>
                             }
                         </select>

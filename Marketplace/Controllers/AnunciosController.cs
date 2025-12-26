@@ -23,7 +23,7 @@ namespace Marketplace.Controllers
         }
 
         // GET: Anuncios
-        public async Task<IActionResult> Index(int? marcaId, int? modeloId, int? tipoId, int? combustivelId,
+        public async Task<IActionResult> Index(int? marcaId, int? modeloId, int? tipoId, int? categoriaId, string? categoria, int? combustivelId,
             decimal? precoMax, int? anoMin, int? anoMax, int? kmMax, string? caixa, string? localizacao,
             string? ordenacao)
         {
@@ -47,6 +47,22 @@ namespace Marketplace.Controllers
 
             if (tipoId.HasValue)
                 query = query.Where(a => a.TipoId == tipoId.Value);
+
+            // Filtering by Category ID (Dropdown)
+            if (categoriaId.HasValue)
+            {
+                query = query.Where(a => a.CategoriaId == categoriaId.Value);
+            }
+            // Filtering by Category Name (Homepage Links)
+            else if (!string.IsNullOrWhiteSpace(categoria))
+            {
+                // Find category ID from name to avoid Join issues if possible, or just Where on navigation property
+                query = query.Where(a => a.Categoria.Nome == categoria);
+                
+                // Try to resolve the ID for the viewbag to select the dropdown correctly
+                var catObj = await _context.Categorias.FirstOrDefaultAsync(c => c.Nome == categoria);
+                if (catObj != null) categoriaId = catObj.Id;
+            }
 
             if (combustivelId.HasValue)
                 query = query.Where(a => a.CombustivelId == combustivelId.Value);
@@ -88,12 +104,14 @@ namespace Marketplace.Controllers
             ViewBag.Marcas = await _context.Set<Marca>().OrderBy(m => m.Nome).ToListAsync();
             ViewBag.Modelos = await _context.Set<Modelo>().OrderBy(m => m.Nome).ToListAsync();
             ViewBag.Tipos = await _context.Set<Tipo>().OrderBy(t => t.Nome).ToListAsync();
+            ViewBag.Categorias = await _context.Set<Categoria>().OrderBy(c => c.Nome).ToListAsync(); // Added Categorias
             ViewBag.Combustiveis = await _context.Set<Combustivel>().OrderBy(c => c.Tipo).ToListAsync();
 
             // Manter valores dos filtros aplicados
             ViewBag.MarcaIdSelecionada = marcaId;
             ViewBag.ModeloIdSelecionado = modeloId;
             ViewBag.TipoIdSelecionado = tipoId;
+            ViewBag.CategoriaIdSelecionada = categoriaId; // Added CategoriaId
             ViewBag.CombustivelIdSelecionado = combustivelId;
             ViewBag.PrecoMax = precoMax;
             ViewBag.AnoMin = anoMin;
