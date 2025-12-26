@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Marketplace.Models
 {
@@ -24,21 +25,25 @@ namespace Marketplace.Models
         [Required]
         public int CompradorId { get; set; }
         [ForeignKey("CompradorId")]
+        [ValidateNever]
         public Comprador Comprador { get; set; } = null!;
 
         [Required]
         public int AnuncioId { get; set; }
         [ForeignKey("AnuncioId")]
+        [ValidateNever]
         public Anuncio Anuncio { get; set; } = null!;
 
         [Required]
         public int VendedorId { get; set; }
         [ForeignKey("VendedorId")]
+        [ValidateNever]
         public Vendedor Vendedor { get; set; } = null!;
 
         // Relação opcional com reserva (caso a visita seja agendada após reserva)
         public int? ReservaId { get; set; }
         [ForeignKey("ReservaId")]
+        [ValidateNever]
         public Reserva? Reserva { get; set; }
 
         // Auditoria

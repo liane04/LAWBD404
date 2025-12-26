@@ -1,9 +1,9 @@
 # CONTEXTO DO PROJETO - DriveDeal (404 Car Marketplace)
 
 > **Ficheiro de contexto para sessões futuras com Claude Code**
-> **Última atualização:** 2025-12-03 (Atualização Fase 3 - Filtros guardados + Notificações)
+> **Última atualização:** 2025-12-26 (Correções: Erro compilação Razor + Feedback visual Visitas)
 > **Fase atual:** Fase 3 (em desenvolvimento ativo - Sprint final)
-> **Prazo de entrega:** 5 de janeiro de 2026 (47 dias restantes)
+> **Prazo de entrega:** 5 de janeiro de 2026 (10 dias restantes ⚠️)
 
 ---
 
@@ -992,7 +992,91 @@ git push origin main
 
 ---
 
-## 18. CONTACTOS DA EQUIPA
+## 18. CORREÇÕES RECENTES (26/12/2025)
+
+### ✅ Erro de Compilação Razor - Views/Visitas/Create.cshtml
+**Problema:** Erro RZ1010 - `@{ }` dentro de bloco `@if { }`
+**Linha:** 140
+**Solução:** Removido `@{ }` desnecessário (já em contexto C# dentro do `@if`)
+
+```csharp
+// ❌ ANTES
+@if (temDisponibilidades && slotsDisponiveis.Any())
+{
+    @{
+        var slotsPorDia = slotsDisponiveis.Take(60).GroupBy(s => s.Date).Take(14);
+    }
+}
+
+// ✅ DEPOIS
+@if (temDisponibilidades && slotsDisponiveis.Any())
+{
+    var slotsPorDia = slotsDisponiveis.Take(60).GroupBy(s => s.Date).Take(14);
+}
+```
+
+### ✅ Melhoria de Feedback Visual - Formulário de Visitas
+**Problema:** Após submeter o formulário de agendamento, não havia feedback visual claro de sucesso/erro
+**Solução Implementada:**
+- ✅ Adicionado alert de erro visível no topo do formulário quando ModelState é inválido
+- ✅ Mensagem de sucesso já existia na view Index (via TempData) - funcional
+- ✅ Removido validation-summary duplicado do formulário
+
+**Ficheiros Alterados:**
+- `Views/Visitas/Create.cshtml` (linhas 34-47)
+- `Controllers/VisitasController.cs` (já tinha TempData configurado - linha 309)
+
+**Fluxo Atual:**
+1. Utilizador submete formulário
+2. **Se válido:** Redireciona para Index com mensagem de sucesso verde + botão "Ver Detalhes"
+3. **Se inválido:** Recarrega Create com alert vermelho mostrando erros específicos
+
+### ✅ Erro de Validação - Modelo Visita
+**Problema:** Erro "The Comprador/Anuncio/Vendedor field is required" ao submeter formulário
+**Causa:** Propriedades de navegação estavam a ser validadas durante o model binding
+**Solução:** Adicionado atributo `[ValidateNever]` nas propriedades de navegação
+
+**Ficheiro Alterado:**
+- `Models/Visita.cs` (linhas 28, 34, 40, 46)
+- Adicionado `using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;`
+
+```csharp
+[ValidateNever]
+public Comprador Comprador { get; set; } = null!;
+
+[ValidateNever]
+public Anuncio Anuncio { get; set; } = null!;
+
+[ValidateNever]
+public Vendedor Vendedor { get; set; } = null!;
+
+[ValidateNever]
+public Reserva? Reserva { get; set; }
+```
+
+**Nota:** Esta correção pode ser necessária em outros modelos com relações (Reserva, Compra, etc.)
+
+### ✅ Erro 404 - Botão "Ver Detalhes da Visita"
+**Problema:** Após agendar visita com sucesso, o botão "Ver Detalhes da Visita" redirecionava para URL incorreta (erro 404)
+**Causa:** Faltava especificar o controller no tag helper `asp-action`
+**Solução:** Adicionado `asp-controller="Visitas"` ao link
+
+**Ficheiro Alterado:**
+- `Views/Visitas/Index.cshtml` (linha 65)
+
+```csharp
+// ❌ ANTES (linha 65)
+<a asp-action="Details" asp-route-id="@TempData["VisitaId"]" class="btn btn-sm btn-success mt-2">
+
+// ✅ DEPOIS
+<a asp-controller="Visitas" asp-action="Details" asp-route-id="@TempData["VisitaId"]" class="btn btn-sm btn-success mt-2">
+```
+
+**Nota:** Sempre especificar explicitamente o controller em tag helpers para evitar ambiguidade de roteamento.
+
+---
+
+## 19. CONTACTOS DA EQUIPA
 
 - **Bruno Alves:** al80990@utad.eu
 - **Liane Duarte:** al79012@utad.eu
@@ -1003,18 +1087,11 @@ git push origin main
 **FIM DO CONTEXTO**
 
 > Este ficheiro será atualizado conforme o projeto evolui.
-> **Última revisão:** 2025-11-19
+> **Última revisão:** 2025-12-26
 >
 > **Principais alterações desta revisão:**
-> - ✅ Atualização de progresso: ~60% completo (anteriormente 45%)
-> - ✅ Documentação de funcionalidades recentemente implementadas:
->   - Sistema de filtros dinâmico funcional
->   - Gestão de utilizadores completa
->   - Edição de perfil funcional
->   - CRUD de anúncios completo
-> - ✅ Adição de View Components implementados (GerirUtilizadores, ModerarAnuncios)
-> - ✅ Correção da data de última atualização (era 2025-12-17, corrigido para 2025-11-19)
-> - ✅ Atualização do roadmap com base no progresso real
-> - ✅ Adição de tempo restante: 47 dias até entrega (5 jan 2026)
-> - ⚠️ Identificação de ficheiro "nul" não rastreado para remoção
-> - ⚠️ 12 ocorrências de TODO/FIXME/IMPORTANTE identificadas no código
+> - ✅ **Correção:** Erro de compilação RZ1010 em Views/Visitas/Create.cshtml (linha 140)
+> - ✅ **Melhoria:** Feedback visual no formulário de agendamento de visitas
+>   - Alert de erro visível quando há problemas de validação
+>   - Mensagem de sucesso com botão "Ver Detalhes" após criar visita
+> - 🔥 **Alerta:** Apenas 10 dias restantes para entrega da Fase 3 (5 janeiro 2026)
