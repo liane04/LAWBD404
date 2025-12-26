@@ -16,8 +16,8 @@
             userRole = bodyElement.getAttribute('data-user-role');
         }
 
-        // Carregar favoritos do utilizador se for Comprador
-        if (userRole === 'Comprador') {
+        // Carregar favoritos do utilizador se estiver autenticado
+        if (userRole) {
             carregarFavoritos();
         }
 
@@ -56,13 +56,17 @@
 
             // Adiciona event listener
             btn.addEventListener('click', async function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
                 // Verifica autenticação
+                /* Role Check Removed - Available to all authenticated users
                 if (userRole !== 'Comprador') {
-                    mostrarToast('Precisa de estar autenticado como Comprador para adicionar favoritos', 'warning');
-                    // Redirecionar para login
+                     // ...
+                }
+                */
+                // Se não estiver logado (userRole null ou undefined assumindo que backend injecta corretamente), o backend rejeita.
+                // Mas idealmente deveríamos verificar se está logado genérico.
+                // Simplificação: Se userRole existir (qualquer que seja), tenta. Se falhar, o backend trata.
+                if (!userRole) {
+                    mostrarToast('Precisa de estar autenticado para adicionar favoritos', 'warning');
                     setTimeout(() => {
                         window.location.href = '/Utilizadores/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }, 1500);
