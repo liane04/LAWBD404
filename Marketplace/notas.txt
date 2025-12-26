@@ -24,3 +24,5 @@ Update-Database -Context ApplicationDbContext
   Add-Migration AddIdentityTables -Context ApplicationDbContext
   Drop-Database -Context ApplicationDbContext
   Update-Database -Context ApplicationDbContext
+
+

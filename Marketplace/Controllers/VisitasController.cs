@@ -113,7 +113,7 @@ namespace Marketplace.Controllers
         }
 
         // GET: Visitas/Create?anuncioId=5
-        [Authorize(Roles = "Comprador")]
+        [Authorize(Roles = "Comprador,Vendedor")]
         public async Task<IActionResult> Create(int? anuncioId)
         {
             if (anuncioId == null)
@@ -129,9 +129,26 @@ namespace Marketplace.Controllers
                 return NotFound("Anúncio não encontrado");
 
             var user = await _userManager.GetUserAsync(User);
+
+            // Buscar Comprador ou Vendedor (TPH - ambos são Utilizador)
+            int? compradorId = null;
             var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
-            if (comprador == null)
+            if (comprador != null)
+            {
+                compradorId = comprador.Id;
+            }
+            else if (User.IsInRole("Vendedor"))
+            {
+                // Vendedor pode agendar visitas - usar o ID do Vendedor (é um Utilizador)
+                var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+                if (vendedor != null)
+                {
+                    compradorId = vendedor.Id; // TPH: Vendedor e Comprador são Utilizador
+                }
+            }
+
+            if (compradorId == null)
                 return Forbid();
 
             // Buscar disponibilidades do vendedor
@@ -182,7 +199,7 @@ namespace Marketplace.Controllers
             {
                 AnuncioId = anuncio.Id,
                 Anuncio = anuncio,
-                CompradorId = comprador.Id,
+                CompradorId = compradorId.Value,
                 VendedorId = anuncio.VendedorId,
                 Data = slotsDisponiveis.FirstOrDefault() != default ? slotsDisponiveis.First() : DateTime.Now.AddDays(1),
                 Estado = "Pendente"
@@ -199,13 +216,34 @@ namespace Marketplace.Controllers
         // POST: Visitas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Comprador")]
+        [Authorize(Roles = "Comprador,Vendedor")]
         public async Task<IActionResult> Create([Bind("AnuncioId,Data,Observacoes")] Visita visita)
         {
             var user = await _userManager.GetUserAsync(User);
+
+            // Buscar Comprador ou Vendedor (TPH - ambos são Utilizador)
+            int? compradorId = null;
+            string nomeUtilizador = user.UserName ?? "Utilizador";
+
             var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
-            if (comprador == null)
+            if (comprador != null)
+            {
+                compradorId = comprador.Id;
+                nomeUtilizador = comprador.Nome;
+            }
+            else if (User.IsInRole("Vendedor"))
+            {
+                // Vendedor pode agendar visitas - usar o ID do Vendedor (é um Utilizador)
+                var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+                if (vendedor != null)
+                {
+                    compradorId = vendedor.Id; // TPH: Vendedor e Comprador são Utilizador
+                    nomeUtilizador = vendedor.Nome;
+                }
+            }
+
+            if (compradorId == null)
                 return Forbid();
 
             var anuncio = await _context.Anuncios
@@ -235,7 +273,7 @@ namespace Marketplace.Controllers
 
             if (ModelState.IsValid)
             {
-                visita.CompradorId = comprador.Id;
+                visita.CompradorId = compradorId.Value;
                 visita.VendedorId = anuncio.VendedorId;
                 visita.Estado = "Pendente";
                 visita.DataCriacao = DateTime.Now;
@@ -255,7 +293,7 @@ namespace Marketplace.Controllers
                         <ul>
                             <li><strong>Veículo:</strong> {anuncio.Titulo}</li>
                             <li><strong>Data:</strong> {visita.Data:dd/MM/yyyy HH:mm}</li>
-                            <li><strong>Comprador:</strong> {comprador.Nome}</li>
+                            <li><strong>Comprador:</strong> {nomeUtilizador}</li>
                             <li><strong>Observações:</strong> {visita.Observacoes ?? "Nenhuma"}</li>
                         </ul>
                         <p>Por favor, confirme a visita o mais breve possível.</p>
@@ -273,9 +311,50 @@ namespace Marketplace.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Se chegou aqui, houve erro - recarregar view
+            // Se chegou aqui, houve erro - recarregar view com dados necessários
             ViewBag.Anuncio = anuncio;
             ViewBag.MinDate = DateTime.Now.AddHours(1).ToString("yyyy-MM-ddTHH:mm");
+
+            // Recalcular slots disponíveis para recarregar a view
+            var disponibilidades = await _context.DisponibilidadesVendedor
+                .Where(d => d.VendedorId == anuncio.VendedorId && d.Ativo)
+                .OrderBy(d => d.DiaSemana)
+                .ThenBy(d => d.HoraInicio)
+                .ToListAsync();
+
+            var slotsDisponiveis = new List<DateTime>();
+            var dataInicio = DateTime.Now.AddHours(1);
+            var dataFim = DateTime.Now.AddDays(30);
+
+            for (var data = dataInicio.Date; data <= dataFim; data = data.AddDays(1))
+            {
+                var diaSemana = (int)data.DayOfWeek;
+                var disponibilidadesDoDia = disponibilidades.Where(d => d.DiaSemana == diaSemana).ToList();
+
+                foreach (var disp in disponibilidadesDoDia)
+                {
+                    var horaAtual = disp.HoraInicio;
+                    while (horaAtual < disp.HoraFim)
+                    {
+                        var slotDateTime = data.Add(horaAtual);
+                        if (slotDateTime > DateTime.Now)
+                        {
+                            var temConflito = await _context.Visitas
+                                .AnyAsync(v => v.VendedorId == anuncio.VendedorId
+                                            && v.Data == slotDateTime
+                                            && v.Estado != "Cancelada");
+
+                            if (!temConflito)
+                                slotsDisponiveis.Add(slotDateTime);
+                        }
+                        horaAtual = horaAtual.Add(TimeSpan.FromMinutes(disp.IntervaloMinutos));
+                    }
+                }
+            }
+
+            ViewBag.SlotsDisponiveis = slotsDisponiveis;
+            ViewBag.TemDisponibilidades = disponibilidades.Any();
+
             return View(visita);
         }
 

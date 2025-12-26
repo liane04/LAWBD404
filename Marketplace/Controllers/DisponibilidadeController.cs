@@ -42,7 +42,9 @@ namespace Marketplace.Controllers
         // GET: Disponibilidade/Create
         public IActionResult Create()
         {
-            return View();
+            // Limpar ModelState para evitar problemas com checkbox
+            ModelState.Clear();
+            return View(new DisponibilidadeVendedor());
         }
 
         // POST: Disponibilidade/Create
@@ -55,6 +57,9 @@ namespace Marketplace.Controllers
 
             if (vendedor == null)
                 return Forbid();
+
+            // Remover validação da propriedade de navegação
+            ModelState.Remove("Vendedor");
 
             // Validações
             if (disponibilidade.HoraFim <= disponibilidade.HoraInicio)
@@ -95,6 +100,8 @@ namespace Marketplace.Controllers
             if (disponibilidade == null)
                 return NotFound();
 
+            // Limpar ModelState para evitar problemas com checkbox
+            ModelState.Clear();
             return View(disponibilidade);
         }
 
@@ -111,6 +118,9 @@ namespace Marketplace.Controllers
 
             if (vendedor == null || disponibilidade.VendedorId != vendedor.Id)
                 return Forbid();
+
+            // Remover validação da propriedade de navegação
+            ModelState.Remove("Vendedor");
 
             // Validações
             if (disponibilidade.HoraFim <= disponibilidade.HoraInicio)

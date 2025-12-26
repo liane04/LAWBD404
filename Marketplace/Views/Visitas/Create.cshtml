@@ -134,29 +134,43 @@
 
                             @if (temDisponibilidades && slotsDisponiveis.Any())
                             {
-                                <select asp-for="Data" class="form-select form-select-lg" required>
-                                    <option value="">Selecione uma data e hora...</option>
-                                    @foreach (var slot in slotsDisponiveis.Take(50))
+                                <input type="hidden" asp-for="Data" id="dataHiddenInput" required />
+                                <span asp-validation-for="Data" class="text-danger small d-block mb-2"></span>
+
+                                @{
+                                    var slotsPorDia = slotsDisponiveis.Take(60).GroupBy(s => s.Date).Take(14);
+                                }
+
+                                <div class="slots-container" style="max-height: 500px; overflow-y: auto;">
+                                    @foreach (var grupo in slotsPorDia)
                                     {
-                                        var dataFormatada = slot.ToString("dd/MM/yyyy");
-                                        var horaFormatada = slot.ToString("HH:mm");
-                                        var diaSemana = slot.ToString("dddd", new System.Globalization.CultureInfo("pt-PT"));
-                                        <option value="@slot.ToString("yyyy-MM-ddTHH:mm")">
-                                            @diaSemana, @dataFormatada às @horaFormatada
-                                        </option>
+                                        var dia = grupo.Key;
+                                        var diaSemana = dia.ToString("dddd", new System.Globalization.CultureInfo("pt-PT"));
+                                        var dataFormatada = dia.ToString("dd/MM/yyyy");
+
+                                        <div class="mb-4">
+                                            <h6 class="fw-bold text-primary mb-3">
+                                                <i class="bi bi-calendar3 me-2"></i>@diaSemana, @dataFormatada
+                                            </h6>
+                                            <div class="row g-2">
+                                                @foreach (var slot in grupo)
+                                                {
+                                                    var horaFormatada = slot.ToString("HH:mm");
+                                                    var slotValue = slot.ToString("yyyy-MM-ddTHH:mm");
+                                                    <div class="col-6 col-sm-4 col-md-3">
+                                                        <button type="button" class="btn btn-outline-primary w-100 slot-btn" data-slot="@slotValue">
+                                                            <i class="bi bi-clock me-1"></i>@horaFormatada
+                                                        </button>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
                                     }
-                                </select>
-                                <span asp-validation-for="Data" class="text-danger small"></span>
+                                </div>
+
                                 <div class="form-text">
                                     <i class="bi bi-info-circle me-1"></i>
-                                    @if (slotsDisponiveis.Count > 50)
-                                    {
-                                        <text>Mostrando os próximos 50 horários disponíveis de @slotsDisponiveis.Count no total.</text>
-                                    }
-                                    else
-                                    {
-                                        <text>@slotsDisponiveis.Count horário(s) disponível(is) nos próximos 30 dias.</text>
-                                    }
+                                    Mostrando horários disponíveis nos próximos 14 dias. Clique no horário desejado.
                                 </div>
                             }
                             else if (!temDisponibilidades)
@@ -266,4 +280,77 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function() {
+            // Selecionar horário
+            $('.slot-btn').on('click', function() {
+                $('.slot-btn').removeClass('active btn-primary').addClass('btn-outline-primary');
+                $(this).removeClass('btn-outline-primary').addClass('btn-primary active');
+
+                var slotValue = $(this).data('slot');
+                $('#dataHiddenInput').val(slotValue);
+
+                // Remover mensagem de erro se existir
+                $('span[data-valmsg-for="Data"]').text('');
+            });
+
+            // Loading spinner ao submeter
+            $('form').on('submit', function(e) {
+                var dataValue = $('#dataHiddenInput').val();
+
+                if (!dataValue) {
+                    e.preventDefault();
+                    $('span[data-valmsg-for="Data"]').text('Por favor, selecione um horário.');
+                    $('html, body').animate({
+                        scrollTop: $('.slots-container').offset().top - 100
+                    }, 500);
+                    return false;
+                }
+
+                var $submitBtn = $(this).find('button[type="submit"]');
+                $submitBtn.prop('disabled', true);
+                $submitBtn.html('<span class="spinner-border spinner-border-sm me-2" role="status"></span>A processar...');
+            });
+        });
+    </script>
+
+    <style>
+        .slot-btn {
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+        }
+
+        .slot-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .slot-btn.active {
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .slots-container {
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+        }
+
+        .slots-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .slots-container::-webkit-scrollbar-track {
+            background: #e9ecef;
+            border-radius: 10px;
+        }
+
+        .slots-container::-webkit-scrollbar-thumb {
+            background: #2563eb;
+            border-radius: 10px;
+        }
+    </style>
 }
