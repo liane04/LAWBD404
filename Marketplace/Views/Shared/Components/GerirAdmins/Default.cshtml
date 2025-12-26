@@ -1,0 +1,206 @@
+@model Marketplace.Components.GerirAdminsVM
+
+<div class="row g-4 mb-4">
+    <!-- Resumo -->
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm bg-white text-dark">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-2 text-muted">Total de Administradores</h6>
+                        <h2 class="fw-bold mb-0 text-primary">@Model.TotalAdmins</h2>
+                    </div>
+                    <i class="bi bi-shield-lock-fill fs-1 text-primary opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3 border-0">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control bg-light border-start-0" id="searchAdmin" placeholder="Pesquisar por nome ou email...">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+             <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Administrador</th>
+                        <th>Email</th>
+                        <th>Nível de Acesso</th>
+                        <th class="text-end pe-4">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody">
+                    @foreach (var admin in Model.Admins)
+                    {
+                        <tr class="admin-row">
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-3">
+                                        @if (!string.IsNullOrEmpty(admin.ImagemPerfil))
+                                        {
+                                            <img src="@admin.ImagemPerfil" alt="Avatar" class="rounded-circle" width="40" height="40" style="object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <i class="bi bi-person-fill"></i>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold admin-name">@admin.Nome</h6>
+                                        <small class="text-muted admin-username">@("@" + admin.Username)</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="admin-email">@admin.Email</td>
+                            <td>
+                                @if (admin.NivelAcesso == "Nivel 0")
+                                {
+                                    <span class="badge bg-danger">Nível 0 (Super Admin)</span>
+                                }
+                                else if (admin.NivelAcesso == "Nivel 1")
+                                {
+                                    <span class="badge bg-warning text-dark">Nível 1 (Moderador Chefe)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-info text-dark">Nível 2 (Moderador)</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        onclick="openEditLevelModal(@admin.Id, '@admin.Nome', '@admin.NivelAcesso')"
+                                        data-bs-toggle="tooltip" 
+                                        title="Alterar Permissões">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger ms-1" 
+                                        onclick="openDemoteModal(@admin.Id, '@admin.Nome')"
+                                        data-bs-toggle="tooltip" 
+                                        title="Remover Permissões (Tornar Comprador)">
+                                    <i class="bi bi-person-down"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Level -->
+<div class="modal fade" id="editLevelModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Alterar Nível de Acesso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Alterar nível de acesso para <strong id="adminNameDisplay">User</strong></p>
+                <form id="editLevelForm" method="post" action="/Administrador/UpdateAdminLevel">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="editAdminId" name="id" />
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Nível de Acesso</label>
+                        <select class="form-select" id="editNivelAcesso" name="nivel" required>
+                            <option value="Nivel 0">Nível 0 (Super Admin - Acesso Total)</option>
+                            <option value="Nivel 1">Nível 1 (Moderador Chefe - Gerir Usuários/Anúncios)</option>
+                            <option value="Nivel 2">Nível 2 (Moderador - Moderar Anúncios)</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Guardar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Demote Admin -->
+<div class="modal fade" id="demoteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 bg-danger text-white">
+                <h5 class="modal-title fw-bold">Remover Permissões de Administrador</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
+                    <h5 class="fw-bold mt-3">Confirmar Ação</h5>
+                    <p class="text-muted">
+                        Tem a certeza que pretende remover as permissões de administrador de <strong id="demoteAdminName" class="text-dark">User</strong>?
+                    </p>
+                </div>
+                
+                <div class="alert alert-warning small">
+                    <i class="bi bi-info-circle me-1"></i>
+                    O utilizador passará a ser um <strong>Comprador</strong> normal e perderá acesso ao painel de administração.
+                </div>
+
+                <form id="demoteForm" method="post" action="/Administrador/RemoverPermissoesAdmin">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="demoteAdminId" name="id" />
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger fw-bold">Confirmar Remoção</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEditLevelModal(id, nome, currentLevel) {
+        document.getElementById('editAdminId').value = id;
+        document.getElementById('adminNameDisplay').innerText = nome;
+        document.getElementById('editNivelAcesso').value = currentLevel;
+        
+        var myModal = new bootstrap.Modal(document.getElementById('editLevelModal'));
+        myModal.show();
+    }
+
+    function openDemoteModal(id, nome) {
+        document.getElementById('demoteAdminId').value = id;
+        document.getElementById('demoteAdminName').innerText = nome;
+        
+        var myModal = new bootstrap.Modal(document.getElementById('demoteModal'));
+        myModal.show();
+    }
+
+    document.getElementById('searchAdmin').addEventListener('input', function() {
+        var searchTerm = this.value.toLowerCase();
+        var rows = document.querySelectorAll('.admin-row');
+
+        rows.forEach(function(row) {
+            var name = row.querySelector('.admin-name').textContent.toLowerCase();
+            var email = row.querySelector('.admin-email').textContent.toLowerCase();
+            var username = row.querySelector('.admin-username').textContent.toLowerCase();
+
+            if (name.includes(searchTerm) || email.includes(searchTerm) || username.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
