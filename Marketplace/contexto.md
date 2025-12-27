@@ -1,9 +1,9 @@
 # CONTEXTO DO PROJETO - DriveDeal (404 Car Marketplace)
 
 > **Ficheiro de contexto para sessões futuras com Claude Code**
-> **Última atualização:** 2025-12-26 (Correções: Erro compilação Razor + Feedback visual Visitas)
+> **Última atualização:** 2025-12-27 (Correções: Secção Minhas Compras + Sistema de Anúncios Vendidos)
 > **Fase atual:** Fase 3 (em desenvolvimento ativo - Sprint final)
-> **Prazo de entrega:** 5 de janeiro de 2026 (10 dias restantes ⚠️)
+> **Prazo de entrega:** 5 de janeiro de 2026 (9 dias restantes ⚠️)
 
 ---
 
@@ -993,6 +993,162 @@ git push origin main
 ---
 
 ## 18. CORREÇÕES RECENTES
+
+### 27/12/2025 - Sistema de Compra Completo com Stripe
+
+**Implementação:** Sistema completo de compra de veículos integrado com Stripe, incluindo dedução automática do sinal pago em reservas, emails estilizados e gestão de histórico de compras.
+
+**Ficheiros Criados:**
+- `Controllers/ComprasController.cs` - Controller completo de compras
+- `Views/Compras/Index.cshtml` - Lista de compras do utilizador
+- `Views/Compras/Success.cshtml` - Página de sucesso pós-pagamento
+- `Views/Compras/Cancel.cshtml` - Página de cancelamento
+
+**Ficheiros Modificados:**
+- `Views/Anuncios/Details.cshtml` - Modal de compra + JavaScript de verificação de reserva
+- `Controllers/ReservasController.cs` - Emails HTML estilizados
+- `Controllers/UtilizadoresController.cs` - Carregamento de compras
+- `Views/Utilizadores/Perfil.cshtml` - Link "Minhas Compras"
+
+**Funcionalidades Principais:**
+
+1. **Modal de Compra Inteligente** (Details.cshtml linhas 988-1131)
+   - Verificação automática de reserva ativa via JavaScript
+   - Dedução automática do sinal se tiver reserva
+   - Mostra breakdown: Preço Total - Sinal Pago = Total a Pagar
+   - Design moderno com gradiente verde
+
+2. **Fluxo de Compra com Stripe** (ComprasController.cs)
+   - Verifica se tem reserva ativa
+   - Calcula valor correto: `valorAPagar = anuncio.Preco - valorSinal` (se tiver reserva)
+   - Cria sessão Stripe com metadata completa
+   - Processa pagamento e cria compra na BD
+   - Marca reserva como "Concluída" (se existir)
+
+3. **Emails HTML Estilizados** (ReservasController.cs e ComprasController.cs)
+   - Templates HTML completos com gradientes e design profissional
+   - Email de reserva com **botão de link direto** para concluir compra
+   - Email de compra mostra breakdown de pagamento (sinal + restante)
+   - Usa variáveis dinâmicas do domínio para links
+
+4. **Gestão de Compras**
+   - View Index.cshtml com lista de todas as compras
+   - Cards bonitos com imagem, detalhes e status
+   - Integração no perfil do utilizador (badge com contador)
+
+**Fluxo Completo:**
+1. Comprador reserva veículo → Paga sinal via Stripe
+2. Recebe email com link de pagamento direto
+3. Clica "Comprar Agora" → Modal detecta reserva automaticamente
+4. Mostra valor a pagar (preço - sinal)
+5. Processa pagamento do restante
+6. Marca reserva como concluída
+7. Envia emails de confirmação de venda
+
+---
+
+### 27/12/2025 (Tarde) - Sistema de Estados de Anúncios e Secção Minhas Compras
+
+**Problema Reportado:**
+1. Secção "Minhas Compras" não aparecia nada no perfil do utilizador
+2. Veículos vendidos continuavam a aparecer na listagem pública
+3. Modelo Anuncio não tinha campo de Estado (faltava padrão de design em relação a outras entidades)
+
+**Evolução da Solução:**
+- **Inicialmente:** Adicionado campo booleano `Vendido`
+- **Refinamento:** Substituído por campo `Estado` (string) para maior flexibilidade e consistência com outras entidades (Reserva, Visita, Compra, Utilizador)
+
+**Soluções Implementadas:**
+
+1. **Secção "Minhas Compras" Adicionada** (`Views/Utilizadores/Perfil.cshtml`, linha 1916)
+   - Nova tab completa com lista de compras do comprador
+   - Cards detalhados com imagem, informações do veículo e dados de pagamento
+   - Mostra: Data da compra, Valor pago, Estado de pagamento
+   - Informações do vendedor com foto de perfil
+   - Links para contactar vendedor e ver anúncio
+   - Estado vazio estilizado quando não há compras
+   - Total de compras exibido no badge do menu lateral
+
+2. **Campo "Estado" Adicionado ao Modelo Anuncio** (`Models/Anuncio.cs`, linha 50-52)
+   ```csharp
+   [StringLength(20)]
+   public string Estado { get; set; } = "Ativo";
+   ```
+   **Estados possíveis:**
+   - `"Ativo"` - Anúncio visível e disponível para compra (padrão)
+   - `"Reservado"` - Tem reserva ativa
+   - `"Vendido"` - Foi comprado
+   - `"Pausado"` - Vendedor pausou temporariamente
+   - `"Bloqueado"` - Bloqueado por admin
+   - `"Expirado"` - Anúncio expirou
+
+3. **Gestão Automática de Estados:**
+
+   **a) Reserva Criada** (`Controllers/ReservasController.cs`, linha 233)
+   ```csharp
+   anuncio.Estado = "Reservado";
+   ```
+
+   **b) Compra Concluída** (`Controllers/ComprasController.cs`, linha 244)
+   ```csharp
+   anuncio.Estado = "Vendido";
+   ```
+
+4. **Filtragem Inteligente de Anúncios** (`Controllers/AnunciosController.cs`, linha 39)
+   ```csharp
+   .Where(a => a.Estado == "Ativo" || a.Estado == "Reservado")
+   ```
+   - Anúncios "Vendido", "Bloqueado", "Pausado" e "Expirado" não aparecem na listagem pública
+   - Anúncios "Reservado" continuam visíveis (transparência para compradores)
+
+**Migration com Migração de Dados:**
+- **Migration:** `20251227222440_SubstituirVendidoPorEstado`
+- **Processo em 3 etapas:**
+  1. Adiciona coluna `Estado` (nvarchar(20), default "Ativo")
+  2. Migra dados existentes:
+     ```sql
+     UPDATE Anuncios
+     SET Estado = CASE
+         WHEN Vendido = 1 THEN 'Vendido'
+         ELSE 'Ativo'
+     END
+     ```
+  3. Remove coluna `Vendido` (bit)
+- **Resultado:** Todos os anúncios existentes preservam o estado correto
+
+**Correções de Erros de Compilação:**
+- **ComprasController.cs (linha 262):** Corrigido conversão `decimal?` → `decimal`
+- **ReservasController.cs (linha 239):** Mesma correção de conversão
+- **Views/Compras/Cancel.cshtml (linha 97):** Escapado `@keyframes` → `@@keyframes`
+- **Views/Compras/Success.cshtml (linhas 197, 205):** Escapado `@keyframes` → `@@keyframes`
+
+**Ficheiros Modificados:**
+- ✅ `Models/Anuncio.cs` - Substituído `Vendido` (bool) por `Estado` (string)
+- ✅ `Controllers/ComprasController.cs` - Usa `Estado = "Vendido"`
+- ✅ `Controllers/ReservasController.cs` - Usa `Estado = "Reservado"`
+- ✅ `Controllers/AnunciosController.cs` - Filtra por Estado
+- ✅ `Views/Utilizadores/Perfil.cshtml` - Secção "Minhas Compras" completa
+- ✅ `Views/Compras/Cancel.cshtml` - Correção Razor
+- ✅ `Views/Compras/Success.cshtml` - Correção Razor
+- ✅ `Migrations/20251227222440_SubstituirVendidoPorEstado.cs` - Migration personalizada com migração de dados
+
+**Fluxo Completo Atualizado:**
+
+**Cenário 1: Compra Direta**
+1. Anúncio em estado "Ativo"
+2. Comprador compra → Estado muda para "Vendido"
+3. Anúncio desaparece da listagem pública
+4. Compra aparece em "Minhas Compras"
+
+**Cenário 2: Compra com Reserva**
+1. Anúncio em estado "Ativo"
+2. Comprador reserva → Estado muda para "Reservado" ✨
+3. Anúncio continua visível mas marcado como reservado
+4. Comprador completa compra → Estado muda para "Vendido"
+5. Anúncio desaparece da listagem pública
+6. Compra aparece em "Minhas Compras"
+
+---
 
 ### 27/12/2025 - Integração do Stripe no Modal de Reserva
 

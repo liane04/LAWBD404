@@ -985,6 +985,151 @@
     </div>
 </div>
 
+<!-- Modal: Comprar Veículo -->
+<div class="modal fade" id="comprarModal" tabindex="-1" aria-labelledby="comprarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success bg-opacity-10 border-success">
+                <h5 class="modal-title fw-bold text-success" id="comprarModalLabel">
+                    <i class="bi bi-bag-check-fill me-2"></i>Comprar Veículo
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Resumo do Veículo -->
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-car-front-fill text-primary me-2"></i>Veículo a Comprar
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-auto">
+                                @{
+                                    var primeiraImagemCompra = Model.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/no-image.jpg";
+                                }
+                                <img src="@primeiraImagemCompra" alt="@Model.Titulo" class="rounded" style="width: 100px; height: 75px; object-fit: cover;">
+                            </div>
+                            <div class="col">
+                                <h5 class="mb-1">@Model.Titulo</h5>
+                                <p class="text-muted mb-1 small">
+                                    @Model.Ano •
+                                    @(Model.Quilometragem?.ToString("N0") ?? "N/A") km •
+                                    @Model.Combustivel?.Tipo •
+                                    @Model.Caixa
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações sobre Reserva (se existir) -->
+                <div id="infoReserva" class="alert alert-info mb-4" style="display: none;">
+                    <h6 class="alert-heading">
+                        <i class="bi bi-info-circle-fill me-2"></i>Reserva Ativa Detectada
+                    </h6>
+                    <p class="mb-0">
+                        Você já pagou o sinal de <strong id="valorSinalPago">0€</strong> para reservar este veículo.
+                        Este valor será deduzido do preço total.
+                    </p>
+                </div>
+
+                <!-- Resumo de Pagamento -->
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">Resumo do Pagamento</h6>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Preço Total do Veículo:</span>
+                            <span class="fw-bold">@Model.Preco.ToString("N0") €</span>
+                        </div>
+
+                        <div id="linhaDesconto" style="display: none;">
+                            <div class="d-flex justify-content-between mb-2 text-success">
+                                <span>
+                                    <i class="bi bi-dash-circle me-1"></i>Sinal já pago:
+                                </span>
+                                <span class="fw-bold" id="descontoSinal">- 0 €</span>
+                            </div>
+                            <hr>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold fs-5">Total a Pagar:</span>
+                            <span class="text-success fw-bold fs-3" id="valorTotalPagar">@Model.Preco.ToString("N0") €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário de Compra -->
+                <form id="formCompra" asp-controller="Compras" asp-action="CreateCheckoutSession" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="anuncioId" value="@Model.Id" />
+
+                    <div class="alert alert-warning mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Importante:</strong> Ao confirmar a compra, será redirecionado para o Stripe para processar o pagamento de forma segura.
+                        Após a confirmação do pagamento, o veículo será considerado vendido.
+                    </div>
+
+                    <!-- Termos e Condições -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="compraTermos" required>
+                        <label class="form-check-label small" for="compraTermos">
+                            Li e concordo com os <a href="/Home/TermosCondicoes" target="_blank" class="text-primary">termos e condições de compra</a>
+                        </label>
+                    </div>
+
+                    <!-- Info Timeline -->
+                    <div class="alert alert-light border mb-0">
+                        <h6 class="fw-bold mb-3">O que acontece a seguir?</h6>
+                        <div class="d-flex mb-2">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-1-circle-fill"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 small fw-semibold">Pagamento Seguro</h6>
+                                <p class="mb-0 small text-muted">Processamento via Stripe com proteção total</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-2-circle-fill"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 small fw-semibold">Confirmação Imediata</h6>
+                                <p class="mb-0 small text-muted">Receberá email de confirmação com todos os detalhes</p>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-3-circle-fill"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 small fw-semibold">Contacto do Vendedor</h6>
+                                <p class="mb-0 small text-muted">O vendedor entrará em contacto para combinar a entrega</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancelar
+                </button>
+                <button type="submit" form="formCompra" class="btn btn-success btn-lg" id="btnConfirmarCompra">
+                    <i class="bi bi-credit-card me-2"></i>Pagar com Stripe
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Gallery Thumbnails Navigation
     function goToSlide(index) {
@@ -1080,6 +1225,45 @@
                 alertDiv.classList.remove('show');
                 setTimeout(() => alertDiv.remove(), 150);
             }, 8000);
+        }
+
+        // Modal de Compra - Verificar Reserva Ativa
+        const comprarModal = document.getElementById('comprarModal');
+        if (comprarModal) {
+            comprarModal.addEventListener('show.bs.modal', async function () {
+                try {
+                    // Fazer fetch para verificar se o utilizador tem reserva ativa neste anúncio
+                    const response = await fetch('/Compras/VerificarReserva?anuncioId=@Model.Id');
+                    if (response.ok) {
+                        const data = await response.json();
+
+                        const precoTotal = @Model.Preco;
+                        let valorAPagar = precoTotal;
+
+                        if (data.temReserva && data.valorSinal > 0) {
+                            // Mostrar informação de reserva
+                            document.getElementById('infoReserva').style.display = 'block';
+                            document.getElementById('valorSinalPago').textContent = data.valorSinal.toFixed(0) + '€';
+
+                            // Mostrar linha de desconto
+                            document.getElementById('linhaDesconto').style.display = 'block';
+                            document.getElementById('descontoSinal').textContent = '- ' + data.valorSinal.toFixed(0) + ' €';
+
+                            // Calcular valor a pagar
+                            valorAPagar = precoTotal - data.valorSinal;
+                        } else {
+                            // Esconder informação de reserva
+                            document.getElementById('infoReserva').style.display = 'none';
+                            document.getElementById('linhaDesconto').style.display = 'none';
+                        }
+
+                        // Atualizar valor total a pagar
+                        document.getElementById('valorTotalPagar').textContent = valorAPagar.toFixed(0) + ' €';
+                    }
+                } catch (error) {
+                    console.error('Erro ao verificar reserva:', error);
+                }
+            });
         }
     });
 </script>

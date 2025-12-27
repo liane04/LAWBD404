@@ -36,6 +36,7 @@ namespace Marketplace.Controllers
                 .Include(a => a.Tipo)
                 .Include(a => a.Vendedor)
                 .Include(a => a.Imagens)
+                .Where(a => a.Estado == "Ativo" || a.Estado == "Reservado") // Mostrar apenas ativos e reservados
                 .AsQueryable();
 
             // Aplicar filtros

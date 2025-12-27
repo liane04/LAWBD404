@@ -47,6 +47,10 @@ namespace Marketplace.Models
         [Column("n_visualizacoes")]
         public int NVisualizacoes { get; set; } = 0;
 
+        // Estado do anúncio: Ativo, Reservado, Vendido, Pausado, Bloqueado, Expirado
+        [StringLength(20)]
+        public string Estado { get; set; } = "Ativo";
+
         // Relações com outras entidades
         public int VendedorId { get; set; }
         [ForeignKey("VendedorId")]

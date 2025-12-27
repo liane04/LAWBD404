@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Compra Cancelada";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center p-5">
+                    <!-- Cancel Icon -->
+                    <div class="mb-4">
+                        <div class="cancel-icon">
+                            <i class="bi bi-x-circle text-danger" style="font-size: 80px;"></i>
+                        </div>
+                    </div>
+
+                    <h1 class="text-danger mb-3">
+                        Compra Cancelada
+                    </h1>
+
+                    <p class="lead text-muted mb-4">
+                        O processo de pagamento foi cancelado. Não foi efetuada nenhuma cobrança.
+                    </p>
+
+                    <div class="alert alert-info bg-info bg-opacity-10 border-info mb-4">
+                        <h5 class="alert-heading">
+                            <i class="bi bi-info-circle-fill me-2"></i>O que aconteceu?
+                        </h5>
+                        <p class="mb-0">
+                            O pagamento foi cancelado durante o processo de checkout.
+                            Nenhum valor foi debitado do seu cartão.
+                        </p>
+                    </div>
+
+                    <div class="card bg-light border-0 mb-4">
+                        <div class="card-body text-start">
+                            <h5 class="card-title mb-3">
+                                <i class="bi bi-lightbulb text-warning me-2"></i>Gostaria de continuar?
+                            </h5>
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    O veículo ainda está disponível para compra
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Pode tentar novamente a qualquer momento
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Todos os seus dados estão guardados em segurança
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning bg-warning bg-opacity-10 border-warning mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Nota:</strong> Se encontrou algum problema durante o pagamento, contacte o nosso suporte.
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        @if (ViewBag.AnuncioId != null)
+                        {
+                            <a href="@Url.Action("Details", "Anuncios", new { id = ViewBag.AnuncioId })" class="btn btn-primary btn-lg">
+                                <i class="bi bi-arrow-counterclockwise me-2"></i>Tentar Novamente
+                            </a>
+                        }
+                        <a href="@Url.Action("Index", "Anuncios")" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-search me-2"></i>Ver Outros Veículos
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-house-fill me-2"></i>Voltar ao Início
+                        </a>
+                    </div>
+
+                    <div class="mt-4 text-muted">
+                        <small>
+                            <i class="bi bi-shield-check me-1"></i>
+                            Os seus dados estão protegidos e nenhuma informação foi partilhada.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cancel-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+        animation: shake 0.5s;
+    }
+
+    @@keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+        20%, 40%, 60%, 80% { transform: translateX(10px); }
+    }
+</style>

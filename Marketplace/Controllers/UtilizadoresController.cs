@@ -228,6 +228,24 @@ namespace Marketplace.Controllers
 
                     ViewBag.MinhasVisitasComprador = visitasComprador;
 
+                    // Carregar compras do comprador
+                    var compras = await _db.Compras
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Combustivel)
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Vendedor)
+                        .Where(c => c.CompradorId == comprador.Id)
+                        .OrderByDescending(c => c.Data)
+                        .ToListAsync();
+                    ViewBag.Compras = compras;
+                    ViewBag.ComprasCount = compras.Count;
+
                     ViewBag.Nome = comprador.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(comprador.ImagemPerfil) ? null : comprador.ImagemPerfil;
 
@@ -1219,6 +1237,40 @@ namespace Marketplace.Controllers
                 await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(claimType, value.ToString()));
             }
             await _signInManager.RefreshSignInAsync(user);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> PrivacySettings()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var claims = await _userManager.GetClaimsAsync(user);
+            bool perfilPublico = GetNotificationFlag(claims, "privacy:public", true);
+            bool mostrarEmail = GetNotificationFlag(claims, "privacy:showEmail", false);
+
+            return Json(new { perfilPublico, mostrarEmail });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetPrivacy(string tipo, bool ativo)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var key = tipo?.ToLowerInvariant() switch
+            {
+                "perfil" => "privacy:public",
+                "email" => "privacy:showEmail",
+                _ => null
+            };
+            if (key == null) return BadRequest(new { error = "Tipo de privacidade inválido." });
+
+            await SetNotificationFlag(user, key, ativo);
+            return Json(new { success = true, tipo = key, ativo });
         }
 
         [Authorize]

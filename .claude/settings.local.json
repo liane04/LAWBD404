@@ -6,7 +6,12 @@
       "Bash(dotnet build:*)",
       "Bash(dotnet build-server:*)",
       "Bash(dotnet clean:*)",
-      "Bash(sqlcmd:*)"
+      "Bash(sqlcmd:*)",
+      "Bash(cat:*)",
+      "Bash(Select-String -Pattern \"error\" -Context 0,2)",
+      "Bash(taskkill:*)",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 43944 -Force\")",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 28428 -Force\")"
     ]
   }
 }

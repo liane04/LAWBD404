@@ -220,7 +220,7 @@ namespace Marketplace.Controllers
 
                         _context.Reservas.Add(reserva);
 
-                        // Buscar anúncio para enviar emails
+                        // Buscar anúncio para enviar emails e marcar como reservado
                         var anuncio = await _context.Anuncios
                             .Include(a => a.Vendedor)
                             .Include(a => a.Marca)
@@ -229,10 +229,15 @@ namespace Marketplace.Controllers
 
                         if (anuncio != null)
                         {
-                            // Nota: O modelo Anuncio não tem propriedade Estado
+                            // Marcar anúncio como reservado
+                            anuncio.Estado = "Reservado";
 
                             var comprador = await _context.Compradores
                                 .FirstOrDefaultAsync(c => c.Id == compradorId);
+
+                            var domain = $"{Request.Scheme}://{Request.Host}";
+                            var linkAnuncio = $"{domain}/Anuncios/Details/{anuncio.Id}";
+                            var valorSinal = (session.AmountTotal ?? 0) / 100m;
 
                             // Enviar email ao vendedor
                             try
@@ -240,13 +245,7 @@ namespace Marketplace.Controllers
                                 await _emailSender.SendAsync(
                                     anuncio.Vendedor.Email,
                                     "Novo Veículo Reservado - 404 Ride",
-                                    $@"<h2>Veículo Reservado</h2>
-                                    <p>Olá {anuncio.Vendedor.Nome},</p>
-                                    <p>O seu veículo <strong>{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}</strong> foi reservado!</p>
-                                    <p><strong>Comprador:</strong> {comprador?.Nome}</p>
-                                    <p><strong>Email:</strong> {comprador?.Email}</p>
-                                    <p><strong>Data da Reserva:</strong> {DateTime.Now:dd/MM/yyyy HH:mm}</p>
-                                    <p>O comprador tem 7 dias para concluir a compra. Entre em contacto para combinar os detalhes.</p>"
+                                    GetEmailVendedorReserva(anuncio, comprador, valorSinal, linkAnuncio)
                                 );
                             }
                             catch (Exception ex)
@@ -260,13 +259,7 @@ namespace Marketplace.Controllers
                                 await _emailSender.SendAsync(
                                     comprador?.Email ?? "",
                                     "Reserva Confirmada - 404 Ride",
-                                    $@"<h2>Reserva Confirmada</h2>
-                                    <p>Olá {comprador?.Nome},</p>
-                                    <p>A sua reserva do veículo <strong>{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}</strong> foi confirmada!</p>
-                                    <p><strong>Valor pago:</strong> {session.AmountTotal / 100:C}</p>
-                                    <p><strong>Validade:</strong> 7 dias</p>
-                                    <p>O vendedor irá contactá-lo em breve para combinar os detalhes da compra.</p>
-                                    <p>Pode ver os detalhes da reserva na sua área pessoal.</p>"
+                                    GetEmailCompradorReserva(anuncio, comprador, valorSinal, linkAnuncio)
                                 );
                             }
                             catch (Exception ex)
@@ -370,6 +363,148 @@ namespace Marketplace.Controllers
 
             TempData["Success"] = "Reserva cancelada com sucesso.";
             return RedirectToAction(nameof(Index));
+        }
+
+        // Templates de Email Estilizados para Reservas
+        private string GetEmailVendedorReserva(Anuncio anuncio, Comprador comprador, decimal valorSinal, string linkAnuncio)
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }}
+        .container {{ max-width: 600px; margin: 30px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
+        .header {{ background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; padding: 30px; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 28px; }}
+        .content {{ padding: 30px; }}
+        .vehicle-info {{ background: #f8fafc; border-left: 4px solid #2563eb; padding: 20px; margin: 20px 0; border-radius: 5px; }}
+        .buyer-info {{ background: #ecfdf5; border-left: 4px solid #10b981; padding: 20px; margin: 20px 0; border-radius: 5px; }}
+        .footer {{ background: #1e293b; color: #94a3b8; padding: 20px; text-align: center; font-size: 12px; }}
+        .icon {{ font-size: 60px; text-align: center; margin: 20px 0; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <div class='icon'>🎯</div>
+            <h1>Veículo Reservado!</h1>
+            <p>O seu veículo foi reservado por um comprador</p>
+        </div>
+        <div class='content'>
+            <p>Olá <strong>{anuncio.Vendedor.Nome}</strong>,</p>
+            <p>Temos boas notícias! O seu veículo foi reservado através da plataforma 404 Ride.</p>
+
+            <div class='vehicle-info'>
+                <h3 style='margin-top:0; color: #2563eb;'>🚗 Detalhes do Veículo</h3>
+                <p><strong>Veículo:</strong> {anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}</p>
+                <p><strong>Título:</strong> {anuncio.Titulo}</p>
+                <p><strong>Ano:</strong> {anuncio.Ano}</p>
+                <p><strong>Valor do Sinal Recebido:</strong> {valorSinal:N2}€</p>
+            </div>
+
+            <div class='buyer-info'>
+                <h3 style='margin-top:0; color: #10b981;'>👤 Informações do Comprador</h3>
+                <p><strong>Nome:</strong> {comprador?.Nome}</p>
+                <p><strong>Email:</strong> {comprador?.Email}</p>
+                <p><strong>Data da Reserva:</strong> {DateTime.Now:dd/MM/yyyy HH:mm}</p>
+            </div>
+
+            <h3>📞 Próximos Passos</h3>
+            <ol>
+                <li>O comprador tem 7 dias para concluir a compra</li>
+                <li>Entre em contacto para combinar uma visita</li>
+                <li>Prepare a documentação do veículo</li>
+            </ol>
+
+            <p style='background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 5px; margin-top: 30px;'>
+                <strong>💡 Dica:</strong> Responda rapidamente ao comprador para garantir uma venda bem-sucedida!
+            </p>
+        </div>
+        <div class='footer'>
+            <p>© 2025 404 Ride - Marketplace de Veículos</p>
+            <p>Este é um email automático, por favor não responda.</p>
+        </div>
+    </div>
+</body>
+</html>";
+        }
+
+        private string GetEmailCompradorReserva(Anuncio anuncio, Comprador comprador, decimal valorSinal, string linkAnuncio)
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }}
+        .container {{ max-width: 600px; margin: 30px auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
+        .header {{ background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; }}
+        .header h1 {{ margin: 0; font-size: 28px; }}
+        .content {{ padding: 30px; }}
+        .vehicle-info {{ background: #f0f9ff; border-left: 4px solid #2563eb; padding: 20px; margin: 20px 0; border-radius: 5px; }}
+        .payment-info {{ background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 20px 0; border-radius: 5px; }}
+        .button {{ display: inline-block; padding: 15px 30px; background: #2563eb; color: white !important; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: bold; text-align: center; }}
+        .footer {{ background: #1e293b; color: #94a3b8; padding: 20px; text-align: center; font-size: 12px; }}
+        .icon {{ font-size: 60px; text-align: center; margin: 20px 0; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <div class='icon'>✅</div>
+            <h1>Reserva Confirmada!</h1>
+            <p>O veículo está reservado para si</p>
+        </div>
+        <div class='content'>
+            <p>Olá <strong>{comprador?.Nome}</strong>,</p>
+            <p>A sua reserva foi confirmada com sucesso! O veículo está agora reservado exclusivamente para si.</p>
+
+            <div class='vehicle-info'>
+                <h3 style='margin-top:0; color: #2563eb;'>🚗 Veículo Reservado</h3>
+                <p><strong>Veículo:</strong> {anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}</p>
+                <p><strong>Ano:</strong> {anuncio.Ano}</p>
+                <p><strong>Quilometragem:</strong> {anuncio.Quilometragem:N0} km</p>
+                <p><strong>Combustível:</strong> {anuncio.Combustivel?.Tipo}</p>
+            </div>
+
+            <div class='payment-info'>
+                <h3 style='margin-top:0; color: #10b981;'>💰 Detalhes do Pagamento</h3>
+                <p><strong>Preço Total do Veículo:</strong> {anuncio.Preco:N2}€</p>
+                <p><strong>Sinal Pago:</strong> {valorSinal:N2}€</p>
+                <p><strong>Valor Restante a Pagar:</strong> {(anuncio.Preco - valorSinal):N2}€</p>
+                <p style='color: #10b981;'>✓ Sinal Confirmado</p>
+            </div>
+
+            <h3>⏰ Validade da Reserva</h3>
+            <p>A sua reserva é válida por <strong>7 dias</strong> (até {DateTime.Now.AddDays(7):dd/MM/yyyy}).</p>
+            <p>Durante este período, o vendedor não pode vender o veículo a outros compradores.</p>
+
+            <div style='text-align: center; margin: 30px 0;'>
+                <a href='{linkAnuncio}' class='button'>
+                    🛒 Concluir Compra e Pagar Restante
+                </a>
+            </div>
+
+            <h3>📞 Próximos Passos</h3>
+            <ol>
+                <li>O vendedor entrará em contacto consigo para agendar uma visita</li>
+                <li>Visite o veículo e confirme se está tudo conforme descrito</li>
+                <li>Clique no botão acima para concluir a compra e pagar o valor restante</li>
+                <li>Combine a entrega com o vendedor</li>
+            </ol>
+
+            <p style='background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 5px; margin-top: 30px;'>
+                <strong>⚠️ Importante:</strong> Se não concluir a compra dentro de 7 dias, a reserva expirará e o sinal não será reembolsado.
+            </p>
+        </div>
+        <div class='footer'>
+            <p>© 2025 404 Ride - Marketplace de Veículos</p>
+            <p>Este é um email automático, por favor não responda.</p>
+        </div>
+    </div>
+</body>
+</html>";
         }
     }
 }
