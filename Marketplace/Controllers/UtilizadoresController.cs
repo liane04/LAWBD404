@@ -1164,6 +1164,64 @@ namespace Marketplace.Controllers
         }
 
         [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> NotificationSettings()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var claims = await _userManager.GetClaimsAsync(user);
+            bool email = GetNotificationFlag(claims, "notif:email", true);
+            bool novos = GetNotificationFlag(claims, "notif:novos", true);
+            bool preco = GetNotificationFlag(claims, "notif:preco", false);
+
+            return Json(new { email, novos, preco });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetNotification(string tipo, bool ativo)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var key = tipo?.ToLowerInvariant() switch
+            {
+                "email" => "notif:email",
+                "novos" => "notif:novos",
+                "preco" => "notif:preco",
+                _ => null
+            };
+            if (key == null) return BadRequest(new { error = "Tipo de notificação inválido." });
+
+            await SetNotificationFlag(user, key, ativo);
+            return Json(new { success = true, tipo = key, ativo });
+        }
+
+        private bool GetNotificationFlag(IEnumerable<System.Security.Claims.Claim> claims, string claimType, bool defaultValue)
+        {
+            var claim = claims.FirstOrDefault(c => c.Type == claimType);
+            if (claim == null) return defaultValue;
+            return bool.TryParse(claim.Value, out var val) ? val : defaultValue;
+        }
+
+        private async Task SetNotificationFlag(ApplicationUser user, string claimType, bool value)
+        {
+            var existing = await _userManager.GetClaimsAsync(user);
+            var current = existing.FirstOrDefault(c => c.Type == claimType);
+            if (current != null)
+            {
+                await _userManager.ReplaceClaimAsync(user, current, new System.Security.Claims.Claim(claimType, value.ToString()));
+            }
+            else
+            {
+                await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(claimType, value.ToString()));
+            }
+            await _signInManager.RefreshSignInAsync(user);
+        }
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TerminateOtherSessions()

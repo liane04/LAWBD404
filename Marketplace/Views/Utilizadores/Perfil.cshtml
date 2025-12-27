@@ -3194,6 +3194,9 @@
         const sessionsFeedback = document.getElementById('sessionsFeedback');
         const btnTerminateSessions = document.getElementById('btnTerminateSessions');
         const btnSessions = document.getElementById('btnSessions');
+        const switchEmailNotif = document.getElementById('switchEmailNotif');
+        const switchNovos = document.getElementById('switchNovosAnuncios');
+        const switchPreco = document.getElementById('switchPreco');
         const tokenField = () => document.querySelector('#securityAntiForgery input[name="__RequestVerificationToken"]')?.value;
 
         let twofaEnabled = false;
@@ -3226,10 +3229,63 @@
                 if (!res.ok) throw new Error();
                 const data = await res.json();
                 update2faUI(!!data.twoFactorEnabled, data.recoveryCodes ?? 0);
+                await loadNotificationStatus();
             } catch {
                 update2faUI(false, 0);
                 showSecurityAlert('warning', 'Não foi possível verificar o estado de segurança neste momento.');
             }
+        };
+
+        const setToggleUI = (el, active) => {
+            if (!el) return;
+            el.checked = active;
+            const label = el.parentElement?.querySelector('label span');
+            if (label) {
+                label.classList.remove('bg-success', 'bg-secondary');
+                label.classList.add(active ? 'bg-success' : 'bg-secondary');
+                label.textContent = active ? 'Ativo' : 'Desativado';
+            }
+        };
+
+        const loadNotificationStatus = async () => {
+            try {
+                const res = await fetch('/Utilizadores/NotificationSettings');
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                setToggleUI(switchEmailNotif, !!data.email);
+                setToggleUI(switchNovos, !!data.novos);
+                setToggleUI(switchPreco, !!data.preco);
+            } catch {
+                showSecurityAlert('warning', 'Não foi possível carregar as preferências de notificação.');
+            }
+        };
+
+        const saveNotification = async (tipo, ativo) => {
+            const token = tokenField();
+            const formData = new FormData();
+            formData.append('tipo', tipo);
+            formData.append('ativo', ativo ? 'true' : 'false');
+            if (token) formData.append('__RequestVerificationToken', token);
+            const res = await fetch('/Utilizadores/SetNotification', { method: 'POST', body: formData });
+            if (!res.ok) {
+                showSecurityAlert('danger', 'Não foi possível atualizar notificações.');
+                return false;
+            }
+            return true;
+        };
+
+        const bindNotifToggle = (el, tipo) => {
+            if (!el) return;
+            el.addEventListener('change', async () => {
+                const desired = el.checked;
+                const ok = await saveNotification(tipo, desired);
+                if (ok) {
+                    setToggleUI(el, desired);
+                    showSecurityAlert('success', `Notificação de ${tipo} ${desired ? 'ativada' : 'desativada'}.`);
+                } else {
+                    setToggleUI(el, !desired);
+                }
+            });
         };
 
         const openTwoFaSetup = async () => {
@@ -3359,6 +3415,10 @@
             const codeInput = twofaForm?.querySelector('input[name="Code"]');
             codeInput?.focus();
         });
+
+        bindNotifToggle(switchEmailNotif, 'email');
+        bindNotifToggle(switchNovos, 'novos');
+        bindNotifToggle(switchPreco, 'preco');
 
         btnSessions?.addEventListener('click', () => {
             if (sessionsFeedback) sessionsFeedback.innerHTML = '';

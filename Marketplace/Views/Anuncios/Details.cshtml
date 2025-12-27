@@ -26,6 +26,26 @@
         </div>
     </div>
 }
+@if (TempData["CompraSucesso"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-bag-check-fill me-2"></i>
+            <strong>@TempData["CompraSucesso"]</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+@if (TempData["CompraErro"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>@TempData["CompraErro"]</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
 
 <div class="container my-5">
     <div class="row">
@@ -430,29 +450,55 @@
 
                         <hr class="my-2">
 
-                        <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#reservarModal" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
-                            <i class="bi bi-bookmark-check-fill me-2"></i>Reservar Veículo
-                        </button>
                         @{
                             var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                             int.TryParse(userIdClaim, out var loggedUserId);
                             var isProprioVendedor = Model.Vendedor?.IdentityUserId == loggedUserId;
                             var isComprador = User.IsInRole("Comprador");
+                            // Availability is checked server-side in ReservasController
                         }
+
+                        @* Botão de Reserva *@
                         @if (User.Identity.IsAuthenticated)
                         {
                             if (isProprioVendedor)
                             {
-                                <button class="btn btn-outline-secondary btn-lg" disabled title="Não pode agendar visita no seu próprio anúncio">
-                                    <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                                <button class="btn btn-success btn-lg" disabled title="Não pode reservar o seu próprio anúncio">
+                                    <i class="bi bi-lock-fill me-2"></i>Reservar Veículo
                                 </button>
                             }
                             else
                             {
-                                <a href="@Url.Action("Create", "Visitas", new { anuncioId = Model.Id })" class="btn btn-info btn-lg text-white">
-                                    <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
-                                </a>
+                                <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#reservarModal">
+                                    <i class="bi bi-lock-fill me-2"></i>Reservar Veículo
+                                </button>
                             }
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Login", "Utilizadores", new { returnUrl = Url.Action("Details", "Anuncios", new { id = Model.Id }) })" class="btn btn-success btn-lg">
+                                <i class="bi bi-lock-fill me-2"></i>Reservar Veículo
+                            </a>
+                        }
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            if (isProprioVendedor)
+            {
+                <button class="btn btn-outline-secondary btn-lg" disabled title="Não pode agendar visita no seu próprio anúncio">
+                    <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                </button>
+            }
+            else
+            {
+                <a href="@Url.Action("Create", "Visitas", new { anuncioId = Model.Id })" class="btn btn-info btn-lg text-white me-2">
+                    <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                </a>
+                <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#comprarModal">
+                    <i class="bi bi-bag-check-fill me-2"></i>Comprar Agora
+                </button>
+            }
+        }
                         }
                         else
                         {
@@ -662,62 +708,20 @@
                 </div>
 
                 <!-- Formulário de Reserva -->
-                <form id="formReserva">
-                    <h6 class="fw-bold mb-3">
-                        <i class="bi bi-person-fill text-primary me-2"></i>Seus Dados
-                    </h6>
+                <form id="formReserva" asp-controller="Reservas" asp-action="CreateCheckoutSession" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="anuncioId" value="@Model.Id" />
 
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label for="reservaNome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="reservaNome" value="João Duarte Silva" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="reservaEmail" class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="reservaEmail" value="joao.silva@exemplo.com" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="reservaTelefone" class="form-label">Telefone <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" id="reservaTelefone" value="+351 912 345 678" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="reservaDataExpiracao" class="form-label">Validade da Reserva</label>
-                            <input type="text" class="form-control" id="reservaDataExpiracao" value="48 horas" readonly>
-                        </div>
-                    </div>
-
-                    <h6 class="fw-bold mb-3">
-                        <i class="bi bi-credit-card text-primary me-2"></i>Pagamento do Sinal
-                    </h6>
-                    <div class="mb-4">
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <label for="metodoPagamento" class="form-label">Método de Pagamento <span class="text-danger">*</span></label>
-                                <select class="form-select" id="metodoPagamento" required>
-                                    <option value="">Selecione o método...</option>
-                                    <option value="mbway">MB WAY</option>
-                                    <option value="transferencia">Transferência Bancária</option>
-                                    <option value="multibanco">Multibanco (Referência MB)</option>
-                                    <option value="cartao">Cartão de Crédito/Débito</option>
-                                </select>
-                                <div class="form-text">@(Model.ValorSinal > 0 ? $"O sinal de {Model.ValorSinal:N0}€ será processado após a confirmação do vendedor" : "O valor do sinal será processado após a confirmação do vendedor")</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h6 class="fw-bold mb-3">
-                        <i class="bi bi-chat-text text-primary me-2"></i>Mensagem (Opcional)
-                    </h6>
-                    <div class="mb-4">
-                        <textarea class="form-control" id="reservaMensagem" rows="3" placeholder="Deixe uma mensagem para o vendedor (ex: disponibilidade para visita, questões sobre o veículo...)"></textarea>
-                        <div class="form-text">Esta mensagem será enviada ao vendedor junto com a notificação de reserva.</div>
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <strong>Nota:</strong> Ao clicar em "Confirmar Reserva", será redirecionado para a página de pagamento seguro do Stripe para processar o sinal de <strong>@(Model.ValorSinal > 0 ? Model.ValorSinal.ToString("N0") + "€" : "a definir")</strong>.
                     </div>
 
                     <!-- Termos e Condições -->
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="reservaTermos" required>
                         <label class="form-check-label small" for="reservaTermos">
-                            Li e concordo com os <a href="#" class="text-primary">termos e condições de reserva</a>
+                            Li e concordo com os <a href="/Home/TermosCondicoes" target="_blank" class="text-primary">termos e condições de reserva</a>
                         </label>
                     </div>
 
@@ -764,8 +768,8 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i>Cancelar
                 </button>
-                <button type="button" class="btn btn-success" id="btnConfirmarReserva">
-                    <i class="bi bi-bookmark-check-fill me-2"></i>Confirmar Reserva
+                <button type="submit" form="formReserva" class="btn btn-success" id="btnConfirmarReserva">
+                    <i class="bi bi-credit-card me-2"></i>Pagar Sinal com Stripe
                 </button>
             </div>
         </div>
@@ -1008,44 +1012,10 @@
         // In production, this would open a modal with larger images
     }
 
-    // Mockup: Confirmar Reserva
+    // JavaScript para modais
     document.addEventListener('DOMContentLoaded', function () {
-        const btnConfirmarReserva = document.getElementById('btnConfirmarReserva');
         const btnConfirmarVisita = document.getElementById('btnConfirmarVisita');
-        const reservarModal = document.getElementById('reservarModal');
         const agendarVisitaModal = document.getElementById('agendarVisitaModal');
-
-        // Confirmar Reserva
-        if (btnConfirmarReserva) {
-            btnConfirmarReserva.addEventListener('click', function () {
-                // Validação básica do formulário
-                const form = document.getElementById('formReserva');
-                const termosCheckbox = document.getElementById('reservaTermos');
-                const metodoPagamento = document.getElementById('metodoPagamento').value;
-
-                if (!metodoPagamento) {
-                    alert('Por favor, selecione um método de pagamento.');
-                    return;
-                }
-
-                if (!termosCheckbox.checked) {
-                    alert('Por favor, aceite os termos e condições para continuar.');
-                    return;
-                }
-
-                // Simular sucesso
-                const modalInstance = bootstrap.Modal.getInstance(reservarModal);
-                modalInstance.hide();
-
-                // Mostrar mensagem de sucesso
-                setTimeout(() => {
-                    mostrarMensagemSucesso(
-                        'Reserva Confirmada!',
-                        'A sua reserva foi efetuada com sucesso. Receberá instruções de pagamento do sinal (500€) por email. O vendedor irá contactá-lo nas próximas horas.'
-                    );
-                }, 300);
-            });
-        }
 
         // Confirmar Visita
         if (btnConfirmarVisita) {

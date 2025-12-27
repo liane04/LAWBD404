@@ -992,7 +992,55 @@ git push origin main
 
 ---
 
-## 18. CORREÇÕES RECENTES (26/12/2025)
+## 18. CORREÇÕES RECENTES
+
+### 27/12/2025 - Integração do Stripe no Modal de Reserva
+
+**Problema:** Foi criado um novo formulário de reserva (Create.cshtml) que não usava o modal existente e calculava o valor do sinal como percentagem do preço (10%), em vez de usar o `ValorSinal` definido pelo vendedor no anúncio.
+
+**Solução Implementada:**
+
+1. **ReservasController.cs:**
+   - Modificado método `Create` (linha 111): Agora usa `anuncio.ValorSinal` em vez de `CalcularValorReserva()`
+   - Modificado método `CreateCheckoutSession` (linha 138): Usa `anuncio.ValorSinal` diretamente
+   - Removido método helper `CalcularValorReserva()` que calculava percentagem
+   - Fallback: Se `ValorSinal` não estiver definido (= 0), usa 10% do preço como backup
+
+2. **Views/Anuncios/Details.cshtml:**
+   - **Modal de Reserva (linhas 649-823):**
+     - Integrado Stripe no formulário existente do modal
+     - Formulário agora submete via POST para `Reservas/CreateCheckoutSession`
+     - Simplificado o formulário - removidos campos desnecessários (nome, email, telefone)
+     - Adicionado alert informativo sobre redirecionamento para Stripe
+     - Botão "Confirmar Reserva" agora é `type="submit"` com `form="formReserva"`
+   - **Botão "Reservar Veículo" (linha 472):**
+     - Alterado de link para botão que abre o modal (`data-bs-toggle="modal"`)
+   - **JavaScript (linha 1020):**
+     - Removida lógica mockup do `btnConfirmarReserva`
+     - Modal agora funciona com submit real do formulário
+
+3. **Create.cshtml de Reservas:**
+   - Mantida como backup (tem bom conteúdo de UI)
+   - Não está sendo usada no fluxo principal (preferência pelo modal)
+
+**Fluxo de Reserva Atual:**
+1. Utilizador clica em "Reservar Veículo" na página de detalhes do anúncio
+2. Modal de reserva abre com informações do veículo e valor do sinal (`Model.ValorSinal`)
+3. Utilizador aceita termos e clica em "Pagar Sinal com Stripe"
+4. Sistema redireciona para Stripe Checkout com o valor correto (`ValorSinal`)
+5. Após pagamento bem-sucedido, cria a reserva na BD
+6. Envia emails de confirmação ao comprador e vendedor
+7. Redireciona para página de sucesso (`Reservas/Success`)
+
+**Ficheiros Alterados:**
+- `Controllers/ReservasController.cs`
+- `Views/Anuncios/Details.cshtml`
+
+---
+
+### 26/12/2025 - Feedback Visual em Formulários de Visitas
+
+## 19. CORREÇÕES ANTIGAS (26/12/2025)
 
 ### ✅ Erro de Compilação Razor - Views/Visitas/Create.cshtml
 **Problema:** Erro RZ1010 - `@{ }` dentro de bloco `@if { }`

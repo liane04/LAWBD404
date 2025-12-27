@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Reserva Confirmada";
+    var sessionId = ViewBag.SessionId;
+    var amountPaid = ViewBag.AmountPaid;
+    var anuncioId = ViewBag.AnuncioId;
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow border-0">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                    </div>
+
+                    <h2 class="text-success mb-3">Reserva Confirmada!</h2>
+                    <p class="lead text-muted mb-4">
+                        O seu pagamento foi processado com sucesso
+                    </p>
+
+                    <div class="card bg-light border-0 mb-4">
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <p class="text-muted small mb-1">Valor Pago</p>
+                                    <h4 class="text-success mb-0">@amountPaid€</h4>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted small mb-1">Validade da Reserva</p>
+                                    <h4 class="text-primary mb-0">7 Dias</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info text-start">
+                        <h5 class="alert-heading">
+                            <i class="bi bi-info-circle-fill me-2"></i>Próximos Passos
+                        </h5>
+                        <ul class="mb-0">
+                            <li>O vendedor foi notificado da sua reserva</li>
+                            <li>Em breve será contactado para combinar os detalhes</li>
+                            <li>Tem 7 dias para concluir a compra</li>
+                            <li>Pode acompanhar o estado da reserva na sua área pessoal</li>
+                        </ul>
+                    </div>
+
+                    <div class="text-muted small mb-4">
+                        <i class="bi bi-receipt me-1"></i>
+                        ID da Transação: <code>@sessionId</code>
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a asp-action="Index" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-list-ul me-2"></i>Minhas Reservas
+                        </a>
+                        <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncioId" class="btn btn-primary btn-lg">
+                            <i class="bi bi-car-front-fill me-2"></i>Ver Veículo
+                        </a>
+                    </div>
+
+                    <div class="mt-4">
+                        <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                            <i class="bi bi-house-fill me-1"></i>Voltar à Página Inicial
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    Receberá um email de confirmação em breve
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

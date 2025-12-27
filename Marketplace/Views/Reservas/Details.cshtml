@@ -1,0 +1,207 @@
+@model Marketplace.Models.Reserva
+
+@{
+    ViewData["Title"] = "Detalhes da Reserva";
+    var imagemPrincipal = Model.Anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
+    var badgeClass = Model.Estado switch
+    {
+        "Ativa" => "bg-success",
+        "Cancelada" => "bg-danger",
+        "Expirada" => "bg-secondary",
+        "Concluida" => "bg-info",
+        _ => "bg-warning"
+    };
+    var diasRestantes = Model.DataExpiracao.HasValue
+        ? (Model.DataExpiracao.Value - DateTime.Now).Days
+        : 0;
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow border-0 mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-lock-fill me-2"></i>Detalhes da Reserva
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge @badgeClass fs-5">@Model.Estado</span>
+                        <span class="text-muted">#@Model.Id</span>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-5">
+                            <img src="@imagemPrincipal" alt="@Model.Anuncio.Titulo" class="img-fluid rounded shadow-sm">
+                        </div>
+                        <div class="col-md-7">
+                            <h3 class="fw-bold">@Model.Anuncio.Titulo</h3>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-car-front-fill me-1"></i>
+                                @Model.Anuncio.Marca?.Nome @Model.Anuncio.Modelo?.Nome
+                            </p>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-geo-alt-fill me-1"></i>
+                                @Model.Anuncio.Localizacao
+                            </p>
+                            <h4 class="text-success mb-3">@Model.Anuncio.Preco.ToString("N0")€</h4>
+
+                            <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@Model.Anuncio.Id" class="btn btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i>Ver Anúncio Completo
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h5 class="fw-bold mb-3">Informações da Reserva</h5>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light border-0">
+                                <div class="card-body">
+                                    <small class="text-muted">Data da Reserva</small>
+                                    <p class="mb-0 fw-bold">
+                                        <i class="bi bi-calendar-event me-1"></i>
+                                        @Model.Data.ToString("dd/MM/yyyy HH:mm")
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.DataExpiracao.HasValue)
+                        {
+                            <div class="col-md-6">
+                                <div class="card @(diasRestantes <= 2 && Model.Estado == "Ativa" ? "bg-danger-subtle" : "bg-light") border-0">
+                                    <div class="card-body">
+                                        <small class="text-muted">Validade da Reserva</small>
+                                        <p class="mb-0 fw-bold @(diasRestantes <= 2 && Model.Estado == "Ativa" ? "text-danger" : "")">
+                                            <i class="bi bi-clock-fill me-1"></i>
+                                            @if (diasRestantes >= 0 && Model.Estado == "Ativa")
+                                            {
+                                                <span>@diasRestantes dia@(diasRestantes != 1 ? "s" : "") restante@(diasRestantes != 1 ? "s" : "")</span>
+                                            }
+                                            else
+                                            {
+                                                @Model.DataExpiracao.Value.ToString("dd/MM/yyyy")
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @if (Model.Estado == "Ativa" && diasRestantes > 0)
+                    {
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-info-circle-fill me-2"></i>Próximos Passos
+                            </h6>
+                            <ul class="mb-0">
+                                <li>O vendedor foi notificado e entrará em contacto consigo</li>
+                                <li>Combine os detalhes da compra com o vendedor</li>
+                                <li>Tem até <strong>@Model.DataExpiracao?.ToString("dd/MM/yyyy")</strong> para concluir a compra</li>
+                                <li>Após a conclusão, o valor da reserva será descontado do total</li>
+                            </ul>
+                        </div>
+                    }
+                    else if (Model.Estado == "Cancelada")
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-x-circle-fill me-2"></i>
+                            Esta reserva foi cancelada.
+                        </div>
+                    }
+                    else if (diasRestantes < 0)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Esta reserva expirou. O veículo está novamente disponível para outros compradores.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mb-4">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Voltar às Reservas
+                </a>
+                @if (Model.Estado == "Ativa" && diasRestantes > 0)
+                {
+                    <button type="button" class="btn btn-danger ms-auto" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                        <i class="bi bi-x-circle me-1"></i>Cancelar Reserva
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow border-0 mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-circle me-2"></i>Informações do Vendedor
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <strong>Nome:</strong> @Model.Anuncio.Vendedor?.Nome
+                    </p>
+                    <p class="mb-2">
+                        <strong>Email:</strong> @Model.Anuncio.Vendedor?.Email
+                    </p>
+                    @if (Model.Estado == "Ativa")
+                    {
+                        <div class="alert alert-success mt-3 mb-0 small">
+                            <i class="bi bi-envelope-fill me-1"></i>
+                            O vendedor foi notificado e entrará em contacto em breve.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow border-0">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-shield-check me-2"></i>Proteção ao Comprador
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="small mb-0">
+                        <li class="mb-2">Pagamento seguro via Stripe</li>
+                        <li class="mb-2">Veículo reservado exclusivamente</li>
+                        <li class="mb-2">Garantia de 7 dias de reserva</li>
+                        <li>Suporte 404 Ride disponível</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Cancelamento -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Cancelamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja cancelar esta reserva?</p>
+                <p class="text-danger small mb-0">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    Esta ação não pode ser desfeita e o valor pago não será reembolsado.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                <form asp-action="CancelReserva" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">Sim, Cancelar Reserva</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

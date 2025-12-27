@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "Confirmar Reserva";
+    var anuncio = ViewBag.Anuncio as Marketplace.Models.Anuncio;
+    var valorReserva = ViewBag.ValorReserva;
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-lock-fill me-2"></i>Confirmar Reserva
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            @if (anuncio.Imagens != null && anuncio.Imagens.Any())
+                            {
+                                <img src="@anuncio.Imagens.First().ImagemCaminho" alt="@anuncio.Titulo" class="img-fluid rounded">
+                            }
+                            else
+                            {
+                                <img src="~/imagens/default-car.jpg" alt="Default" class="img-fluid rounded">
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="fw-bold">@anuncio.Titulo</h5>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-car-front-fill me-1"></i>
+                                @anuncio.Marca?.Nome @anuncio.Modelo?.Nome
+                            </p>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-geo-alt-fill me-1"></i>
+                                @anuncio.Localizacao
+                            </p>
+                            <h4 class="text-success mb-0">@anuncio.Preco.ToString("N0")€</h4>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">
+                            <i class="bi bi-info-circle-fill me-2"></i>Como funciona a reserva?
+                        </h5>
+                        <ul class="mb-0">
+                            <li>Paga <strong>@valorReserva.ToString("N2")€</strong> (10% do valor total) para reservar o veículo</li>
+                            <li>O veículo fica reservado <strong>exclusivamente para si durante 7 dias</strong></li>
+                            <li>O vendedor não pode vender a terceiros durante este período</li>
+                            <li>Tem 7 dias para concluir a compra e pagar o valor restante</li>
+                            <li>O vendedor entrará em contacto consigo para combinar os detalhes</li>
+                        </ul>
+                    </div>
+
+                    <div class="card bg-light border-0 mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">Resumo do Pagamento</h5>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Valor Total do Veículo:</span>
+                                <span class="fw-bold">@anuncio.Preco.ToString("N2")€</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Valor da Reserva (10%):</span>
+                                <span class="text-primary fw-bold">@valorReserva.ToString("N2")€</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">A Pagar Agora:</span>
+                                <span class="text-success fw-bold fs-4">@valorReserva.ToString("N2")€</span>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted mt-2">
+                                <span>Restante a pagar:</span>
+                                <span>@((anuncio.Preco - valorReserva).ToString("N2"))€</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Nota:</strong> O pagamento é processado de forma segura através do Stripe.
+                        Será redirecionado para uma página segura de pagamento.
+                    </div>
+
+                    <form asp-action="CreateCheckoutSession" method="post" class="mt-4">
+                        <input type="hidden" name="anuncioId" value="@anuncio.Id" />
+                        <div class="d-flex gap-3">
+                            <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-outline-secondary btn-lg flex-fill">
+                                <i class="bi bi-arrow-left me-2"></i>Voltar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg flex-fill">
+                                <i class="bi bi-lock-fill me-2"></i>Pagar e Reservar
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <img src="https://cdn.brandfolder.io/KGT2DTA4/at/8vbr8k4mr5xjwk4hxq4t9vs/Stripe_wordmark_-_blurple.svg"
+                             alt="Powered by Stripe" style="height: 30px; opacity: 0.7;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

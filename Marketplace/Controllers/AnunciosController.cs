@@ -229,6 +229,56 @@ namespace Marketplace.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Comprador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Comprar(int id)
+        {
+            var identityIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(identityIdStr, out var identityId)) return Forbid();
+
+            var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
+            if (comprador == null)
+            {
+                TempData["CompraErro"] = "É necessário perfil de comprador para concluir a compra.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var anuncio = await _context.Anuncios
+                .Include(a => a.Vendedor)
+                .FirstOrDefaultAsync(a => a.Id == id);
+            if (anuncio == null)
+            {
+                TempData["CompraErro"] = "Anúncio não encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (anuncio.VendedorId == comprador.Id)
+            {
+                TempData["CompraErro"] = "Não pode comprar o seu próprio anúncio.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var jaComprou = await _context.Compras.AnyAsync(c => c.AnuncioId == id && c.CompradorId == comprador.Id);
+            if (jaComprou)
+            {
+                TempData["CompraErro"] = "Já registou uma compra para este anúncio.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            _context.Compras.Add(new Compra
+            {
+                AnuncioId = id,
+                CompradorId = comprador.Id,
+                Data = DateTime.UtcNow,
+                EstadoPagamento = "Pendente"
+            });
+            await _context.SaveChangesAsync();
+
+            TempData["CompraSucesso"] = "Compra registada! O vendedor será notificado para concluir o processo.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
         // POST: Anuncios/DeleteFiltro
         [Authorize(Roles = "Comprador")]
         [HttpPost]
