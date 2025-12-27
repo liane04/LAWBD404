@@ -433,11 +433,14 @@
                         <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#reservarModal" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
                             <i class="bi bi-bookmark-check-fill me-2"></i>Reservar Veículo
                         </button>
+                        @{
+                            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                            int.TryParse(userIdClaim, out var loggedUserId);
+                            var isProprioVendedor = Model.Vendedor?.IdentityUserId == loggedUserId;
+                            var isComprador = User.IsInRole("Comprador");
+                        }
                         @if (User.Identity.IsAuthenticated)
                         {
-                            @* Verificar se é o próprio vendedor do anúncio *@
-                            var isProprioVendedor = User.Identity.Name == Model.Vendedor?.Email;
-
                             if (isProprioVendedor)
                             {
                                 <button class="btn btn-outline-secondary btn-lg" disabled title="Não pode agendar visita no seu próprio anúncio">
