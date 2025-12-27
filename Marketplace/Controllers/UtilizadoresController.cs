@@ -84,8 +84,8 @@ namespace Marketplace.Controllers
                         .CountAsync();
                     ViewBag.ReservasRecebidasCount = reservasCount;
 
-                    var visitasVendedor = await _db.Visitas
-                        .Include(v => v.Comprador)
+                    // Carregar visitas RECEBIDAS (aos meus anúncios - como vendedor)
+                    var visitasRecebidas = await _db.Visitas
                         .Include(v => v.Anuncio)
                             .ThenInclude(a => a.Marca)
                         .Include(v => v.Anuncio)
@@ -96,8 +96,64 @@ namespace Marketplace.Controllers
                         .OrderByDescending(v => v.Data)
                         .ToListAsync();
 
-                    ViewBag.MinhasVisitasVendedor = visitasVendedor;
-                    ViewBag.VisitasAgendadasCount = visitasVendedor.Count;
+                    // Carregar Comprador manualmente para cada visita recebida
+                    foreach (var visita in visitasRecebidas)
+                    {
+                        if (visita.Comprador == null)
+                        {
+                            var utilizadorComprador = await _db.Set<Utilizador>()
+                                .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+                            if (utilizadorComprador != null)
+                            {
+                                visita.Comprador = new Comprador
+                                {
+                                    Id = utilizadorComprador.Id,
+                                    Nome = utilizadorComprador.Nome,
+                                    Email = utilizadorComprador.Email
+                                };
+                            }
+                        }
+                    }
+
+                    ViewBag.VisitasRecebidas = visitasRecebidas;
+                    ViewBag.VisitasRecebidasCount = visitasRecebidas.Count;
+
+                    // Carregar visitas AGENDADAS (que eu agendei - como comprador)
+                    var visitasAgendadas = await _db.Visitas
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Where(v => v.CompradorId == vendedor.Id)
+                        .OrderByDescending(v => v.Data)
+                        .ToListAsync();
+
+                    // Carregar Vendedor manualmente para cada visita agendada
+                    foreach (var visita in visitasAgendadas)
+                    {
+                        if (visita.Vendedor == null)
+                        {
+                            var utilizadorVendedor = await _db.Set<Utilizador>()
+                                .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
+                            if (utilizadorVendedor != null)
+                            {
+                                visita.Vendedor = new Vendedor
+                                {
+                                    Id = utilizadorVendedor.Id,
+                                    Nome = utilizadorVendedor.Nome,
+                                    Email = utilizadorVendedor.Email
+                                };
+                            }
+                        }
+                    }
+
+                    ViewBag.VisitasAgendadas = visitasAgendadas;
+                    ViewBag.VisitasAgendadasCount = visitasAgendadas.Count;
+
+                    // Total de visitas (para compatibilidade com código existente)
+                    ViewBag.MinhasVisitasVendedor = visitasRecebidas.Concat(visitasAgendadas).OrderByDescending(v => v.Data).ToList();
 
                     // Carregar disponibilidades do vendedor
                     var disponibilidades = await _db.DisponibilidadesVendedor
@@ -141,7 +197,6 @@ namespace Marketplace.Controllers
 
                     // Carregar visitas do comprador
                     var visitasComprador = await _db.Visitas
-                        .Include(v => v.Vendedor)
                         .Include(v => v.Anuncio)
                             .ThenInclude(a => a.Marca)
                         .Include(v => v.Anuncio)
@@ -151,6 +206,25 @@ namespace Marketplace.Controllers
                         .Where(v => v.CompradorId == comprador.Id)
                         .OrderByDescending(v => v.Data)
                         .ToListAsync();
+
+                    // Carregar Vendedor manualmente para cada visita
+                    foreach (var visita in visitasComprador)
+                    {
+                        if (visita.Vendedor == null)
+                        {
+                            var utilizadorVendedor = await _db.Set<Utilizador>()
+                                .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
+                            if (utilizadorVendedor != null)
+                            {
+                                visita.Vendedor = new Vendedor
+                                {
+                                    Id = utilizadorVendedor.Id,
+                                    Nome = utilizadorVendedor.Nome,
+                                    Email = utilizadorVendedor.Email
+                                };
+                            }
+                        }
+                    }
 
                     ViewBag.MinhasVisitasComprador = visitasComprador;
 
@@ -685,7 +759,7 @@ namespace Marketplace.Controllers
         // POST: Utilizadores/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string identifier, string password, bool rememberMe = false)
+        public async Task<IActionResult> Login(string identifier, string password, bool rememberMe = false, string? returnUrl = null)
         {
             if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(password))
             {
@@ -714,6 +788,11 @@ namespace Marketplace.Controllers
                 return View();
             }
 
+            if (result.RequiresTwoFactor)
+            {
+                return RedirectToAction(nameof(Login2FA), new { returnUrl, rememberMe });
+            }
+
             if (!result.Succeeded)
             {
                 TempData["LoginError"] = "Credenciais incorretas.";
@@ -725,6 +804,49 @@ namespace Marketplace.Controllers
             if (await _userManager.IsInRoleAsync(user, "Vendedor"))
                 return RedirectToAction("Index", "Anuncios");
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login2FA(bool rememberMe, string? returnUrl = null)
+        {
+            return View(new TwoFactorViewModel { RememberMe = rememberMe, ReturnUrl = returnUrl });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login2FA(TwoFactorViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Code))
+            {
+                ModelState.AddModelError(string.Empty, "Introduza o código de 6 dígitos.");
+                return View(model);
+            }
+
+            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Sessão de autenticação expirada. Volte a iniciar sessão.");
+                return View(model);
+            }
+
+            var code = model.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+            var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(code, model.RememberMe, model.RememberMachine);
+
+            if (result.Succeeded)
+            {
+                return RedirectToLocal(model.ReturnUrl);
+            }
+
+            if (result.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty, "Conta bloqueada devido a tentativas falhadas. Aguarde ou redefina a password.");
+                return View(model);
+            }
+
+            ModelState.AddModelError(string.Empty, "Código inválido. Tente novamente.");
+            return View(model);
         }
 
         // POST: Utilizadores/Logout
@@ -1022,6 +1144,37 @@ namespace Marketplace.Controllers
         public class EnableTwoFactorRequest
         {
             public string Code { get; set; } = string.Empty;
+        }
+
+        public class TwoFactorViewModel
+        {
+            public string? Code { get; set; }
+            public bool RememberMe { get; set; }
+            public bool RememberMachine { get; set; }
+            public string? ReturnUrl { get; set; }
+        }
+
+        private IActionResult RedirectToLocal(string? returnUrl)
+        {
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TerminateOtherSessions()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            await _userManager.UpdateSecurityStampAsync(user);
+            await _signInManager.RefreshSignInAsync(user);
+
+            return Json(new { success = true, message = "Sessões em outros dispositivos foram terminadas." });
         }
         public async Task<IActionResult> PromoteMe()
         {

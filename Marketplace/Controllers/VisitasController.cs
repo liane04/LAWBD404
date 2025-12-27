@@ -33,6 +33,8 @@ namespace Marketplace.Controllers
             if (user == null)
                 return RedirectToAction("Login", "Utilizadores");
 
+            Console.WriteLine($"[DEBUG INDEX] User Identity ID: {user.Id}, UserName: {user.UserName}");
+
             // Buscar utilizador de domínio (Comprador, Vendedor ou Administrador)
             Utilizador? domainUser = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
             if (domainUser == null)
@@ -41,27 +43,39 @@ namespace Marketplace.Controllers
                 domainUser = await _context.Administradores.FirstOrDefaultAsync(a => a.IdentityUserId == user.Id);
 
             if (domainUser == null)
+            {
+                Console.WriteLine($"[ERRO INDEX] Nenhum utilizador de domínio encontrado para IdentityUserId: {user.Id}");
                 return NotFound();
+            }
+
+            Console.WriteLine($"[DEBUG INDEX] DomainUser encontrado: Id={domainUser.Id}, Nome={domainUser.Nome}, Tipo={domainUser.GetType().Name}");
 
             IQueryable<Visita> visitasQuery = _context.Visitas
                 .Include(v => v.Anuncio)
                     .ThenInclude(a => a.Marca)
                 .Include(v => v.Anuncio)
                     .ThenInclude(a => a.Modelo)
-                .Include(v => v.Comprador)
-                .Include(v => v.Vendedor);
+                .Include(v => v.Anuncio)
+                    .ThenInclude(a => a.Vendedor);
+            // NOTA: Não incluir v.Comprador e v.Vendedor diretamente porque causa problemas
+            // quando um Vendedor agenda visita (CompradorId aponta para Vendedor, não Comprador)
 
             if (domainUser is Comprador)
             {
                 // Compradores veem suas próprias visitas agendadas
                 visitasQuery = visitasQuery.Where(v => v.CompradorId == domainUser.Id);
                 ViewBag.UserRole = "Comprador";
+                Console.WriteLine($"[DEBUG INDEX] Filtrando visitas para Comprador ID={domainUser.Id}");
             }
             else if (domainUser is Vendedor)
             {
-                // Vendedores veem visitas aos seus anúncios
-                visitasQuery = visitasQuery.Where(v => v.VendedorId == domainUser.Id);
+                // Vendedores veem AMBAS:
+                // 1. Visitas aos seus anúncios (como vendedor)
+                // 2. Visitas que agendaram (como comprador)
+                visitasQuery = visitasQuery.Where(v => v.VendedorId == domainUser.Id || v.CompradorId == domainUser.Id);
                 ViewBag.UserRole = "Vendedor";
+                ViewBag.VendedorId = domainUser.Id; // Para separar na view
+                Console.WriteLine($"[DEBUG INDEX] Filtrando visitas para Vendedor ID={domainUser.Id} (VendedorId OU CompradorId)");
             }
             else
             {
@@ -71,6 +85,63 @@ namespace Marketplace.Controllers
             var visitas = await visitasQuery
                 .OrderByDescending(v => v.Data)
                 .ToListAsync();
+
+            // Carregar Comprador e Vendedor como Utilizador para evitar problemas de discriminador
+            // Isto é necessário porque um Vendedor pode agendar visitas (CompradorId aponta para Vendedor)
+            foreach (var visita in visitas)
+            {
+                if (visita.Comprador == null)
+                {
+                    visita.Comprador = await _context.Set<Utilizador>()
+                        .FirstOrDefaultAsync(u => u.Id == visita.CompradorId) as Comprador;
+
+                    // Se não for Comprador, é um Vendedor agindo como comprador
+                    if (visita.Comprador == null)
+                    {
+                        var utilizador = await _context.Set<Utilizador>()
+                            .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+
+                        // Criar um objeto temporário para exibição com os dados do utilizador
+                        if (utilizador != null)
+                        {
+                            visita.Comprador = new Comprador
+                            {
+                                Id = utilizador.Id,
+                                Nome = utilizador.Nome,
+                                Email = utilizador.Email
+                            };
+                        }
+                    }
+                }
+
+                if (visita.Vendedor == null)
+                {
+                    visita.Vendedor = await _context.Set<Utilizador>()
+                        .FirstOrDefaultAsync(u => u.Id == visita.VendedorId) as Vendedor;
+
+                    if (visita.Vendedor == null)
+                    {
+                        var utilizador = await _context.Set<Utilizador>()
+                            .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
+
+                        if (utilizador != null)
+                        {
+                            visita.Vendedor = new Vendedor
+                            {
+                                Id = utilizador.Id,
+                                Nome = utilizador.Nome,
+                                Email = utilizador.Email
+                            };
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine($"[DEBUG INDEX] Total de visitas encontradas: {visitas.Count}");
+            if (visitas.Any())
+            {
+                Console.WriteLine($"[DEBUG INDEX] Primeira visita: Id={visitas.First().Id}, CompradorId={visitas.First().CompradorId}, VendedorId={visitas.First().VendedorId}");
+            }
 
             return View(visitas);
         }
@@ -88,13 +159,45 @@ namespace Marketplace.Controllers
                     .ThenInclude(a => a.Modelo)
                 .Include(v => v.Anuncio)
                     .ThenInclude(a => a.Imagens)
-                .Include(v => v.Comprador)
-                .Include(v => v.Vendedor)
                 .Include(v => v.Reserva)
                 .FirstOrDefaultAsync(m => m.Id == id);
+            // NOTA: Não incluir v.Comprador e v.Vendedor devido a problemas de discriminador TPH
 
             if (visita == null)
                 return NotFound();
+
+            // Carregar Comprador e Vendedor manualmente como Utilizador
+            if (visita.Comprador == null)
+            {
+                var utilizadorComprador = await _context.Set<Utilizador>()
+                    .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+
+                if (utilizadorComprador != null)
+                {
+                    visita.Comprador = new Comprador
+                    {
+                        Id = utilizadorComprador.Id,
+                        Nome = utilizadorComprador.Nome,
+                        Email = utilizadorComprador.Email
+                    };
+                }
+            }
+
+            if (visita.Vendedor == null)
+            {
+                var utilizadorVendedor = await _context.Set<Utilizador>()
+                    .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
+
+                if (utilizadorVendedor != null)
+                {
+                    visita.Vendedor = new Vendedor
+                    {
+                        Id = utilizadorVendedor.Id,
+                        Nome = utilizadorVendedor.Nome,
+                        Email = utilizadorVendedor.Email
+                    };
+                }
+            }
 
             // Verificar se o utilizador tem permissão para ver esta visita
             var user = await _userManager.GetUserAsync(User);
@@ -113,13 +216,9 @@ namespace Marketplace.Controllers
         }
 
         // GET: Visitas/Create?anuncioId=5
-        [Authorize] // Removida restrição de role para debug
+        [Authorize(Roles = "Comprador,Vendedor")]
         public async Task<IActionResult> Create(int? anuncioId)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var roles = await _userManager.GetRolesAsync(user);
-            Console.WriteLine($"[DEBUG] User: {user.UserName}, Roles: {string.Join(", ", roles)}");
-
             if (anuncioId == null)
                 return BadRequest("ID do anúncio é obrigatório");
 
@@ -132,16 +231,31 @@ namespace Marketplace.Controllers
             if (anuncio == null)
                 return NotFound("Anúncio não encontrado");
 
-            // Buscar Comprador
+            var user = await _userManager.GetUserAsync(User);
+
+            // Buscar Comprador ou Vendedor (TPH - ambos são Utilizador)
+            int? compradorId = null;
             var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
-            if (comprador == null)
+            if (comprador != null)
             {
-                Console.WriteLine($"[ERRO] Comprador não encontrado para IdentityUserId: {user.Id}");
-                return Forbid();
+                compradorId = comprador.Id;
+            }
+            else if (User.IsInRole("Vendedor"))
+            {
+                // Vendedor pode agendar visitas - usar o ID do Vendedor (é um Utilizador)
+                var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+                if (vendedor != null)
+                {
+                    compradorId = vendedor.Id; // TPH: Vendedor e Comprador são Utilizador
+                }
             }
 
-            Console.WriteLine($"[DEBUG] Comprador encontrado: ID={comprador.Id}, Nome={comprador.Nome}");
+            if (compradorId == null)
+            {
+                TempData["VisitasErro"] = "Precisa de entrar como comprador para agendar visitas.";
+                return RedirectToAction("Details", "Anuncios", new { id = anuncio.Id });
+            }
 
             // Buscar disponibilidades do vendedor
             var disponibilidades = await _context.DisponibilidadesVendedor
@@ -191,7 +305,7 @@ namespace Marketplace.Controllers
             {
                 AnuncioId = anuncio.Id,
                 Anuncio = anuncio,
-                CompradorId = comprador.Id,
+                CompradorId = compradorId.Value,
                 VendedorId = anuncio.VendedorId,
                 Data = slotsDisponiveis.FirstOrDefault() != default ? slotsDisponiveis.First() : DateTime.Now.AddDays(1),
                 Estado = "Pendente"
@@ -208,24 +322,38 @@ namespace Marketplace.Controllers
         // POST: Visitas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize] // Removida restrição de role para debug
+        [Authorize(Roles = "Comprador,Vendedor")]
         public async Task<IActionResult> Create([Bind("AnuncioId,Data,Observacoes")] Visita visita)
         {
             var user = await _userManager.GetUserAsync(User);
-            var roles = await _userManager.GetRolesAsync(user);
-            Console.WriteLine($"[DEBUG POST] User: {user.UserName}, Roles: {string.Join(", ", roles)}");
 
-            // Buscar Comprador
+            // Buscar Comprador ou Vendedor (TPH - ambos são Utilizador)
+            int? compradorId = null;
+            string nomeUtilizador = user.UserName ?? "Utilizador";
+
             var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
-            if (comprador == null)
+            if (comprador != null)
             {
-                Console.WriteLine($"[ERRO] Comprador não encontrado para IdentityUserId: {user.Id}");
-                return Forbid();
+                compradorId = comprador.Id;
+                nomeUtilizador = comprador.Nome;
+            }
+            else if (User.IsInRole("Vendedor"))
+            {
+                // Vendedor pode agendar visitas - usar o ID do Vendedor (é um Utilizador)
+                var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+                if (vendedor != null)
+                {
+                    compradorId = vendedor.Id; // TPH: Vendedor e Comprador são Utilizador
+                    nomeUtilizador = vendedor.Nome;
+                }
             }
 
-            Console.WriteLine($"[DEBUG POST] Comprador encontrado: ID={comprador.Id}, Nome={comprador.Nome}");
-            string nomeUtilizador = comprador.Nome;
+            if (compradorId == null)
+            {
+                TempData["VisitasErro"] = "Precisa de entrar como comprador para agendar visitas.";
+                return RedirectToAction("Details", "Anuncios", new { id = visita.AnuncioId });
+            }
 
             var anuncio = await _context.Anuncios
                 .Include(a => a.Vendedor)
@@ -261,7 +389,7 @@ namespace Marketplace.Controllers
 
             if (ModelState.IsValid)
             {
-                visita.CompradorId = comprador.Id;
+                visita.CompradorId = compradorId.Value;
                 visita.VendedorId = anuncio.VendedorId;
                 visita.Estado = "Pendente";
                 visita.DataCriacao = DateTime.Now;
@@ -381,12 +509,41 @@ namespace Marketplace.Controllers
 
             var visita = await _context.Visitas
                 .Include(v => v.Anuncio)
-                .Include(v => v.Comprador)
-                .Include(v => v.Vendedor)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (visita == null)
                 return NotFound();
+
+            // Carregar Comprador e Vendedor manualmente
+            if (visita.Comprador == null)
+            {
+                var utilizadorComprador = await _context.Set<Utilizador>()
+                    .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+                if (utilizadorComprador != null)
+                {
+                    visita.Comprador = new Comprador
+                    {
+                        Id = utilizadorComprador.Id,
+                        Nome = utilizadorComprador.Nome,
+                        Email = utilizadorComprador.Email
+                    };
+                }
+            }
+
+            if (visita.Vendedor == null)
+            {
+                var utilizadorVendedor = await _context.Set<Utilizador>()
+                    .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
+                if (utilizadorVendedor != null)
+                {
+                    visita.Vendedor = new Vendedor
+                    {
+                        Id = utilizadorVendedor.Id,
+                        Nome = utilizadorVendedor.Nome,
+                        Email = utilizadorVendedor.Email
+                    };
+                }
+            }
 
             // Verificar permissões
             var user = await _userManager.GetUserAsync(User);
@@ -516,12 +673,23 @@ namespace Marketplace.Controllers
         {
             var visita = await _context.Visitas
                 .Include(v => v.Anuncio)
-                .Include(v => v.Comprador)
-                .Include(v => v.Vendedor)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (visita == null)
                 return NotFound();
+
+            // Carregar Comprador manualmente
+            var utilizadorComprador = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+            if (utilizadorComprador != null)
+            {
+                visita.Comprador = new Comprador
+                {
+                    Id = utilizadorComprador.Id,
+                    Nome = utilizadorComprador.Nome,
+                    Email = utilizadorComprador.Email
+                };
+            }
 
             var user = await _userManager.GetUserAsync(User);
             var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
@@ -565,12 +733,35 @@ namespace Marketplace.Controllers
         {
             var visita = await _context.Visitas
                 .Include(v => v.Anuncio)
-                .Include(v => v.Comprador)
-                .Include(v => v.Vendedor)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (visita == null)
                 return NotFound();
+
+            // Carregar Comprador e Vendedor manualmente
+            var utilizadorComprador = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+            if (utilizadorComprador != null)
+            {
+                visita.Comprador = new Comprador
+                {
+                    Id = utilizadorComprador.Id,
+                    Nome = utilizadorComprador.Nome,
+                    Email = utilizadorComprador.Email
+                };
+            }
+
+            var utilizadorVendedor = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
+            if (utilizadorVendedor != null)
+            {
+                visita.Vendedor = new Vendedor
+                {
+                    Id = utilizadorVendedor.Id,
+                    Nome = utilizadorVendedor.Nome,
+                    Email = utilizadorVendedor.Email
+                };
+            }
 
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -648,12 +839,35 @@ namespace Marketplace.Controllers
 
             var visita = await _context.Visitas
                 .Include(v => v.Anuncio)
-                .Include(v => v.Comprador)
-                .Include(v => v.Vendedor)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (visita == null)
                 return NotFound();
+
+            // Carregar Comprador e Vendedor manualmente
+            var utilizadorComprador = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+            if (utilizadorComprador != null)
+            {
+                visita.Comprador = new Comprador
+                {
+                    Id = utilizadorComprador.Id,
+                    Nome = utilizadorComprador.Nome,
+                    Email = utilizadorComprador.Email
+                };
+            }
+
+            var utilizadorVendedor = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
+            if (utilizadorVendedor != null)
+            {
+                visita.Vendedor = new Vendedor
+                {
+                    Id = utilizadorVendedor.Id,
+                    Nome = utilizadorVendedor.Nome,
+                    Email = utilizadorVendedor.Email
+                };
+            }
 
             // Apenas comprador pode deletar
             var user = await _userManager.GetUserAsync(User);

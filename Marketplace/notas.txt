@@ -5,7 +5,7 @@ Update-Database -Context ApplicationDbContext
 
 
  1. Administrador: admin@email.com / Admin123
-  2. Vendedor: vendedor@email.com / Vende123
+  2. Vendedor: vendedor@email.com / Vende1234
   3. Comprador: comprador@email.com / Compr123
   PALAVRA PASSE GERAL: Demo123!
 
