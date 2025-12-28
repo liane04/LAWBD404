@@ -9,7 +9,9 @@
       "Bash(sqlcmd:*)",
       "Bash(curl:*)",
       "Bash(cp:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(dotnet run:*)",
+      "Bash(findstr:*)"
     ]
   }
 }
