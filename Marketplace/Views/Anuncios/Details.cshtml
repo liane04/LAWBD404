@@ -424,18 +424,42 @@
                         <button class="btn btn-primary btn-lg">
                             <i class="bi bi-telephone-fill me-2"></i>Ver Telefone
                         </button>
-                        <button class="btn btn-outline-primary btn-lg">
+                        <a href="@Url.Action("IniciarConversa", "Mensagens", new { anuncioId = Model.Id })" class="btn btn-outline-primary btn-lg">
                             <i class="bi bi-chat-dots-fill me-2"></i>Enviar Mensagem
-                        </button>
+                        </a>
 
                         <hr class="my-2">
 
                         <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#reservarModal" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
                             <i class="bi bi-bookmark-check-fill me-2"></i>Reservar Veículo
                         </button>
-                        <button class="btn btn-info btn-lg text-white" data-bs-toggle="modal" data-bs-target="#agendarVisitaModal" data-mockup-user-type="comprador" data-mockup-user-type-alt="vendedor">
-                            <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
-                        </button>
+                        @{
+                            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                            int.TryParse(userIdClaim, out var loggedUserId);
+                            var isProprioVendedor = Model.Vendedor?.IdentityUserId == loggedUserId;
+                            var isComprador = User.IsInRole("Comprador");
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            if (isProprioVendedor)
+                            {
+                                <button class="btn btn-outline-secondary btn-lg" disabled title="Não pode agendar visita no seu próprio anúncio">
+                                    <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                                </button>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Create", "Visitas", new { anuncioId = Model.Id })" class="btn btn-info btn-lg text-white">
+                                    <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Login", "Utilizadores", new { returnUrl = Url.Action("Create", "Visitas", new { anuncioId = Model.Id }) })" class="btn btn-info btn-lg text-white">
+                                <i class="bi bi-calendar-check-fill me-2"></i>Agendar Visita
+                            </a>
+                        }
                     </div>
                 </div>
                 <div class="card-footer text-center bg-light">
@@ -446,7 +470,7 @@
             </div>
 
             <!-- Safety Tips Card -->
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm mb-4" style="position: relative; z-index: 10;">
                 <div class="card-header bg-warning bg-opacity-10 border-warning">
                     <h6 class="mb-0 text-warning"><i class="bi bi-shield-exclamation me-2"></i>Dicas de Segurança</h6>
                 </div>
@@ -1090,4 +1114,4 @@
     });
 </script>
 
-<script src="~/js/favoritos.js"></script>
+<script src="~/js/favoritos.js" asp-append-version="true"></script>

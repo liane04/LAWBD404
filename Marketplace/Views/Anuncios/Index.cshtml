@@ -1,10 +1,11 @@
-@model IEnumerable<Marketplace.Models.Anuncio>
+﻿@model IEnumerable<Marketplace.Models.Anuncio>
 
 @{
     ViewData["Title"] = "Comprar Carros";
     var marcas = ViewBag.Marcas as List<Marketplace.Models.Marca> ?? new List<Marketplace.Models.Marca>();
     var modelos = ViewBag.Modelos as List<Marketplace.Models.Modelo> ?? new List<Marketplace.Models.Modelo>();
     var tipos = ViewBag.Tipos as List<Marketplace.Models.Tipo> ?? new List<Marketplace.Models.Tipo>();
+    var categorias = ViewBag.Categorias as List<Marketplace.Models.Categoria> ?? new List<Marketplace.Models.Categoria>();
     var combustiveis = ViewBag.Combustiveis as List<Marketplace.Models.Combustivel> ?? new List<Marketplace.Models.Combustivel>();
 }
 
@@ -33,12 +34,12 @@
     <div class="row g-4">
         <!-- Coluna de Filtros -->
         <div class="col-lg-3" id="filtersColumn">
-            <div class="filters-sidebar sticky-top" style="top: 90px;" id="mobileFilters">
+            <div class="filters-sidebar" id="mobileFilters">
                 <div class="filters-header">
                     <h5 class="mb-0">
                         <i class="bi bi-sliders me-2"></i>Filtros de Pesquisa
                     </h5>
-                    <button class="btn btn-sm btn-link text-danger" onclick="resetFilters()">
+                    <button type="button" class="btn btn-sm btn-link text-danger" onclick="resetFilters()">
                         <i class="bi bi-arrow-clockwise me-1"></i>Limpar
                     </button>
                 </div>
@@ -82,10 +83,10 @@
                             <i class="bi bi-currency-euro me-2"></i>Preço Máximo
                         </label>
                         <div class="price-range-container">
-                            <input type="range" class="form-range" min="0" max="100000" step="1000" id="preco" value="50000" oninput="updatePriceLabel(this.value)">
+                            <input type="range" class="form-range" name="precoMax" min="0" max="100000" step="1000" id="preco" value="@(ViewBag.PrecoMax ?? 50000)" oninput="updatePriceLabel(this.value)">
                             <div class="d-flex justify-content-between mt-2">
                                 <span class="text-muted small">0 €</span>
-                                <span class="price-value fw-bold text-primary" id="precoValue">50.000 €</span>
+                                <span class="price-value fw-bold text-primary" id="precoValue">@(ViewBag.PrecoMax != null ? ((decimal)ViewBag.PrecoMax).ToString("N0") : "50.000") €</span>
                                 <span class="text-muted small">100k €</span>
                             </div>
                         </div>
@@ -98,10 +99,10 @@
                         </label>
                         <div class="row g-2">
                             <div class="col-6">
-                                <input type="number" id="ano-min" class="form-control" placeholder="Min" min="1960" max="2025">
+                                <input type="number" name="anoMin" id="ano-min" class="form-control" placeholder="Min" min="1960" max="2025" value="@ViewBag.AnoMin">
                             </div>
                             <div class="col-6">
-                                <input type="number" id="ano-max" class="form-control" placeholder="Max" min="1960" max="2025">
+                                <input type="number" name="anoMax" id="ano-max" class="form-control" placeholder="Max" min="1960" max="2025" value="@ViewBag.AnoMax">
                             </div>
                         </div>
                     </div>
@@ -112,51 +113,58 @@
                             <i class="bi bi-speedometer2 me-2"></i>Quilometragem (km)
                         </label>
                         <div class="row g-2">
-                            <div class="col-6">
-                                <input type="number" id="km-min" class="form-control" placeholder="Mín" step="1000">
-                            </div>
-                            <div class="col-6">
-                                <input type="number" id="km-max" class="form-control" placeholder="Máx" step="1000">
+                            <div class="col-12">
+                                <input type="number" name="kmMax" id="km-max" class="form-control" placeholder="Máximo" step="1000" value="@ViewBag.KmMax">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Filtro de Categoria -->
+                    <!-- Filtro de Tipo de Veículo -->
                     <div class="filter-group">
-                        <label for="categoria" class="filter-label">
+                        <label for="tipoId" class="filter-label">
+                            <i class="bi bi-bicycle me-2"></i>Tipo de Veículo
+                        </label>
+                        <select name="tipoId" id="tipoId" class="form-select">
+                            <option value="">Todos</option>
+                            @foreach (var tipo in tipos)
+                            {
+                                <option value="@tipo.Id" selected="@(ViewBag.TipoIdSelecionado == tipo.Id)">
+                                    @tipo.Nome
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Filtro de Categoria (SUV, Sedan, etc) -->
+                    <div class="filter-group">
+                        <label for="categoriaId" class="filter-label">
                             <i class="bi bi-grid-3x3-gap me-2"></i>Categoria
                         </label>
-                        <select id="categoria" class="form-select">
-                            <option value="" selected>Todas</option>
-                            <option value="suv">SUV</option>
-                            <option value="sedan">Sedan</option>
-                            <option value="hatchback">Hatchback</option>
-                            <option value="carrinha">Carrinha</option>
-                            <option value="desportivo">Desportivo</option>
-                            <option value="citadino">Citadino</option>
+                        <select name="categoriaId" id="categoriaId" class="form-select">
+                            <option value="">Todas</option>
+                            @foreach (var cat in categorias)
+                            {
+                                <option value="@cat.Id" selected="@(ViewBag.CategoriaIdSelecionada == cat.Id)">
+                                    @cat.Nome
+                                </option>
+                            }
                         </select>
                     </div>
 
                     <!-- Filtro de Combustível -->
                     <div class="filter-group">
-                        <label for="combustivel" class="filter-label">
+                        <label class="filter-label">
                             <i class="bi bi-fuel-pump me-2"></i>Combustível
                         </label>
                         <div class="btn-group-vertical w-100" role="group">
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-todos" value="" checked>
+                            <input type="radio" class="btn-check" name="combustivelId" id="comb-todos" value="" @(ViewBag.CombustivelIdSelecionado == null ? "checked" : "")>
                             <label class="btn btn-outline-secondary" for="comb-todos">Todos</label>
 
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-gasolina" value="gasolina">
-                            <label class="btn btn-outline-secondary" for="comb-gasolina">Gasolina</label>
-
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-diesel" value="diesel">
-                            <label class="btn btn-outline-secondary" for="comb-diesel">Diesel</label>
-
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-eletrico" value="eletrico">
-                            <label class="btn btn-outline-secondary" for="comb-eletrico">Elétrico</label>
-
-                            <input type="radio" class="btn-check" name="combustivel" id="comb-hibrido" value="hibrido">
-                            <label class="btn btn-outline-secondary" for="comb-hibrido">Híbrido</label>
+                            @foreach (var combustivel in combustiveis)
+                            {
+                                <input type="radio" class="btn-check" name="combustivelId" id="comb-@combustivel.Id" value="@combustivel.Id" @(ViewBag.CombustivelIdSelecionado == combustivel.Id ? "checked" : "")>
+                                <label class="btn btn-outline-secondary" for="comb-@combustivel.Id">@combustivel.Tipo</label>
+                            }
                         </div>
                     </div>
 
@@ -165,10 +173,10 @@
                         <label for="caixa" class="filter-label">
                             <i class="bi bi-gear-fill me-2"></i>Transmissão
                         </label>
-                        <select id="caixa" class="form-select">
-                            <option value="" selected>Todas</option>
-                            <option value="manual">Manual</option>
-                            <option value="automatica">Automática</option>
+                        <select name="caixa" id="caixa" class="form-select">
+                            <option value="">Todas</option>
+                            <option value="manual" selected="@(ViewBag.Caixa == "manual")">Manual</option>
+                            <option value="automatica" selected="@(ViewBag.Caixa == "automatica")">Automática</option>
                         </select>
                     </div>
 
@@ -177,7 +185,7 @@
                         <label for="localizacao" class="filter-label">
                             <i class="bi bi-geo-alt-fill me-2"></i>Localização
                         </label>
-                        <input type="text" id="localizacao" class="form-control" placeholder="Cidade ou distrito">
+                        <input type="text" name="localizacao" id="localizacao" class="form-control" placeholder="Cidade ou distrito" value="@ViewBag.Localizacao">
                     </div>
 
                     <!-- Botão Aplicar -->
@@ -185,7 +193,7 @@
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="bi bi-search me-2"></i>Aplicar Filtros
                         </button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="saveFilters()">
+                        <button type="button" class="btn btn-outline-secondary" onclick="saveFiltersPost()">
                             <i class="bi bi-bookmark-heart me-2"></i>Guardar Pesquisa
                         </button>
                     </div>
@@ -215,13 +223,18 @@
                         </div>
                     </div>
                     <div class="sort-dropdown">
-                        <select id="ordenar" class="form-select form-select-sm">
-                            <option value="relevancia" selected>Relevância</option>
-                            <option value="preco-asc">Preço: Menor para Maior</option>
-                            <option value="preco-desc">Preço: Maior para Menor</option>
-                            <option value="ano-desc">Ano: Mais Recente</option>
-                            <option value="km-asc">Quilometragem: Menor</option>
-                        </select>
+						<select name="ordenacao"
+								id="ordenar"
+								form="filtrosForm"
+								class="form-select form-select-sm"
+								onchange="this.form.submit()">
+
+							<option value="relevancia" selected="@(ViewBag.Ordenacao == "relevancia" || ViewBag.Ordenacao == null)">Relevância</option>
+							<option value="preco-asc" selected="@(ViewBag.Ordenacao == "preco-asc")">Preço: Menor para Maior</option>
+							<option value="preco-desc" selected="@(ViewBag.Ordenacao == "preco-desc")">Preço: Maior para Menor</option>
+							<option value="ano-desc" selected="@(ViewBag.Ordenacao == "ano-desc")">Ano: Mais Recente</option>
+							<option value="km-asc" selected="@(ViewBag.Ordenacao == "km-asc")">Quilometragem: Menor</option>
+						</select>
                     </div>
                 </div>
             </div>
@@ -363,6 +376,36 @@
 
         function saveFilters() {
             alert('Pesquisa guardada com sucesso! Receberá notificações quando surgirem novos anúncios que correspondam aos seus critérios.');
+        }
+
+        // Função de POST para guardar pesquisa atual
+        function saveFiltersPost() {
+            const form = document.getElementById('filtrosForm');
+            const data = new FormData();
+            data.append('marcaId', form.elements['marcaId'] ? form.elements['marcaId'].value : '');
+            data.append('modeloId', form.elements['modeloId'] ? form.elements['modeloId'].value : '');
+            data.append('tipoId', form.elements['tipoId'] ? form.elements['tipoId'].value : '');
+            const combSel = form.querySelector('input[name="combustivelId"]:checked');
+            data.append('combustivelId', combSel ? combSel.value : '');
+            data.append('precoMax', form.elements['precoMax'] ? form.elements['precoMax'].value : '');
+            data.append('anoMin', form.elements['anoMin'] ? form.elements['anoMin'].value : '');
+            data.append('anoMax', form.elements['anoMax'] ? form.elements['anoMax'].value : '');
+            data.append('kmMax', form.elements['kmMax'] ? form.elements['kmMax'].value : '');
+            data.append('caixa', form.elements['caixa'] ? form.elements['caixa'].value : '');
+            data.append('localizacao', form.elements['localizacao'] ? form.elements['localizacao'].value : '');
+            data.append('ordenacao', form.elements['ordenacao'] ? form.elements['ordenacao'].value : '');
+            const marcaSel = form.elements['marcaId'];
+            const modeloSel = form.elements['modeloId'];
+            const marcaNome = marcaSel && marcaSel.selectedIndex > 0 ? marcaSel.options[marcaSel.selectedIndex].text : '';
+            const modeloNome = modeloSel && modeloSel.selectedIndex > 0 ? modeloSel.options[modeloSel.selectedIndex].text : '';
+            const preco = form.elements['precoMax'] ? form.elements['precoMax'].value : '';
+            const sugerido = `${marcaNome} ${modeloNome} ${preco ? '≤ ' + new Intl.NumberFormat('pt-PT').format(preco) + '€' : ''}`.trim();
+            const nome = prompt('Nome da pesquisa para guardar:', sugerido || 'Pesquisa');
+            if (nome === null) return;
+            data.append('nome', nome);
+            fetch('@Url.Action("GuardarFiltro","Anuncios")', { method: 'POST', body: data, credentials: 'same-origin' })
+                .then(res => { if (res.redirected) { window.location.href = res.url; } else { alert('Pesquisa guardada.'); window.location.reload(); } })
+                .catch(() => alert('Não foi possível guardar a pesquisa.'));
         }
 
         // ========== COMPARISON FUNCTIONALITY ==========
@@ -603,5 +646,5 @@
         });
     </script>
 
-    <script src="~/js/favoritos.js"></script>
+    <script src="~/js/favoritos.js" asp-append-version="true"></script>
 }

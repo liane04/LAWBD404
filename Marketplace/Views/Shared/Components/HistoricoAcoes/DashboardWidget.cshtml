@@ -1,0 +1,103 @@
+@model IEnumerable<Marketplace.Models.HistoricoAcao>
+
+<div class="activity-feed">
+    @if (!Model.Any())
+    {
+        <div class="text-center py-4 text-muted">
+            <i class="bi bi-clock-history fs-1 mb-2 d-block"></i>
+            Nenhuma atividade recente registada.
+        </div>
+    }
+    else
+    {
+        foreach (var acao in Model)
+        {
+            var colorClass = "secondary";
+            var iconClass = "bi-activity";
+            var title = "Ação Administrativa";
+            var description = acao.Motivo ?? "Sem detalhes";
+            var timeSpan = DateTime.UtcNow - acao.Data;
+            var timeText = "";
+
+            if (timeSpan.TotalMinutes < 60)
+            {
+                timeText = $"Há {Math.Max(1, (int)timeSpan.TotalMinutes)} min";
+            }
+            else if (timeSpan.TotalHours < 24)
+            {
+                timeText = $"Há {(int)timeSpan.TotalHours}h";
+            }
+            else
+            {
+                timeText = $"Há {(int)timeSpan.TotalDays} dias";
+            }
+
+            // Determine style based on Motivo/TipoAcao
+            var motivo = acao.Motivo ?? "";
+            
+            if (motivo.Contains("Aprovar") || motivo.Contains("Retomar") || motivo.Contains("Desbloquear"))
+            {
+                colorClass = "success";
+                iconClass = "bi-check-circle-fill";
+                if (motivo.Contains("Aprovar")) title = "Aprovação Realizada";
+                else if (motivo.Contains("Retomar")) title = "Anúncio Retomado";
+                else title = "Utilizador Desbloqueado";
+            }
+            else if (motivo.Contains("Bloquear") || motivo.Contains("Rejeitar") || motivo.Contains("Eliminar"))
+            {
+                colorClass = "danger";
+                iconClass = "bi-x-circle-fill";
+                if (motivo.Contains("Bloquear")) 
+                {
+                    title = "Utilizador Bloqueado";
+                    iconClass = "bi-lock-fill";
+                }
+                else if (motivo.Contains("Rejeitar")) 
+                {
+                    title = "Registo Rejeitado";
+                    iconClass = "bi-person-x-fill";
+                }
+                else title = "Item Eliminado";
+            }
+            else if (motivo.Contains("Pausar"))
+            {
+                colorClass = "warning";
+                iconClass = "bi-pause-circle-fill";
+                title = "Anúncio Pausado";
+            }
+
+            // Enrich description with entity name if available
+            if (acao is Marketplace.Models.AcaoUser acaoUser && acaoUser.Utilizador != null)
+            {
+                description = $"{acaoUser.Utilizador.Nome} ({acaoUser.Utilizador.Email})";
+            }
+            else if (acao is Marketplace.Models.AcaoAnuncio acaoAnuncio && acaoAnuncio.Anuncio != null)
+            {
+                description = $"Anúncio: {acaoAnuncio.Anuncio.Titulo}";
+            }
+
+            <div class="activity-item border-start border-@colorClass border-3 ps-3 pb-3">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <div class="activity-icon bg-@colorClass bg-opacity-10 rounded-circle p-2 me-2">
+                        <i class="bi @iconClass text-@colorClass"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <p class="mb-0"><strong>@title</strong></p>
+                        <small class="text-muted">@description</small>
+                        @if (!string.IsNullOrEmpty(motivo) && motivo.Contains(":"))
+                        {
+                            <div class="small text-muted fst-italic mt-1">"@motivo.Split(':', 2)[1].Trim()"</div>
+                        }
+                    </div>
+                    <small class="text-muted text-nowrap ms-2">@timeText</small>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="text-center mt-3">
+    <a href="#" class="btn btn-sm btn-outline-primary" onclick="document.querySelector('[data-target=\'#historico-acoes-content\']').click(); return false;">
+        Ver Histórico Completo <i class="bi bi-arrow-right ms-1"></i>
+    </a>
+</div>

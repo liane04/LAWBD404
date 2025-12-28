@@ -11,7 +11,7 @@ namespace Marketplace.Data.Seeders
 {
     public static class UserSeeder
     {
-        private record UserSeed(string fullName, string email, string username, string role, string? password);
+        private record UserSeed(string fullName, string email, string username, string role, string? accessLevel, string? password);
 
         public static async Task SeedAsync(
             UserManager<ApplicationUser> userManager,
@@ -20,6 +20,7 @@ namespace Marketplace.Data.Seeders
             string contentRootPath,
             Action<string>? log = null)
         {
+
             log ??= _ => { };
 
             // Roles
@@ -75,7 +76,9 @@ namespace Marketplace.Data.Seeders
 
             // Utilizadores base mÇðnimos
             var adminUser = await EnsureUserAsync("admin@email.com", "admin", "Administrador", "Administrador", "Admin123");
+            var admin2User = await EnsureUserAsync("admin2@email.com", "admin2", "Administrador Nivel 2", "Administrador", "Admin123");
             var vendedorUser = await EnsureUserAsync("vendedor@email.com", "vendedor", "Vendedor Demo", "Vendedor", "Vende123");
+            var vendedorPendenteUser = await EnsureUserAsync("vendedor.pendente@email.com", "vendedor.pendente", "Vendedor Pendente", "Vendedor", "Vende123");
             var compradorUser = await EnsureUserAsync("comprador@email.com", "comprador", "Comprador Demo", "Comprador", "Compr123");
 
             // Entidades de domÇðnio associadas aos mÇðnimos
@@ -89,8 +92,23 @@ namespace Marketplace.Data.Seeders
                     PasswordHash = "IDENTITY",
                     Estado = "Ativo",
                     Tipo = "Administrador",
-                    NivelAcesso = "Total",
+                    NivelAcesso = "Nivel 1",
                     IdentityUserId = adminUser.Id
+                });
+            }
+
+            if (admin2User != null && !db.Administradores.Any(a => a.IdentityUserId == admin2User.Id))
+            {
+                db.Administradores.Add(new Administrador
+                {
+                    Username = admin2User.UserName!,
+                    Email = admin2User.Email!,
+                    Nome = admin2User.FullName ?? "Administrador Nivel 2",
+                    PasswordHash = "IDENTITY",
+                    Estado = "Ativo",
+                    Tipo = "Administrador",
+                    NivelAcesso = "Nivel 2",
+                    IdentityUserId = admin2User.Id
                 });
             }
 
@@ -105,6 +123,20 @@ namespace Marketplace.Data.Seeders
                     Estado = "Ativo",
                     Tipo = "Vendedor",
                     IdentityUserId = vendedorUser.Id
+                });
+            }
+
+            if (vendedorPendenteUser != null && !db.Vendedores.Any(v => v.IdentityUserId == vendedorPendenteUser.Id))
+            {
+                db.Vendedores.Add(new Vendedor
+                {
+                    Username = vendedorPendenteUser.UserName!,
+                    Email = vendedorPendenteUser.Email!,
+                    Nome = vendedorPendenteUser.FullName ?? "Vendedor Pendente",
+                    PasswordHash = "IDENTITY",
+                    Estado = "Pendente",
+                    Tipo = "Vendedor",
+                    IdentityUserId = vendedorPendenteUser.Id
                 });
             }
 
@@ -155,93 +187,46 @@ namespace Marketplace.Data.Seeders
                     if (created == null)
                         continue;
 
-                    if (role == "Administrador" && !db.Administradores.Any(a => a.IdentityUserId == created.Id))
+                if (role == "Administrador" && !db.Administradores.Any(a => a.IdentityUserId == created.Id))
+                {
+                    db.Administradores.Add(new Administrador
                     {
-                        db.Administradores.Add(new Administrador
-                        {
-                            Username = created.UserName!,
-                            Email = created.Email!,
-                            Nome = created.FullName ?? created.UserName!,
-                            PasswordHash = "IDENTITY",
-                            Estado = "Ativo",
-                            Tipo = "Administrador",
-                            NivelAcesso = "Total",
-                            IdentityUserId = created.Id
-                        });
-                    }
-                    else if (role == "Vendedor" && !db.Vendedores.Any(v => v.IdentityUserId == created.Id))
-                    {
-                        db.Vendedores.Add(new Vendedor
-                        {
-                            Username = created.UserName!,
-                            Email = created.Email!,
-                            Nome = created.FullName ?? created.UserName!,
-                            PasswordHash = "IDENTITY",
-                            Estado = "Ativo",
-                            Tipo = "Vendedor",
-                            IdentityUserId = created.Id
-                        });
-                    }
-                    else if (role == "Comprador" && !db.Compradores.Any(c => c.IdentityUserId == created.Id))
-                    {
-                        db.Compradores.Add(new Comprador
-                        {
-                            Username = created.UserName!,
-                            Email = created.Email!,
-                            Nome = created.FullName ?? created.UserName!,
-                            PasswordHash = "IDENTITY",
-                            Estado = "Ativo",
-                            Tipo = "Comprador",
-                            IdentityUserId = created.Id
-                        });
-                    }
+                        Username = created.UserName!,
+                        Email = created.Email!,
+                        Nome = created.FullName ?? created.UserName!,
+                        PasswordHash = "IDENTITY",
+                        Estado = "Ativo",
+                        Tipo = "Administrador",
+                        NivelAcesso = u.accessLevel ?? "Nivel 2",
+                        IdentityUserId = created.Id
+                    });
                 }
-            }
-
-            await db.SaveChangesAsync();
-
-            await SeedProfileImagesAsync(db, contentRootPath, log);
-        }
-
-        private static async Task SeedProfileImagesAsync(ApplicationDbContext db, string contentRootPath, Action<string> log)
-        {
-            var pool = GetProfileImagePool(contentRootPath);
-            if (pool.Count == 0)
-            {
-                log("[seed] utilizadores criados sem fotos demo (nenhuma imagem de origem encontrada em Data/Seeds/images/perfil ou wwwroot/imagens)");
-                return;
-            }
-
-            var destinoPerfil = Path.Combine(contentRootPath, "wwwroot", "images", "perfil");
-            Directory.CreateDirectory(destinoPerfil);
-
-            // Mapear utilizadores de domÇðnio por IdentityUserId para atualizar o mesmo caminho de imagem
-            var admins = db.Administradores.ToDictionary(a => a.IdentityUserId);
-            var vendedores = db.Vendedores.ToDictionary(v => v.IdentityUserId);
-            var compradores = db.Compradores.ToDictionary(c => c.IdentityUserId);
-
-            int idx = 0;
-            var usersSemFoto = db.Users.Where(u => string.IsNullOrWhiteSpace(u.ImagemPerfil)).ToList();
-            foreach (var user in usersSemFoto)
-            {
-                var origem = pool[idx % pool.Count];
-                var ext = Path.GetExtension(origem);
-                var fileName = $"user_{user.Id}{ext}";
-                var destino = Path.Combine(destinoPerfil, fileName);
-
-                File.Copy(origem, destino, overwrite: true);
-
-                var relativo = $"/images/perfil/{fileName}";
-                user.ImagemPerfil = relativo;
-
-                if (admins.TryGetValue(user.Id, out var admin))
-                    admin.ImagemPerfil = relativo;
-                if (vendedores.TryGetValue(user.Id, out var vendedor))
-                    vendedor.ImagemPerfil = relativo;
-                if (compradores.TryGetValue(user.Id, out var comprador))
-                    comprador.ImagemPerfil = relativo;
-
-                idx++;
+                else if (role == "Vendedor" && !db.Vendedores.Any(v => v.IdentityUserId == created.Id))
+                {
+                    db.Vendedores.Add(new Vendedor
+                    {
+                        Username = created.UserName!,
+                        Email = created.Email!,
+                        Nome = created.FullName ?? created.UserName!,
+                        PasswordHash = "IDENTITY",
+                        Estado = "Ativo",
+                        Tipo = "Vendedor",
+                        IdentityUserId = created.Id
+                    });
+                }
+                else if (role == "Comprador" && !db.Compradores.Any(c => c.IdentityUserId == created.Id))
+                {
+                    db.Compradores.Add(new Comprador
+                    {
+                        Username = created.UserName!,
+                        Email = created.Email!,
+                        Nome = created.FullName ?? created.UserName!,
+                        PasswordHash = "IDENTITY",
+                        Estado = "Ativo",
+                        Tipo = "Comprador",
+                        IdentityUserId = created.Id
+                    });
+                }
             }
 
             await db.SaveChangesAsync();

@@ -133,15 +133,15 @@
                                     }
                                 </td>
                                 <td class="text-end pe-4">
-                                    <form method="post" style="display: inline-block;" asp-controller="Administrador" asp-action="AprovarVendedor" asp-route-id="@vendedor.Id">
+                                    <form method="post" style="display: inline-block;" asp-controller="Administrador" asp-action="AprovarVendedor" asp-route-id="@vendedor.Id" onsubmit="return disableFormButton(this)">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-success me-1" title="Aprovar">
+                                        <button type="submit" class="btn btn-sm btn-outline-success me-1" title="Aprovar">
                                             <i class="bi bi-check-circle-fill me-1"></i>Aprovar
                                         </button>
                                     </form>
-                                    <form method="post" style="display: inline-block;" asp-controller="Administrador" asp-action="RejeitarVendedor" asp-route-id="@vendedor.Id">
+                                    <form method="post" style="display: inline-block;" asp-controller="Administrador" asp-action="RejeitarVendedor" asp-route-id="@vendedor.Id" onsubmit="return disableFormButton(this)">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-danger" title="Rejeitar"
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Rejeitar"
                                                 onclick="return confirm('Tem certeza que deseja rejeitar este vendedor?');">
                                             <i class="bi bi-x-circle-fill me-1"></i>Rejeitar
                                         </button>

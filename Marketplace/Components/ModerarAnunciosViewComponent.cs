@@ -27,6 +27,8 @@ namespace Marketplace.Components
                 .Include(a => a.Categoria)
                 .Include(a => a.Combustivel)
                 .Include(a => a.Imagens)
+                .Include(a => a.Denuncias)
+                .Include(a => a.AcoesAnuncio)
                 .OrderByDescending(a => a.Id)
                 .ToListAsync();
 
@@ -47,17 +49,19 @@ namespace Marketplace.Components
                 TipoNome = a.Tipo?.Nome ?? "N/A",
                 CategoriaNome = a.Categoria?.Nome ?? "N/A",
                 CombustivelTipo = a.Combustivel?.Tipo ?? "N/A",
-                PrimeiraImagem = a.Imagens?.FirstOrDefault()?.ImagemCaminho
+                PrimeiraImagem = a.Imagens?.FirstOrDefault()?.ImagemCaminho,
+                HasDenuncias = a.Denuncias != null && a.Denuncias.Any(),
+                IsPausado = a.AcoesAnuncio != null && a.AcoesAnuncio.OrderByDescending(ac => ac.Data).FirstOrDefault()?.Motivo == "Anúncio Pausado"
             }).ToList();
 
-            // Calcular estatísticas (como não temos campo de estado, vamos considerar todos ativos)
+            // Calcular estatísticas
             var model = new ModerarAnunciosSectionVM
             {
                 Anuncios = anunciosDetalhados,
                 TotalPendentes = 0, // Pode ser implementado se adicionar campo Estado
-                TotalAtivos = anunciosDetalhados.Count,
-                TotalDenuncias = 0, // Pode ser implementado se adicionar sistema de denúncias
-                TotalPausados = 0 // Pode ser implementado se adicionar campo Estado
+                TotalAtivos = anunciosDetalhados.Count(a => !a.HasDenuncias && !a.IsPausado),
+                TotalDenuncias = anunciosDetalhados.Count(a => a.HasDenuncias),
+                TotalPausados = anunciosDetalhados.Count(a => a.IsPausado)
             };
 
             return View(model);
@@ -90,5 +94,7 @@ namespace Marketplace.Components
         public string CategoriaNome { get; set; } = string.Empty;
         public string CombustivelTipo { get; set; } = string.Empty;
         public string? PrimeiraImagem { get; set; }
+        public bool HasDenuncias { get; set; }
+        public bool IsPausado { get; set; }
     }
 }

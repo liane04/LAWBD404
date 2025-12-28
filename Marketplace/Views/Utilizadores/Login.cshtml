@@ -144,22 +144,29 @@
                                     </button>
                                 </div>
 
-                                <div class="text-center position-relative my-4">
-                                    <hr class="my-0">
-                                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">ou</span>
-                                </div>
+    </form>
 
-                                <div class="text-center">
-                                    <p class="mb-0 text-muted">
-                                        Ainda não tem uma conta?
-                                        <a asp-controller="Utilizadores"
-                                           asp-action="Registar"
-                                           class="text-primary text-decoration-none fw-bold">
-                                            Criar conta
-                                        </a>
-                                    </p>
-                                </div>
-                            </form>
+    <!-- Login com Google (apenas se configurado) -->
+    @{
+        var googleId = Configuration["Authentication:Google:ClientId"];
+        var googleSecret = Configuration["Authentication:Google:ClientSecret"];
+    }
+    @if (!string.IsNullOrWhiteSpace(googleId) && !string.IsNullOrWhiteSpace(googleSecret))
+    {
+        <div class="text-center position-relative my-4">
+            <hr class="my-0">
+            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">ou</span>
+        </div>
+
+        <form asp-controller="Utilizadores" asp-action="ExternalLogin" method="post" class="mb-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="provider" value="Google" />
+            <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+            <button type="submit" class="btn btn-outline-secondary w-100" style="border-radius: 0.75rem;">
+                <i class="bi bi-google me-2"></i> Continuar com Google
+            </button>
+        </form>
+    }
                         </div>
                     </div>
                 </div>
@@ -213,3 +220,4 @@
 </body>
 </html>
 
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration

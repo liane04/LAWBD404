@@ -1,0 +1,153 @@
+@model Marketplace.Models.Visita
+
+@{
+    ViewData["Title"] = "Remover Visita";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Remover Visita
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Atenção!
+                        </h5>
+                        <p class="mb-0">
+                            Tem certeza que deseja remover esta visita? Esta ação não pode ser desfeita.
+                        </p>
+                    </div>
+
+                    <!-- Informações da Visita -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    @if (Model.Anuncio?.Imagens?.Any() == true)
+                                    {
+                                        <img src="@Url.Content(Model.Anuncio.Imagens.First().ImagemCaminho)"
+                                             class="img-fluid rounded"
+                                             alt="@Model.Anuncio.Titulo">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                             style="height: 120px;">
+                                            <i class="bi bi-car-front fs-1 text-muted"></i>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="col-md-8">
+                                    <h5>@Model.Anuncio?.Titulo</h5>
+                                    <dl class="row mb-0">
+                                        <dt class="col-sm-4">Data</dt>
+                                        <dd class="col-sm-8">@Model.Data.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                                        <dt class="col-sm-4">Estado</dt>
+                                        <dd class="col-sm-8">
+                                            <span class="badge @GetBadgeClass(Model.Estado)">
+                                                @Model.Estado
+                                            </span>
+                                        </dd>
+
+                                        <dt class="col-sm-4">Vendedor</dt>
+                                        <dd class="col-sm-8">@Model.Vendedor?.Nome</dd>
+
+                                        @if (!string.IsNullOrEmpty(Model.Observacoes))
+                                        {
+                                            <dt class="col-sm-12 mt-2">Observações</dt>
+                                            <dd class="col-sm-12">
+                                                <em class="text-muted">@Model.Observacoes</em>
+                                            </dd>
+                                        }
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário -->
+                    <form asp-action="Delete" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="alert alert-info">
+                            <p class="mb-0">
+                                <strong>Nota:</strong> Se preferir, pode cancelar a visita em vez de removê-la.
+                                O cancelamento mantém o histórico e notifica o vendedor.
+                            </p>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="@Url.Action("Details", new { id = Model.Id })"
+                               class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </a>
+                            <button type="button"
+                                    class="btn btn-warning btn-lg"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#cancelModal">
+                                <i class="bi bi-x-circle"></i> Cancelar em vez de Remover
+                            </button>
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-trash"></i> Confirmar Remoção
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para cancelamento (alternativa à remoção) -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cancelar Visita</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="Cancelar" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <p>O cancelamento mantém o histórico e notifica o vendedor.</p>
+                    <div class="mb-3">
+                        <label for="motivo" class="form-label">Motivo (opcional)</label>
+                        <textarea class="form-control" id="motivo" name="motivo"
+                                  rows="3" placeholder="Informe o motivo do cancelamento"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-x-circle"></i> Cancelar Visita
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetBadgeClass(string estado)
+    {
+        return estado switch
+        {
+            "Pendente" => "bg-warning text-dark",
+            "Confirmada" => "bg-success",
+            "Concluída" => "bg-secondary",
+            "Cancelada" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
+

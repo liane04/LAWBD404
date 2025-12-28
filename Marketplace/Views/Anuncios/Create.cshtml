@@ -56,16 +56,16 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label asp-for="CategoriaId" class="form-label fw-semibold">
-                                                <i class="bi bi-car-front text-primary me-2"></i>Tipo de Veículo
+                                                <i class="bi bi-grid-3x3-gap text-primary me-2"></i>Categoria
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <select asp-for="CategoriaId" asp-items="@ViewBag.CategoriaId" class="form-select form-select-lg" required>
-                                                <option value="">Selecione o tipo...</option>
+                                                <option value="">Selecione a categoria...</option>
                                             </select>
                                             <span asp-validation-for="CategoriaId" class="text-danger"></span>
                                             <div class="form-text">
                                                 <i class="bi bi-info-circle me-1"></i>
-                                                Carro, Moto, Caravana, etc.
+                                                SUV, Sedan, Hatchback, Carrinha, etc.
                                             </div>
                                         </div>
 
@@ -294,7 +294,7 @@
 
                                         <div class="col-md-6">
                                             <label asp-for="TipoId" class="form-label fw-semibold">
-                                                <i class="bi bi-grid text-primary me-2"></i>Categoria
+                                                <i class="bi bi-bicycle text-primary me-2"></i>Tipo de Veículo
                                             </label>
                                             <select asp-for="TipoId" asp-items="@ViewBag.TipoId" id="tipoSelect" class="form-select form-select-lg" readonly>
                                                 <option value="">Preenchido automaticamente...</option>
@@ -302,7 +302,7 @@
                                             <span asp-validation-for="TipoId" class="text-danger"></span>
                                             <div class="form-text">
                                                 <i class="bi bi-magic me-1 text-success"></i>
-                                                Preenchido automaticamente ao selecionar o modelo (SUV, Ligeiro, etc.)
+                                                Preenchido automaticamente (Carro, Mota, etc.)
                                             </div>
                                         </div>
 

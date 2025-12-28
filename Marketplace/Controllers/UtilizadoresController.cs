@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 using Marketplace.Data;
 using Marketplace.Models;
 using Marketplace.Services;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace Marketplace.Controllers
 {
@@ -80,10 +84,85 @@ namespace Marketplace.Controllers
                         .CountAsync();
                     ViewBag.ReservasRecebidasCount = reservasCount;
 
-                    var visitasCount = await _db.Visitas
+                    // Carregar visitas RECEBIDAS (aos meus anúncios - como vendedor)
+                    var visitasRecebidas = await _db.Visitas
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Imagens)
                         .Where(v => v.VendedorId == vendedor.Id)
-                        .CountAsync();
-                    ViewBag.VisitasAgendadasCount = visitasCount;
+                        .OrderByDescending(v => v.Data)
+                        .ToListAsync();
+
+                    // Carregar Comprador manualmente para cada visita recebida
+                    foreach (var visita in visitasRecebidas)
+                    {
+                        if (visita.Comprador == null)
+                        {
+                            var utilizadorComprador = await _db.Set<Utilizador>()
+                                .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+                            if (utilizadorComprador != null)
+                            {
+                                visita.Comprador = new Comprador
+                                {
+                                    Id = utilizadorComprador.Id,
+                                    Nome = utilizadorComprador.Nome,
+                                    Email = utilizadorComprador.Email
+                                };
+                            }
+                        }
+                    }
+
+                    ViewBag.VisitasRecebidas = visitasRecebidas;
+                    ViewBag.VisitasRecebidasCount = visitasRecebidas.Count;
+
+                    // Carregar visitas AGENDADAS (que eu agendei - como comprador)
+                    var visitasAgendadas = await _db.Visitas
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Where(v => v.CompradorId == vendedor.Id)
+                        .OrderByDescending(v => v.Data)
+                        .ToListAsync();
+
+                    // Carregar Vendedor manualmente para cada visita agendada
+                    foreach (var visita in visitasAgendadas)
+                    {
+                        if (visita.Vendedor == null)
+                        {
+                            var utilizadorVendedor = await _db.Set<Utilizador>()
+                                .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
+                            if (utilizadorVendedor != null)
+                            {
+                                visita.Vendedor = new Vendedor
+                                {
+                                    Id = utilizadorVendedor.Id,
+                                    Nome = utilizadorVendedor.Nome,
+                                    Email = utilizadorVendedor.Email
+                                };
+                            }
+                        }
+                    }
+
+                    ViewBag.VisitasAgendadas = visitasAgendadas;
+                    ViewBag.VisitasAgendadasCount = visitasAgendadas.Count;
+
+                    // Total de visitas (para compatibilidade com código existente)
+                    ViewBag.MinhasVisitasVendedor = visitasRecebidas.Concat(visitasAgendadas).OrderByDescending(v => v.Data).ToList();
+
+                    // Carregar disponibilidades do vendedor
+                    var disponibilidades = await _db.DisponibilidadesVendedor
+                        .Where(d => d.VendedorId == vendedor.Id)
+                        .OrderBy(d => d.DiaSemana)
+                        .ThenBy(d => d.HoraInicio)
+                        .ToListAsync();
+                    ViewBag.Disponibilidades = disponibilidades;
+                    ViewBag.DisponibilidadesCount = disponibilidades.Count;
 
                     ViewBag.Nome = vendedor.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(vendedor.ImagemPerfil) ? null : vendedor.ImagemPerfil;
@@ -115,8 +194,49 @@ namespace Marketplace.Controllers
                 {
                     ViewBag.MeusFavoritos = comprador.AnunciosFavoritos.OrderByDescending(af => af.Id).ToList();
                     ViewBag.FavoritosCount = comprador.AnunciosFavoritos.Count;
+
+                    // Carregar visitas do comprador
+                    var visitasComprador = await _db.Visitas
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(v => v.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Where(v => v.CompradorId == comprador.Id)
+                        .OrderByDescending(v => v.Data)
+                        .ToListAsync();
+
+                    // Carregar Vendedor manualmente para cada visita
+                    foreach (var visita in visitasComprador)
+                    {
+                        if (visita.Vendedor == null)
+                        {
+                            var utilizadorVendedor = await _db.Set<Utilizador>()
+                                .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
+                            if (utilizadorVendedor != null)
+                            {
+                                visita.Vendedor = new Vendedor
+                                {
+                                    Id = utilizadorVendedor.Id,
+                                    Nome = utilizadorVendedor.Nome,
+                                    Email = utilizadorVendedor.Email
+                                };
+                            }
+                        }
+                    }
+
+                    ViewBag.MinhasVisitasComprador = visitasComprador;
+
                     ViewBag.Nome = comprador.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(comprador.ImagemPerfil) ? null : comprador.ImagemPerfil;
+
+                    // Pesquisas guardadas (Filtros Favoritos)
+                    var filtros = await _db.FiltrosFavoritos
+                        .Where(f => f.CompradorId == comprador.Id)
+                        .OrderByDescending(f => f.CreatedAt)
+                        .ToListAsync();
+                    ViewBag.SavedFilters = filtros;
                 }
             }
 
@@ -368,6 +488,157 @@ namespace Marketplace.Controllers
             return RedirectToAction("Perfil");
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> SecurityStatus()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var is2FaEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
+            var recoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user);
+            var hasAuthenticator = !string.IsNullOrWhiteSpace(await _userManager.GetAuthenticatorKeyAsync(user));
+
+            return Json(new
+            {
+                email = user.Email,
+                twoFactorEnabled = is2FaEnabled,
+                recoveryCodes = recoveryCodesLeft,
+                hasAuthenticator
+            });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> TwoFactorSetup()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var key = await _userManager.GetAuthenticatorKeyAsync(user);
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                key = await _userManager.GetAuthenticatorKeyAsync(user);
+            }
+
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return BadRequest(new { error = "Não foi possível gerar uma chave de autenticação. Tente novamente." });
+            }
+
+            var sharedKey = FormatKey(key);
+            var authenticatorUri = GenerateQrCodeUri(user.Email ?? user.UserName ?? "DriveDeal", key);
+
+            return Json(new { sharedKey, authenticatorUri });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnableTwoFactor([FromForm] EnableTwoFactorRequest request)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var code = (request.Code ?? string.Empty).Replace(" ", string.Empty).Replace("-", string.Empty);
+            var isValid = await _userManager.VerifyTwoFactorTokenAsync(
+                user,
+                _userManager.Options.Tokens.AuthenticatorTokenProvider,
+                code);
+
+            if (!isValid)
+            {
+                return BadRequest(new { error = "Código de verificação inválido. Confirme o valor na app de autenticação." });
+            }
+
+            var enableResult = await _userManager.SetTwoFactorEnabledAsync(user, true);
+            if (!enableResult.Succeeded)
+            {
+                return BadRequest(new { error = "Não foi possível ativar a autenticação de dois fatores. Tente novamente." });
+            }
+
+            var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 5);
+            await _signInManager.RefreshSignInAsync(user);
+
+            return Json(new { success = true, recoveryCodes });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DisableTwoFactor()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var result = await _userManager.SetTwoFactorEnabledAsync(user, false);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { error = "Não foi possível desativar a autenticação de dois fatores." });
+            }
+
+            await _userManager.ResetAuthenticatorKeyAsync(user);
+            await _signInManager.RefreshSignInAsync(user);
+            return Json(new { success = true });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlterarPassword([FromForm] ChangePasswordRequest request)
+        {
+            if (request == null ||
+                string.IsNullOrWhiteSpace(request.PasswordAtual) ||
+                string.IsNullOrWhiteSpace(request.PasswordNova) ||
+                string.IsNullOrWhiteSpace(request.PasswordNovaConfirmacao))
+            {
+                return BadRequest(new { error = "Preencha todos os campos." });
+            }
+
+            if (!string.Equals(request.PasswordNova, request.PasswordNovaConfirmacao, StringComparison.Ordinal))
+            {
+                return BadRequest(new { error = "As palavras-passe novas não coincidem." });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            IdentityResult result;
+            if (await _userManager.HasPasswordAsync(user))
+            {
+                result = await _userManager.ChangePasswordAsync(user, request.PasswordAtual, request.PasswordNova);
+            }
+            else
+            {
+                result = await _userManager.AddPasswordAsync(user, request.PasswordNova);
+            }
+
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToArray();
+                return BadRequest(new { errors });
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+
+            if (!string.IsNullOrWhiteSpace(user.Email))
+            {
+                try
+                {
+                    await _emailSender.SendAsync(
+                        user.Email,
+                        "Password alterada - DriveDeal",
+                        "<p>A sua password foi alterada com sucesso.</p><p>Se não reconhece esta alteração, reponha a sua palavra-passe imediatamente.</p>");
+                }
+                catch
+                {
+                }
+            }
+
+            return Json(new { success = true, message = "Password alterada com sucesso." });
+        }
+
         private bool IsValidNif(string? nif)
         {
             if (string.IsNullOrWhiteSpace(nif)) return true;
@@ -488,7 +759,7 @@ namespace Marketplace.Controllers
         // POST: Utilizadores/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string identifier, string password, bool rememberMe = false)
+        public async Task<IActionResult> Login(string identifier, string password, bool rememberMe = false, string? returnUrl = null)
         {
             if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(password))
             {
@@ -509,6 +780,19 @@ namespace Marketplace.Controllers
             // NOTA: EmailConfirmed não é verificado aqui porque RequireConfirmedEmail = false no Program.cs
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, password, rememberMe, lockoutOnFailure: true);
+            if (result.IsLockedOut)
+            {
+                var lockoutEnd = user.LockoutEnd.HasValue ? user.LockoutEnd.Value.LocalDateTime.ToString("dd/MM/yyyy HH:mm") : "indefinidamente";
+                
+                TempData["LoginError"] = $"A sua conta encontra-se bloqueada até {lockoutEnd}.";
+                return View();
+            }
+
+            if (result.RequiresTwoFactor)
+            {
+                return RedirectToAction(nameof(Login2FA), new { returnUrl, rememberMe });
+            }
+
             if (!result.Succeeded)
             {
                 TempData["LoginError"] = "Credenciais incorretas.";
@@ -522,6 +806,49 @@ namespace Marketplace.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login2FA(bool rememberMe, string? returnUrl = null)
+        {
+            return View(new TwoFactorViewModel { RememberMe = rememberMe, ReturnUrl = returnUrl });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login2FA(TwoFactorViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Code))
+            {
+                ModelState.AddModelError(string.Empty, "Introduza o código de 6 dígitos.");
+                return View(model);
+            }
+
+            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Sessão de autenticação expirada. Volte a iniciar sessão.");
+                return View(model);
+            }
+
+            var code = model.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+            var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(code, model.RememberMe, model.RememberMachine);
+
+            if (result.Succeeded)
+            {
+                return RedirectToLocal(model.ReturnUrl);
+            }
+
+            if (result.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty, "Conta bloqueada devido a tentativas falhadas. Aguarde ou redefina a password.");
+                return View(model);
+            }
+
+            ModelState.AddModelError(string.Empty, "Código inválido. Tente novamente.");
+            return View(model);
+        }
+
         // POST: Utilizadores/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -530,6 +857,90 @@ namespace Marketplace.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        // POST: Utilizadores/ExternalLogin (Google)
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        {
+            if (string.IsNullOrWhiteSpace(provider))
+                return RedirectToAction(nameof(Login));
+
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Utilizadores", new { returnUrl });
+            var props = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(props, provider);
+        }
+
+        // GET: Utilizadores/ExternalLoginCallback
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
+        {
+            if (!string.IsNullOrEmpty(remoteError))
+            {
+                TempData["LoginError"] = $"Falha no login externo: {remoteError}";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                TempData["LoginError"] = "Não foi possível obter informações do login externo.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (signInResult.Succeeded)
+            {
+                return LocalRedirect(returnUrl ?? "/");
+            }
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            var name = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email ?? "Utilizador";
+
+            if (email == null)
+            {
+                TempData["LoginError"] = "A conta externa não forneceu um email válido.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            // Se já existe conta com este email, associar o login externo
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if (existingUser != null)
+            {
+                try { await _userManager.AddLoginAsync(existingUser, info); } catch { /* ignorar se já associado */ }
+                await _signInManager.SignInAsync(existingUser, isPersistent: false);
+                return LocalRedirect(returnUrl ?? "/");
+            }
+
+            // Criar nova conta e entidade de domínio (Comprador)
+            var user = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true };
+            var createRes = await _userManager.CreateAsync(user);
+            if (!createRes.Succeeded)
+            {
+                TempData["LoginError"] = string.Join("; ", createRes.Errors.Select(e => e.Description));
+                return RedirectToAction(nameof(Login));
+            }
+
+            await _userManager.AddLoginAsync(user, info);
+            await _userManager.AddToRoleAsync(user, "Comprador");
+
+            var comprador = new Comprador
+            {
+                Username = user.UserName!,
+                Email = user.Email!,
+                Nome = name,
+                IdentityUserId = user.Id,
+                PasswordHash = "IDENTITY"
+            };
+            _db.Compradores.Add(comprador);
+            await _db.SaveChangesAsync();
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            return LocalRedirect(returnUrl ?? "/");
         }
 
         // GET: Utilizadores/ConfirmarEmail
@@ -697,6 +1108,85 @@ namespace Marketplace.Controllers
             ViewBag.Sucesso = true;
             ViewBag.Email = user.Email;
             return View();
+        }
+
+        private static string FormatKey(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key)) return string.Empty;
+            var result = new StringBuilder();
+            int current = 0;
+            while (current + 4 < key.Length)
+            {
+                result.Append(key.AsSpan(current, 4)).Append(' ');
+                current += 4;
+            }
+            if (current < key.Length)
+            {
+                result.Append(key[current..]);
+            }
+            return result.ToString().Trim().ToUpperInvariant();
+        }
+
+        private string GenerateQrCodeUri(string email, string unformattedKey)
+        {
+            var issuer = UrlEncoder.Default.Encode("DriveDeal");
+            var encodedEmail = UrlEncoder.Default.Encode(email);
+            return $"otpauth://totp/{issuer}:{encodedEmail}?secret={unformattedKey}&issuer={issuer}&digits=6";
+        }
+
+        public class ChangePasswordRequest
+        {
+            public string PasswordAtual { get; set; } = string.Empty;
+            public string PasswordNova { get; set; } = string.Empty;
+            public string PasswordNovaConfirmacao { get; set; } = string.Empty;
+        }
+
+        public class EnableTwoFactorRequest
+        {
+            public string Code { get; set; } = string.Empty;
+        }
+
+        public class TwoFactorViewModel
+        {
+            public string? Code { get; set; }
+            public bool RememberMe { get; set; }
+            public bool RememberMachine { get; set; }
+            public string? ReturnUrl { get; set; }
+        }
+
+        private IActionResult RedirectToLocal(string? returnUrl)
+        {
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TerminateOtherSessions()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            await _userManager.UpdateSecurityStampAsync(user);
+            await _signInManager.RefreshSignInAsync(user);
+
+            return Json(new { success = true, message = "Sessões em outros dispositivos foram terminadas." });
+        }
+        public async Task<IActionResult> PromoteMe()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+            if (vendedor != null)
+            {
+                vendedor.Estado = "Ativo";
+                await _db.SaveChangesAsync();
+                return Content("Promoted!");
+            }
+            return Content("Not found");
         }
     }
 }

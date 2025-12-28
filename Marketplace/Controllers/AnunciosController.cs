@@ -23,7 +23,7 @@ namespace Marketplace.Controllers
         }
 
         // GET: Anuncios
-        public async Task<IActionResult> Index(int? marcaId, int? modeloId, int? tipoId, int? combustivelId,
+        public async Task<IActionResult> Index(int? marcaId, int? modeloId, int? tipoId, int? categoriaId, string? categoria, int? combustivelId,
             decimal? precoMax, int? anoMin, int? anoMax, int? kmMax, string? caixa, string? localizacao,
             string? ordenacao)
         {
@@ -47,6 +47,22 @@ namespace Marketplace.Controllers
 
             if (tipoId.HasValue)
                 query = query.Where(a => a.TipoId == tipoId.Value);
+
+            // Filtering by Category ID (Dropdown)
+            if (categoriaId.HasValue)
+            {
+                query = query.Where(a => a.CategoriaId == categoriaId.Value);
+            }
+            // Filtering by Category Name (Homepage Links)
+            else if (!string.IsNullOrWhiteSpace(categoria))
+            {
+                // Find category ID from name to avoid Join issues if possible, or just Where on navigation property
+                query = query.Where(a => a.Categoria.Nome == categoria);
+                
+                // Try to resolve the ID for the viewbag to select the dropdown correctly
+                var catObj = await _context.Categorias.FirstOrDefaultAsync(c => c.Nome == categoria);
+                if (catObj != null) categoriaId = catObj.Id;
+            }
 
             if (combustivelId.HasValue)
                 query = query.Where(a => a.CombustivelId == combustivelId.Value);
@@ -76,7 +92,10 @@ namespace Marketplace.Controllers
                 "preco-desc" => query.OrderByDescending(a => a.Preco),
                 "ano-desc" => query.OrderByDescending(a => a.Ano),
                 "km-asc" => query.OrderBy(a => a.Quilometragem),
-                _ => query.OrderByDescending(a => a.Id) // Relevância (mais recentes primeiro)
+
+                "relevancia" => query.OrderByDescending(a => a.NVisualizacoes).ThenByDescending(a => a.Id),
+
+                _ => query.OrderByDescending(a => a.Id)
             };
 
             var anuncios = await query.ToListAsync();
@@ -85,12 +104,14 @@ namespace Marketplace.Controllers
             ViewBag.Marcas = await _context.Set<Marca>().OrderBy(m => m.Nome).ToListAsync();
             ViewBag.Modelos = await _context.Set<Modelo>().OrderBy(m => m.Nome).ToListAsync();
             ViewBag.Tipos = await _context.Set<Tipo>().OrderBy(t => t.Nome).ToListAsync();
+            ViewBag.Categorias = await _context.Set<Categoria>().OrderBy(c => c.Nome).ToListAsync(); // Added Categorias
             ViewBag.Combustiveis = await _context.Set<Combustivel>().OrderBy(c => c.Tipo).ToListAsync();
 
             // Manter valores dos filtros aplicados
             ViewBag.MarcaIdSelecionada = marcaId;
             ViewBag.ModeloIdSelecionado = modeloId;
             ViewBag.TipoIdSelecionado = tipoId;
+            ViewBag.CategoriaIdSelecionada = categoriaId; // Added CategoriaId
             ViewBag.CombustivelIdSelecionado = combustivelId;
             ViewBag.PrecoMax = precoMax;
             ViewBag.AnoMin = anoMin;
@@ -100,7 +121,130 @@ namespace Marketplace.Controllers
             ViewBag.Localizacao = localizacao;
             ViewBag.Ordenacao = ordenacao;
 
+            // Carregar pesquisas guardadas do comprador autenticado
+            if (User.Identity?.IsAuthenticated == true && User.IsInRole("Comprador"))
+            {
+                var identityIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (int.TryParse(identityIdStr, out var identityId))
+                {
+                    var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
+                    if (comprador != null)
+                    {
+                        var filtros = await _context.FiltrosFavoritos
+                            .Where(f => f.CompradorId == comprador.Id)
+                            .OrderByDescending(f => f.CreatedAt)
+                            .ToListAsync();
+                        ViewBag.SavedFilters = filtros;
+                    }
+                }
+            }
+
             return View(anuncios);
+        }
+
+        // POST: Anuncios/GuardarFiltro
+        [Authorize(Roles = "Comprador")]
+        [HttpPost]
+        public async Task<IActionResult> GuardarFiltro(
+            string? nome,
+            int? marcaId, int? modeloId, int? tipoId, int? combustivelId,
+            decimal? precoMax, int? anoMin, int? anoMax, int? kmMax, string? caixa, string? localizacao,
+            string? ordenacao)
+        {
+            var identityIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(identityIdStr, out var identityId))
+                return Forbid();
+
+            var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
+            if (comprador == null)
+                return Forbid();
+
+            // Computar nome sugerido (opcionalmente inclui nomes de marca/modelo)
+            var partes = new List<string>();
+            if (marcaId.HasValue)
+            {
+                var marcaNome = await _context.Marcas
+                    .Where(m => m.Id == marcaId.Value)
+                    .Select(m => m.Nome)
+                    .FirstOrDefaultAsync();
+                if (!string.IsNullOrWhiteSpace(marcaNome)) partes.Add(marcaNome);
+            }
+            if (modeloId.HasValue)
+            {
+                var modeloNome = await _context.Modelos
+                    .Where(m => m.Id == modeloId.Value)
+                    .Select(m => m.Nome)
+                    .FirstOrDefaultAsync();
+                if (!string.IsNullOrWhiteSpace(modeloNome)) partes.Add(modeloNome);
+            }
+            if (precoMax.HasValue) partes.Add($"≤ {precoMax.Value:N0}€");
+            if (anoMin.HasValue || anoMax.HasValue) partes.Add($"Ano {(anoMin?.ToString() ?? "?")}–{(anoMax?.ToString() ?? "?")}");
+            var computedNome = string.IsNullOrWhiteSpace(nome) ? (partes.Count > 0 ? string.Join(" ", partes) : "Pesquisa") : nome!.Trim();
+
+            var filtro = new FiltrosFav
+            {
+                CompradorId = comprador.Id,
+                Nome = computedNome,
+                MarcaId = marcaId,
+                ModeloId = modeloId,
+                TipoId = tipoId,
+                CombustivelId = combustivelId,
+                PrecoMax = precoMax,
+                AnoMin = anoMin,
+                AnoMax = anoMax,
+                KmMax = kmMax,
+                Caixa = string.IsNullOrWhiteSpace(caixa) ? null : caixa,
+                Localizacao = string.IsNullOrWhiteSpace(localizacao) ? null : localizacao,
+                Ativo = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.FiltrosFavoritos.Add(filtro);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Pesquisa guardada. Receberá alertas de novidades.";
+            return RedirectToAction(nameof(Index), new
+            {
+                marcaId, modeloId, tipoId, combustivelId,
+                precoMax, anoMin, anoMax, kmMax, caixa, localizacao,
+                ordenacao
+            });
+        }
+
+        // POST: Anuncios/ToggleFiltro
+        [Authorize(Roles = "Comprador")]
+        [HttpPost]
+        public async Task<IActionResult> ToggleFiltro(int id, bool ativo)
+        {
+            var identityIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(identityIdStr, out var identityId)) return Forbid();
+            var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
+            if (comprador == null) return Forbid();
+
+            var filtro = await _context.FiltrosFavoritos.FirstOrDefaultAsync(f => f.Id == id && f.CompradorId == comprador.Id);
+            if (filtro == null) return NotFound();
+
+            filtro.Ativo = ativo;
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Anuncios/DeleteFiltro
+        [Authorize(Roles = "Comprador")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteFiltro(int id)
+        {
+            var identityIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(identityIdStr, out var identityId)) return Forbid();
+            var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
+            if (comprador == null) return Forbid();
+
+            var filtro = await _context.FiltrosFavoritos.FirstOrDefaultAsync(f => f.Id == id && f.CompradorId == comprador.Id);
+            if (filtro == null) return NotFound();
+
+            _context.FiltrosFavoritos.Remove(filtro);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Anuncios/Details/5
@@ -219,6 +363,7 @@ namespace Marketplace.Controllers
             // Log erros de validação
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
             Console.WriteLine("Erros de validação: " + string.Join(", ", errors));
+            System.IO.File.WriteAllText("validation_errors.txt", "Erros: " + string.Join(", ", errors));
 
             ViewData["CategoriaId"] = new SelectList(_context.Set<Categoria>(), "Id", "Nome", anuncio.CategoriaId);
             ViewData["CombustivelId"] = new SelectList(_context.Set<Combustivel>(), "Id", "Tipo", anuncio.CombustivelId);

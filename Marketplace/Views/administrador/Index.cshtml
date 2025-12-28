@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Marketplace.Controllers.AdministradorController.DashboardStatsVM
+
+@{
     ViewData["Title"] = "Painel de Administração";
 }
 
@@ -10,9 +12,12 @@
             <!-- Cartão de Perfil do Admin -->
             <div class="card shadow-sm mb-3 admin-profile-card">
                 <div class="card-body text-center">
-                    <img src="https://placehold.co/100x100/343a40/ffffff?text=Admin" alt="Foto do Administrador" class="rounded-circle mb-3">
-                    <h5 class="card-title mb-0">Adminstrador Principal</h5>
-                    <p class="card-text text-muted small">admin@marketplace404.pt</p>
+                    <img src="@(string.IsNullOrEmpty(ViewBag.AdminFoto) ? "https://placehold.co/100x100/343a40/ffffff?text=Admin" : ViewBag.AdminFoto)" alt="Foto do Administrador" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                    <h5 class="card-title mb-2">@ViewBag.AdminName</h5>
+                    <p class="card-text text-muted small mb-2">@ViewBag.AdminEmail</p>
+                    <span class="badge @(ViewBag.NivelAcesso == "Nivel 1" ? "bg-danger" : "bg-warning text-dark")">
+                        <i class="bi bi-shield-lock-fill me-1"></i>@ViewBag.NivelAcesso
+                    </span>
                 </div>
             </div>
 
@@ -27,6 +32,15 @@
                     </a>
                     <a href="#" class="list-group-item list-group-item-action" data-target="#gerir-utilizadores-content">
                         <i class="bi bi-people-fill me-2"></i>Gerir Utilizadores
+                    </a>
+                    @if (ViewBag.NivelAcesso == "Nivel 0")
+                    {
+                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center" data-target="#gerir-admins-content">
+                            <i class="bi bi-shield-lock me-3"></i>Gerir Administradores
+                        </a>
+                    }
+                    <a href="#" class="list-group-item list-group-item-action" data-target="#criar-utilizador-content">
+                        <i class="bi bi-person-plus-fill me-2"></i>Criar Utilizador
                     </a>
                     <a href="#" class="list-group-item list-group-item-action" data-target="#moderar-anuncios-content">
                         <i class="bi bi-megaphone-fill me-2"></i>Moderar Anúncios
@@ -62,7 +76,7 @@
                     </div>
                     <div class="text-end">
                         <small class="text-muted d-block">Última atualização</small>
-                        <strong class="text-primary">24/10/2025 14:30</strong>
+                        <strong class="text-primary">@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</strong>
                     </div>
                 </div>
 
@@ -75,13 +89,9 @@
                                     <div class="stat-icon bg-primary-subtle text-primary rounded-3 p-3">
                                         <i class="bi bi-cart-check-fill fs-4"></i>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success">
-                                        <i class="bi bi-arrow-up"></i> 12%
-                                    </span>
                                 </div>
                                 <h6 class="text-muted mb-1 fw-normal">Compradores</h6>
-                                <h3 class="mb-0 fw-bold">847</h3>
-                                <small class="text-muted">+94 este mês</small>
+                                <h3 class="mb-0 fw-bold">@Model.TotalCompradores</h3>
                             </div>
                         </div>
                     </div>
@@ -92,13 +102,9 @@
                                     <div class="stat-icon bg-info-subtle text-info rounded-3 p-3">
                                         <i class="bi bi-shop-window fs-4"></i>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success">
-                                        <i class="bi bi-arrow-up"></i> 8%
-                                    </span>
                                 </div>
                                 <h6 class="text-muted mb-1 fw-normal">Vendedores</h6>
-                                <h3 class="mb-0 fw-bold">407</h3>
-                                <small class="text-muted">+31 este mês</small>
+                                <h3 class="mb-0 fw-bold">@Model.TotalVendedores</h3>
                             </div>
                         </div>
                     </div>
@@ -109,13 +115,9 @@
                                     <div class="stat-icon bg-success-subtle text-success rounded-3 p-3">
                                         <i class="bi bi-megaphone-fill fs-4"></i>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success">
-                                        <i class="bi bi-arrow-up"></i> 15%
-                                    </span>
                                 </div>
                                 <h6 class="text-muted mb-1 fw-normal">Anúncios Ativos</h6>
-                                <h3 class="mb-0 fw-bold">832</h3>
-                                <small class="text-muted">+112 este mês</small>
+                                <h3 class="mb-0 fw-bold">@Model.TotalAnunciosAtivos</h3>
                             </div>
                         </div>
                     </div>
@@ -126,13 +128,10 @@
                                     <div class="stat-icon bg-warning-subtle text-warning rounded-3 p-3">
                                         <i class="bi bi-currency-euro fs-4"></i>
                                     </div>
-                                    <span class="badge bg-success-subtle text-success">
-                                        <i class="bi bi-arrow-up"></i> 23%
-                                    </span>
                                 </div>
                                 <h6 class="text-muted mb-1 fw-normal">Vendas no Mês</h6>
-                                <h3 class="mb-0 fw-bold">156</h3>
-                                <small class="text-muted">Volume: 2,8M€</small>
+                                <h3 class="mb-0 fw-bold">@Model.VendasMes</h3>
+                                <small class="text-muted">Volume: @Model.VolumeVendasMes.ToString("C0")</small>
                             </div>
                         </div>
                     </div>
@@ -141,7 +140,7 @@
                 <!-- Alertas e Pendências - Linha 2 -->
                 <div class="row g-3 mb-4">
                     <div class="col-md-3">
-                        <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
+                        <div class="card shadow-sm border-0 border-start border-warning border-4 h-100 cursor-pointer" onclick="openSection('validar-vendedores')">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0 me-3">
@@ -151,14 +150,14 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="text-muted mb-1">Vendedores a Validar</h6>
-                                        <h4 class="mb-0 fw-bold text-warning">12</h4>
+                                        <h4 class="mb-0 fw-bold text-warning">@Model.VendedoresPendentes</h4>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card shadow-sm border-0 border-start border-danger border-4 h-100">
+                        <div class="card shadow-sm border-0 border-start border-danger border-4 h-100 cursor-pointer" onclick="openSection('gerir-denuncias')">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0 me-3">
@@ -168,24 +167,24 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="text-muted mb-1">Denúncias Abertas</h6>
-                                        <h4 class="mb-0 fw-bold text-danger">7</h4>
+                                        <h4 class="mb-0 fw-bold text-danger">@Model.DenunciasAbertas</h4>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card shadow-sm border-0 border-start border-primary border-4 h-100">
+                        <div class="card shadow-sm border-0 border-start border-primary border-4 h-100 cursor-pointer" onclick="openSection('moderar-anuncios'); setTimeout(() => { if(typeof filterAds === 'function') filterAds('bloqueado'); }, 100);">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                                            <i class="bi bi-clipboard-check-fill fs-4 text-primary"></i>
+                                            <i class="bi bi-pause-circle-fill fs-4 text-primary"></i>
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="text-muted mb-1">Anúncios Pendentes</h6>
-                                        <h4 class="mb-0 fw-bold text-primary">5</h4>
+                                        <h6 class="text-muted mb-1">Anúncios Suspensos</h6>
+                                        <h4 class="mb-0 fw-bold text-primary">@Model.AnunciosSuspensos</h4>
                                     </div>
                                 </div>
                             </div>
@@ -202,7 +201,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="text-muted mb-1">Destaques Ativos</h6>
-                                        <h4 class="mb-0 fw-bold text-secondary">43</h4>
+                                        <h4 class="mb-0 fw-bold text-secondary">@Model.DestaquesAtivos</h4>
                                     </div>
                                 </div>
                             </div>
@@ -254,73 +253,7 @@
                                 </h5>
                             </div>
                             <div class="card-body">
-                                <div class="activity-feed">
-                                    <div class="activity-item border-start border-primary border-3 ps-3 pb-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-primary bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-person-plus-fill text-primary"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Novo vendedor registado</strong></p>
-                                                <small class="text-muted">João Pereira aguarda aprovação</small>
-                                            </div>
-                                            <small class="text-muted">Há 15 min</small>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item border-start border-danger border-3 ps-3 pb-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-danger bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-flag-fill text-danger"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Nova denúncia recebida</strong></p>
-                                                <small class="text-muted">Anúncio #A5543 denunciado por conteúdo enganador</small>
-                                            </div>
-                                            <small class="text-muted">Há 1h</small>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item border-start border-success border-3 ps-3 pb-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-success bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-check-circle-fill text-success"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Anúncio aprovado</strong></p>
-                                                <small class="text-muted">VW Golf 1.6 TDI de Miguel Costa</small>
-                                            </div>
-                                            <small class="text-muted">Há 2h</small>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item border-start border-warning border-3 ps-3 pb-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-warning bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-currency-euro text-warning"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Nova compra realizada</strong></p>
-                                                <small class="text-muted">BMW Série 1 vendido por 15.900€</small>
-                                            </div>
-                                            <small class="text-muted">Há 3h</small>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item border-start border-secondary border-3 ps-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div class="activity-icon bg-secondary bg-opacity-10 rounded-circle p-2 me-2">
-                                                <i class="bi bi-lock-fill text-secondary"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="mb-0"><strong>Utilizador bloqueado</strong></p>
-                                                <small class="text-muted">Bruno Vieira bloqueado por comportamento fraudulento</small>
-                                            </div>
-                                            <small class="text-muted">Há 5h</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-center mt-3">
-                                    <a href="#" class="btn btn-sm btn-outline-primary" data-target="#historico-acoes-content">
-                                        Ver Histórico Completo <i class="bi bi-arrow-right ms-1"></i>
-                                    </a>
-                                </div>
+                                @await Component.InvokeAsync("HistoricoAcoes", new { count = 5, isDashboard = true })
                             </div>
                         </div>
                     </div>
@@ -336,51 +269,25 @@
                                 </h5>
                             </div>
                             <div class="card-body">
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">BMW</span>
-                                        <span class="badge bg-primary-subtle text-primary">42 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">Mercedes-Benz</span>
-                                        <span class="badge bg-primary-subtle text-primary">38 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 90%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">Audi</span>
-                                        <span class="badge bg-primary-subtle text-primary">35 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 83%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">Volkswagen</span>
-                                        <span class="badge bg-primary-subtle text-primary">29 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 69%"></div>
-                                    </div>
-                                </div>
-                                <div class="mb-0">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-semibold">Peugeot</span>
-                                        <span class="badge bg-primary-subtle text-primary">24 vendas</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 57%"></div>
-                                    </div>
-                                </div>
+                                @if (Model.TopMarcas.Any())
+                                {
+                                    @foreach (var marca in Model.TopMarcas)
+                                    {
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="fw-semibold">@marca.Nome</span>
+                                                <span class="badge bg-primary-subtle text-primary">@marca.Vendas vendas</span>
+                                            </div>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar bg-primary" role="progressbar" style="width: @marca.Percentagem%"></div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted text-center py-4">Ainda não existem dados de vendas suficientes.</p>
+                                }
                             </div>
                         </div>
                     </div>
@@ -396,28 +303,28 @@
                                     <div class="col-6">
                                         <div class="text-center p-3 bg-light rounded">
                                             <i class="bi bi-eye-fill fs-3 text-primary mb-2"></i>
-                                            <h4 class="mb-0 fw-bold">127K</h4>
-                                            <small class="text-muted">Visualizações no Mês</small>
+                                            <h4 class="mb-0 fw-bold">@Model.TotalVisualizacoes</h4>
+                                            <small class="text-muted">Visualizações Totais</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="text-center p-3 bg-light rounded">
                                             <i class="bi bi-heart-fill fs-3 text-danger mb-2"></i>
-                                            <h4 class="mb-0 fw-bold">3.4K</h4>
+                                            <h4 class="mb-0 fw-bold">@Model.TotalFavoritos</h4>
                                             <small class="text-muted">Anúncios Favoritados</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="text-center p-3 bg-light rounded">
                                             <i class="bi bi-calendar-check-fill fs-3 text-info mb-2"></i>
-                                            <h4 class="mb-0 fw-bold">542</h4>
+                                            <h4 class="mb-0 fw-bold">@Model.TotalReservasAtivas</h4>
                                             <small class="text-muted">Reservas Ativas</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="text-center p-3 bg-light rounded">
                                             <i class="bi bi-chat-dots-fill fs-3 text-warning mb-2"></i>
-                                            <h4 class="mb-0 fw-bold">1.8K</h4>
+                                            <h4 class="mb-0 fw-bold">@Model.TotalMensagens</h4>
                                             <small class="text-muted">Mensagens Trocadas</small>
                                         </div>
                                     </div>
@@ -437,13 +344,36 @@
                 @await Component.InvokeAsync("GerirUtilizadores")
             </div>
 
+            @if (ViewBag.NivelAcesso == "Nivel 0")
+            {
+                <!-- ======================= Conteúdo: Gerir Administradores ======================= -->
+                <div id="gerir-admins-content" class="admin-content-section" style="display: none;">
+                    @await Component.InvokeAsync("GerirAdmins")
+                </div>
+            }
+
+            <!-- ======================= Conteúdo: Criar Utilizador ======================= -->
+            <div id="criar-utilizador-content" class="admin-content-section" style="display: none;">
+                @await Component.InvokeAsync("CriarUtilizador")
+            </div>
+
             <!-- ======================= Conteúdo: Moderar Anúncios ======================= -->
             <div id="moderar-anuncios-content" class="admin-content-section" style="display: none;">
                 @await Component.InvokeAsync("ModerarAnuncios")
             </div>
+
+            <!-- ======================= Conteúdo: Histórico de Ações ======================= -->
+            <div id="historico-acoes-content" class="admin-content-section" style="display: none;">
+                @await Component.InvokeAsync("HistoricoAcoes", new { filter = ViewBag.HistoryFilter })
+            </div>
+
+            <!-- ======================= Conteúdo: Estatísticas ======================= -->
+            <div id="estatisticas-content" class="admin-content-section" style="display: none;">
+                @await Component.InvokeAsync("Estatisticas")
+            </div>
         </div>
     </div>
-</div>
+
 
 <!-- ========================= MODAIS ========================= -->
 
@@ -2055,7 +1985,44 @@
             if (filtroDenunciaEstado) {
                 filtrarDenuncias();
             }
+
+            // Verificar se há uma secção ativa definida pelo servidor (Persistência de Secção)
+            var activeSection = '@ViewBag.ActiveSection';
+            if (activeSection) {
+                // Use vanilla JS instead of jQuery for better reliability
+                var selector = '.admin-sidebar a[data-target="#' + activeSection + '-content"]';
+                var link = document.querySelector(selector);
+                
+                if (link) {
+                    // Pequeno delay para garantir que o DOM está pronto e eventos anexados
+                    setTimeout(function() {
+                        link.click();
+                    }, 100);
+                }
+            }
         });
+
+        // Global function to disable form submit buttons
+        function disableFormButton(form) {
+            const btn = form.querySelector('button[type="submit"]');
+            if (btn) {
+                // Store original text/html
+                if (!btn.dataset.originalHtml) {
+                    btn.dataset.originalHtml = btn.innerHTML;
+                }
+                
+                // Disable and show spinner
+                btn.disabled = true;
+                btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>A processar...';
+                
+                // Re-enable after 5 seconds (safety timeout in case of error/no navigation)
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = btn.dataset.originalHtml;
+                }, 5000);
+            }
+            return true; // Allow form submission
+        }
     </script>
     <style>
         /* Estilos para Timeline */

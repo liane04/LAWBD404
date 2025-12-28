@@ -75,6 +75,7 @@ namespace Marketplace.Models
         public ICollection<Imagem> Imagens { get; set; } = new List<Imagem>();
         public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
         public ICollection<Compra> Compras { get; set; } = new List<Compra>();
+        public ICollection<Visita> Visitas { get; set; } = new List<Visita>();
         public ICollection<Conversa> Conversas { get; set; } = new List<Conversa>();
         public ICollection<DenunciaAnuncio> Denuncias { get; set; } = new List<DenunciaAnuncio>();
         public ICollection<AcaoAnuncio> AcoesAnuncio { get; set; } = new List<AcaoAnuncio>();

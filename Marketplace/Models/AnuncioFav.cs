@@ -8,9 +8,11 @@ namespace Marketplace.Models
         [Key]
         public int Id { get; set; }
 
+        // Mapeado para a mesma coluna na BD (CompradorId) mas agora referenciando a tabela base Utilizadores
+        // para permitir que Vendedores também tenham favoritos.
         public int CompradorId { get; set; }
         [ForeignKey("CompradorId")]
-        public Comprador Comprador { get; set; } = null!;
+        public Utilizador Comprador { get; set; } = null!;
 
         public int AnuncioId { get; set; }
         [ForeignKey("AnuncioId")]

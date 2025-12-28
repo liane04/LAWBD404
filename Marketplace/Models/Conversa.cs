@@ -23,6 +23,8 @@ namespace Marketplace.Models
         [ForeignKey("AnuncioId")]
         public Anuncio Anuncio { get; set; } = null!;
 
+        public DateTime UltimaMensagemData { get; set; }
+
         public ICollection<Mensagens> Mensagens { get; set; } = new List<Mensagens>();
     }
 }

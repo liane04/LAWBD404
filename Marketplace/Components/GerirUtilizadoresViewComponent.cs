@@ -36,8 +36,18 @@ namespace Marketplace.Components
 
                 string? imagemPerfil = null;
                 string? nif = null;
+                string? nivelAcesso = null;
 
-                // Buscar dados adicionais de Vendedor ou Comprador
+                // Buscar dados adicionais de Vendedor ou Comprador ou Admin
+                if (isAdmin)
+                {
+                    var admin = await _db.Administradores.FirstOrDefaultAsync(a => a.IdentityUserId == user.Id);
+                    if (admin != null)
+                    {
+                        nivelAcesso = admin.NivelAcesso;
+                    }
+                }
+                
                 if (isVendedor)
                 {
                     var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
@@ -67,6 +77,7 @@ namespace Marketplace.Components
                     IsAdministrador = isAdmin,
                     ImagemPerfil = imagemPerfil,
                     Nif = nif,
+                    NivelAcesso = nivelAcesso,
                     EmailConfirmed = user.EmailConfirmed,
                     LockoutEnabled = user.LockoutEnabled,
                     LockoutEnd = user.LockoutEnd
@@ -82,6 +93,7 @@ namespace Marketplace.Components
                 TotalBloqueados = utilizadoresDetalhados.Count(u => u.LockoutEnd.HasValue && u.LockoutEnd > System.DateTimeOffset.UtcNow)
             };
 
+            ViewBag.NivelAcesso = ViewBag.NivelAcesso;
             return View(model);
         }
     }
@@ -106,6 +118,7 @@ namespace Marketplace.Components
         public bool IsAdministrador { get; set; }
         public string? ImagemPerfil { get; set; }
         public string? Nif { get; set; }
+        public string? NivelAcesso { get; set; }
         public bool EmailConfirmed { get; set; }
         public bool LockoutEnabled { get; set; }
         public System.DateTimeOffset? LockoutEnd { get; set; }

@@ -42,6 +42,7 @@ namespace Marketplace.Data
         public DbSet<DenunciaUser> DenunciasUser { get; set; }
         public DbSet<Extra> Extras { get; set; }
         public DbSet<AnuncioExtra> AnuncioExtras { get; set; }
+        public DbSet<DisponibilidadeVendedor> DisponibilidadesVendedor { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -87,11 +88,13 @@ namespace Marketplace.Data
 
             // IMPORTANTE: Configurações para evitar ciclos de cascade delete
 
-            // AnunciosFavoritos - desativa cascade para Comprador
+            // AnunciosFavoritos - configurado mais abaixo ligando a Utilizador
+            /* Removido:
             modelBuilder.Entity<AnuncioFav>()
                 .HasOne(af => af.Comprador)
                 .WithMany(c => c.AnunciosFavoritos)
                 .OnDelete(DeleteBehavior.Restrict);
+            */
 
             // MarcasFavoritas - desativa cascade para Comprador
             modelBuilder.Entity<MarcasFav>()
@@ -175,20 +178,36 @@ namespace Marketplace.Data
                 .WithMany(a => a.Reservas)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Visitas - desativa cascade para Reserva
+            // Visitas - configurações de relacionamentos
             modelBuilder.Entity<Visita>()
                 .HasOne(v => v.Reserva)
                 .WithMany(r => r.Visitas)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Visita>()
+                .HasOne(v => v.Comprador)
+                .WithMany(c => c.Visitas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Visita>()
+                .HasOne(v => v.Anuncio)
+                .WithMany(a => a.Visitas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Visita>()
+                .HasOne(v => v.Vendedor)
+                .WithMany(v => v.Visitas)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configurações de precisão
             modelBuilder.Entity<Anuncio>()
                 .Property(a => a.Preco)
                 .HasPrecision(10, 2);
 
+            // AnuncioFav agora aponta para Utilizador (mantendo a coluna CompradorId)
             modelBuilder.Entity<AnuncioFav>()
-                .HasOne(af => af.Comprador)
-                .WithMany(c => c.AnunciosFavoritos)
+                .HasOne(af => af.Comprador) // Propriedade chama-se Comprador mas é do tipo Utilizador
+                .WithMany(u => u.AnunciosFavoritos)
                 .HasForeignKey(af => af.CompradorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
