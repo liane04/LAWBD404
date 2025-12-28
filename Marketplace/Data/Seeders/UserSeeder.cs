@@ -156,17 +156,39 @@ namespace Marketplace.Data.Seeders
 
             await db.SaveChangesAsync();
 
-            // Pool de imagens de perfil
-            var pool = GetProfileImagePool(contentRootPath);
-            int poolIndex = 0;
+            // Pools de imagens de perfil separadas por género
+            var poolMulheres = GetProfileImagePool(contentRootPath, "mulheres");
+            var poolHomens = GetProfileImagePool(contentRootPath, "homens");
+            int indexMulheres = 0;
+            int indexHomens = 0;
+
+            // Nomes femininos portugueses comuns
+            var nomesFemininos = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "Maria", "Ana", "Filipa", "Carla", "Sofia", "Susana", "Paula", "Vera", "Inês",
+                "Bruna", "Patrícia", "Luísa", "Letícia", "Rita", "Cláudia", "Helena", "Marta",
+                "Beatriz", "Teresa", "Joana", "Catarina", "Tatiana", "Vânia", "Liliana", "Sara",
+                "Daniela", "Leonor", "Francisca", "Ines", "Patricia", "Claudia", "Vania"
+            };
+
+            // Função para detectar se é nome feminino
+            bool IsFemale(string? fullName)
+            {
+                if (string.IsNullOrWhiteSpace(fullName)) return false;
+                var firstName = fullName.Split(' ').FirstOrDefault() ?? "";
+                return nomesFemininos.Contains(firstName);
+            }
 
             // Função para copiar imagem e retornar caminho
-            string? CopyProfileImage(int userId)
+            string? CopyProfileImage(int userId, string? fullName)
             {
+                var isFemale = IsFemale(fullName);
+                var pool = isFemale ? poolMulheres : poolHomens;
+
                 if (pool.Count == 0) return null;
 
-                var origem = pool[poolIndex % pool.Count];
-                poolIndex++;
+                var index = isFemale ? indexMulheres++ : indexHomens++;
+                var origem = pool[index % pool.Count];
 
                 var ext = Path.GetExtension(origem);
                 var destDir = Path.Combine(contentRootPath, "wwwroot", "imagens", "perfil");
@@ -259,27 +281,28 @@ namespace Marketplace.Data.Seeders
             // Atribuir imagens de perfil aos novos mock users
             foreach (var admin in db.Administradores.Where(a => string.IsNullOrEmpty(a.ImagemPerfil)).ToList())
             {
-                admin.ImagemPerfil = CopyProfileImage(admin.Id);
+                admin.ImagemPerfil = CopyProfileImage(admin.Id, admin.Nome);
             }
             foreach (var vendedor in db.Vendedores.Where(v => string.IsNullOrEmpty(v.ImagemPerfil)).ToList())
             {
-                vendedor.ImagemPerfil = CopyProfileImage(vendedor.Id);
+                vendedor.ImagemPerfil = CopyProfileImage(vendedor.Id, vendedor.Nome);
             }
             foreach (var comprador in db.Compradores.Where(c => string.IsNullOrEmpty(c.ImagemPerfil)).ToList())
             {
-                comprador.ImagemPerfil = CopyProfileImage(comprador.Id);
+                comprador.ImagemPerfil = CopyProfileImage(comprador.Id, comprador.Nome);
             }
 
             await db.SaveChangesAsync();
 
             // Garantir avatar por omissão usado pelo helper
             var defaultAvatar = Path.Combine(contentRootPath, "wwwroot", "imagens", "default-avatar.png");
-            if (!File.Exists(defaultAvatar) && pool.Count > 0)
+            var anyPool = poolMulheres.Count > 0 ? poolMulheres : poolHomens;
+            if (!File.Exists(defaultAvatar) && anyPool.Count > 0)
             {
                 try
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(defaultAvatar)!);
-                    File.Copy(pool.First(), defaultAvatar, overwrite: true);
+                    File.Copy(anyPool.First(), defaultAvatar, overwrite: true);
                 }
                 catch
                 {
@@ -288,12 +311,12 @@ namespace Marketplace.Data.Seeders
             }
         }
 
-        private static List<string> GetProfileImagePool(string contentRootPath)
+        private static List<string> GetProfileImagePool(string contentRootPath, string genero)
         {
             var extensoesPermitidas = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png", ".webp" };
 
-            // 1) Pasta dedicada wwwroot/imagens/seeds/perfil (fotos de perfil para seed)
-            var seedsDir = Path.Combine(contentRootPath, "wwwroot", "imagens", "seeds", "perfil");
+            // Pasta dedicada wwwroot/imagens/seeds/perfil/{genero} (mulheres ou homens)
+            var seedsDir = Path.Combine(contentRootPath, "wwwroot", "imagens", "seeds", "perfil", genero);
             if (Directory.Exists(seedsDir))
             {
                 var files = Directory.GetFiles(seedsDir).Where(f => extensoesPermitidas.Contains(Path.GetExtension(f))).ToList();
