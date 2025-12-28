@@ -156,6 +156,38 @@ namespace Marketplace.Data.Seeders
 
             await db.SaveChangesAsync();
 
+            // Pool de imagens de perfil
+            var pool = GetProfileImagePool(contentRootPath);
+            int poolIndex = 0;
+
+            // Atribuir imagens de perfil aos utilizadores base
+            async Task AssignProfileImageAsync(ApplicationUser? user)
+            {
+                if (user == null || pool.Count == 0) return;
+                if (!string.IsNullOrEmpty(user.ImagemPerfil)) return; // já tem imagem
+
+                var origem = pool[poolIndex % pool.Count];
+                poolIndex++;
+
+                var ext = Path.GetExtension(origem);
+                var destDir = Path.Combine(contentRootPath, "wwwroot", "images", "perfil");
+                Directory.CreateDirectory(destDir);
+
+                var nomeArquivo = $"user_{user.Id}_{DateTime.Now.Ticks}{ext}";
+                var destino = Path.Combine(destDir, nomeArquivo);
+
+                File.Copy(origem, destino, overwrite: true);
+
+                user.ImagemPerfil = $"/images/perfil/{nomeArquivo}";
+                await userManager.UpdateAsync(user);
+            }
+
+            await AssignProfileImageAsync(adminUser);
+            await AssignProfileImageAsync(admin2User);
+            await AssignProfileImageAsync(vendedorUser);
+            await AssignProfileImageAsync(vendedorPendenteUser);
+            await AssignProfileImageAsync(compradorUser);
+
             // Mock users a partir do JSON
             var usersPath = Path.Combine(contentRootPath, "Data", "Seeds", "mock-users.json");
             List<UserSeed> seeds = new();
@@ -227,16 +259,21 @@ namespace Marketplace.Data.Seeders
                         IdentityUserId = created.Id
                     });
                 }
+
+                // Atribuir imagem de perfil ao mock user
+                await AssignProfileImageAsync(created);
+            }
             }
 
             await db.SaveChangesAsync();
 
-            // Garantir avatar por omissÇœo usado pelo helper
+            // Garantir avatar por omissão usado pelo helper
             var defaultAvatar = Path.Combine(contentRootPath, "wwwroot", "images", "default-avatar.png");
-            if (!File.Exists(defaultAvatar))
+            if (!File.Exists(defaultAvatar) && pool.Count > 0)
             {
                 try
                 {
+                    Directory.CreateDirectory(Path.GetDirectoryName(defaultAvatar)!);
                     File.Copy(pool.First(), defaultAvatar, overwrite: true);
                 }
                 catch
