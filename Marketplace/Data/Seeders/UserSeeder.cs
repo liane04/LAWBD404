@@ -160,11 +160,10 @@ namespace Marketplace.Data.Seeders
             var pool = GetProfileImagePool(contentRootPath);
             int poolIndex = 0;
 
-            // Atribuir imagens de perfil aos utilizadores base
-            async Task AssignProfileImageAsync(ApplicationUser? user)
+            // Função para copiar imagem e retornar caminho
+            string? CopyProfileImage(int userId)
             {
-                if (user == null || pool.Count == 0) return;
-                if (!string.IsNullOrEmpty(user.ImagemPerfil)) return; // já tem imagem
+                if (pool.Count == 0) return null;
 
                 var origem = pool[poolIndex % pool.Count];
                 poolIndex++;
@@ -173,20 +172,12 @@ namespace Marketplace.Data.Seeders
                 var destDir = Path.Combine(contentRootPath, "wwwroot", "images", "perfil");
                 Directory.CreateDirectory(destDir);
 
-                var nomeArquivo = $"user_{user.Id}_{DateTime.Now.Ticks}{ext}";
+                var nomeArquivo = $"user_{userId}_{DateTime.Now.Ticks}{ext}";
                 var destino = Path.Combine(destDir, nomeArquivo);
 
                 File.Copy(origem, destino, overwrite: true);
-
-                user.ImagemPerfil = $"/images/perfil/{nomeArquivo}";
-                await userManager.UpdateAsync(user);
+                return $"/images/perfil/{nomeArquivo}";
             }
-
-            await AssignProfileImageAsync(adminUser);
-            await AssignProfileImageAsync(admin2User);
-            await AssignProfileImageAsync(vendedorUser);
-            await AssignProfileImageAsync(vendedorPendenteUser);
-            await AssignProfileImageAsync(compradorUser);
 
             // Mock users a partir do JSON
             var usersPath = Path.Combine(contentRootPath, "Data", "Seeds", "mock-users.json");
@@ -260,9 +251,23 @@ namespace Marketplace.Data.Seeders
                     });
                 }
 
-                // Atribuir imagem de perfil ao mock user
-                await AssignProfileImageAsync(created);
             }
+            }
+
+            await db.SaveChangesAsync();
+
+            // Atribuir imagens de perfil aos novos mock users
+            foreach (var admin in db.Administradores.Where(a => string.IsNullOrEmpty(a.ImagemPerfil)).ToList())
+            {
+                admin.ImagemPerfil = CopyProfileImage(admin.Id);
+            }
+            foreach (var vendedor in db.Vendedores.Where(v => string.IsNullOrEmpty(v.ImagemPerfil)).ToList())
+            {
+                vendedor.ImagemPerfil = CopyProfileImage(vendedor.Id);
+            }
+            foreach (var comprador in db.Compradores.Where(c => string.IsNullOrEmpty(c.ImagemPerfil)).ToList())
+            {
+                comprador.ImagemPerfil = CopyProfileImage(comprador.Id);
             }
 
             await db.SaveChangesAsync();
