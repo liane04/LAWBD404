@@ -190,15 +190,15 @@ namespace Marketplace.Data.Seeders
         {
             var extensoesPermitidas = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png", ".webp" };
 
-            // 1) Tentar Data/Seeds/images/anuncios (se existir uma pasta com imagens dedicadas)
-            var seedsDir = Path.Combine(contentRootPath, "Data", "Seeds", "images", "anuncios");
+            // 1) Tentar wwwroot/images/seeds/anuncios (pasta dedicada para imagens de seed)
+            var seedsDir = Path.Combine(contentRootPath, "wwwroot", "images", "seeds", "anuncios");
             if (Directory.Exists(seedsDir))
             {
                 var files = Directory.GetFiles(seedsDir).Where(f => extensoesPermitidas.Contains(Path.GetExtension(f))).ToList();
                 if (files.Count > 0) return files;
             }
 
-            // 2) Fallback: usar imagens existentes em wwwroot/imagens (jÇ­ no repositÇürio)
+            // 2) Fallback: usar imagens existentes em wwwroot/imagens
             var wwwrootImagens = Path.Combine(contentRootPath, "wwwroot", "imagens");
             if (Directory.Exists(wwwrootImagens))
             {
