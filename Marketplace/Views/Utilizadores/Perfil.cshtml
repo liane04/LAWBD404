@@ -18,7 +18,7 @@
                                 <i class="bi bi-camera-fill"></i>
                             </button>
                         </div>
-                        <h5 class="mb-2 fw-bold">João Duarte Silva</h5>
+                        <h5 class="mb-2 fw-bold">@(ViewBag.Nome ?? "Utilizador")</h5>
                         <div class="perfil-user-badges mb-2">
                             @if (User.IsInRole("Comprador"))
                             {
@@ -40,7 +40,7 @@
                             }
                         </div>
                         <small class="perfil-member-since">
-                            <i class="bi bi-calendar-check me-1"></i>Membro desde Out 2025
+                            <i class="bi bi-calendar-check me-1"></i>Membro desde @(((DateTime?)ViewBag.DataCriacao)?.ToString("MMM yyyy") ?? "2025")
                         </small>
                     </div>
 
@@ -199,7 +199,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Nome Completo</label>
-                                            <p class="perfil-info-value">João Duarte Silva</p>
+                                            <p class="perfil-info-value">@(ViewBag.Nome ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -210,7 +210,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Username</label>
-                                            <p class="perfil-info-value">joao.silva</p>
+                                            <p class="perfil-info-value">@(ViewBag.UserName ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -221,7 +221,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Email</label>
-                                            <p class="perfil-info-value">joao.silva@exemplo.com</p>
+                                            <p class="perfil-info-value">@(ViewBag.Email ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -233,8 +233,14 @@
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Estado da Conta</label>
                                             <p class="perfil-info-value">
-                                                <span class="badge bg-success-subtle text-success">
-                                                    <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                                @{
+                                                    var estado = ViewBag.EstadoConta as string ?? "Ativo";
+                                                    var estadoBadgeClass = estado == "Ativo" ? "bg-success-subtle text-success" :
+                                                                    estado == "Pendente" ? "bg-warning-subtle text-warning" :
+                                                                    "bg-danger-subtle text-danger";
+                                                }
+                                                <span class="badge @estadoBadgeClass">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>@estado
                                                 </span>
                                             </p>
                                         </div>
@@ -260,21 +266,24 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Telemóvel</label>
-                                            <p class="perfil-info-value">+351 912 345 678</p>
+                                            <p class="perfil-info-value">@(ViewBag.Telefone ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="perfil-info-item">
-                                        <div class="perfil-info-icon">
-                                            <i class="bi bi-telephone-fill"></i>
-                                        </div>
-                                        <div class="perfil-info-content">
-                                            <label class="perfil-info-label">Telefone Alternativo</label>
-                                            <p class="perfil-info-value text-muted">Não definido</p>
+                                @if (User.IsInRole("Vendedor") && ViewBag.Nif != null)
+                                {
+                                    <div class="col-md-6">
+                                        <div class="perfil-info-item">
+                                            <div class="perfil-info-icon">
+                                                <i class="bi bi-credit-card-2-front"></i>
+                                            </div>
+                                            <div class="perfil-info-content">
+                                                <label class="perfil-info-label">NIF</label>
+                                                <p class="perfil-info-value">@ViewBag.Nif</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -295,7 +304,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Rua</label>
-                                            <p class="perfil-info-value">Rua Dr. Manuel Cardona, nº 123, 2º Esq.</p>
+                                            <p class="perfil-info-value">@(ViewBag.Rua ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -306,7 +315,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Código Postal</label>
-                                            <p class="perfil-info-value">5000-558</p>
+                                            <p class="perfil-info-value">@(ViewBag.CodigoPostal ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -317,7 +326,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Localidade</label>
-                                            <p class="perfil-info-value">Vila Real</p>
+                                            <p class="perfil-info-value">@(ViewBag.Localidade ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -328,13 +337,38 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">País</label>
-                                            <p class="perfil-info-value">Portugal</p>
+                                            <p class="perfil-info-value">@(ViewBag.Pais ?? "Portugal")</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    @* Botão para se tornar vendedor (apenas para compradores) *@
+                    @if (User.IsInRole("Comprador") && !User.IsInRole("Vendedor"))
+                    {
+                        <div class="card shadow-sm border-0 border-start border-4 border-primary mt-4">
+                            <div class="card-body p-4">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h5 class="mb-2">
+                                            <i class="bi bi-shop text-primary me-2"></i>Quer vender os seus veículos?
+                                        </h5>
+                                        <p class="text-muted mb-0">
+                                            Torne-se um vendedor na plataforma 404 Ride e comece a anunciar os seus veículos.
+                                            Após aprovação do administrador, terá acesso a todas as funcionalidades de vendedor.
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalTornarVendedor">
+                                            <i class="bi bi-arrow-right-circle me-2"></i>Tornar-me Vendedor
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
 
                 @if (User.IsInRole("Vendedor"))
@@ -646,7 +680,7 @@
                                 var anuncio = visita.Anuncio;
                                 var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
                                 var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
-                                var badgeClass = visita.Estado switch
+                                var visitaRecebidaBadge = visita.Estado switch
                                 {
                                     "Confirmada" => "bg-success",
                                     "Pendente" => "bg-warning text-dark",
@@ -677,7 +711,7 @@
                                                             Seu anúncio • @marcaModelo • Preço: @anuncio.Preco.ToString("N0")€
                                                         </p>
                                                     </div>
-                                                    <span class="badge @badgeClass fs-6">
+                                                    <span class="badge @visitaRecebidaBadge fs-6">
                                                         @if (visita.Estado == "Confirmada")
                                                         {
                                                             <i class="bi bi-check-circle-fill me-1"></i>
@@ -862,7 +896,7 @@
                                 var anuncio = visita.Anuncio;
                                 var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
                                 var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
-                                var badgeClass = visita.Estado switch
+                                var visitaAgendadaBadge = visita.Estado switch
                                 {
                                     "Confirmada" => "bg-success",
                                     "Pendente" => "bg-warning text-dark",
@@ -893,7 +927,7 @@
                                                             @marcaModelo • Preço: @anuncio.Preco.ToString("N0")€
                                                         </p>
                                                     </div>
-                                                    <span class="badge @badgeClass fs-6">
+                                                    <span class="badge @visitaAgendadaBadge fs-6">
                                                         @if (visita.Estado == "Confirmada")
                                                         {
                                                             <i class="bi bi-check-circle-fill me-1"></i>
@@ -1748,7 +1782,7 @@
                                 var anuncio = visita.Anuncio;
                                 var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
                                 var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
-                                var badgeClass = visita.Estado switch
+                                var minhaVisitaBadge = visita.Estado switch
                                 {
                                     "Confirmada" => "bg-success",
                                     "Pendente" => "bg-warning",
@@ -1783,7 +1817,7 @@
                                                             }
                                                         </p>
                                                     </div>
-                                                    <span class="badge @badgeClass fs-6">
+                                                    <span class="badge @minhaVisitaBadge fs-6">
                                                         @if (visita.Estado == "Confirmada")
                                                         {
                                                             <i class="bi bi-check-circle-fill me-1"></i>
@@ -2758,6 +2792,143 @@
     </div>
 </div>
 
+<!-- Modal: Upload Foto de Perfil -->
+<div class="modal fade" id="modalFotoPerfil" tabindex="-1" aria-labelledby="modalFotoPerfilLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalFotoPerfilLabel">
+                    <i class="bi bi-camera-fill me-2"></i>Alterar Foto de Perfil
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formFotoPerfil" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <img id="previewFotoPerfil"
+                             src="@((ViewBag.ImagemPerfil as string) ?? Url.Content("~/imagens/logo.png"))"
+                             class="rounded-circle mb-3"
+                             style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #dee2e6;"
+                             alt="Preview">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputFotoPerfil" class="form-label">Escolha uma nova foto</label>
+                        <input type="file"
+                               class="form-control"
+                               id="inputFotoPerfil"
+                               name="fotoPerfil"
+                               accept="image/jpeg,image/jpg,image/png"
+                               required>
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>Formatos aceites: JPG, PNG (máx. 2MB)
+                        </div>
+                    </div>
+                    <div id="erroUploadFoto" class="alert alert-danger d-none" role="alert"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload me-2"></i>Guardar Foto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Pedir para Tornar-se Vendedor -->
+<div class="modal fade" id="modalTornarVendedor" tabindex="-1" aria-labelledby="modalTornarVendedorLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h5 class="modal-title" id="modalTornarVendedorLabel">
+                    <i class="bi bi-shop me-2"></i>Pedido para Tornar-se Vendedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formTornarVendedor">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="alert alert-info border-0 shadow-sm mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-info-circle-fill me-3" style="font-size: 2rem;"></i>
+                            <div>
+                                <h6 class="alert-heading mb-1">Como funciona?</h6>
+                                <p class="mb-0 small">
+                                    Após submeter o pedido, um administrador irá rever a sua solicitação.
+                                    Receberá um email quando o pedido for aprovado ou rejeitado.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nifVendedor" class="form-label">
+                            <i class="bi bi-credit-card-2-front me-1"></i>NIF <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               class="form-control"
+                               id="nifVendedor"
+                               name="nif"
+                               placeholder="123456789"
+                               pattern="[0-9]{9}"
+                               maxlength="9"
+                               required>
+                        <div class="form-text">
+                            <i class="bi bi-shield-check me-1"></i>Necessário para faturação e verificação fiscal
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dadosFaturacao" class="form-label">
+                            <i class="bi bi-building me-1"></i>Dados de Faturação
+                        </label>
+                        <textarea class="form-control"
+                                  id="dadosFaturacao"
+                                  name="dadosFaturacao"
+                                  rows="3"
+                                  placeholder="Nome da empresa/pessoa, morada de faturação, etc."></textarea>
+                        <div class="form-text">Opcional - pode preencher mais tarde</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="motivacao" class="form-label">
+                            <i class="bi bi-chat-text me-1"></i>Motivação <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control"
+                                  id="motivacao"
+                                  name="motivacao"
+                                  rows="4"
+                                  placeholder="Conte-nos porque quer ser vendedor na plataforma 404 Ride..."
+                                  required></textarea>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="aceitarTermos"
+                               name="aceitarTermos"
+                               required>
+                        <label class="form-check-label" for="aceitarTermos">
+                            Aceito os <a href="#" target="_blank">Termos e Condições</a> para vendedores
+                        </label>
+                    </div>
+
+                    <div id="erroTornarVendedor" class="alert alert-danger d-none mt-3" role="alert"></div>
+                    <div id="sucessoTornarVendedor" class="alert alert-success d-none mt-3" role="alert"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send me-2"></i>Enviar Pedido
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         // Sistema de Tabs do Perfil
@@ -3706,5 +3877,141 @@
         var modal = new bootstrap.Modal(document.getElementById('modalEditarDisponibilidade'));
         modal.show();
     }
+
+    // ===== UPLOAD DE FOTO DE PERFIL =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // Abrir modal ao clicar no botão da câmera
+        const btnCamera = document.querySelector('.perfil-avatar-edit');
+        if (btnCamera) {
+            btnCamera.addEventListener('click', function(e) {
+                e.preventDefault();
+                const modal = new bootstrap.Modal(document.getElementById('modalFotoPerfil'));
+                modal.show();
+            });
+        }
+
+        // Preview da imagem quando selecionar
+        const inputFoto = document.getElementById('inputFotoPerfil');
+        if (inputFoto) {
+            inputFoto.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validar tamanho (2MB)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('A imagem é muito grande! Tamanho máximo: 2MB');
+                        inputFoto.value = '';
+                        return;
+                    }
+
+                    // Preview
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('previewFotoPerfil').src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Submit form de foto via AJAX
+        const formFoto = document.getElementById('formFotoPerfil');
+        if (formFoto) {
+            formFoto.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const btnSubmit = this.querySelector('button[type="submit"]');
+                const erroDiv = document.getElementById('erroUploadFoto');
+
+                erroDiv.classList.add('d-none');
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A carregar...';
+
+                try {
+                    const response = await fetch('@Url.Action("UploadFotoPerfil", "Utilizadores")', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Atualizar imagem no avatar do sidebar
+                        const avatarImg = document.querySelector('.perfil-avatar');
+                        if (avatarImg) {
+                            avatarImg.src = result.imagemUrl + '?t=' + new Date().getTime();
+                        }
+
+                        // Fechar modal
+                        bootstrap.Modal.getInstance(document.getElementById('modalFotoPerfil')).hide();
+
+                        // Mostrar mensagem de sucesso
+                        alert('Foto de perfil atualizada com sucesso!');
+                    } else {
+                        erroDiv.textContent = result.message || 'Erro ao carregar imagem';
+                        erroDiv.classList.remove('d-none');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    erroDiv.textContent = 'Erro ao comunicar com o servidor';
+                    erroDiv.classList.remove('d-none');
+                } finally {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i class="bi bi-upload me-2"></i>Guardar Foto';
+                }
+            });
+        }
+
+        // ===== PEDIDO PARA TORNAR-SE VENDEDOR =====
+        const formVendedor = document.getElementById('formTornarVendedor');
+        if (formVendedor) {
+            formVendedor.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const btnSubmit = this.querySelector('button[type="submit"]');
+                const erroDiv = document.getElementById('erroTornarVendedor');
+                const sucessoDiv = document.getElementById('sucessoTornarVendedor');
+
+                erroDiv.classList.add('d-none');
+                sucessoDiv.classList.add('d-none');
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar...';
+
+                try {
+                    const response = await fetch('@Url.Action("PedirSerVendedor", "Utilizadores")', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        sucessoDiv.innerHTML = '<i class="bi bi-check-circle me-2"></i>' + (result.message || 'Pedido enviado com sucesso!');
+                        sucessoDiv.classList.remove('d-none');
+
+                        // Limpar form
+                        formVendedor.reset();
+
+                        // Fechar modal após 2 segundos
+                        setTimeout(() => {
+                            bootstrap.Modal.getInstance(document.getElementById('modalTornarVendedor')).hide();
+                            location.reload(); // Recarregar página para atualizar estado
+                        }, 2000);
+                    } else {
+                        erroDiv.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>' + (result.message || 'Erro ao enviar pedido');
+                        erroDiv.classList.remove('d-none');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    erroDiv.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Erro ao comunicar com o servidor';
+                    erroDiv.classList.remove('d-none');
+                } finally {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i class="bi bi-send me-2"></i>Enviar Pedido';
+                }
+            });
+        }
+    });
 </script>
 }
