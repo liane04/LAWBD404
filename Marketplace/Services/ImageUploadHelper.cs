@@ -39,7 +39,7 @@ namespace Marketplace.Services
             try
             {
                 // Pasta de destino
-                var uploadsFolder = Path.Combine(webRootPath, "images", "perfil");
+                var uploadsFolder = Path.Combine(webRootPath, "imagens", "perfil");
 
                 // Criar pasta se não existir
                 if (!Directory.Exists(uploadsFolder))
@@ -57,7 +57,7 @@ namespace Marketplace.Services
                 }
 
                 // Retornar caminho relativo (para guardar na BD)
-                return $"/images/perfil/{uniqueFileName}";
+                return $"/imagens/perfil/{uniqueFileName}";
             }
             catch
             {
@@ -97,7 +97,7 @@ namespace Marketplace.Services
         /// </summary>
         public static string GetDefaultProfileImage()
         {
-            return "/images/default-avatar.png";
+            return "/imagens/default-avatar.png";
         }
 
         /// <summary>

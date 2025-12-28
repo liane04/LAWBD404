@@ -169,14 +169,14 @@ namespace Marketplace.Data.Seeders
                 poolIndex++;
 
                 var ext = Path.GetExtension(origem);
-                var destDir = Path.Combine(contentRootPath, "wwwroot", "images", "perfil");
+                var destDir = Path.Combine(contentRootPath, "wwwroot", "imagens", "perfil");
                 Directory.CreateDirectory(destDir);
 
                 var nomeArquivo = $"user_{userId}_{DateTime.Now.Ticks}{ext}";
                 var destino = Path.Combine(destDir, nomeArquivo);
 
                 File.Copy(origem, destino, overwrite: true);
-                return $"/images/perfil/{nomeArquivo}";
+                return $"/imagens/perfil/{nomeArquivo}";
             }
 
             // Mock users a partir do JSON
@@ -273,7 +273,7 @@ namespace Marketplace.Data.Seeders
             await db.SaveChangesAsync();
 
             // Garantir avatar por omissão usado pelo helper
-            var defaultAvatar = Path.Combine(contentRootPath, "wwwroot", "images", "default-avatar.png");
+            var defaultAvatar = Path.Combine(contentRootPath, "wwwroot", "imagens", "default-avatar.png");
             if (!File.Exists(defaultAvatar) && pool.Count > 0)
             {
                 try
@@ -292,8 +292,8 @@ namespace Marketplace.Data.Seeders
         {
             var extensoesPermitidas = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png", ".webp" };
 
-            // 1) Pasta dedicada wwwroot/images/seeds/perfil (fotos de perfil para seed)
-            var seedsDir = Path.Combine(contentRootPath, "wwwroot", "images", "seeds", "perfil");
+            // 1) Pasta dedicada wwwroot/imagens/seeds/perfil (fotos de perfil para seed)
+            var seedsDir = Path.Combine(contentRootPath, "wwwroot", "imagens", "seeds", "perfil");
             if (Directory.Exists(seedsDir))
             {
                 var files = Directory.GetFiles(seedsDir).Where(f => extensoesPermitidas.Contains(Path.GetExtension(f))).ToList();

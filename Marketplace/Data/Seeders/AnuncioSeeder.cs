@@ -143,11 +143,11 @@ namespace Marketplace.Data.Seeders
             var imagensOrigem = GetSeedImagePool(contentRootPath);
             if (imagensOrigem.Count == 0)
             {
-                log("[seed] anÇ§ncios inseridos mas sem imagens demo (nenhuma imagem de origem encontrada em Data/Seeds/images/anuncios ou wwwroot/imagens)");
+                log("[seed] anúncios inseridos mas sem imagens demo (nenhuma imagem encontrada em wwwroot/imagens/seeds/anuncios)");
                 return;
             }
 
-            var destinoRoot = Path.Combine(contentRootPath, "wwwroot", "images", "anuncios");
+            var destinoRoot = Path.Combine(contentRootPath, "wwwroot", "imagens", "anuncios");
             Directory.CreateDirectory(destinoRoot);
 
             int offset = 0;
@@ -173,7 +173,7 @@ namespace Marketplace.Data.Seeders
                     db.Imagens.Add(new Imagem
                     {
                         AnuncioId = anuncio.Id,
-                        ImagemCaminho = $"/images/anuncios/{anuncio.Id}/{nome}"
+                        ImagemCaminho = $"/imagens/anuncios/{anuncio.Id}/{nome}"
                     });
 
                     idx++;
@@ -190,8 +190,8 @@ namespace Marketplace.Data.Seeders
         {
             var extensoesPermitidas = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".jpg", ".jpeg", ".png", ".webp" };
 
-            // 1) Tentar wwwroot/images/seeds/anuncios (pasta dedicada para imagens de seed)
-            var seedsDir = Path.Combine(contentRootPath, "wwwroot", "images", "seeds", "anuncios");
+            // 1) Tentar wwwroot/imagens/seeds/anuncios (pasta dedicada para imagens de seed)
+            var seedsDir = Path.Combine(contentRootPath, "wwwroot", "imagens", "seeds", "anuncios");
             if (Directory.Exists(seedsDir))
             {
                 var files = Directory.GetFiles(seedsDir).Where(f => extensoesPermitidas.Contains(Path.GetExtension(f))).ToList();

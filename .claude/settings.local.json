@@ -6,7 +6,10 @@
       "Bash(dotnet build:*)",
       "Bash(dotnet build-server:*)",
       "Bash(dotnet clean:*)",
-      "Bash(sqlcmd:*)"
+      "Bash(sqlcmd:*)",
+      "Bash(curl:*)",
+      "Bash(cp:*)",
+      "Bash(mkdir:*)"
     ]
   }
 }
