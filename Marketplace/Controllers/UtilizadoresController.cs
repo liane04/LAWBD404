@@ -87,6 +87,12 @@ namespace Marketplace.Controllers
                     ViewBag.MeusAnuncios = anuncios;
                     ViewBag.AnunciosCount = anuncios.Count;
 
+                    // Contagens por estado para os filtros
+                    ViewBag.AnunciosAtivos = anuncios.Count(a => a.Estado == "Ativo");
+                    ViewBag.AnunciosReservados = anuncios.Count(a => a.Estado == "Reservado");
+                    ViewBag.AnunciosVendidos = anuncios.Count(a => a.Estado == "Vendido");
+                    ViewBag.AnunciosPausados = anuncios.Count(a => a.Estado == "Pausado");
+
                     var reservasCount = await _db.Reservas
                         .Include(r => r.Anuncio)
                         .Where(r => r.Anuncio.VendedorId == vendedor.Id)
@@ -195,6 +201,26 @@ namespace Marketplace.Controllers
                     }
 
                     ViewBag.Nif = vendedor.Nif ?? "Não definido";
+                    ViewBag.Nib = vendedor.Nib ?? "Não definido";
+
+                    // Carregar favoritos do vendedor (vendedores também podem ter favoritos)
+                    var favoritosVendedor = await _db.AnunciosFavoritos
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Combustivel)
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Tipo)
+                        .Where(af => af.CompradorId == vendedor.Id)
+                        .OrderByDescending(af => af.Id)
+                        .ToListAsync();
+
+                    ViewBag.MeusFavoritos = favoritosVendedor;
+                    ViewBag.FavoritosCount = favoritosVendedor.Count;
                 }
             }
             // Se o usuário for comprador, carregar seus favoritos
@@ -1322,6 +1348,57 @@ namespace Marketplace.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeactivateAccount()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var identityId = user.Id;
+            var util = await _db.Set<Utilizador>().FirstOrDefaultAsync(u => u.IdentityUserId == identityId);
+            if (util != null)
+            {
+                util.Estado = "Desativado";
+                _db.Update(util);
+                await _db.SaveChangesAsync();
+            }
+
+            // Lock account via Identity
+            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+            await _signInManager.SignOutAsync();
+
+            TempData["PerfilSucesso"] = "Conta desativada. Pode reativar contactando suporte.";
+            return RedirectToAction("Login", "Utilizadores");
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var identityId = user.Id;
+
+            // Soft-delete: marcar estado e bloquear login
+            var util = await _db.Set<Utilizador>().FirstOrDefaultAsync(u => u.IdentityUserId == identityId);
+            if (util != null)
+            {
+                util.Estado = "Eliminado";
+                _db.Update(util);
+            }
+
+            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+            await _signInManager.SignOutAsync();
+            await _db.SaveChangesAsync();
+
+            TempData["PerfilSucesso"] = "Conta eliminada (soft delete). Contacte suporte se precisar reverter.";
+            return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> TerminateOtherSessions()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -1427,7 +1504,9 @@ namespace Marketplace.Controllers
             }
 
             var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
-            var comprador = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+            var comprador = await _db.Compradores
+                .Include(c => c.Morada)
+                .FirstOrDefaultAsync(c => c.IdentityUserId == userId);
 
             if (comprador == null)
             {
@@ -1436,17 +1515,27 @@ namespace Marketplace.Controllers
 
             try
             {
-                // Verificar se já existe pedido pendente
+                // Verificar se já tem pedido pendente
                 var pedidoExistente = await _db.PedidosVendedor
-                    .Where(p => p.CompradorId == comprador.Id && p.Estado == "Pendente")
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync(p => p.CompradorId == comprador.Id && p.Estado == "Pendente");
 
                 if (pedidoExistente != null)
                 {
                     return Json(new { success = false, message = "Já tem um pedido pendente de aprovação." });
                 }
 
-                // Criar novo pedido
+                // Verificar se já é vendedor
+                var jaEVendedor = await _userManager.IsInRoleAsync(
+                    await _userManager.FindByIdAsync(userId.ToString()),
+                    "Vendedor"
+                );
+
+                if (jaEVendedor)
+                {
+                    return Json(new { success = false, message = "Já é vendedor na plataforma." });
+                }
+
+                // Criar pedido
                 var pedido = new PedidoVendedor
                 {
                     CompradorId = comprador.Id,
@@ -1515,7 +1604,7 @@ namespace Marketplace.Controllers
                                     </div>
 
                                     <p style='text-align: center; margin: 30px 0;'>
-                                        <a href='{Url.Action("Index", "Admin", null, Request.Scheme)}'
+                                        <a href='{Url.Action("Index", "Administrador", null, Request.Scheme)}#validar-vendedores'
                                            style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
                                             Gerir Pedidos
                                         </a>

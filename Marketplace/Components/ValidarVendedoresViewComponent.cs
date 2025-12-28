@@ -21,22 +21,18 @@ namespace Marketplace.Components
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var vendedores = await _db.Vendedores
+            var pedidos = await _db.PedidosVendedor
+                .Include(p => p.Comprador)
                 .AsNoTracking()
-                .OrderBy(v => v.Nome)
+                .OrderByDescending(p => p.DataPedido)
                 .ToListAsync();
-
-            var pendentes = vendedores.Where(v => string.IsNullOrWhiteSpace(v.Estado) || v.Estado == "Pendente").ToList();
-            var aprovados = vendedores.Where(v => v.Estado == "Ativo").Count();
-            var rejeitados = vendedores.Where(v => v.Estado == "Rejeitado").Count();
 
             var model = new ValidarVendedoresSectionVM
             {
-                Pendentes = pendentes,
-                Todos = vendedores,
-                TotalPendentes = pendentes.Count,
-                TotalAprovados = aprovados,
-                TotalRejeitados = rejeitados
+                Pedidos = pedidos,
+                TotalPendentes = pedidos.Count(p => p.Estado == "Pendente"),
+                TotalAprovados = pedidos.Count(p => p.Estado == "Aprovado"),
+                TotalRejeitados = pedidos.Count(p => p.Estado == "Rejeitado")
             };
 
             return View(model);
@@ -45,8 +41,7 @@ namespace Marketplace.Components
 
     public class ValidarVendedoresSectionVM
     {
-        public System.Collections.Generic.List<Marketplace.Models.Vendedor> Pendentes { get; set; } = new();
-        public System.Collections.Generic.List<Marketplace.Models.Vendedor> Todos { get; set; } = new();
+        public System.Collections.Generic.List<Marketplace.Models.PedidoVendedor> Pedidos { get; set; } = new();
         public int TotalPendentes { get; set; }
         public int TotalAprovados { get; set; }
         public int TotalRejeitados { get; set; }

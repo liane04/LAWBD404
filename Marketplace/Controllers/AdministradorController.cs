@@ -148,128 +148,6 @@ namespace Marketplace.Controllers
             return await _db.Administradores.FirstOrDefaultAsync(a => a.IdentityUserId == user.Id);
         }
 
-        // POST: Administrador/AprovarVendedor/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AprovarVendedor(int id)
-        {
-            var vendedor = await _db.Vendedores.FindAsync(id);
-            if (vendedor == null) return NotFound();
-
-            vendedor.Estado = "Ativo";
-
-            // Registar ação
-            var admin = await GetCurrentAdminAsync();
-            if (admin != null)
-            {
-                string motivo = "Aprovar: Vendedor Aprovado";
-                if (!await IsDuplicateUserAction(id, admin.Id, motivo))
-                {
-                    var acao = new AcaoUser
-                    {
-                        UtilizadorId = id,
-                        Data = DateTime.UtcNow,
-                        AdministradorId = admin.Id,
-                        Motivo = motivo
-                    };
-                    _db.Add(acao);
-                }
-            }
-
-            await _db.SaveChangesAsync();
-
-            TempData["Success"] = $"Vendedor '{vendedor.Nome}' aprovado com sucesso!";
-
-            // Notificar vendedor por email
-            try
-            {
-                if (_emailSender != null && !string.IsNullOrEmpty(vendedor.Email))
-                {
-                    await _emailSender.SendAsync(
-                        vendedor.Email,
-                        "Aprovação de Vendedor - 404 Ride",
-                        $@"<html>
-                        <body style='font-family: Arial, sans-serif;'>
-                            <h2 style='color: #0d6efd;'>Parabéns! Seu pedido foi aprovado</h2>
-                            <p>Olá <strong>{vendedor.Nome}</strong>,</p>
-                            <p>O seu pedido para se tornar vendedor na plataforma <strong>404 Ride</strong> foi <span style='color: #28a745;'>aprovado</span>.</p>
-                            <p>Já pode começar a criar e gerir os seus anúncios de veículos!</p>
-                            <hr>
-                            <p style='color: #666; font-size: 12px;'>Esta é uma mensagem automática. Por favor não responda a este email.</p>
-                        </body>
-                        </html>");
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log error but don't fail the approval
-                Console.WriteLine($"Erro ao enviar email: {ex.Message}");
-            }
-
-
-
-            return RedirectToAction(nameof(Index), new { section = "validar-vendedores" });
-        }
-
-        // POST: Administrador/RejeitarVendedor/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejeitarVendedor(int id)
-        {
-            var vendedor = await _db.Vendedores.FindAsync(id);
-            if (vendedor == null) return NotFound();
-
-            vendedor.Estado = "Rejeitado";
-
-            // Registar ação
-            var admin = await GetCurrentAdminAsync();
-            if (admin != null)
-            {
-                string motivo = "Rejeitar: Vendedor Rejeitado";
-                if (!await IsDuplicateUserAction(id, admin.Id, motivo))
-                {
-                    var acao = new AcaoUser
-                    {
-                        UtilizadorId = id,
-                        Data = DateTime.UtcNow,
-                        AdministradorId = admin.Id,
-                        Motivo = motivo
-                    };
-                    _db.Add(acao);
-                }
-            }
-
-            await _db.SaveChangesAsync();
-
-            TempData["Warning"] = $"Vendedor '{vendedor.Nome}' foi rejeitado.";
-
-            // Notificar vendedor por email
-            try
-            {
-                if (_emailSender != null && !string.IsNullOrEmpty(vendedor.Email))
-                {
-                    await _emailSender.SendAsync(
-                        vendedor.Email,
-                        "Pedido de Vendedor - 404 Ride",
-                        $@"<html>
-                        <body style='font-family: Arial, sans-serif;'>
-                            <h2 style='color: #dc3545;'>Pedido não aprovado</h2>
-                            <p>Olá <strong>{vendedor.Nome}</strong>,</p>
-                            <p>Lamentamos informar que o seu pedido para se tornar vendedor na plataforma <strong>404 Ride</strong> não foi aprovado neste momento.</p>
-                            <p>Se necessitar de esclarecimentos adicionais, por favor contacte o nosso suporte.</p>
-                            <hr>
-                            <p style='color: #666; font-size: 12px;'>Esta é uma mensagem automática. Por favor não responda a este email.</p>
-                        </body>
-                        </html>");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro ao enviar email: {ex.Message}");
-            }
-
-            return RedirectToAction(nameof(Index), new { section = "validar-vendedores" });
-        }
 
 
 
@@ -863,6 +741,367 @@ namespace Marketplace.Controllers
                 a.AdministradorId == adminId &&
                 a.Motivo == motivo &&
                 a.Data >= thirtySecondsAgo);
+        }
+
+
+        // POST: Administrador/AprovarPedidoVendedor
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AprovarPedidoVendedor(int id)
+        {
+            var pedido = await _db.PedidosVendedor
+                .Include(p => p.Comprador)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (pedido == null)
+            {
+                TempData["Error"] = "Pedido não encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (pedido.Estado != "Pendente")
+            {
+                TempData["Error"] = "Este pedido já foi processado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var currentAdmin = await GetCurrentAdminAsync();
+            if (currentAdmin == null)
+            {
+                TempData["Error"] = "Administrador não encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                var comprador = pedido.Comprador;
+                if (comprador == null)
+                {
+                    TempData["Error"] = "Comprador não encontrado.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Adicionar role de Vendedor ao utilizador (sem criar novo registo na tabela)
+                var appUser = await _userManager.FindByIdAsync(comprador.IdentityUserId.ToString());
+                if (appUser != null)
+                {
+                    var isVendedor = await _userManager.IsInRoleAsync(appUser, "Vendedor");
+                    if (!isVendedor)
+                    {
+                        await _userManager.AddToRoleAsync(appUser, "Vendedor");
+                    }
+                }
+
+                // Atualizar pedido
+                pedido.Estado = "Aprovado";
+                pedido.DataResposta = DateTime.Now;
+                pedido.AdminRespondeuId = currentAdmin.Id;
+
+                await _db.SaveChangesAsync();
+
+                // Enviar email de confirmação
+                if (_emailSender != null && !string.IsNullOrWhiteSpace(comprador.Email))
+                {
+                    await EnviarEmailAprovacao(comprador, pedido);
+                }
+
+                TempData["Success"] = $"Pedido de {comprador.Nome} aprovado com sucesso!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao aprovar pedido: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Administrador/RejeitarPedidoVendedor
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejeitarPedidoVendedor(int id, string? motivoRejeicao)
+        {
+            var pedido = await _db.PedidosVendedor
+                .Include(p => p.Comprador)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (pedido == null)
+            {
+                TempData["Error"] = "Pedido não encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (pedido.Estado != "Pendente")
+            {
+                TempData["Error"] = "Este pedido já foi processado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var currentAdmin = await GetCurrentAdminAsync();
+            if (currentAdmin == null)
+            {
+                TempData["Error"] = "Administrador não encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                pedido.Estado = "Rejeitado";
+                pedido.DataResposta = DateTime.Now;
+                pedido.AdminRespondeuId = currentAdmin.Id;
+                pedido.MotivoRejeicao = motivoRejeicao;
+
+                await _db.SaveChangesAsync();
+
+                // Enviar email de rejeição
+                if (_emailSender != null && pedido.Comprador != null && !string.IsNullOrWhiteSpace(pedido.Comprador.Email))
+                {
+                    await EnviarEmailRejeicao(pedido.Comprador, pedido);
+                }
+
+                TempData["Success"] = $"Pedido de {pedido.Comprador?.Nome} rejeitado.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao rejeitar pedido: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        private async Task EnviarEmailAprovacao(Comprador comprador, PedidoVendedor pedido)
+        {
+            if (_emailSender == null || string.IsNullOrWhiteSpace(comprador.Email)) return;
+
+            var subject = "✅ Pedido Aprovado - Bem-vindo como Vendedor 404 Ride";
+            var message = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;'>
+                        <h1 style='color: white; margin: 0;'>404 Ride</h1>
+                        <p style='color: white; margin: 10px 0 0 0;'>Marketplace de Veículos Usados</p>
+                    </div>
+                    <div style='background: #f7f7f7; padding: 30px;'>
+                        <h2 style='color: #333; margin-top: 0;'>Parabéns, {comprador.Nome}!</h2>
+                        <p>O seu pedido para tornar-se vendedor foi <strong style='color: #10b981;'>aprovado</strong>!</p>
+
+                        <div style='background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;'>
+                            <h3 style='margin-top: 0; color: #10b981;'>O que pode fazer agora:</h3>
+                            <ul style='line-height: 1.8;'>
+                                <li>Criar e gerir os seus anúncios de veículos</li>
+                                <li>Receber e responder a reservas</li>
+                                <li>Agendar visitas com potenciais compradores</li>
+                                <li>Gerir a sua disponibilidade</li>
+                                <li>Acompanhar as suas vendas</li>
+                            </ul>
+                        </div>
+
+                        <p style='text-align: center; margin: 30px 0;'>
+                            <a href='{Url.Action("Perfil", "Utilizadores", null, Request.Scheme)}'
+                               style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                                Aceder ao Meu Perfil
+                            </a>
+                        </p>
+
+                        <p style='text-align: center; margin: 20px 0;'>
+                            <a href='{Url.Action("Create", "Anuncios", null, Request.Scheme)}'
+                               style='background: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                                Criar Primeiro Anúncio
+                            </a>
+                        </p>
+
+                        <div style='background: #e0e7ff; padding: 15px; border-radius: 5px; margin-top: 20px;'>
+                            <p style='margin: 0; color: #3730a3;'>
+                                <strong>💡 Dica:</strong> Certifique-se de preencher todos os dados de faturação no seu perfil para receber os pagamentos das vendas.
+                            </p>
+                        </div>
+
+                        <p style='color: #666; font-size: 12px; text-align: center; margin-top: 30px;'>
+                            Este é um email automático do sistema 404 Ride.<br>
+                            Bem-vindo à nossa comunidade de vendedores!
+                        </p>
+                    </div>
+                </div>";
+
+            await _emailSender.SendAsync(comprador.Email, subject, message);
+        }
+
+        private async Task EnviarEmailRejeicao(Comprador comprador, PedidoVendedor pedido)
+        {
+            if (_emailSender == null || string.IsNullOrWhiteSpace(comprador.Email)) return;
+
+            var subject = "❌ Pedido Não Aprovado - 404 Ride";
+            var message = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;'>
+                        <h1 style='color: white; margin: 0;'>404 Ride</h1>
+                        <p style='color: white; margin: 10px 0 0 0;'>Marketplace de Veículos Usados</p>
+                    </div>
+                    <div style='background: #f7f7f7; padding: 30px;'>
+                        <h2 style='color: #333; margin-top: 0;'>Olá, {comprador.Nome}</h2>
+                        <p>Infelizmente, o seu pedido para tornar-se vendedor não foi aprovado neste momento.</p>
+
+                        {(!string.IsNullOrWhiteSpace(pedido.MotivoRejeicao) ? $@"
+                        <div style='background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;'>
+                            <h4 style='margin-top: 0; color: #ef4444;'>Motivo:</h4>
+                            <p>{pedido.MotivoRejeicao}</p>
+                        </div>" : "")}
+
+                        <p>Pode submeter um novo pedido após corrigir as questões mencionadas.</p>
+
+                        <p style='color: #666; font-size: 12px; text-align: center; margin-top: 30px;'>
+                            Este é um email automático do sistema 404 Ride.<br>
+                            Para mais informações, contacte-nos.
+                        </p>
+                    </div>
+                </div>";
+
+            await _emailSender.SendAsync(comprador.Email, subject, message);
+        }
+
+        // POST: Administrador/AprovarVendedor (versão simplificada)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AprovarVendedor(int id)
+        {
+            var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.Id == id);
+
+            if (vendedor == null)
+            {
+                TempData["Warning"] = "Vendedor não encontrado.";
+                return RedirectToAction("Index");
+            }
+
+            if (vendedor.Estado != "Pendente")
+            {
+                TempData["Warning"] = "Este vendedor já foi processado.";
+                return RedirectToAction("Index");
+            }
+
+            try
+            {
+                // Atualizar estado do vendedor
+                vendedor.Estado = "Ativo";
+
+                // Adicionar role de Vendedor ao utilizador
+                var appUser = await _userManager.FindByIdAsync(vendedor.IdentityUserId.ToString());
+                if (appUser != null)
+                {
+                    var isInRole = await _userManager.IsInRoleAsync(appUser, "Vendedor");
+                    if (!isInRole)
+                    {
+                        await _userManager.AddToRoleAsync(appUser, "Vendedor");
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+
+                // Enviar email de confirmação
+                if (_emailSender != null && !string.IsNullOrWhiteSpace(vendedor.Email))
+                {
+                    await EnviarEmailAprovacaoVendedor(vendedor);
+                }
+
+                TempData["Success"] = $"Vendedor {vendedor.Nome} aprovado com sucesso!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao aprovar vendedor: {ex.Message}";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        // POST: Administrador/RejeitarVendedor (versão simplificada)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejeitarVendedor(int id, string? motivoRejeicao)
+        {
+            var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.Id == id);
+
+            if (vendedor == null)
+            {
+                TempData["Warning"] = "Vendedor não encontrado.";
+                return RedirectToAction("Index");
+            }
+
+            if (vendedor.Estado != "Pendente")
+            {
+                TempData["Warning"] = "Este vendedor já foi processado.";
+                return RedirectToAction("Index");
+            }
+
+            try
+            {
+                vendedor.Estado = "Rejeitado";
+                // Não temos campo Observacoes, então guardaremos no DadosFaturacao
+                if (!string.IsNullOrWhiteSpace(motivoRejeicao))
+                {
+                    vendedor.DadosFaturacao = $"[REJEITADO] {motivoRejeicao}";
+                }
+
+                await _db.SaveChangesAsync();
+
+                // Enviar email de rejeição
+                if (_emailSender != null && !string.IsNullOrWhiteSpace(vendedor.Email))
+                {
+                    await EnviarEmailRejeicaoVendedor(vendedor, motivoRejeicao);
+                }
+
+                TempData["Success"] = $"Pedido de {vendedor.Nome} rejeitado.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao rejeitar pedido: {ex.Message}";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        private async Task EnviarEmailAprovacaoVendedor(Vendedor vendedor)
+        {
+            var subject = "✅ Pedido de Vendedor Aprovado - 404 Ride";
+            var message = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;'>
+                        <h1 style='color: white; margin: 0;'>404 Ride</h1>
+                    </div>
+                    <div style='background: #f7f7f7; padding: 30px;'>
+                        <h2 style='color: #28a745; margin-top: 0;'>Parabéns! Pedido Aprovado</h2>
+                        <p>Olá <strong>{vendedor.Nome}</strong>,</p>
+                        <p>O seu pedido para se tornar vendedor na plataforma 404 Ride foi <strong>aprovado</strong>!</p>
+                        <p>Agora pode começar a publicar os seus anúncios de veículos.</p>
+                        <p style='text-align: center; margin: 30px 0;'>
+                            <a href='{Url.Action("Perfil", "Utilizadores", null, Request.Scheme)}'
+                               style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                                Aceder ao Perfil
+                            </a>
+                        </p>
+                    </div>
+                </div>";
+
+            await _emailSender.SendAsync(vendedor.Email, subject, message);
+        }
+
+        private async Task EnviarEmailRejeicaoVendedor(Vendedor vendedor, string? motivo)
+        {
+            var subject = "❌ Pedido de Vendedor Rejeitado - 404 Ride";
+            var message = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;'>
+                        <h1 style='color: white; margin: 0;'>404 Ride</h1>
+                    </div>
+                    <div style='background: #f7f7f7; padding: 30px;'>
+                        <h2 style='color: #dc3545; margin-top: 0;'>Pedido Rejeitado</h2>
+                        <p>Olá <strong>{vendedor.Nome}</strong>,</p>
+                        <p>Informamos que o seu pedido para se tornar vendedor foi <strong>rejeitado</strong>.</p>
+                        {(!string.IsNullOrWhiteSpace(motivo) ? $@"
+                        <div style='background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;'>
+                            <strong>Motivo:</strong> {motivo}
+                        </div>" : "")}
+                        <p>Pode submeter um novo pedido a qualquer momento.</p>
+                    </div>
+                </div>";
+
+            await _emailSender.SendAsync(vendedor.Email, subject, message);
         }
     }
 }

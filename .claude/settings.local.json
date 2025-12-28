@@ -16,7 +16,21 @@
       "Bash(dir nul:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdicionar documentação de apoio à Fase 3\n\nDocumentação completa incluindo:\n- Integridade da base de dados\n- Lógica funcional do sistema\n- Funcionalidades implementadas\n- Tecnologias utilizadas\n- Desafios e soluções\n- Testes realizados\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(powershell.exe -Command \"Stop-Process -Id 50448 -Force\")"
+      "Bash(powershell.exe -Command \"Stop-Process -Id 50448 -Force\")",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 49268 -Force\")",
+      "Bash(dir:*)",
+      "Bash(Select-String -Pattern \"Pedidos\" -Context 1,1)",
+      "Bash(findstr:*)",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 13904 -Force\")",
+      "Bash(del \"C:\\\\Users\\\\bruno\\\\Desktop\\\\utad\\\\a_1_semestre_3_ano\\\\Laboratotio_web_bd\\\\app\\\\Marketplace\\\\Views\\\\Administrador\\\\PedidosVendedor.cshtml\")",
+      "Bash(powershell.exe -Command \"Remove-Item ''C:\\\\Users\\\\bruno\\\\Desktop\\\\utad\\\\a_1_semestre_3_ano\\\\Laboratotio_web_bd\\\\app\\\\Marketplace\\\\Views\\\\Administrador\\\\PedidosVendedor.cshtml'' -Force\")",
+      "Bash(Select-String -Pattern \"succeeded|failed|Error\" -CaseSensitive)",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 43160 -Force\")",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 29732 -Force\")",
+      "Bash(dotnet run)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 416 -Force\")",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 49372 -Force\")"
     ]
   }
 }

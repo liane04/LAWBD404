@@ -284,6 +284,20 @@
                                         </div>
                                     </div>
                                 }
+                                @if (User.IsInRole("Vendedor"))
+                                {
+                                    <div class="col-md-6">
+                                        <div class="perfil-info-item">
+                                            <div class="perfil-info-icon">
+                                                <i class="bi bi-bank"></i>
+                                            </div>
+                                            <div class="perfil-info-content">
+                                                <label class="perfil-info-label">NIB (Pagamentos)</label>
+                                                <p class="perfil-info-value">@(ViewBag.Nib ?? "Não definido")</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -391,19 +405,19 @@
                     <!-- Filtros/Tabs de Estado -->
                     <div class="anuncios-filter-tabs mb-4">
                         <button class="anuncios-filter-btn active" data-filter="todos">
-                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">5</span>
+                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">@ViewBag.AnunciosCount</span>
                         </button>
                         <button class="anuncios-filter-btn" data-filter="ativo">
-                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">2</span>
+                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">@ViewBag.AnunciosAtivos</span>
                         </button>
                         <button class="anuncios-filter-btn" data-filter="reservado">
-                            <i class="bi bi-bookmark-check-fill me-1"></i>Reservados <span class="badge bg-warning ms-1">1</span>
+                            <i class="bi bi-bookmark-check-fill me-1"></i>Reservados <span class="badge bg-warning ms-1">@ViewBag.AnunciosReservados</span>
                         </button>
                         <button class="anuncios-filter-btn" data-filter="vendido">
-                            <i class="bi bi-check2-circle me-1"></i>Vendidos <span class="badge bg-info ms-1">2</span>
+                            <i class="bi bi-check2-circle me-1"></i>Vendidos <span class="badge bg-info ms-1">@ViewBag.AnunciosVendidos</span>
                         </button>
                         <button class="anuncios-filter-btn" data-filter="pausado">
-                            <i class="bi bi-pause-circle-fill me-1"></i>Pausados <span class="badge bg-secondary ms-1">0</span>
+                            <i class="bi bi-pause-circle-fill me-1"></i>Pausados <span class="badge bg-secondary ms-1">@ViewBag.AnunciosPausados</span>
                         </button>
                     </div>
 
@@ -2390,7 +2404,6 @@
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>Zona de Perigo
                             </h5>
                         </div>
-                        <div class="card-body p-4">
                             <!-- Desativar Conta -->
                             <div class="definicao-item">
                                 <div class="definicao-info">
@@ -2404,9 +2417,12 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button class="btn btn-outline-warning">
-                                    <i class="bi bi-pause me-1"></i>Desativar
-                                </button>
+                                <form asp-controller="Utilizadores" asp-action="DeactivateAccount" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja desativar a sua conta?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-warning">
+                                        <i class="bi bi-pause me-1"></i>Desativar
+                                    </button>
+                                </form>
                             </div>
 
                             <hr class="my-3">
@@ -2424,13 +2440,13 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#eliminarContaModal">
-                                    <i class="bi bi-trash me-1"></i>Eliminar
-                                </button>
+                                <form asp-controller="Utilizadores" asp-action="DeleteAccount" method="post" class="d-inline" onsubmit="return confirm('Eliminar conta? Esta ação é irreversível.');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="bi bi-trash me-1"></i>Eliminar
+                                    </button>
+                                </form>
                             </div>
-                        </div>
-                    </div>
-
                     <!-- Botão de Guardar Alterações -->
                     <div class="text-end">
                         <button class="btn btn-lg btn-primary">
@@ -3532,6 +3548,8 @@
         const switchEmailNotif = document.getElementById('switchEmailNotif');
         const switchNovos = document.getElementById('switchNovosAnuncios');
         const switchPreco = document.getElementById('switchPreco');
+        const switchPerfilPublico = document.getElementById('switchPerfilPublico');
+        const switchMostrarEmail = document.getElementById('switchMostrarEmail');
         const tokenField = () => document.querySelector('#securityAntiForgery input[name="__RequestVerificationToken"]')?.value;
 
         let twofaEnabled = false;
@@ -3565,6 +3583,7 @@
                 const data = await res.json();
                 update2faUI(!!data.twoFactorEnabled, data.recoveryCodes ?? 0);
                 await loadNotificationStatus();
+                await loadPrivacyStatus();
             } catch {
                 update2faUI(false, 0);
                 showSecurityAlert('warning', 'Não foi possível verificar o estado de segurança neste momento.');
@@ -3754,6 +3773,46 @@
         bindNotifToggle(switchEmailNotif, 'email');
         bindNotifToggle(switchNovos, 'novos');
         bindNotifToggle(switchPreco, 'preco');
+
+        const loadPrivacyStatus = async () => {
+            try {
+                const res = await fetch('/Utilizadores/PrivacySettings');
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                setToggleUI(switchPerfilPublico, !!data.perfilPublico);
+                setToggleUI(switchMostrarEmail, !!data.mostrarEmail);
+            } catch {
+                showSecurityAlert('warning', 'Não foi possível carregar as definições de privacidade.');
+            }
+        };
+
+        const savePrivacy = async (tipo, ativo) => {
+            const token = tokenField();
+            const formData = new FormData();
+            formData.append('tipo', tipo);
+            formData.append('ativo', ativo ? 'true' : 'false');
+            if (token) formData.append('__RequestVerificationToken', token);
+            const res = await fetch('/Utilizadores/SetPrivacy', { method: 'POST', body: formData });
+            return res.ok;
+        };
+
+        const bindPrivacyToggle = (el, tipo) => {
+            if (!el) return;
+            el.addEventListener('change', async () => {
+                const desired = el.checked;
+                const ok = await savePrivacy(tipo, desired);
+                if (ok) {
+                    setToggleUI(el, desired);
+                    showSecurityAlert('success', `Privacidade (${tipo}) ${desired ? 'ativada' : 'desativada'}.`);
+                } else {
+                    setToggleUI(el, !desired);
+                    showSecurityAlert('danger', 'Não foi possível atualizar privacidade.');
+                }
+            });
+        };
+
+        bindPrivacyToggle(switchPerfilPublico, 'perfil');
+        bindPrivacyToggle(switchMostrarEmail, 'email');
 
         btnSessions?.addEventListener('click', () => {
             if (sessionsFeedback) sessionsFeedback.innerHTML = '';
