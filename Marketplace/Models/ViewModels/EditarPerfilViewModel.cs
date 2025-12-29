@@ -19,6 +19,11 @@ namespace Marketplace.Models.ViewModels
         [RegularExpression(@"^[1235689]\d{8}$", ErrorMessage = "NIF inválido (9 dígitos e prefixo válido)")]
         public string? Nif { get; set; }
 
+        [StringLength(21)]
+        [RegularExpression(@"^\d{21}$", ErrorMessage = "NIB deve ter 21 dígitos")]
+        [Display(Name = "NIB")]
+        public string? Nib { get; set; }
+
         [StringLength(200)]
         public string? DadosFaturacao { get; set; }
 

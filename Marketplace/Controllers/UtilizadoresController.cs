@@ -93,11 +93,23 @@ namespace Marketplace.Controllers
                     ViewBag.AnunciosVendidos = anuncios.Count(a => a.Estado == "Vendido");
                     ViewBag.AnunciosPausados = anuncios.Count(a => a.Estado == "Pausado");
 
-                    var reservasCount = await _db.Reservas
+                    // Carregar reservas RECEBIDAS (nos meus anúncios - como vendedor)
+                    var reservasRecebidas = await _db.Reservas
                         .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Include(r => r.Comprador)
                         .Where(r => r.Anuncio.VendedorId == vendedor.Id)
-                        .CountAsync();
-                    ViewBag.ReservasRecebidasCount = reservasCount;
+                        .OrderByDescending(r => r.Data)
+                        .ToListAsync();
+
+                    ViewBag.ReservasRecebidas = reservasRecebidas;
+                    ViewBag.ReservasRecebidasCount = reservasRecebidas.Count;
+                    ViewBag.ReservasAtivasVendedor = reservasRecebidas.Count(r => r.Estado == "Ativa");
+                    ViewBag.TotalSinais = reservasRecebidas.Where(r => r.Estado == "Ativa").Sum(r => r.Anuncio.ValorSinal);
 
                     // Carregar visitas RECEBIDAS (aos meus anúncios - como vendedor)
                     var visitasRecebidas = await _db.Visitas
@@ -301,6 +313,27 @@ namespace Marketplace.Controllers
                     ViewBag.Compras = compras;
                     ViewBag.ComprasCount = compras.Count;
 
+                    // Carregar reservas FEITAS (como comprador)
+                    var reservasComprador = await _db.Reservas
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Vendedor)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Combustivel)
+                        .Where(r => r.CompradorId == comprador.Id)
+                        .OrderByDescending(r => r.Data)
+                        .ToListAsync();
+
+                    ViewBag.MinhasReservas = reservasComprador;
+                    ViewBag.MinhasReservasCount = reservasComprador.Count;
+                    ViewBag.ReservasAtivasComprador = reservasComprador.Count(r => r.Estado == "Ativa");
+                    ViewBag.ReservasExpiradas = reservasComprador.Count(r => r.Estado == "Expirada");
+
                     ViewBag.Nome = comprador.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(comprador.ImagemPerfil) ? null : comprador.ImagemPerfil;
                     ViewBag.EstadoConta = comprador.Estado ?? "Ativo";
@@ -406,6 +439,7 @@ namespace Marketplace.Controllers
                 {
                     model.Nome = vendedor.Nome;
                     model.Nif = vendedor.Nif;
+                    model.Nib = vendedor.Nib;
                     model.DadosFaturacao = vendedor.DadosFaturacao;
                     model.ImagemPerfilAtual = vendedor.ImagemPerfil;
                     if (vendedor.Morada != null)
@@ -471,6 +505,7 @@ namespace Marketplace.Controllers
                 {
                     vendedor.Nome = model.Nome;
                     vendedor.Nif = model.Nif;
+                    vendedor.Nib = model.Nib;
                     vendedor.DadosFaturacao = model.DadosFaturacao;
 
                     // Morada

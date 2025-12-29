@@ -332,13 +332,10 @@ namespace Marketplace.Controllers
         [Authorize(Roles = "Vendedor")]
         public async Task<IActionResult> Create()
         {
-            // Verificar se o vendedor está aprovado
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
-            var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
-
-            if (vendedor == null || vendedor.Estado != "Ativo")
+            // Verificar se o utilizador tem a role de Vendedor
+            if (!User.IsInRole("Vendedor"))
             {
-                TempData["Error"] = "A sua conta de vendedor ainda não foi aprovada pelo administrador. Aguarde a aprovação para poder criar anúncios.";
+                TempData["Error"] = "Apenas vendedores aprovados podem criar anúncios. Solicite a aprovação no seu perfil.";
                 return RedirectToAction("Perfil", "Utilizadores");
             }
 
@@ -362,22 +359,34 @@ namespace Marketplace.Controllers
             var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
             var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
 
+            // Se não existe vendedor, criar automaticamente (para compradores aprovados como vendedores)
             if (vendedor == null)
             {
-                ModelState.AddModelError("", "Vendedor não encontrado. Certifique-se de que está autenticado corretamente.");
-                ViewData["CategoriaId"] = new SelectList(_context.Set<Categoria>(), "Id", "Nome", anuncio.CategoriaId);
-                ViewData["CombustivelId"] = new SelectList(_context.Set<Combustivel>(), "Id", "Tipo", anuncio.CombustivelId);
-                ViewData["MarcaId"] = new SelectList(_context.Set<Marca>(), "Id", "Nome", anuncio.MarcaId);
-                ViewData["ModeloId"] = new SelectList(_context.Set<Modelo>(), "Id", "Nome", anuncio.ModeloId);
-                ViewData["TipoId"] = new SelectList(_context.Set<Tipo>(), "Id", "Nome", anuncio.TipoId);
-                return View(anuncio);
-            }
-
-            // Verificar se o vendedor está aprovado
-            if (vendedor.Estado != "Ativo")
-            {
-                TempData["Error"] = "A sua conta de vendedor ainda não foi aprovada pelo administrador. Aguarde a aprovação para poder criar anúncios.";
-                return RedirectToAction("Perfil", "Utilizadores");
+                var comprador = await _context.Compradores.Include(c => c.Morada).FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+                if (comprador != null)
+                {
+                    vendedor = new Vendedor
+                    {
+                        Nome = comprador.Nome,
+                        Email = comprador.Email,
+                        Estado = "Ativo",
+                        IdentityUserId = comprador.IdentityUserId,
+                        ImagemPerfil = comprador.ImagemPerfil,
+                        MoradaId = comprador.MoradaId
+                    };
+                    _context.Vendedores.Add(vendedor);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Erro ao obter informações do vendedor.");
+                    ViewData["CategoriaId"] = new SelectList(_context.Set<Categoria>(), "Id", "Nome", anuncio.CategoriaId);
+                    ViewData["CombustivelId"] = new SelectList(_context.Set<Combustivel>(), "Id", "Tipo", anuncio.CombustivelId);
+                    ViewData["MarcaId"] = new SelectList(_context.Set<Marca>(), "Id", "Nome", anuncio.MarcaId);
+                    ViewData["ModeloId"] = new SelectList(_context.Set<Modelo>(), "Id", "Nome", anuncio.ModeloId);
+                    ViewData["TipoId"] = new SelectList(_context.Set<Tipo>(), "Id", "Nome", anuncio.TipoId);
+                    return View(anuncio);
+                }
             }
 
             // Associar o vendedor ao anúncio

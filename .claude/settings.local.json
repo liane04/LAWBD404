@@ -30,7 +30,16 @@
       "Bash(dotnet run)",
       "Bash(timeout /t 5 /nobreak)",
       "Bash(powershell.exe -Command \"Stop-Process -Id 416 -Force\")",
-      "Bash(powershell.exe -Command \"Stop-Process -Id 49372 -Force\")"
+      "Bash(powershell.exe -Command \"Stop-Process -Id 49372 -Force\")",
+      "Bash(powershell.exe -Command \"Get-Content ''C:\\\\Users\\\\bruno\\\\Desktop\\\\utad\\\\a_1_semestre_3_ano\\\\Laboratotio_web_bd\\\\Fase3\\\\RELATORIO_FASE3_APOIO.md'' | Select-Object -Last 50\")",
+      "Bash(powershell.exe -Command \"Stop-Process -Id 47912 -Force\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem Marketplace\\\\Migrations\\\\*.cs | Select-String ''ValorSinal|MetodoPagamento|DataReserva'' -List | Select-Object -ExpandProperty Path\")",
+      "Bash(powershell.exe -Command \"Get-Content Marketplace\\\\Migrations\\\\ApplicationDbContextModelSnapshot.cs | Select-String -Pattern ''Reservas'', ''ValorSinal'', ''MetodoPagamento'', ''DataReserva'' -Context 2,2\")",
+      "Bash(powershell.exe -Command \"$content = Get-Content Marketplace\\\\Migrations\\\\ApplicationDbContextModelSnapshot.cs -Raw; if \\($content -match ''modelBuilder.Entity\\\\\\(\"\"Marketplace.Models.Reserva\"\"[^}]+ToTable\\\\\\(\"\"Reservas\"\"\\\\\\)''\\) { $matches[0] }\")",
+      "Bash(Select-String \"succeeded|failed|Error\")",
+      "Bash(powershell.exe -Command \"dotnet build Marketplace/Marketplace.csproj 2>&1 | Select-String ''succeeded|failed|Error''\")",
+      "Bash(powershell.exe -Command \"Get-Content ''C:\\\\Users\\\\bruno\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-bruno-Desktop-utad-a-1-semestre-3-ano-Laboratotio-web-bd-app\\\\tasks\\\\beafcac.output'' | Select-Object -Last 50\")",
+      "Bash(powershell.exe -Command \"Get-Content ''C:\\\\Users\\\\bruno\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-bruno-Desktop-utad-a-1-semestre-3-ano-Laboratotio-web-bd-app\\\\tasks\\\\beafcac.output'' -Tail 30\")"
     ]
   }
 }

@@ -453,133 +453,150 @@
                         </div>
                         <div class="reservas-stats d-flex gap-3">
                             <div class="stat-item text-center">
-                                <div class="stat-value text-success fw-bold">1</div>
+                                <div class="stat-value text-success fw-bold">@ViewBag.ReservasAtivasVendedor</div>
                                 <div class="stat-label text-muted small">Ativa</div>
                             </div>
                             <div class="stat-item text-center">
-                                <div class="stat-value text-primary fw-bold">500€</div>
+                                <div class="stat-value text-primary fw-bold">@(ViewBag.TotalSinais?.ToString("N2") ?? "0,00")€</div>
                                 <div class="stat-label text-muted small">Em Sinais</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Filtros de Status -->
+                    @{
+                        var reservasRecebidas = ViewBag.ReservasRecebidas as IEnumerable<Marketplace.Models.Reserva> ?? Enumerable.Empty<Marketplace.Models.Reserva>();
+                        var totalReservasVendedor = reservasRecebidas.Count();
+                        var reservasPendentes = reservasRecebidas.Count(r => r.Estado == "Pendente");
+                        var reservasAtivas = reservasRecebidas.Count(r => r.Estado == "Ativa");
+                        var reservasExpiradas = reservasRecebidas.Count(r => r.Estado == "Expirada");
+                    }
                     <div class="anuncios-filter-tabs mb-4">
                         <button class="anuncios-filter-btn active" data-filter-reservas-vendedor="todas">
-                            <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">1</span>
+                            <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">@totalReservasVendedor</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="pendentes">
-                            <i class="bi bi-clock-fill me-1"></i>Aguardam Confirmação <span class="badge bg-warning ms-1">0</span>
+                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="pendente">
+                            <i class="bi bi-clock-fill me-1"></i>Aguardam Confirmação <span class="badge bg-warning ms-1">@reservasPendentes</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="ativas">
-                            <i class="bi bi-check-circle-fill me-1"></i>Ativas <span class="badge bg-success ms-1">1</span>
+                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="ativa">
+                            <i class="bi bi-check-circle-fill me-1"></i>Ativas <span class="badge bg-success ms-1">@reservasAtivas</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="expiradas">
-                            <i class="bi bi-x-circle-fill me-1"></i>Expiradas <span class="badge bg-secondary ms-1">0</span>
+                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="expirada">
+                            <i class="bi bi-x-circle-fill me-1"></i>Expiradas <span class="badge bg-secondary ms-1">@reservasExpiradas</span>
                         </button>
                     </div>
 
                     <!-- Lista de Reservas -->
                     <div class="reservas-vendedor-list">
-                        <!-- Reserva Ativa -->
-                        <div class="card shadow-sm border-success mb-3" data-status-reserva-vendedor="ativa">
-                            <div class="card-body p-4">
-                                <div class="row g-3">
-                                    <div class="col-auto">
-                                        <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
-                                    </div>
-                                    <div class="col">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="mb-1 fw-bold">Reserva: BMW Série 1 116d</h5>
-                                                <p class="text-muted mb-2 small">Seu anúncio • Preço: 15.900€</p>
-                                            </div>
-                                            <span class="badge bg-success fs-6">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Ativa
-                                            </span>
-                                        </div>
+                        @if (reservasRecebidas.Any())
+                        {
+                            foreach (var reserva in reservasRecebidas)
+                            {
+                                var primeiraImagem = reserva.Anuncio?.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/no-image.jpg";
+                                var borderClass = reserva.Estado == "Ativa" ? "border-success" : reserva.Estado == "Expirada" ? "border-secondary" : "border-warning";
+                                var badgeClass = reserva.Estado == "Ativa" ? "bg-success" : reserva.Estado == "Expirada" ? "bg-secondary" : "bg-warning";
+                                var tempoExpiracao = reserva.DataExpiracao.HasValue ? (reserva.DataExpiracao.Value - DateTime.Now).TotalHours : 0;
 
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Data da Reserva:</p>
-                                                <p class="mb-0 fw-semibold">23/10/2025 14:32</p>
+                                <div class="card shadow-sm @borderClass mb-3" data-status-reserva-vendedor="@reserva.Estado.ToLower()">
+                                    <div class="card-body p-4">
+                                        <div class="row g-3">
+                                            <div class="col-auto">
+                                                <img src="@primeiraImagem" alt="@reserva.Anuncio?.Titulo" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
                                             </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Expira em:</p>
-                                                <p class="mb-0 fw-semibold text-danger">
-                                                    <i class="bi bi-hourglass-split me-1"></i>18 horas
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Sinal Recebido:</p>
-                                                <p class="mb-0 fw-bold text-success fs-5">500€</p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Método Pagamento:</p>
-                                                <p class="mb-0 fw-semibold">MB WAY</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="alert alert-warning mb-3 small">
-                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                            <strong>Ação necessária:</strong> Entre em contacto com o comprador nas próximas 24h para acordar os detalhes da venda.
-                                        </div>
-
-                                        <div class="reserva-comprador mb-3 p-3 bg-light rounded">
-                                            <h6 class="mb-2 small fw-bold">
-                                                <i class="bi bi-person-badge me-1"></i>Comprador
-                                            </h6>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://placehold.co/50x50/0d6efd/ffffff?text=JS" class="rounded-circle me-3" alt="João Silva">
+                                            <div class="col">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
                                                     <div>
-                                                        <p class="mb-0 fw-semibold">João Duarte Silva</p>
-                                                        <p class="mb-0 small text-muted">
-                                                            <i class="bi bi-envelope me-1"></i>joao.silva@exemplo.com •
-                                                            <i class="bi bi-telephone-fill me-1"></i>+351 912 345 678
+                                                        <h5 class="mb-1 fw-bold">Reserva: @reserva.Anuncio?.Titulo</h5>
+                                                        <p class="text-muted mb-2 small">Seu anúncio • Preço: @reserva.Anuncio?.Preco.ToString("N2")€</p>
+                                                    </div>
+                                                    <span class="badge @badgeClass fs-6">
+                                                        <i class="bi bi-check-circle-fill me-1"></i>@reserva.Estado
+                                                    </span>
+                                                </div>
+
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Data da Reserva:</p>
+                                                        <p class="mb-0 fw-semibold">@reserva.Data.ToString("dd/MM/yyyy HH:mm")</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Expira em:</p>
+                                                        <p class="mb-0 fw-semibold @(tempoExpiracao < 24 ? "text-danger" : "text-warning")">
+                                                            <i class="bi bi-hourglass-split me-1"></i>@((int)tempoExpiracao) horas
                                                         </p>
                                                     </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Sinal Recebido:</p>
+                                                        <p class="mb-0 fw-bold text-success fs-5">@reserva.Anuncio.ValorSinal.ToString("N2")€</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Preço Total:</p>
+                                                        <p class="mb-0 fw-semibold">@reserva.Anuncio.Preco.ToString("N2")€</p>
+                                                    </div>
                                                 </div>
-                                                <span class="badge bg-success-subtle text-success">
-                                                    <i class="bi bi-shield-check me-1"></i>Verificado
-                                                </span>
-                                            </div>
-                                            <div class="mt-2 p-2 bg-white rounded border">
-                                                <p class="mb-0 small"><strong>Mensagem do comprador:</strong></p>
-                                                <p class="mb-0 small text-muted">"Boa tarde, tenho muito interesse no veículo. Estou disponível para visitar nos próximos dias. Aguardo o vosso contacto."</p>
-                                            </div>
-                                        </div>
 
-                                        <div class="d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                                <i class="bi bi-eye me-1"></i>Ver Anúncio
-                                            </a>
-                                            <button class="btn btn-success">
-                                                <i class="bi bi-chat-dots-fill me-1"></i>Contactar Comprador
-                                            </button>
-                                            <button class="btn btn-info text-white">
-                                                <i class="bi bi-calendar-plus me-1"></i>Agendar Visita
-                                            </button>
-                                            <button class="btn btn-outline-danger ms-auto">
-                                                <i class="bi bi-x-circle me-1"></i>Cancelar Reserva
-                                            </button>
+                                                @if (reserva.Estado == "Ativa")
+                                                {
+                                                    <div class="alert alert-warning mb-3 small">
+                                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                        <strong>Ação necessária:</strong> Entre em contacto com o comprador nas próximas 24h para acordar os detalhes da venda.
+                                                    </div>
+                                                }
+
+                                                <div class="reserva-comprador mb-3 p-3 bg-light rounded">
+                                                    <h6 class="mb-2 small fw-bold">
+                                                        <i class="bi bi-person-badge me-1"></i>Comprador
+                                                    </h6>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="d-flex align-items-center">
+                                                            @if (!string.IsNullOrEmpty(reserva.Comprador?.ImagemPerfil))
+                                                            {
+                                                                <img src="@reserva.Comprador.ImagemPerfil" class="rounded-circle me-3" alt="@reserva.Comprador.Nome" style="width: 50px; height: 50px; object-fit: cover;">
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                                    @(reserva.Comprador?.Nome?.Substring(0, 1).ToUpper() ?? "?")
+                                                                </div>
+                                                            }
+                                                            <div>
+                                                                <p class="mb-0 fw-semibold">@reserva.Comprador?.Nome</p>
+                                                                <p class="mb-0 small text-muted">
+                                                                    <i class="bi bi-envelope me-1"></i>@reserva.Comprador?.Email
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="d-flex gap-2">
+                                                    <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@reserva.AnuncioId" class="btn btn-primary">
+                                                        <i class="bi bi-eye me-1"></i>Ver Anúncio
+                                                    </a>
+                                                    <a href="mailto:@reserva.Comprador?.Email" class="btn btn-success">
+                                                        <i class="bi bi-envelope-fill me-1"></i>Contactar Comprador
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Estado Vazio -->
+                            <div class="reservas-vendedor-empty text-center py-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-bookmark-x" style="font-size: 4rem; color: #e2e8f0;"></i>
+                                </div>
+                                <h4 class="text-muted mb-2">Sem reservas recebidas</h4>
+                                <p class="text-muted mb-4">Quando alguém reservar um dos seus veículos, aparecerá aqui</p>
+                                <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                    <i class="bi bi-grid-3x3-gap me-2"></i>Ver Meus Anúncios
+                                </a>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Estado Vazio -->
-                    <div class="reservas-vendedor-empty text-center py-5 d-none">
-                        <div class="mb-4">
-                            <i class="bi bi-bookmark-x" style="font-size: 4rem; color: #e2e8f0;"></i>
-                        </div>
-                        <h4 class="text-muted mb-2">Sem reservas recebidas</h4>
-                        <p class="text-muted mb-4">Quando alguém reservar um dos seus veículos, aparecerá aqui</p>
-                        <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
-                            <i class="bi bi-grid-3x3-gap me-2"></i>Ver Meus Anúncios
-                        </a>
+                        }
                     </div>
                 </div>
 
@@ -1647,104 +1664,136 @@
                         </div>
                         <div class="reservas-stats d-flex gap-3">
                             <div class="stat-item text-center">
-                                <div class="stat-value text-warning fw-bold">1</div>
+                                <div class="stat-value text-warning fw-bold">@ViewBag.ReservasAtivasComprador</div>
                                 <div class="stat-label text-muted small">Ativa</div>
                             </div>
                             <div class="stat-item text-center">
-                                <div class="stat-value text-muted fw-bold">0</div>
+                                <div class="stat-value text-muted fw-bold">@ViewBag.ReservasExpiradas</div>
                                 <div class="stat-label text-muted small">Expiradas</div>
                             </div>
                         </div>
                     </div>
 
+                    @{
+                        var minhasReservas = ViewBag.MinhasReservas as IEnumerable<Marketplace.Models.Reserva> ?? Enumerable.Empty<Marketplace.Models.Reserva>();
+                    }
+
                     <!-- Lista de Reservas -->
                     <div class="reservas-list">
-                        <!-- Reserva Ativa -->
-                        <div class="card shadow-sm border-warning mb-3">
-                            <div class="card-body p-4">
-                                <div class="row g-3">
-                                    <div class="col-auto">
-                                        <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 3" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
-                                    </div>
-                                    <div class="col">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="mb-1 fw-bold">BMW Série 3 320d Pack M</h5>
-                                                <p class="text-muted mb-2 small">2019 • 85.000 km • Diesel • Manual</p>
-                                            </div>
-                                            <span class="badge bg-warning text-dark fs-6">
-                                                <i class="bi bi-clock-fill me-1"></i>Ativa
-                                            </span>
-                                        </div>
+                        @if (minhasReservas.Any())
+                        {
+                            foreach (var reserva in minhasReservas)
+                            {
+                                var primeiraImagem = reserva.Anuncio?.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/no-image.jpg";
+                                var borderClass = reserva.Estado == "Ativa" ? "border-warning" : reserva.Estado == "Expirada" ? "border-secondary" : "border-success";
+                                var badgeClass = reserva.Estado == "Ativa" ? "bg-warning text-dark" : reserva.Estado == "Expirada" ? "bg-secondary" : "bg-success";
+                                var tempoExpiracao = reserva.DataExpiracao.HasValue ? (reserva.DataExpiracao.Value - DateTime.Now).TotalHours : 0;
+                                var anuncioInfo = $"{reserva.Anuncio?.Ano} • {reserva.Anuncio?.Quilometragem:N0} km • {reserva.Anuncio?.Combustivel?.Tipo ?? "N/A"} • {reserva.Anuncio?.Caixa}";
 
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Data da Reserva:</p>
-                                                <p class="mb-0 fw-semibold">23/10/2025 14:32</p>
+                                <div class="card shadow-sm @borderClass mb-3">
+                                    <div class="card-body p-4">
+                                        <div class="row g-3">
+                                            <div class="col-auto">
+                                                <img src="@primeiraImagem" alt="@reserva.Anuncio?.Titulo" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
                                             </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Expira em:</p>
-                                                <p class="mb-0 fw-semibold text-danger">
-                                                    <i class="bi bi-hourglass-split me-1"></i>18 horas
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Sinal Pago:</p>
-                                                <p class="mb-0 fw-semibold text-success">500€</p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Preço Total:</p>
-                                                <p class="mb-0 fw-bold text-primary fs-5">28.500€</p>
-                                            </div>
-                                        </div>
+                                            <div class="col">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <h5 class="mb-1 fw-bold">@reserva.Anuncio?.Titulo</h5>
+                                                        <p class="text-muted mb-2 small">@anuncioInfo</p>
+                                                    </div>
+                                                    <span class="badge @badgeClass fs-6">
+                                                        <i class="bi bi-@(reserva.Estado == "Ativa" ? "clock-fill" : reserva.Estado == "Expirada" ? "x-circle-fill" : "check-circle-fill") me-1"></i>@reserva.Estado
+                                                    </span>
+                                                </div>
 
-                                        <div class="alert alert-info mb-3 small">
-                                            <i class="bi bi-info-circle-fill me-2"></i>
-                                            <strong>Prioridade garantida até 25/10/2025 14:32.</strong> Entre em contacto com o vendedor para finalizar a compra.
-                                        </div>
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Data da Reserva:</p>
+                                                        <p class="mb-0 fw-semibold">@reserva.Data.ToString("dd/MM/yyyy HH:mm")</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Expira em:</p>
+                                                        <p class="mb-0 fw-semibold @(tempoExpiracao < 24 ? "text-danger" : tempoExpiracao < 48 ? "text-warning" : "text-success")">
+                                                            <i class="bi bi-hourglass-split me-1"></i>@((int)tempoExpiracao) horas
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Sinal Pago:</p>
+                                                        <p class="mb-0 fw-semibold text-success">@reserva.Anuncio.ValorSinal.ToString("N2")€</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Preço Total:</p>
+                                                        <p class="mb-0 fw-bold text-primary fs-5">@reserva.Anuncio?.Preco.ToString("N2")€</p>
+                                                    </div>
+                                                </div>
 
-                                        <div class="reserva-vendedor mb-3 p-3 bg-light rounded">
-                                            <h6 class="mb-2 small fw-bold">
-                                                <i class="bi bi-person-badge me-1"></i>Vendedor
-                                            </h6>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/50x50/0d6efd/ffffff?text=PC" class="rounded-circle me-3" alt="Pedro Costa">
-                                                <div>
-                                                    <p class="mb-0 fw-semibold">Pedro Costa</p>
-                                                    <p class="mb-0 small text-muted">
-                                                        <i class="bi bi-star-fill text-warning me-1"></i>4.5 • +351 912 345 678
-                                                    </p>
+                                                @if (reserva.Estado == "Ativa" && reserva.DataExpiracao.HasValue)
+                                                {
+                                                    <div class="alert alert-info mb-3 small">
+                                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                                        <strong>Prioridade garantida até @reserva.DataExpiracao.Value.ToString("dd/MM/yyyy HH:mm").</strong> Entre em contacto com o vendedor para finalizar a compra.
+                                                    </div>
+                                                }
+
+                                                <div class="reserva-vendedor mb-3 p-3 bg-light rounded">
+                                                    <h6 class="mb-2 small fw-bold">
+                                                        <i class="bi bi-person-badge me-1"></i>Vendedor
+                                                    </h6>
+                                                    <div class="d-flex align-items-center">
+                                                        @if (!string.IsNullOrEmpty(reserva.Anuncio?.Vendedor?.ImagemPerfil))
+                                                        {
+                                                            <img src="@reserva.Anuncio.Vendedor.ImagemPerfil" class="rounded-circle me-3" alt="@reserva.Anuncio.Vendedor.Nome" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                                @(reserva.Anuncio?.Vendedor?.Nome?.Substring(0, 1).ToUpper() ?? "?")
+                                                            </div>
+                                                        }
+                                                        <div>
+                                                            <p class="mb-0 fw-semibold">@reserva.Anuncio?.Vendedor?.Nome</p>
+                                                            <p class="mb-0 small text-muted">
+                                                                <i class="bi bi-envelope me-1"></i>@reserva.Anuncio?.Vendedor?.Email
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="d-flex gap-2">
+                                                    <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@reserva.AnuncioId" class="btn btn-primary">
+                                                        <i class="bi bi-eye me-1"></i>Ver Anúncio
+                                                    </a>
+                                                    <a href="mailto:@reserva.Anuncio?.Vendedor?.Email" class="btn btn-success">
+                                                        <i class="bi bi-chat-dots-fill me-1"></i>Contactar Vendedor
+                                                    </a>
+                                                    @if (reserva.Estado == "Ativa")
+                                                    {
+                                                        <button class="btn btn-outline-danger ms-auto" onclick="alert('Funcionalidade de cancelamento em desenvolvimento')">
+                                                            <i class="bi bi-x-circle me-1"></i>Cancelar Reserva
+                                                        </button>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                                <i class="bi bi-eye me-1"></i>Ver Anúncio
-                                            </a>
-                                            <button class="btn btn-success">
-                                                <i class="bi bi-chat-dots-fill me-1"></i>Contactar Vendedor
-                                            </button>
-                                            <button class="btn btn-outline-danger ms-auto">
-                                                <i class="bi bi-x-circle me-1"></i>Cancelar Reserva
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Estado Vazio -->
+                            <div class="reservas-empty text-center py-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-bookmark-x" style="font-size: 4rem; color: #e2e8f0;"></i>
+                                </div>
+                                <h4 class="text-muted mb-2">Sem reservas ativas</h4>
+                                <p class="text-muted mb-4">Quando reservar um veículo, ele aparecerá aqui</p>
+                                <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                    <i class="bi bi-search me-2"></i>Explorar Anúncios
+                                </a>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Estado Vazio -->
-                    <div class="reservas-empty text-center py-5 d-none">
-                        <div class="mb-4">
-                            <i class="bi bi-bookmark-x" style="font-size: 4rem; color: #e2e8f0;"></i>
-                        </div>
-                        <h4 class="text-muted mb-2">Sem reservas ativas</h4>
-                        <p class="text-muted mb-4">Quando reservar um veículo, ele aparecerá aqui</p>
-                        <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
-                            <i class="bi bi-search me-2"></i>Explorar Anúncios
-                        </a>
+                        }
                     </div>
                 </div>
 

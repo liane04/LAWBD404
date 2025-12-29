@@ -781,7 +781,7 @@ namespace Marketplace.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Adicionar role de Vendedor ao utilizador (sem criar novo registo na tabela)
+                // Adicionar role de Vendedor ao utilizador
                 var appUser = await _userManager.FindByIdAsync(comprador.IdentityUserId.ToString());
                 if (appUser != null)
                 {
