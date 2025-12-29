@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Reserva Cancelada";
+    var anuncioId = ViewBag.AnuncioId;
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-x-circle-fill text-warning" style="font-size: 5rem;"></i>
+                    </div>
+
+                    <h2 class="text-warning mb-3">Reserva Cancelada</h2>
+                    <p class="lead text-muted mb-4">
+                        O processo de pagamento foi cancelado
+                    </p>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Nenhum valor foi cobrado. Pode tentar novamente quando quiser.
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        @if (anuncioId != null)
+                        {
+                            <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncioId" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-arrow-left me-2"></i>Voltar ao Anúncio
+                            </a>
+                            <a asp-action="Create" asp-route-anuncioId="@anuncioId" class="btn btn-primary btn-lg">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Tentar Novamente
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary btn-lg">
+                                <i class="bi bi-search me-2"></i>Explorar Veículos
+                            </a>
+                        }
+                    </div>
+
+                    <div class="mt-4">
+                        <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                            <i class="bi bi-house-fill me-1"></i>Voltar à Página Inicial
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

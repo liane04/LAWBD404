@@ -65,6 +65,9 @@ builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 // Background service para notificações de filtros guardados
 builder.Services.AddHostedService<SavedFiltersNotificationService>();
 
+// Stripe Configuration
+Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Utilizadores/Login";

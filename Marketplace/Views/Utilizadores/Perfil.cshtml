@@ -18,7 +18,7 @@
                                 <i class="bi bi-camera-fill"></i>
                             </button>
                         </div>
-                        <h5 class="mb-2 fw-bold">João Duarte Silva</h5>
+                        <h5 class="mb-2 fw-bold">@(ViewBag.Nome ?? "Utilizador")</h5>
                         <div class="perfil-user-badges mb-2">
                             @if (User.IsInRole("Comprador"))
                             {
@@ -40,7 +40,7 @@
                             }
                         </div>
                         <small class="perfil-member-since">
-                            <i class="bi bi-calendar-check me-1"></i>Membro desde Out 2025
+                            <i class="bi bi-calendar-check me-1"></i>Membro desde @(((DateTime?)ViewBag.DataCriacao)?.ToString("MMM yyyy") ?? "2025")
                         </small>
                     </div>
 
@@ -95,6 +95,11 @@
                                 <i class="bi bi-calendar-check-fill"></i>
                                 <span>Minhas Visitas</span>
                                 <span class="badge bg-info rounded-pill ms-auto">1</span>
+                            </a>
+                            <a href="#minhas-compras" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-bag-check-fill"></i>
+                                <span>Minhas Compras</span>
+                                <span class="badge bg-success rounded-pill ms-auto">@(ViewBag.ComprasCount ?? 0)</span>
                             </a>
                             <a href="#pesquisas-guardadas" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-bookmark-heart"></i>
@@ -194,7 +199,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Nome Completo</label>
-                                            <p class="perfil-info-value">João Duarte Silva</p>
+                                            <p class="perfil-info-value">@(ViewBag.Nome ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -205,7 +210,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Username</label>
-                                            <p class="perfil-info-value">joao.silva</p>
+                                            <p class="perfil-info-value">@(ViewBag.UserName ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -216,7 +221,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Email</label>
-                                            <p class="perfil-info-value">joao.silva@exemplo.com</p>
+                                            <p class="perfil-info-value">@(ViewBag.Email ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -228,8 +233,14 @@
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Estado da Conta</label>
                                             <p class="perfil-info-value">
-                                                <span class="badge bg-success-subtle text-success">
-                                                    <i class="bi bi-check-circle-fill me-1"></i>Ativo
+                                                @{
+                                                    var estado = ViewBag.EstadoConta as string ?? "Ativo";
+                                                    var estadoBadgeClass = estado == "Ativo" ? "bg-success-subtle text-success" :
+                                                                    estado == "Pendente" ? "bg-warning-subtle text-warning" :
+                                                                    "bg-danger-subtle text-danger";
+                                                }
+                                                <span class="badge @estadoBadgeClass">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>@estado
                                                 </span>
                                             </p>
                                         </div>
@@ -255,21 +266,38 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Telemóvel</label>
-                                            <p class="perfil-info-value">+351 912 345 678</p>
+                                            <p class="perfil-info-value">@(ViewBag.Telefone ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="perfil-info-item">
-                                        <div class="perfil-info-icon">
-                                            <i class="bi bi-telephone-fill"></i>
-                                        </div>
-                                        <div class="perfil-info-content">
-                                            <label class="perfil-info-label">Telefone Alternativo</label>
-                                            <p class="perfil-info-value text-muted">Não definido</p>
+                                @if (User.IsInRole("Vendedor") && ViewBag.Nif != null)
+                                {
+                                    <div class="col-md-6">
+                                        <div class="perfil-info-item">
+                                            <div class="perfil-info-icon">
+                                                <i class="bi bi-credit-card-2-front"></i>
+                                            </div>
+                                            <div class="perfil-info-content">
+                                                <label class="perfil-info-label">NIF</label>
+                                                <p class="perfil-info-value">@ViewBag.Nif</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
+                                @if (User.IsInRole("Vendedor"))
+                                {
+                                    <div class="col-md-6">
+                                        <div class="perfil-info-item">
+                                            <div class="perfil-info-icon">
+                                                <i class="bi bi-bank"></i>
+                                            </div>
+                                            <div class="perfil-info-content">
+                                                <label class="perfil-info-label">NIB (Pagamentos)</label>
+                                                <p class="perfil-info-value">@(ViewBag.Nib ?? "Não definido")</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -290,7 +318,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Rua</label>
-                                            <p class="perfil-info-value">Rua Dr. Manuel Cardona, nº 123, 2º Esq.</p>
+                                            <p class="perfil-info-value">@(ViewBag.Rua ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -301,7 +329,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Código Postal</label>
-                                            <p class="perfil-info-value">5000-558</p>
+                                            <p class="perfil-info-value">@(ViewBag.CodigoPostal ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -312,7 +340,7 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">Localidade</label>
-                                            <p class="perfil-info-value">Vila Real</p>
+                                            <p class="perfil-info-value">@(ViewBag.Localidade ?? "Não definido")</p>
                                         </div>
                                     </div>
                                 </div>
@@ -323,13 +351,38 @@
                                         </div>
                                         <div class="perfil-info-content">
                                             <label class="perfil-info-label">País</label>
-                                            <p class="perfil-info-value">Portugal</p>
+                                            <p class="perfil-info-value">@(ViewBag.Pais ?? "Portugal")</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    @* Botão para se tornar vendedor (apenas para compradores) *@
+                    @if (User.IsInRole("Comprador") && !User.IsInRole("Vendedor"))
+                    {
+                        <div class="card shadow-sm border-0 border-start border-4 border-primary mt-4">
+                            <div class="card-body p-4">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h5 class="mb-2">
+                                            <i class="bi bi-shop text-primary me-2"></i>Quer vender os seus veículos?
+                                        </h5>
+                                        <p class="text-muted mb-0">
+                                            Torne-se um vendedor na plataforma 404 Ride e comece a anunciar os seus veículos.
+                                            Após aprovação do administrador, terá acesso a todas as funcionalidades de vendedor.
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalTornarVendedor">
+                                            <i class="bi bi-arrow-right-circle me-2"></i>Tornar-me Vendedor
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
 
                 @if (User.IsInRole("Vendedor"))
@@ -352,19 +405,19 @@
                     <!-- Filtros/Tabs de Estado -->
                     <div class="anuncios-filter-tabs mb-4">
                         <button class="anuncios-filter-btn active" data-filter="todos">
-                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">5</span>
+                            <i class="bi bi-grid-fill me-1"></i>Todos <span class="badge bg-primary ms-1">@ViewBag.AnunciosCount</span>
                         </button>
                         <button class="anuncios-filter-btn" data-filter="ativo">
-                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">2</span>
+                            <i class="bi bi-check-circle-fill me-1"></i>Ativos <span class="badge bg-success ms-1">@ViewBag.AnunciosAtivos</span>
                         </button>
                         <button class="anuncios-filter-btn" data-filter="reservado">
-                            <i class="bi bi-bookmark-check-fill me-1"></i>Reservados <span class="badge bg-warning ms-1">1</span>
+                            <i class="bi bi-bookmark-check-fill me-1"></i>Reservados <span class="badge bg-warning ms-1">@ViewBag.AnunciosReservados</span>
                         </button>
                         <button class="anuncios-filter-btn" data-filter="vendido">
-                            <i class="bi bi-check2-circle me-1"></i>Vendidos <span class="badge bg-info ms-1">2</span>
+                            <i class="bi bi-check2-circle me-1"></i>Vendidos <span class="badge bg-info ms-1">@ViewBag.AnunciosVendidos</span>
                         </button>
                         <button class="anuncios-filter-btn" data-filter="pausado">
-                            <i class="bi bi-pause-circle-fill me-1"></i>Pausados <span class="badge bg-secondary ms-1">0</span>
+                            <i class="bi bi-pause-circle-fill me-1"></i>Pausados <span class="badge bg-secondary ms-1">@ViewBag.AnunciosPausados</span>
                         </button>
                     </div>
 
@@ -400,133 +453,150 @@
                         </div>
                         <div class="reservas-stats d-flex gap-3">
                             <div class="stat-item text-center">
-                                <div class="stat-value text-success fw-bold">1</div>
+                                <div class="stat-value text-success fw-bold">@ViewBag.ReservasAtivasVendedor</div>
                                 <div class="stat-label text-muted small">Ativa</div>
                             </div>
                             <div class="stat-item text-center">
-                                <div class="stat-value text-primary fw-bold">500€</div>
+                                <div class="stat-value text-primary fw-bold">@(ViewBag.TotalSinais?.ToString("N2") ?? "0,00")€</div>
                                 <div class="stat-label text-muted small">Em Sinais</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Filtros de Status -->
+                    @{
+                        var reservasRecebidas = ViewBag.ReservasRecebidas as IEnumerable<Marketplace.Models.Reserva> ?? Enumerable.Empty<Marketplace.Models.Reserva>();
+                        var totalReservasVendedor = reservasRecebidas.Count();
+                        var reservasPendentes = reservasRecebidas.Count(r => r.Estado == "Pendente");
+                        var reservasAtivas = reservasRecebidas.Count(r => r.Estado == "Ativa");
+                        var reservasExpiradas = reservasRecebidas.Count(r => r.Estado == "Expirada");
+                    }
                     <div class="anuncios-filter-tabs mb-4">
                         <button class="anuncios-filter-btn active" data-filter-reservas-vendedor="todas">
-                            <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">1</span>
+                            <i class="bi bi-grid-fill me-1"></i>Todas <span class="badge bg-primary ms-1">@totalReservasVendedor</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="pendentes">
-                            <i class="bi bi-clock-fill me-1"></i>Aguardam Confirmação <span class="badge bg-warning ms-1">0</span>
+                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="pendente">
+                            <i class="bi bi-clock-fill me-1"></i>Aguardam Confirmação <span class="badge bg-warning ms-1">@reservasPendentes</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="ativas">
-                            <i class="bi bi-check-circle-fill me-1"></i>Ativas <span class="badge bg-success ms-1">1</span>
+                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="ativa">
+                            <i class="bi bi-check-circle-fill me-1"></i>Ativas <span class="badge bg-success ms-1">@reservasAtivas</span>
                         </button>
-                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="expiradas">
-                            <i class="bi bi-x-circle-fill me-1"></i>Expiradas <span class="badge bg-secondary ms-1">0</span>
+                        <button class="anuncios-filter-btn" data-filter-reservas-vendedor="expirada">
+                            <i class="bi bi-x-circle-fill me-1"></i>Expiradas <span class="badge bg-secondary ms-1">@reservasExpiradas</span>
                         </button>
                     </div>
 
                     <!-- Lista de Reservas -->
                     <div class="reservas-vendedor-list">
-                        <!-- Reserva Ativa -->
-                        <div class="card shadow-sm border-success mb-3" data-status-reserva-vendedor="ativa">
-                            <div class="card-body p-4">
-                                <div class="row g-3">
-                                    <div class="col-auto">
-                                        <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 1" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
-                                    </div>
-                                    <div class="col">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="mb-1 fw-bold">Reserva: BMW Série 1 116d</h5>
-                                                <p class="text-muted mb-2 small">Seu anúncio • Preço: 15.900€</p>
-                                            </div>
-                                            <span class="badge bg-success fs-6">
-                                                <i class="bi bi-check-circle-fill me-1"></i>Ativa
-                                            </span>
-                                        </div>
+                        @if (reservasRecebidas.Any())
+                        {
+                            foreach (var reserva in reservasRecebidas)
+                            {
+                                var primeiraImagem = reserva.Anuncio?.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/no-image.jpg";
+                                var borderClass = reserva.Estado == "Ativa" ? "border-success" : reserva.Estado == "Expirada" ? "border-secondary" : "border-warning";
+                                var badgeClass = reserva.Estado == "Ativa" ? "bg-success" : reserva.Estado == "Expirada" ? "bg-secondary" : "bg-warning";
+                                var tempoExpiracao = reserva.DataExpiracao.HasValue ? (reserva.DataExpiracao.Value - DateTime.Now).TotalHours : 0;
 
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Data da Reserva:</p>
-                                                <p class="mb-0 fw-semibold">23/10/2025 14:32</p>
+                                <div class="card shadow-sm @borderClass mb-3" data-status-reserva-vendedor="@reserva.Estado.ToLower()">
+                                    <div class="card-body p-4">
+                                        <div class="row g-3">
+                                            <div class="col-auto">
+                                                <img src="@primeiraImagem" alt="@reserva.Anuncio?.Titulo" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
                                             </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Expira em:</p>
-                                                <p class="mb-0 fw-semibold text-danger">
-                                                    <i class="bi bi-hourglass-split me-1"></i>18 horas
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Sinal Recebido:</p>
-                                                <p class="mb-0 fw-bold text-success fs-5">500€</p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Método Pagamento:</p>
-                                                <p class="mb-0 fw-semibold">MB WAY</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="alert alert-warning mb-3 small">
-                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                            <strong>Ação necessária:</strong> Entre em contacto com o comprador nas próximas 24h para acordar os detalhes da venda.
-                                        </div>
-
-                                        <div class="reserva-comprador mb-3 p-3 bg-light rounded">
-                                            <h6 class="mb-2 small fw-bold">
-                                                <i class="bi bi-person-badge me-1"></i>Comprador
-                                            </h6>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://placehold.co/50x50/0d6efd/ffffff?text=JS" class="rounded-circle me-3" alt="João Silva">
+                                            <div class="col">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
                                                     <div>
-                                                        <p class="mb-0 fw-semibold">João Duarte Silva</p>
-                                                        <p class="mb-0 small text-muted">
-                                                            <i class="bi bi-envelope me-1"></i>joao.silva@exemplo.com •
-                                                            <i class="bi bi-telephone-fill me-1"></i>+351 912 345 678
+                                                        <h5 class="mb-1 fw-bold">Reserva: @reserva.Anuncio?.Titulo</h5>
+                                                        <p class="text-muted mb-2 small">Seu anúncio • Preço: @reserva.Anuncio?.Preco.ToString("N2")€</p>
+                                                    </div>
+                                                    <span class="badge @badgeClass fs-6">
+                                                        <i class="bi bi-check-circle-fill me-1"></i>@reserva.Estado
+                                                    </span>
+                                                </div>
+
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Data da Reserva:</p>
+                                                        <p class="mb-0 fw-semibold">@reserva.Data.ToString("dd/MM/yyyy HH:mm")</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Expira em:</p>
+                                                        <p class="mb-0 fw-semibold @(tempoExpiracao < 24 ? "text-danger" : "text-warning")">
+                                                            <i class="bi bi-hourglass-split me-1"></i>@((int)tempoExpiracao) horas
                                                         </p>
                                                     </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Sinal Recebido:</p>
+                                                        <p class="mb-0 fw-bold text-success fs-5">@reserva.Anuncio.ValorSinal.ToString("N2")€</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Preço Total:</p>
+                                                        <p class="mb-0 fw-semibold">@reserva.Anuncio.Preco.ToString("N2")€</p>
+                                                    </div>
                                                 </div>
-                                                <span class="badge bg-success-subtle text-success">
-                                                    <i class="bi bi-shield-check me-1"></i>Verificado
-                                                </span>
-                                            </div>
-                                            <div class="mt-2 p-2 bg-white rounded border">
-                                                <p class="mb-0 small"><strong>Mensagem do comprador:</strong></p>
-                                                <p class="mb-0 small text-muted">"Boa tarde, tenho muito interesse no veículo. Estou disponível para visitar nos próximos dias. Aguardo o vosso contacto."</p>
-                                            </div>
-                                        </div>
 
-                                        <div class="d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                                <i class="bi bi-eye me-1"></i>Ver Anúncio
-                                            </a>
-                                            <button class="btn btn-success">
-                                                <i class="bi bi-chat-dots-fill me-1"></i>Contactar Comprador
-                                            </button>
-                                            <button class="btn btn-info text-white">
-                                                <i class="bi bi-calendar-plus me-1"></i>Agendar Visita
-                                            </button>
-                                            <button class="btn btn-outline-danger ms-auto">
-                                                <i class="bi bi-x-circle me-1"></i>Cancelar Reserva
-                                            </button>
+                                                @if (reserva.Estado == "Ativa")
+                                                {
+                                                    <div class="alert alert-warning mb-3 small">
+                                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                        <strong>Ação necessária:</strong> Entre em contacto com o comprador nas próximas 24h para acordar os detalhes da venda.
+                                                    </div>
+                                                }
+
+                                                <div class="reserva-comprador mb-3 p-3 bg-light rounded">
+                                                    <h6 class="mb-2 small fw-bold">
+                                                        <i class="bi bi-person-badge me-1"></i>Comprador
+                                                    </h6>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="d-flex align-items-center">
+                                                            @if (!string.IsNullOrEmpty(reserva.Comprador?.ImagemPerfil))
+                                                            {
+                                                                <img src="@reserva.Comprador.ImagemPerfil" class="rounded-circle me-3" alt="@reserva.Comprador.Nome" style="width: 50px; height: 50px; object-fit: cover;">
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                                    @(reserva.Comprador?.Nome?.Substring(0, 1).ToUpper() ?? "?")
+                                                                </div>
+                                                            }
+                                                            <div>
+                                                                <p class="mb-0 fw-semibold">@reserva.Comprador?.Nome</p>
+                                                                <p class="mb-0 small text-muted">
+                                                                    <i class="bi bi-envelope me-1"></i>@reserva.Comprador?.Email
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="d-flex gap-2">
+                                                    <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@reserva.AnuncioId" class="btn btn-primary">
+                                                        <i class="bi bi-eye me-1"></i>Ver Anúncio
+                                                    </a>
+                                                    <a href="mailto:@reserva.Comprador?.Email" class="btn btn-success">
+                                                        <i class="bi bi-envelope-fill me-1"></i>Contactar Comprador
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Estado Vazio -->
+                            <div class="reservas-vendedor-empty text-center py-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-bookmark-x" style="font-size: 4rem; color: #e2e8f0;"></i>
+                                </div>
+                                <h4 class="text-muted mb-2">Sem reservas recebidas</h4>
+                                <p class="text-muted mb-4">Quando alguém reservar um dos seus veículos, aparecerá aqui</p>
+                                <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                    <i class="bi bi-grid-3x3-gap me-2"></i>Ver Meus Anúncios
+                                </a>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Estado Vazio -->
-                    <div class="reservas-vendedor-empty text-center py-5 d-none">
-                        <div class="mb-4">
-                            <i class="bi bi-bookmark-x" style="font-size: 4rem; color: #e2e8f0;"></i>
-                        </div>
-                        <h4 class="text-muted mb-2">Sem reservas recebidas</h4>
-                        <p class="text-muted mb-4">Quando alguém reservar um dos seus veículos, aparecerá aqui</p>
-                        <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
-                            <i class="bi bi-grid-3x3-gap me-2"></i>Ver Meus Anúncios
-                        </a>
+                        }
                     </div>
                 </div>
 
@@ -641,7 +711,7 @@
                                 var anuncio = visita.Anuncio;
                                 var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
                                 var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
-                                var badgeClass = visita.Estado switch
+                                var visitaRecebidaBadge = visita.Estado switch
                                 {
                                     "Confirmada" => "bg-success",
                                     "Pendente" => "bg-warning text-dark",
@@ -672,7 +742,7 @@
                                                             Seu anúncio • @marcaModelo • Preço: @anuncio.Preco.ToString("N0")€
                                                         </p>
                                                     </div>
-                                                    <span class="badge @badgeClass fs-6">
+                                                    <span class="badge @visitaRecebidaBadge fs-6">
                                                         @if (visita.Estado == "Confirmada")
                                                         {
                                                             <i class="bi bi-check-circle-fill me-1"></i>
@@ -857,7 +927,7 @@
                                 var anuncio = visita.Anuncio;
                                 var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
                                 var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
-                                var badgeClass = visita.Estado switch
+                                var visitaAgendadaBadge = visita.Estado switch
                                 {
                                     "Confirmada" => "bg-success",
                                     "Pendente" => "bg-warning text-dark",
@@ -888,7 +958,7 @@
                                                             @marcaModelo • Preço: @anuncio.Preco.ToString("N0")€
                                                         </p>
                                                     </div>
-                                                    <span class="badge @badgeClass fs-6">
+                                                    <span class="badge @visitaAgendadaBadge fs-6">
                                                         @if (visita.Estado == "Confirmada")
                                                         {
                                                             <i class="bi bi-check-circle-fill me-1"></i>
@@ -1594,104 +1664,136 @@
                         </div>
                         <div class="reservas-stats d-flex gap-3">
                             <div class="stat-item text-center">
-                                <div class="stat-value text-warning fw-bold">1</div>
+                                <div class="stat-value text-warning fw-bold">@ViewBag.ReservasAtivasComprador</div>
                                 <div class="stat-label text-muted small">Ativa</div>
                             </div>
                             <div class="stat-item text-center">
-                                <div class="stat-value text-muted fw-bold">0</div>
+                                <div class="stat-value text-muted fw-bold">@ViewBag.ReservasExpiradas</div>
                                 <div class="stat-label text-muted small">Expiradas</div>
                             </div>
                         </div>
                     </div>
 
+                    @{
+                        var minhasReservas = ViewBag.MinhasReservas as IEnumerable<Marketplace.Models.Reserva> ?? Enumerable.Empty<Marketplace.Models.Reserva>();
+                    }
+
                     <!-- Lista de Reservas -->
                     <div class="reservas-list">
-                        <!-- Reserva Ativa -->
-                        <div class="card shadow-sm border-warning mb-3">
-                            <div class="card-body p-4">
-                                <div class="row g-3">
-                                    <div class="col-auto">
-                                        <img src="~/imagens/bmwSerie1.jpg" alt="BMW Série 3" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
-                                    </div>
-                                    <div class="col">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="mb-1 fw-bold">BMW Série 3 320d Pack M</h5>
-                                                <p class="text-muted mb-2 small">2019 • 85.000 km • Diesel • Manual</p>
-                                            </div>
-                                            <span class="badge bg-warning text-dark fs-6">
-                                                <i class="bi bi-clock-fill me-1"></i>Ativa
-                                            </span>
-                                        </div>
+                        @if (minhasReservas.Any())
+                        {
+                            foreach (var reserva in minhasReservas)
+                            {
+                                var primeiraImagem = reserva.Anuncio?.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/no-image.jpg";
+                                var borderClass = reserva.Estado == "Ativa" ? "border-warning" : reserva.Estado == "Expirada" ? "border-secondary" : "border-success";
+                                var badgeClass = reserva.Estado == "Ativa" ? "bg-warning text-dark" : reserva.Estado == "Expirada" ? "bg-secondary" : "bg-success";
+                                var tempoExpiracao = reserva.DataExpiracao.HasValue ? (reserva.DataExpiracao.Value - DateTime.Now).TotalHours : 0;
+                                var anuncioInfo = $"{reserva.Anuncio?.Ano} • {reserva.Anuncio?.Quilometragem:N0} km • {reserva.Anuncio?.Combustivel?.Tipo ?? "N/A"} • {reserva.Anuncio?.Caixa}";
 
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Data da Reserva:</p>
-                                                <p class="mb-0 fw-semibold">23/10/2025 14:32</p>
+                                <div class="card shadow-sm @borderClass mb-3">
+                                    <div class="card-body p-4">
+                                        <div class="row g-3">
+                                            <div class="col-auto">
+                                                <img src="@primeiraImagem" alt="@reserva.Anuncio?.Titulo" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
                                             </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Expira em:</p>
-                                                <p class="mb-0 fw-semibold text-danger">
-                                                    <i class="bi bi-hourglass-split me-1"></i>18 horas
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Sinal Pago:</p>
-                                                <p class="mb-0 fw-semibold text-success">500€</p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <p class="text-muted mb-0 small">Preço Total:</p>
-                                                <p class="mb-0 fw-bold text-primary fs-5">28.500€</p>
-                                            </div>
-                                        </div>
+                                            <div class="col">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <h5 class="mb-1 fw-bold">@reserva.Anuncio?.Titulo</h5>
+                                                        <p class="text-muted mb-2 small">@anuncioInfo</p>
+                                                    </div>
+                                                    <span class="badge @badgeClass fs-6">
+                                                        <i class="bi bi-@(reserva.Estado == "Ativa" ? "clock-fill" : reserva.Estado == "Expirada" ? "x-circle-fill" : "check-circle-fill") me-1"></i>@reserva.Estado
+                                                    </span>
+                                                </div>
 
-                                        <div class="alert alert-info mb-3 small">
-                                            <i class="bi bi-info-circle-fill me-2"></i>
-                                            <strong>Prioridade garantida até 25/10/2025 14:32.</strong> Entre em contacto com o vendedor para finalizar a compra.
-                                        </div>
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Data da Reserva:</p>
+                                                        <p class="mb-0 fw-semibold">@reserva.Data.ToString("dd/MM/yyyy HH:mm")</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Expira em:</p>
+                                                        <p class="mb-0 fw-semibold @(tempoExpiracao < 24 ? "text-danger" : tempoExpiracao < 48 ? "text-warning" : "text-success")">
+                                                            <i class="bi bi-hourglass-split me-1"></i>@((int)tempoExpiracao) horas
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Sinal Pago:</p>
+                                                        <p class="mb-0 fw-semibold text-success">@reserva.Anuncio.ValorSinal.ToString("N2")€</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <p class="text-muted mb-0 small">Preço Total:</p>
+                                                        <p class="mb-0 fw-bold text-primary fs-5">@reserva.Anuncio?.Preco.ToString("N2")€</p>
+                                                    </div>
+                                                </div>
 
-                                        <div class="reserva-vendedor mb-3 p-3 bg-light rounded">
-                                            <h6 class="mb-2 small fw-bold">
-                                                <i class="bi bi-person-badge me-1"></i>Vendedor
-                                            </h6>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://placehold.co/50x50/0d6efd/ffffff?text=PC" class="rounded-circle me-3" alt="Pedro Costa">
-                                                <div>
-                                                    <p class="mb-0 fw-semibold">Pedro Costa</p>
-                                                    <p class="mb-0 small text-muted">
-                                                        <i class="bi bi-star-fill text-warning me-1"></i>4.5 • +351 912 345 678
-                                                    </p>
+                                                @if (reserva.Estado == "Ativa" && reserva.DataExpiracao.HasValue)
+                                                {
+                                                    <div class="alert alert-info mb-3 small">
+                                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                                        <strong>Prioridade garantida até @reserva.DataExpiracao.Value.ToString("dd/MM/yyyy HH:mm").</strong> Entre em contacto com o vendedor para finalizar a compra.
+                                                    </div>
+                                                }
+
+                                                <div class="reserva-vendedor mb-3 p-3 bg-light rounded">
+                                                    <h6 class="mb-2 small fw-bold">
+                                                        <i class="bi bi-person-badge me-1"></i>Vendedor
+                                                    </h6>
+                                                    <div class="d-flex align-items-center">
+                                                        @if (!string.IsNullOrEmpty(reserva.Anuncio?.Vendedor?.ImagemPerfil))
+                                                        {
+                                                            <img src="@reserva.Anuncio.Vendedor.ImagemPerfil" class="rounded-circle me-3" alt="@reserva.Anuncio.Vendedor.Nome" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                                @(reserva.Anuncio?.Vendedor?.Nome?.Substring(0, 1).ToUpper() ?? "?")
+                                                            </div>
+                                                        }
+                                                        <div>
+                                                            <p class="mb-0 fw-semibold">@reserva.Anuncio?.Vendedor?.Nome</p>
+                                                            <p class="mb-0 small text-muted">
+                                                                <i class="bi bi-envelope me-1"></i>@reserva.Anuncio?.Vendedor?.Email
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="d-flex gap-2">
+                                                    <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@reserva.AnuncioId" class="btn btn-primary">
+                                                        <i class="bi bi-eye me-1"></i>Ver Anúncio
+                                                    </a>
+                                                    <a href="mailto:@reserva.Anuncio?.Vendedor?.Email" class="btn btn-success">
+                                                        <i class="bi bi-chat-dots-fill me-1"></i>Contactar Vendedor
+                                                    </a>
+                                                    @if (reserva.Estado == "Ativa")
+                                                    {
+                                                        <button class="btn btn-outline-danger ms-auto" onclick="alert('Funcionalidade de cancelamento em desenvolvimento')">
+                                                            <i class="bi bi-x-circle me-1"></i>Cancelar Reserva
+                                                        </button>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="d-flex gap-2">
-                                            <a asp-controller="Anuncios" asp-action="Details" class="btn btn-primary">
-                                                <i class="bi bi-eye me-1"></i>Ver Anúncio
-                                            </a>
-                                            <button class="btn btn-success">
-                                                <i class="bi bi-chat-dots-fill me-1"></i>Contactar Vendedor
-                                            </button>
-                                            <button class="btn btn-outline-danger ms-auto">
-                                                <i class="bi bi-x-circle me-1"></i>Cancelar Reserva
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Estado Vazio -->
+                            <div class="reservas-empty text-center py-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-bookmark-x" style="font-size: 4rem; color: #e2e8f0;"></i>
+                                </div>
+                                <h4 class="text-muted mb-2">Sem reservas ativas</h4>
+                                <p class="text-muted mb-4">Quando reservar um veículo, ele aparecerá aqui</p>
+                                <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                    <i class="bi bi-search me-2"></i>Explorar Anúncios
+                                </a>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Estado Vazio -->
-                    <div class="reservas-empty text-center py-5 d-none">
-                        <div class="mb-4">
-                            <i class="bi bi-bookmark-x" style="font-size: 4rem; color: #e2e8f0;"></i>
-                        </div>
-                        <h4 class="text-muted mb-2">Sem reservas ativas</h4>
-                        <p class="text-muted mb-4">Quando reservar um veículo, ele aparecerá aqui</p>
-                        <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
-                            <i class="bi bi-search me-2"></i>Explorar Anúncios
-                        </a>
+                        }
                     </div>
                 </div>
 
@@ -1743,7 +1845,7 @@
                                 var anuncio = visita.Anuncio;
                                 var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
                                 var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
-                                var badgeClass = visita.Estado switch
+                                var minhaVisitaBadge = visita.Estado switch
                                 {
                                     "Confirmada" => "bg-success",
                                     "Pendente" => "bg-warning",
@@ -1778,7 +1880,7 @@
                                                             }
                                                         </p>
                                                     </div>
-                                                    <span class="badge @badgeClass fs-6">
+                                                    <span class="badge @minhaVisitaBadge fs-6">
                                                         @if (visita.Estado == "Confirmada")
                                                         {
                                                             <i class="bi bi-check-circle-fill me-1"></i>
@@ -1904,8 +2006,167 @@
                     </div>
                 }
 
+                <!-- Aba: Minhas Compras (Comprador) -->
+                @if (User.IsInRole("Comprador"))
+                {
+                    var compras = ViewBag.Compras as List<Marketplace.Models.Compra> ?? new List<Marketplace.Models.Compra>();
+                    <div class="tab-pane fade" id="minhas-compras">
+                        <!-- Cabeçalho da Página -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h3 class="mb-1 fw-bold">
+                                    <i class="bi bi-bag-check-fill text-success me-2"></i>Minhas Compras
+                                </h3>
+                                <p class="text-muted mb-0">Veículos que adquiriu através da plataforma</p>
+                            </div>
+                            <div class="compras-stats d-flex gap-3">
+                                <div class="stat-item text-center">
+                                    <div class="stat-value text-success fw-bold">@compras.Count</div>
+                                    <div class="stat-label text-muted small">Total</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (compras.Any())
+                        {
+                            <!-- Lista de Compras -->
+                            <div class="compras-list">
+                                @foreach (var compra in compras)
+                                {
+                                    var anuncio = compra.Anuncio;
+                                    var imagemPrincipal = anuncio.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
+                                    var marcaModelo = $"{anuncio.Marca?.Nome} {anuncio.Modelo?.Nome}";
+
+                                    <div class="card shadow-sm border-success mb-3">
+                                        <div class="card-body p-4">
+                                            <div class="row g-3">
+                                                <div class="col-auto">
+                                                    <img src="@imagemPrincipal" alt="@anuncio.Titulo" class="rounded" style="width: 150px; height: 112px; object-fit: cover;">
+                                                </div>
+                                                <div class="col">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <div>
+                                                            <h5 class="mb-1 fw-bold">@anuncio.Titulo</h5>
+                                                            <p class="text-muted mb-2">
+                                                                <i class="bi bi-car-front me-1"></i>@marcaModelo
+                                                                @if (anuncio.Ano != null)
+                                                                {
+                                                                    <span> • @anuncio.Ano</span>
+                                                                }
+                                                            </p>
+                                                        </div>
+                                                        <span class="badge bg-success fs-6">
+                                                            <i class="bi bi-check-circle-fill me-1"></i>Pago
+                                                        </span>
+                                                    </div>
+
+                                                    <div class="row g-3 mb-3">
+                                                        <div class="col-md-4">
+                                                            <p class="text-muted mb-0 small">Data da Compra:</p>
+                                                            <p class="mb-0 fw-bold text-success">
+                                                                <i class="bi bi-calendar-check me-1"></i>@compra.Data.ToString("dd/MM/yyyy")
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p class="text-muted mb-0 small">Valor Pago:</p>
+                                                            <p class="mb-0 fw-bold text-primary">
+                                                                <i class="bi bi-currency-euro me-1"></i>@anuncio.Preco.ToString("N0")€
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p class="text-muted mb-0 small">Estado do Pagamento:</p>
+                                                            <p class="mb-0 fw-bold text-success">
+                                                                <i class="bi bi-check-all me-1"></i>@compra.EstadoPagamento
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    @if (anuncio.Quilometragem != null || !string.IsNullOrEmpty(anuncio.Combustivel?.Tipo))
+                                                    {
+                                                        <div class="mb-3 p-3 bg-light rounded">
+                                                            <h6 class="mb-2 small fw-bold">
+                                                                <i class="bi bi-info-circle me-1"></i>Características
+                                                            </h6>
+                                                            <div class="row g-2 small">
+                                                                @if (anuncio.Quilometragem != null)
+                                                                {
+                                                                    <div class="col-md-6">
+                                                                        <i class="bi bi-speedometer2 me-1 text-primary"></i>
+                                                                        <strong>Quilometragem:</strong> @anuncio.Quilometragem.Value.ToString("N0") km
+                                                                    </div>
+                                                                }
+                                                                @if (!string.IsNullOrEmpty(anuncio.Combustivel?.Tipo))
+                                                                {
+                                                                    <div class="col-md-6">
+                                                                        <i class="bi bi-fuel-pump me-1 text-primary"></i>
+                                                                        <strong>Combustível:</strong> @anuncio.Combustivel.Tipo
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                    <div class="compra-vendedor mb-3 p-3 bg-light rounded">
+                                                        <h6 class="mb-2 small fw-bold">
+                                                            <i class="bi bi-person-badge me-1"></i>Vendedor
+                                                        </h6>
+                                                        <div class="d-flex align-items-center">
+                                                            @if (!string.IsNullOrEmpty(anuncio.Vendedor?.ImagemPerfil))
+                                                            {
+                                                                <img src="@anuncio.Vendedor.ImagemPerfil" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="@anuncio.Vendedor.Nome">
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                                    <i class="bi bi-person-fill fs-4"></i>
+                                                                </div>
+                                                            }
+                                                            <div>
+                                                                <p class="mb-0 fw-semibold">@anuncio.Vendedor?.Nome</p>
+                                                                <p class="mb-0 text-muted small">@anuncio.Vendedor?.Email</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="alert alert-success small mb-3">
+                                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                                        <strong>Compra finalizada com sucesso!</strong> O vendedor entrará em contacto consigo para combinar a entrega do veículo.
+                                                    </div>
+
+                                                    <div class="d-flex gap-2 flex-wrap">
+                                                        <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-sm btn-primary">
+                                                            <i class="bi bi-car-front me-1"></i>Ver Anúncio
+                                                        </a>
+                                                        <a href="mailto:@anuncio.Vendedor?.Email" class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-envelope me-1"></i>Contactar Vendedor
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Estado Vazio -->
+                            <div class="compras-empty text-center py-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-bag-x" style="font-size: 4rem; color: #e2e8f0;"></i>
+                                </div>
+                                <h4 class="text-muted mb-2">Sem compras registadas</h4>
+                                <p class="text-muted mb-4">Quando comprar um veículo, ele aparecerá aqui</p>
+                                <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                    <i class="bi bi-search me-2"></i>Explorar Anúncios
+                                </a>
+                            </div>
+                        }
+                    </div>
+                }
+
                 <!-- Aba: Definições -->
-
+
                 <!-- Aba: Pesquisas Guardadas (Comprador) -->
                 <div class="tab-pane fade" id="pesquisas-guardadas">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -2192,7 +2453,6 @@
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>Zona de Perigo
                             </h5>
                         </div>
-                        <div class="card-body p-4">
                             <!-- Desativar Conta -->
                             <div class="definicao-item">
                                 <div class="definicao-info">
@@ -2206,9 +2466,12 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button class="btn btn-outline-warning">
-                                    <i class="bi bi-pause me-1"></i>Desativar
-                                </button>
+                                <form asp-controller="Utilizadores" asp-action="DeactivateAccount" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja desativar a sua conta?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-warning">
+                                        <i class="bi bi-pause me-1"></i>Desativar
+                                    </button>
+                                </form>
                             </div>
 
                             <hr class="my-3">
@@ -2226,13 +2489,13 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#eliminarContaModal">
-                                    <i class="bi bi-trash me-1"></i>Eliminar
-                                </button>
+                                <form asp-controller="Utilizadores" asp-action="DeleteAccount" method="post" class="d-inline" onsubmit="return confirm('Eliminar conta? Esta ação é irreversível.');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="bi bi-trash me-1"></i>Eliminar
+                                    </button>
+                                </form>
                             </div>
-                        </div>
-                    </div>
-
                     <!-- Botão de Guardar Alterações -->
                     <div class="text-end">
                         <button class="btn btn-lg btn-primary">
@@ -2587,6 +2850,143 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-circle me-1"></i>Atualizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Upload Foto de Perfil -->
+<div class="modal fade" id="modalFotoPerfil" tabindex="-1" aria-labelledby="modalFotoPerfilLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalFotoPerfilLabel">
+                    <i class="bi bi-camera-fill me-2"></i>Alterar Foto de Perfil
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formFotoPerfil" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <img id="previewFotoPerfil"
+                             src="@((ViewBag.ImagemPerfil as string) ?? Url.Content("~/imagens/logo.png"))"
+                             class="rounded-circle mb-3"
+                             style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #dee2e6;"
+                             alt="Preview">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputFotoPerfil" class="form-label">Escolha uma nova foto</label>
+                        <input type="file"
+                               class="form-control"
+                               id="inputFotoPerfil"
+                               name="fotoPerfil"
+                               accept="image/jpeg,image/jpg,image/png"
+                               required>
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>Formatos aceites: JPG, PNG (máx. 2MB)
+                        </div>
+                    </div>
+                    <div id="erroUploadFoto" class="alert alert-danger d-none" role="alert"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload me-2"></i>Guardar Foto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Pedir para Tornar-se Vendedor -->
+<div class="modal fade" id="modalTornarVendedor" tabindex="-1" aria-labelledby="modalTornarVendedorLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h5 class="modal-title" id="modalTornarVendedorLabel">
+                    <i class="bi bi-shop me-2"></i>Pedido para Tornar-se Vendedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formTornarVendedor">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="alert alert-info border-0 shadow-sm mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-info-circle-fill me-3" style="font-size: 2rem;"></i>
+                            <div>
+                                <h6 class="alert-heading mb-1">Como funciona?</h6>
+                                <p class="mb-0 small">
+                                    Após submeter o pedido, um administrador irá rever a sua solicitação.
+                                    Receberá um email quando o pedido for aprovado ou rejeitado.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nifVendedor" class="form-label">
+                            <i class="bi bi-credit-card-2-front me-1"></i>NIF <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               class="form-control"
+                               id="nifVendedor"
+                               name="nif"
+                               placeholder="123456789"
+                               pattern="[0-9]{9}"
+                               maxlength="9"
+                               required>
+                        <div class="form-text">
+                            <i class="bi bi-shield-check me-1"></i>Necessário para faturação e verificação fiscal
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dadosFaturacao" class="form-label">
+                            <i class="bi bi-building me-1"></i>Dados de Faturação
+                        </label>
+                        <textarea class="form-control"
+                                  id="dadosFaturacao"
+                                  name="dadosFaturacao"
+                                  rows="3"
+                                  placeholder="Nome da empresa/pessoa, morada de faturação, etc."></textarea>
+                        <div class="form-text">Opcional - pode preencher mais tarde</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="motivacao" class="form-label">
+                            <i class="bi bi-chat-text me-1"></i>Motivação <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control"
+                                  id="motivacao"
+                                  name="motivacao"
+                                  rows="4"
+                                  placeholder="Conte-nos porque quer ser vendedor na plataforma 404 Ride..."
+                                  required></textarea>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="aceitarTermos"
+                               name="aceitarTermos"
+                               required>
+                        <label class="form-check-label" for="aceitarTermos">
+                            Aceito os <a href="#" target="_blank">Termos e Condições</a> para vendedores
+                        </label>
+                    </div>
+
+                    <div id="erroTornarVendedor" class="alert alert-danger d-none mt-3" role="alert"></div>
+                    <div id="sucessoTornarVendedor" class="alert alert-success d-none mt-3" role="alert"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send me-2"></i>Enviar Pedido
                     </button>
                 </div>
             </form>
@@ -3194,6 +3594,11 @@
         const sessionsFeedback = document.getElementById('sessionsFeedback');
         const btnTerminateSessions = document.getElementById('btnTerminateSessions');
         const btnSessions = document.getElementById('btnSessions');
+        const switchEmailNotif = document.getElementById('switchEmailNotif');
+        const switchNovos = document.getElementById('switchNovosAnuncios');
+        const switchPreco = document.getElementById('switchPreco');
+        const switchPerfilPublico = document.getElementById('switchPerfilPublico');
+        const switchMostrarEmail = document.getElementById('switchMostrarEmail');
         const tokenField = () => document.querySelector('#securityAntiForgery input[name="__RequestVerificationToken"]')?.value;
 
         let twofaEnabled = false;
@@ -3226,10 +3631,64 @@
                 if (!res.ok) throw new Error();
                 const data = await res.json();
                 update2faUI(!!data.twoFactorEnabled, data.recoveryCodes ?? 0);
+                await loadNotificationStatus();
+                await loadPrivacyStatus();
             } catch {
                 update2faUI(false, 0);
                 showSecurityAlert('warning', 'Não foi possível verificar o estado de segurança neste momento.');
             }
+        };
+
+        const setToggleUI = (el, active) => {
+            if (!el) return;
+            el.checked = active;
+            const label = el.parentElement?.querySelector('label span');
+            if (label) {
+                label.classList.remove('bg-success', 'bg-secondary');
+                label.classList.add(active ? 'bg-success' : 'bg-secondary');
+                label.textContent = active ? 'Ativo' : 'Desativado';
+            }
+        };
+
+        const loadNotificationStatus = async () => {
+            try {
+                const res = await fetch('/Utilizadores/NotificationSettings');
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                setToggleUI(switchEmailNotif, !!data.email);
+                setToggleUI(switchNovos, !!data.novos);
+                setToggleUI(switchPreco, !!data.preco);
+            } catch {
+                showSecurityAlert('warning', 'Não foi possível carregar as preferências de notificação.');
+            }
+        };
+
+        const saveNotification = async (tipo, ativo) => {
+            const token = tokenField();
+            const formData = new FormData();
+            formData.append('tipo', tipo);
+            formData.append('ativo', ativo ? 'true' : 'false');
+            if (token) formData.append('__RequestVerificationToken', token);
+            const res = await fetch('/Utilizadores/SetNotification', { method: 'POST', body: formData });
+            if (!res.ok) {
+                showSecurityAlert('danger', 'Não foi possível atualizar notificações.');
+                return false;
+            }
+            return true;
+        };
+
+        const bindNotifToggle = (el, tipo) => {
+            if (!el) return;
+            el.addEventListener('change', async () => {
+                const desired = el.checked;
+                const ok = await saveNotification(tipo, desired);
+                if (ok) {
+                    setToggleUI(el, desired);
+                    showSecurityAlert('success', `Notificação de ${tipo} ${desired ? 'ativada' : 'desativada'}.`);
+                } else {
+                    setToggleUI(el, !desired);
+                }
+            });
         };
 
         const openTwoFaSetup = async () => {
@@ -3360,6 +3819,50 @@
             codeInput?.focus();
         });
 
+        bindNotifToggle(switchEmailNotif, 'email');
+        bindNotifToggle(switchNovos, 'novos');
+        bindNotifToggle(switchPreco, 'preco');
+
+        const loadPrivacyStatus = async () => {
+            try {
+                const res = await fetch('/Utilizadores/PrivacySettings');
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                setToggleUI(switchPerfilPublico, !!data.perfilPublico);
+                setToggleUI(switchMostrarEmail, !!data.mostrarEmail);
+            } catch {
+                showSecurityAlert('warning', 'Não foi possível carregar as definições de privacidade.');
+            }
+        };
+
+        const savePrivacy = async (tipo, ativo) => {
+            const token = tokenField();
+            const formData = new FormData();
+            formData.append('tipo', tipo);
+            formData.append('ativo', ativo ? 'true' : 'false');
+            if (token) formData.append('__RequestVerificationToken', token);
+            const res = await fetch('/Utilizadores/SetPrivacy', { method: 'POST', body: formData });
+            return res.ok;
+        };
+
+        const bindPrivacyToggle = (el, tipo) => {
+            if (!el) return;
+            el.addEventListener('change', async () => {
+                const desired = el.checked;
+                const ok = await savePrivacy(tipo, desired);
+                if (ok) {
+                    setToggleUI(el, desired);
+                    showSecurityAlert('success', `Privacidade (${tipo}) ${desired ? 'ativada' : 'desativada'}.`);
+                } else {
+                    setToggleUI(el, !desired);
+                    showSecurityAlert('danger', 'Não foi possível atualizar privacidade.');
+                }
+            });
+        };
+
+        bindPrivacyToggle(switchPerfilPublico, 'perfil');
+        bindPrivacyToggle(switchMostrarEmail, 'email');
+
         btnSessions?.addEventListener('click', () => {
             if (sessionsFeedback) sessionsFeedback.innerHTML = '';
             sessionsModal?.show();
@@ -3482,5 +3985,141 @@
         var modal = new bootstrap.Modal(document.getElementById('modalEditarDisponibilidade'));
         modal.show();
     }
+
+    // ===== UPLOAD DE FOTO DE PERFIL =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // Abrir modal ao clicar no botão da câmera
+        const btnCamera = document.querySelector('.perfil-avatar-edit');
+        if (btnCamera) {
+            btnCamera.addEventListener('click', function(e) {
+                e.preventDefault();
+                const modal = new bootstrap.Modal(document.getElementById('modalFotoPerfil'));
+                modal.show();
+            });
+        }
+
+        // Preview da imagem quando selecionar
+        const inputFoto = document.getElementById('inputFotoPerfil');
+        if (inputFoto) {
+            inputFoto.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validar tamanho (2MB)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('A imagem é muito grande! Tamanho máximo: 2MB');
+                        inputFoto.value = '';
+                        return;
+                    }
+
+                    // Preview
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('previewFotoPerfil').src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Submit form de foto via AJAX
+        const formFoto = document.getElementById('formFotoPerfil');
+        if (formFoto) {
+            formFoto.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const btnSubmit = this.querySelector('button[type="submit"]');
+                const erroDiv = document.getElementById('erroUploadFoto');
+
+                erroDiv.classList.add('d-none');
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A carregar...';
+
+                try {
+                    const response = await fetch('@Url.Action("UploadFotoPerfil", "Utilizadores")', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Atualizar imagem no avatar do sidebar
+                        const avatarImg = document.querySelector('.perfil-avatar');
+                        if (avatarImg) {
+                            avatarImg.src = result.imagemUrl + '?t=' + new Date().getTime();
+                        }
+
+                        // Fechar modal
+                        bootstrap.Modal.getInstance(document.getElementById('modalFotoPerfil')).hide();
+
+                        // Mostrar mensagem de sucesso
+                        alert('Foto de perfil atualizada com sucesso!');
+                    } else {
+                        erroDiv.textContent = result.message || 'Erro ao carregar imagem';
+                        erroDiv.classList.remove('d-none');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    erroDiv.textContent = 'Erro ao comunicar com o servidor';
+                    erroDiv.classList.remove('d-none');
+                } finally {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i class="bi bi-upload me-2"></i>Guardar Foto';
+                }
+            });
+        }
+
+        // ===== PEDIDO PARA TORNAR-SE VENDEDOR =====
+        const formVendedor = document.getElementById('formTornarVendedor');
+        if (formVendedor) {
+            formVendedor.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const btnSubmit = this.querySelector('button[type="submit"]');
+                const erroDiv = document.getElementById('erroTornarVendedor');
+                const sucessoDiv = document.getElementById('sucessoTornarVendedor');
+
+                erroDiv.classList.add('d-none');
+                sucessoDiv.classList.add('d-none');
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar...';
+
+                try {
+                    const response = await fetch('@Url.Action("PedirSerVendedor", "Utilizadores")', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        sucessoDiv.innerHTML = '<i class="bi bi-check-circle me-2"></i>' + (result.message || 'Pedido enviado com sucesso!');
+                        sucessoDiv.classList.remove('d-none');
+
+                        // Limpar form
+                        formVendedor.reset();
+
+                        // Fechar modal após 2 segundos
+                        setTimeout(() => {
+                            bootstrap.Modal.getInstance(document.getElementById('modalTornarVendedor')).hide();
+                            location.reload(); // Recarregar página para atualizar estado
+                        }, 2000);
+                    } else {
+                        erroDiv.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>' + (result.message || 'Erro ao enviar pedido');
+                        erroDiv.classList.remove('d-none');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    erroDiv.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Erro ao comunicar com o servidor';
+                    erroDiv.classList.remove('d-none');
+                } finally {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i class="bi bi-send me-2"></i>Enviar Pedido';
+                }
+            });
+        }
+    });
 </script>
 }

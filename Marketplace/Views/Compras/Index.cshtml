@@ -1,0 +1,151 @@
+@model List<Marketplace.Models.Compra>
+
+@{
+    ViewData["Title"] = "Minhas Compras";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Cabeçalho -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">
+                        <i class="bi bi-bag-check-fill text-success me-2"></i>Minhas Compras
+                    </h2>
+                    <p class="text-muted mb-0">Histórico de veículos adquiridos</p>
+                </div>
+                <a href="@Url.Action("Index", "Anuncios")" class="btn btn-outline-primary">
+                    <i class="bi bi-search me-2"></i>Procurar Mais Veículos
+                </a>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <!-- Lista de Compras -->
+                @foreach (var compra in Model)
+                {
+                    var anuncio = compra.Anuncio;
+                    var imagemPrincipal = anuncio?.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "~/imagens/default-car.jpg";
+                    var marcaModelo = $"{anuncio?.Marca?.Nome} {anuncio?.Modelo?.Nome}";
+                    var badgeClass = compra.EstadoPagamento switch
+                    {
+                        "Pago" => "bg-success",
+                        "Pendente" => "bg-warning text-dark",
+                        _ => "bg-secondary"
+                    };
+
+                    <div class="card shadow-sm border-start border-success border-4 mb-4">
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <!-- Imagem -->
+                                <div class="col-md-3">
+                                    <img src="@imagemPrincipal" alt="@anuncio?.Titulo" class="img-fluid rounded shadow-sm" style="object-fit: cover; width: 100%; height: 180px;">
+                                </div>
+
+                                <!-- Informações -->
+                                <div class="col-md-9">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h4 class="mb-1 fw-bold">@anuncio?.Titulo</h4>
+                                            <p class="text-muted mb-0">
+                                                <i class="bi bi-car-front me-1"></i>@marcaModelo
+                                                @if (!string.IsNullOrEmpty(anuncio?.Localizacao))
+                                                {
+                                                    <span class="ms-2">
+                                                        <i class="bi bi-geo-alt me-1"></i>@anuncio.Localizacao
+                                                    </span>
+                                                }
+                                            </p>
+                                        </div>
+                                        <span class="badge @badgeClass fs-6 px-3 py-2">
+                                            @if (compra.EstadoPagamento == "Pago")
+                                            {
+                                                <i class="bi bi-check-circle-fill me-1"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-clock-fill me-1"></i>
+                                            }
+                                            @compra.EstadoPagamento
+                                        </span>
+                                    </div>
+
+                                    <!-- Detalhes da Compra -->
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block mb-1">
+                                                <i class="bi bi-calendar3 me-1"></i>Data da Compra
+                                            </small>
+                                            <strong>@compra.Data.ToString("dd/MM/yyyy")</strong>
+                                            <small class="text-muted d-block">@compra.Data.ToString("HH:mm")</small>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block mb-1">
+                                                <i class="bi bi-cash-coin me-1"></i>Preço Total
+                                            </small>
+                                            <strong class="text-success fs-5">@anuncio?.Preco.ToString("N0") €</strong>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block mb-1">
+                                                <i class="bi bi-person-fill me-1"></i>Vendedor
+                                            </small>
+                                            <strong>@anuncio?.Vendedor?.Nome</strong>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block mb-1">
+                                                <i class="bi bi-speedometer2 me-1"></i>Quilometragem
+                                            </small>
+                                            <strong>@anuncio?.Quilometragem?.ToString("N0") km</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Características do Veículo -->
+                                    <div class="d-flex gap-3 mb-3 flex-wrap">
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="bi bi-calendar-event me-1"></i>@anuncio?.Ano
+                                        </span>
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="bi bi-fuel-pump me-1"></i>@anuncio?.Combustivel?.Tipo
+                                        </span>
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="bi bi-gear me-1"></i>@anuncio?.Caixa
+                                        </span>
+                                    </div>
+
+                                    <!-- Ações -->
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <a href="@Url.Action("Details", "Anuncios", new { id = anuncio?.Id })" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-eye-fill me-1"></i>Ver Anúncio
+                                        </a>
+                                        @if (compra.EstadoPagamento == "Pago")
+                                        {
+                                            <div class="d-flex align-items-center text-success ms-2">
+                                                <i class="bi bi-patch-check-fill me-2 fs-5"></i>
+                                                <span class="fw-semibold">Compra Concluída com Sucesso</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Estado Vazio -->
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-bag-x text-muted" style="font-size: 5rem;"></i>
+                    </div>
+                    <h4 class="mb-2">Ainda não fez nenhuma compra</h4>
+                    <p class="text-muted mb-4">Explore os nossos anúncios e encontre o veículo perfeito para si!</p>
+                    <a href="@Url.Action("Index", "Anuncios")" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search me-2"></i>Procurar Veículos
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

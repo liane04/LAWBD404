@@ -19,6 +19,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-x-circle-fill me-2"></i>
+        <strong>@TempData["Error"]</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 @if (TempData["Warning"] != null)
 {
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -35,13 +43,13 @@
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
-                        <div class="bg-warning bg-opacity-10 rounded-circle p-2">
-                            <i class="bi bi-clock-history fs-4 text-warning"></i>
+                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-clock-history fs-3 text-warning"></i>
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1 small">Pendentes</h6>
-                        <h4 class="mb-0 fw-bold text-warning">@Model.TotalPendentes</h4>
+                        <h6 class="text-muted mb-1">Pendentes</h6>
+                        <h3 class="mb-0 fw-bold">@Model.TotalPendentes</h3>
                     </div>
                 </div>
             </div>
@@ -52,13 +60,13 @@
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
-                        <div class="bg-success bg-opacity-10 rounded-circle p-2">
-                            <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-check-circle fs-3 text-success"></i>
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1 small">Aprovados</h6>
-                        <h4 class="mb-0 fw-bold text-success">@Model.TotalAprovados</h4>
+                        <h6 class="text-muted mb-1">Aprovados</h6>
+                        <h3 class="mb-0 fw-bold">@Model.TotalAprovados</h3>
                     </div>
                 </div>
             </div>
@@ -69,13 +77,13 @@
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
-                        <div class="bg-danger bg-opacity-10 rounded-circle p-2">
-                            <i class="bi bi-x-circle-fill fs-4 text-danger"></i>
+                        <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-x-circle fs-3 text-danger"></i>
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1 small">Rejeitados</h6>
-                        <h4 class="mb-0 fw-bold text-danger">@Model.TotalRejeitados</h4>
+                        <h6 class="text-muted mb-1">Rejeitados</h6>
+                        <h3 class="mb-0 fw-bold">@Model.TotalRejeitados</h3>
                     </div>
                 </div>
             </div>
@@ -83,150 +91,258 @@
     </div>
 </div>
 
-<!-- Lista de Vendedores Pendentes -->
-<div class="card shadow-sm border-0">
-    <div class="card-header bg-white border-bottom">
-        <h5 class="mb-0">
-            <i class="bi bi-hourglass-split text-warning me-2"></i>Vendedores Pendentes de Aprovação
-        </h5>
-    </div>
-    <div class="card-body p-0">
-        @if (Model.Pendentes != null && Model.Pendentes.Any())
-        {
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th scope="col" class="ps-4">Vendedor</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">NIF</th>
-                            <th scope="col" class="text-end pe-4">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var vendedor in Model.Pendentes)
-                        {
-                            <tr>
-                                <td class="ps-4">
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://placehold.co/48x48/0d6efd/ffffff?text=@(vendedor.Nome?.Substring(0, 1) ?? "V")"
-                                             alt="Avatar" class="rounded-circle me-3">
-                                        <div>
-                                            <div class="fw-bold">@vendedor.Nome</div>
-                                            <div class="small text-muted">
-                                                <i class="bi bi-person-badge me-1"></i>ID: @vendedor.Id
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <i class="bi bi-envelope me-1 text-muted"></i>@vendedor.Email
-                                </td>
-                                <td>
-                                    @if (!string.IsNullOrEmpty(vendedor.Nif))
-                                    {
-                                        <span><i class="bi bi-credit-card me-1 text-muted"></i>@vendedor.Nif</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">-</span>
-                                    }
-                                </td>
-                                <td class="text-end pe-4">
-                                    <form method="post" style="display: inline-block;" asp-controller="Administrador" asp-action="AprovarVendedor" asp-route-id="@vendedor.Id" onsubmit="return disableFormButton(this)">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-success me-1" title="Aprovar">
-                                            <i class="bi bi-check-circle-fill me-1"></i>Aprovar
-                                        </button>
-                                    </form>
-                                    <form method="post" style="display: inline-block;" asp-controller="Administrador" asp-action="RejeitarVendedor" asp-route-id="@vendedor.Id" onsubmit="return disableFormButton(this)">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Rejeitar"
-                                                onclick="return confirm('Tem certeza que deseja rejeitar este vendedor?');">
-                                            <i class="bi bi-x-circle-fill me-1"></i>Rejeitar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <div class="text-center py-5">
-                <div class="mb-4">
-                    <i class="bi bi-check-circle" style="font-size: 4rem; color: #28a745;"></i>
+<!-- Filtros -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-sm btn-primary filtro-estado active" data-estado="todos">
+                        Todos (@Model.Pedidos.Count)
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning filtro-estado" data-estado="Pendente">
+                        Pendentes (@Model.TotalPendentes)
+                    </button>
+                    <button class="btn btn-sm btn-outline-success filtro-estado" data-estado="Aprovado">
+                        Aprovados (@Model.TotalAprovados)
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger filtro-estado" data-estado="Rejeitado">
+                        Rejeitados (@Model.TotalRejeitados)
+                    </button>
                 </div>
-                <h5 class="text-muted mb-2">Nenhum vendedor pendente</h5>
-                <p class="text-muted mb-0">Todos os pedidos foram processados!</p>
             </div>
-        }
+        </div>
     </div>
 </div>
 
-@if (Model.Todos != null && Model.Todos.Any())
+<!-- Lista de Pedidos -->
+@if (!Model.Pedidos.Any())
 {
-    <!-- Lista de Todos os Vendedores -->
-    <div class="card shadow-sm border-0 mt-4">
-        <div class="card-header bg-white border-bottom">
-            <h5 class="mb-0">
-                <i class="bi bi-people-fill text-primary me-2"></i>Todos os Vendedores
-            </h5>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th scope="col" class="ps-4">Vendedor</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">NIF</th>
-                            <th scope="col">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var vendedor in Model.Todos)
-                        {
-                            <tr>
-                                <td class="ps-4">
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://placehold.co/48x48/0d6efd/ffffff?text=@(vendedor.Nome?.Substring(0, 1) ?? "V")"
-                                             alt="Avatar" class="rounded-circle me-3">
-                                        <div>
-                                            <div class="fw-bold">@vendedor.Nome</div>
-                                            <div class="small text-muted">
-                                                <i class="bi bi-person-badge me-1"></i>ID: @vendedor.Id
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <i class="bi bi-envelope me-1 text-muted"></i>@vendedor.Email
-                                </td>
-                                <td>
-                                    @if (!string.IsNullOrEmpty(vendedor.Nif))
-                                    {
-                                        <span><i class="bi bi-credit-card me-1 text-muted"></i>@vendedor.Nif</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">-</span>
-                                    }
-                                </td>
-                                <td>
-                                    @{
-                                        var estado = string.IsNullOrWhiteSpace(vendedor.Estado) ? "Pendente" : vendedor.Estado;
-                                        var badgeClass = estado == "Ativo" ? "success" : (estado == "Rejeitado" ? "danger" : "warning");
-                                    }
-                                    <span class="badge bg-@badgeClass">@estado</span>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="text-muted">Nenhum pedido de vendedor encontrado</h5>
+            <p class="text-muted mb-0">Os pedidos aparecerão aqui quando os compradores solicitarem tornar-se vendedores.</p>
         </div>
     </div>
 }
+else
+{
+    <div class="row">
+        @foreach (var pedido in Model.Pedidos)
+        {
+            var estadoBadgeClass = pedido.Estado switch
+            {
+                "Pendente" => "bg-warning",
+                "Aprovado" => "bg-success",
+                "Rejeitado" => "bg-danger",
+                _ => "bg-secondary"
+            };
+
+            var estadoIcon = pedido.Estado switch
+            {
+                "Pendente" => "clock-history",
+                "Aprovado" => "check-circle-fill",
+                "Rejeitado" => "x-circle-fill",
+                _ => "question-circle"
+            };
+
+            <div class="col-12 mb-3 pedido-card" data-estado="@pedido.Estado">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Informações do Comprador -->
+                            <div class="col-lg-4 border-end">
+                                <div class="d-flex align-items-start mb-3">
+                                    @if (!string.IsNullOrEmpty(pedido.Comprador?.ImagemPerfil))
+                                    {
+                                        <img src="@pedido.Comprador.ImagemPerfil" alt="Foto de Perfil"
+                                             class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-primary bg-opacity-10 rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                             style="width: 60px; height: 60px;">
+                                            <i class="bi bi-person fs-3 text-primary"></i>
+                                        </div>
+                                    }
+                                    <div>
+                                        <h5 class="mb-1 fw-bold">@pedido.Comprador?.Nome</h5>
+                                        <p class="text-muted mb-1 small">
+                                            <i class="bi bi-envelope me-1"></i>@pedido.Comprador?.Email
+                                        </p>
+                                        <span class="badge @estadoBadgeClass text-white">
+                                            <i class="bi bi-@estadoIcon me-1"></i>@pedido.Estado
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted d-block">NIF</small>
+                                    <strong>@pedido.Nif</strong>
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted d-block">Data do Pedido</small>
+                                    <strong>@pedido.DataPedido.ToString("dd/MM/yyyy HH:mm")</strong>
+                                </div>
+
+                                @if (pedido.DataResposta != null)
+                                {
+                                    <div class="mb-2">
+                                        <small class="text-muted d-block">Data da Resposta</small>
+                                        <strong>@pedido.DataResposta?.ToString("dd/MM/yyyy HH:mm")</strong>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Motivação e Dados de Faturação -->
+                            <div class="col-lg-5 border-end">
+                                <div class="mb-3">
+                                    <h6 class="fw-bold mb-2">
+                                        <i class="bi bi-chat-left-quote me-2 text-primary"></i>Motivação
+                                    </h6>
+                                    <p class="mb-0">@pedido.Motivacao</p>
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(pedido.DadosFaturacao))
+                                {
+                                    <div class="mb-3">
+                                        <h6 class="fw-bold mb-2">
+                                            <i class="bi bi-receipt me-2 text-primary"></i>Dados de Faturação
+                                        </h6>
+                                        <p class="mb-0 small">@pedido.DadosFaturacao</p>
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(pedido.MotivoRejeicao))
+                                {
+                                    <div class="alert alert-danger mb-0">
+                                        <h6 class="fw-bold mb-1">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>Motivo da Rejeição
+                                        </h6>
+                                        <p class="mb-0 small">@pedido.MotivoRejeicao</p>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Ações -->
+                            <div class="col-lg-3">
+                                <h6 class="fw-bold mb-3">Ações</h6>
+
+                                @if (pedido.Estado == "Pendente")
+                                {
+                                    <form method="post" action="@Url.Action("AprovarPedidoVendedor", "Administrador")" class="mb-2">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@pedido.Id" />
+                                        <button type="submit" class="btn btn-success w-100 mb-2"
+                                                onclick="return confirm('Tem certeza que deseja aprovar este pedido? O utilizador será promovido a vendedor.')">
+                                            <i class="bi bi-check-circle me-2"></i>Aprovar
+                                        </button>
+                                    </form>
+
+                                    <button type="button" class="btn btn-danger w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalRejeitar@(pedido.Id)">
+                                        <i class="bi bi-x-circle me-2"></i>Rejeitar
+                                    </button>
+
+                                    <!-- Modal de Rejeição -->
+                                    <div class="modal fade" id="modalRejeitar@(pedido.Id)" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" action="@Url.Action("RejeitarPedidoVendedor", "Administrador")">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@pedido.Id" />
+
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Rejeitar Pedido</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Tem certeza que deseja rejeitar o pedido de <strong>@pedido.Comprador?.Nome</strong>?</p>
+
+                                                        <div class="mb-3">
+                                                            <label for="motivoRejeicao@(pedido.Id)" class="form-label">
+                                                                Motivo da Rejeição <span class="text-muted">(opcional)</span>
+                                                            </label>
+                                                            <textarea class="form-control"
+                                                                      id="motivoRejeicao@(pedido.Id)"
+                                                                      name="motivoRejeicao"
+                                                                      rows="3"
+                                                                      placeholder="Ex: Documentação incompleta, NIF inválido, etc."></textarea>
+                                                            <small class="text-muted">Este motivo será enviado ao utilizador por email.</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class="bi bi-x-circle me-2"></i>Rejeitar Pedido
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info mb-0">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        <small>Este pedido já foi processado.</small>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<script>
+    // Filtro por estado
+    document.querySelectorAll('.filtro-estado').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Atualizar botões ativos
+            document.querySelectorAll('.filtro-estado').forEach(b => {
+                b.classList.remove('active', 'btn-primary', 'btn-success', 'btn-warning', 'btn-danger');
+                const estado = b.getAttribute('data-estado');
+                if (estado === 'Pendente') {
+                    b.classList.add('btn-outline-warning');
+                } else if (estado === 'Aprovado') {
+                    b.classList.add('btn-outline-success');
+                } else if (estado === 'Rejeitado') {
+                    b.classList.add('btn-outline-danger');
+                } else {
+                    b.classList.add('btn-outline-primary');
+                }
+            });
+
+            this.classList.add('active');
+            this.classList.remove('btn-outline-primary', 'btn-outline-warning', 'btn-outline-success', 'btn-outline-danger');
+
+            const estado = this.getAttribute('data-estado');
+            if (estado === 'Pendente') {
+                this.classList.add('btn-warning');
+            } else if (estado === 'Aprovado') {
+                this.classList.add('btn-success');
+            } else if (estado === 'Rejeitado') {
+                this.classList.add('btn-danger');
+            } else {
+                this.classList.add('btn-primary');
+            }
+
+            // Filtrar pedidos
+            const pedidos = document.querySelectorAll('.pedido-card');
+            pedidos.forEach(pedido => {
+                if (estado === 'todos' || pedido.getAttribute('data-estado') === estado) {
+                    pedido.style.display = 'block';
+                } else {
+                    pedido.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>

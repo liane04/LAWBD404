@@ -43,6 +43,7 @@ namespace Marketplace.Data
         public DbSet<Extra> Extras { get; set; }
         public DbSet<AnuncioExtra> AnuncioExtras { get; set; }
         public DbSet<DisponibilidadeVendedor> DisponibilidadesVendedor { get; set; }
+        public DbSet<PedidoVendedor> PedidosVendedor { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

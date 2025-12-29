@@ -4,6 +4,7 @@ using Marketplace.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marketplace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251227222440_SubstituirVendidoPorEstado")]
+    partial class SubstituirVendidoPorEstado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -809,56 +812,6 @@ namespace Marketplace.Migrations
                     b.ToTable("Notificacoes");
                 });
 
-            modelBuilder.Entity("Marketplace.Models.PedidoVendedor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AdminRespondeuId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CompradorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DadosFaturacao")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("DataPedido")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DataResposta")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Motivacao")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("MotivoRejeicao")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Nif")
-                        .IsRequired()
-                        .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompradorId");
-
-                    b.ToTable("PedidosVendedor");
-                });
-
             modelBuilder.Entity("Marketplace.Models.PesquisasPassadas", b =>
                 {
                     b.Property<int>("Id")
@@ -1281,10 +1234,6 @@ namespace Marketplace.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("Nib")
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
-
                     b.Property<string>("Nif")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -1588,17 +1537,6 @@ namespace Marketplace.Migrations
                     b.Navigation("MarcasFav");
 
                     b.Navigation("PesquisasPassadas");
-                });
-
-            modelBuilder.Entity("Marketplace.Models.PedidoVendedor", b =>
-                {
-                    b.HasOne("Marketplace.Models.Comprador", "Comprador")
-                        .WithMany()
-                        .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comprador");
                 });
 
             modelBuilder.Entity("Marketplace.Models.PesquisasPassadas", b =>

@@ -63,7 +63,7 @@ namespace Marketplace.Controllers
                     imagemAnuncio = c.Anuncio.Imagens.Any() ? c.Anuncio.Imagens.First().ImagemCaminho : "/images/default-car.png",
                     outroParticipanteNome = c.Vendedor.IdentityUserId == userId ? c.Comprador.Nome : c.Vendedor.Nome,
                     outroParticipanteImagem = c.Vendedor.IdentityUserId == userId ? (c.Comprador.ImagemPerfil ?? "https://placehold.co/150") : (c.Vendedor.ImagemPerfil ?? "https://placehold.co/150"),
-                    ultimaMensagem = c.Mensagens.OrderByDescending(m => m.DataEnvio).FirstOrDefault().Conteudo,
+                    ultimaMensagem = c.Mensagens.OrderByDescending(m => m.DataEnvio).Select(m => m.Conteudo).FirstOrDefault() ?? "Sem mensagens",
                     ultimaMensagemData = c.UltimaMensagemData,
                     naoLidas = c.Mensagens.Count(m => !m.Lida && m.RemetenteId != userId),
                     tipo = c.Vendedor.IdentityUserId == userId ? "vender" : "comprar"
@@ -140,7 +140,11 @@ namespace Marketplace.Controllers
 
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
 
-            var conversa = await _context.Conversas.FindAsync(conversaId);
+            var conversa = await _context.Conversas
+                .Include(c => c.Vendedor)
+                .Include(c => c.Comprador)
+                .Include(c => c.Anuncio)
+                .FirstOrDefaultAsync(c => c.Id == conversaId);
             if (conversa == null) return NotFound();
 
             var mensagem = new Mensagens

@@ -56,11 +56,20 @@ namespace Marketplace.Controllers
         public async Task<IActionResult> Perfil()
         {
             var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var appUser = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (appUser == null) return RedirectToAction("Login");
+
+            // Dados comuns do ApplicationUser
+            ViewBag.UserName = appUser.UserName;
+            ViewBag.Email = appUser.Email;
+            ViewBag.Telefone = appUser.PhoneNumber ?? "Não definido";
+            ViewBag.DataCriacao = DateTime.Now; // Temporário - será substituído pelos dados de Comprador/Vendedor
 
             // Se o usuário for vendedor, carregar seus anúncios
             if (User.IsInRole("Vendedor"))
             {
-                var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+                var vendedor = await _db.Vendedores.Include(v => v.Morada).FirstOrDefaultAsync(v => v.IdentityUserId == userId);
 
                 if (vendedor != null)
                 {
@@ -78,11 +87,29 @@ namespace Marketplace.Controllers
                     ViewBag.MeusAnuncios = anuncios;
                     ViewBag.AnunciosCount = anuncios.Count;
 
-                    var reservasCount = await _db.Reservas
+                    // Contagens por estado para os filtros
+                    ViewBag.AnunciosAtivos = anuncios.Count(a => a.Estado == "Ativo");
+                    ViewBag.AnunciosReservados = anuncios.Count(a => a.Estado == "Reservado");
+                    ViewBag.AnunciosVendidos = anuncios.Count(a => a.Estado == "Vendido");
+                    ViewBag.AnunciosPausados = anuncios.Count(a => a.Estado == "Pausado");
+
+                    // Carregar reservas RECEBIDAS (nos meus anúncios - como vendedor)
+                    var reservasRecebidas = await _db.Reservas
                         .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Include(r => r.Comprador)
                         .Where(r => r.Anuncio.VendedorId == vendedor.Id)
-                        .CountAsync();
-                    ViewBag.ReservasRecebidasCount = reservasCount;
+                        .OrderByDescending(r => r.Data)
+                        .ToListAsync();
+
+                    ViewBag.ReservasRecebidas = reservasRecebidas;
+                    ViewBag.ReservasRecebidasCount = reservasRecebidas.Count;
+                    ViewBag.ReservasAtivasVendedor = reservasRecebidas.Count(r => r.Estado == "Ativa");
+                    ViewBag.TotalSinais = reservasRecebidas.Where(r => r.Estado == "Ativa").Sum(r => r.Anuncio.ValorSinal);
 
                     // Carregar visitas RECEBIDAS (aos meus anúncios - como vendedor)
                     var visitasRecebidas = await _db.Visitas
@@ -167,12 +194,52 @@ namespace Marketplace.Controllers
                     ViewBag.Nome = vendedor.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(vendedor.ImagemPerfil) ? null : vendedor.ImagemPerfil;
                     ViewBag.VendedorEstado = vendedor.Estado;
+                    ViewBag.EstadoConta = vendedor.Estado ?? "Ativo";
+
+                    // Dados de morada
+                    if (vendedor.Morada != null)
+                    {
+                        ViewBag.Rua = vendedor.Morada.Rua;
+                        ViewBag.CodigoPostal = vendedor.Morada.CodigoPostal;
+                        ViewBag.Localidade = vendedor.Morada.Localidade;
+                        ViewBag.Pais = "Portugal";
+                    }
+                    else
+                    {
+                        ViewBag.Rua = "Não definido";
+                        ViewBag.CodigoPostal = "Não definido";
+                        ViewBag.Localidade = "Não definido";
+                        ViewBag.Pais = "Portugal";
+                    }
+
+                    ViewBag.Nif = vendedor.Nif ?? "Não definido";
+                    ViewBag.Nib = vendedor.Nib ?? "Não definido";
+
+                    // Carregar favoritos do vendedor (vendedores também podem ter favoritos)
+                    var favoritosVendedor = await _db.AnunciosFavoritos
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Combustivel)
+                        .Include(af => af.Anuncio)
+                            .ThenInclude(a => a.Tipo)
+                        .Where(af => af.CompradorId == vendedor.Id)
+                        .OrderByDescending(af => af.Id)
+                        .ToListAsync();
+
+                    ViewBag.MeusFavoritos = favoritosVendedor;
+                    ViewBag.FavoritosCount = favoritosVendedor.Count;
                 }
             }
             // Se o usuário for comprador, carregar seus favoritos
             else if (User.IsInRole("Comprador"))
             {
                 var comprador = await _db.Compradores
+                    .Include(c => c.Morada)
                     .Include(c => c.AnunciosFavoritos)
                         .ThenInclude(af => af.Anuncio)
                             .ThenInclude(a => a.Marca)
@@ -228,8 +295,64 @@ namespace Marketplace.Controllers
 
                     ViewBag.MinhasVisitasComprador = visitasComprador;
 
+                    // Carregar compras do comprador
+                    var compras = await _db.Compras
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Combustivel)
+                        .Include(c => c.Anuncio)
+                            .ThenInclude(a => a.Vendedor)
+                        .Where(c => c.CompradorId == comprador.Id)
+                        .OrderByDescending(c => c.Data)
+                        .ToListAsync();
+                    ViewBag.Compras = compras;
+                    ViewBag.ComprasCount = compras.Count;
+
+                    // Carregar reservas FEITAS (como comprador)
+                    var reservasComprador = await _db.Reservas
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Marca)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Modelo)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Imagens)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Vendedor)
+                        .Include(r => r.Anuncio)
+                            .ThenInclude(a => a.Combustivel)
+                        .Where(r => r.CompradorId == comprador.Id)
+                        .OrderByDescending(r => r.Data)
+                        .ToListAsync();
+
+                    ViewBag.MinhasReservas = reservasComprador;
+                    ViewBag.MinhasReservasCount = reservasComprador.Count;
+                    ViewBag.ReservasAtivasComprador = reservasComprador.Count(r => r.Estado == "Ativa");
+                    ViewBag.ReservasExpiradas = reservasComprador.Count(r => r.Estado == "Expirada");
+
                     ViewBag.Nome = comprador.Nome;
                     ViewBag.ImagemPerfil = string.IsNullOrWhiteSpace(comprador.ImagemPerfil) ? null : comprador.ImagemPerfil;
+                    ViewBag.EstadoConta = comprador.Estado ?? "Ativo";
+
+                    // Dados de morada
+                    if (comprador.Morada != null)
+                    {
+                        ViewBag.Rua = comprador.Morada.Rua;
+                        ViewBag.CodigoPostal = comprador.Morada.CodigoPostal;
+                        ViewBag.Localidade = comprador.Morada.Localidade;
+                        ViewBag.Pais = "Portugal";
+                    }
+                    else
+                    {
+                        ViewBag.Rua = "Não definido";
+                        ViewBag.CodigoPostal = "Não definido";
+                        ViewBag.Localidade = "Não definido";
+                        ViewBag.Pais = "Portugal";
+                    }
 
                     // Pesquisas guardadas (Filtros Favoritos)
                     var filtros = await _db.FiltrosFavoritos
@@ -316,6 +439,7 @@ namespace Marketplace.Controllers
                 {
                     model.Nome = vendedor.Nome;
                     model.Nif = vendedor.Nif;
+                    model.Nib = vendedor.Nib;
                     model.DadosFaturacao = vendedor.DadosFaturacao;
                     model.ImagemPerfilAtual = vendedor.ImagemPerfil;
                     if (vendedor.Morada != null)
@@ -381,6 +505,7 @@ namespace Marketplace.Controllers
                 {
                     vendedor.Nome = model.Nome;
                     vendedor.Nif = model.Nif;
+                    vendedor.Nib = model.Nib;
                     vendedor.DadosFaturacao = model.DadosFaturacao;
 
                     // Morada
@@ -1164,6 +1289,149 @@ namespace Marketplace.Controllers
         }
 
         [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> NotificationSettings()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var claims = await _userManager.GetClaimsAsync(user);
+            bool email = GetNotificationFlag(claims, "notif:email", true);
+            bool novos = GetNotificationFlag(claims, "notif:novos", true);
+            bool preco = GetNotificationFlag(claims, "notif:preco", false);
+
+            return Json(new { email, novos, preco });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetNotification(string tipo, bool ativo)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var key = tipo?.ToLowerInvariant() switch
+            {
+                "email" => "notif:email",
+                "novos" => "notif:novos",
+                "preco" => "notif:preco",
+                _ => null
+            };
+            if (key == null) return BadRequest(new { error = "Tipo de notificação inválido." });
+
+            await SetNotificationFlag(user, key, ativo);
+            return Json(new { success = true, tipo = key, ativo });
+        }
+
+        private bool GetNotificationFlag(IEnumerable<System.Security.Claims.Claim> claims, string claimType, bool defaultValue)
+        {
+            var claim = claims.FirstOrDefault(c => c.Type == claimType);
+            if (claim == null) return defaultValue;
+            return bool.TryParse(claim.Value, out var val) ? val : defaultValue;
+        }
+
+        private async Task SetNotificationFlag(ApplicationUser user, string claimType, bool value)
+        {
+            var existing = await _userManager.GetClaimsAsync(user);
+            var current = existing.FirstOrDefault(c => c.Type == claimType);
+            if (current != null)
+            {
+                await _userManager.ReplaceClaimAsync(user, current, new System.Security.Claims.Claim(claimType, value.ToString()));
+            }
+            else
+            {
+                await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(claimType, value.ToString()));
+            }
+            await _signInManager.RefreshSignInAsync(user);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> PrivacySettings()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var claims = await _userManager.GetClaimsAsync(user);
+            bool perfilPublico = GetNotificationFlag(claims, "privacy:public", true);
+            bool mostrarEmail = GetNotificationFlag(claims, "privacy:showEmail", false);
+
+            return Json(new { perfilPublico, mostrarEmail });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetPrivacy(string tipo, bool ativo)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var key = tipo?.ToLowerInvariant() switch
+            {
+                "perfil" => "privacy:public",
+                "email" => "privacy:showEmail",
+                _ => null
+            };
+            if (key == null) return BadRequest(new { error = "Tipo de privacidade inválido." });
+
+            await SetNotificationFlag(user, key, ativo);
+            return Json(new { success = true, tipo = key, ativo });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeactivateAccount()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var identityId = user.Id;
+            var util = await _db.Set<Utilizador>().FirstOrDefaultAsync(u => u.IdentityUserId == identityId);
+            if (util != null)
+            {
+                util.Estado = "Desativado";
+                _db.Update(util);
+                await _db.SaveChangesAsync();
+            }
+
+            // Lock account via Identity
+            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+            await _signInManager.SignOutAsync();
+
+            TempData["PerfilSucesso"] = "Conta desativada. Pode reativar contactando suporte.";
+            return RedirectToAction("Login", "Utilizadores");
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var identityId = user.Id;
+
+            // Soft-delete: marcar estado e bloquear login
+            var util = await _db.Set<Utilizador>().FirstOrDefaultAsync(u => u.IdentityUserId == identityId);
+            if (util != null)
+            {
+                util.Estado = "Eliminado";
+                _db.Update(util);
+            }
+
+            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+            await _signInManager.SignOutAsync();
+            await _db.SaveChangesAsync();
+
+            TempData["PerfilSucesso"] = "Conta eliminada (soft delete). Contacte suporte se precisar reverter.";
+            return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TerminateOtherSessions()
@@ -1176,6 +1444,225 @@ namespace Marketplace.Controllers
 
             return Json(new { success = true, message = "Sessões em outros dispositivos foram terminadas." });
         }
+
+        // POST: Utilizadores/UploadFotoPerfil
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UploadFotoPerfil(IFormFile fotoPerfil)
+        {
+            if (fotoPerfil == null || fotoPerfil.Length == 0)
+            {
+                return Json(new { success = false, message = "Nenhuma imagem foi selecionada." });
+            }
+
+            // Validar imagem
+            if (!ImageUploadHelper.IsValidProfileImage(fotoPerfil, out var error))
+            {
+                return Json(new { success = false, message = error });
+            }
+
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var appUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (appUser == null)
+            {
+                return Json(new { success = false, message = "Utilizador não encontrado." });
+            }
+
+            try
+            {
+                string? imagemAnterior = null;
+                string? novaImagemPath = null;
+
+                // Upload da imagem
+                novaImagemPath = await ImageUploadHelper.UploadProfileImage(fotoPerfil, _env.WebRootPath, appUser.Id);
+                if (string.IsNullOrWhiteSpace(novaImagemPath))
+                {
+                    return Json(new { success = false, message = "Erro ao guardar a imagem." });
+                }
+
+                // Atualizar no banco de dados
+                if (User.IsInRole("Vendedor"))
+                {
+                    var vendedor = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+                    if (vendedor != null)
+                    {
+                        imagemAnterior = vendedor.ImagemPerfil;
+                        vendedor.ImagemPerfil = novaImagemPath;
+                    }
+                }
+                else if (User.IsInRole("Comprador"))
+                {
+                    var comprador = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+                    if (comprador != null)
+                    {
+                        imagemAnterior = comprador.ImagemPerfil;
+                        comprador.ImagemPerfil = novaImagemPath;
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+
+                // Deletar imagem anterior
+                if (!string.IsNullOrWhiteSpace(imagemAnterior))
+                {
+                    ImageUploadHelper.DeleteProfileImage(imagemAnterior, _env.WebRootPath);
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Foto de perfil atualizada com sucesso!",
+                    imagemUrl = Url.Content(novaImagemPath)
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Erro ao processar imagem: {ex.Message}" });
+            }
+        }
+
+        // POST: Utilizadores/PedirSerVendedor
+        [Authorize(Roles = "Comprador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PedirSerVendedor(string nif, string? dadosFaturacao, string motivacao)
+        {
+            if (string.IsNullOrWhiteSpace(nif) || string.IsNullOrWhiteSpace(motivacao))
+            {
+                return Json(new { success = false, message = "Por favor preencha todos os campos obrigatórios." });
+            }
+
+            // Validar NIF
+            if (!IsValidNif(nif))
+            {
+                return Json(new { success = false, message = "NIF inválido." });
+            }
+
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var comprador = await _db.Compradores
+                .Include(c => c.Morada)
+                .FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+
+            if (comprador == null)
+            {
+                return Json(new { success = false, message = "Utilizador não encontrado." });
+            }
+
+            try
+            {
+                // Verificar se já tem pedido pendente
+                var pedidoExistente = await _db.PedidosVendedor
+                    .FirstOrDefaultAsync(p => p.CompradorId == comprador.Id && p.Estado == "Pendente");
+
+                if (pedidoExistente != null)
+                {
+                    return Json(new { success = false, message = "Já tem um pedido pendente de aprovação." });
+                }
+
+                // Verificar se já é vendedor
+                var jaEVendedor = await _userManager.IsInRoleAsync(
+                    await _userManager.FindByIdAsync(userId.ToString()),
+                    "Vendedor"
+                );
+
+                if (jaEVendedor)
+                {
+                    return Json(new { success = false, message = "Já é vendedor na plataforma." });
+                }
+
+                // Criar pedido
+                var pedido = new PedidoVendedor
+                {
+                    CompradorId = comprador.Id,
+                    Nif = nif,
+                    DadosFaturacao = dadosFaturacao,
+                    Motivacao = motivacao,
+                    Estado = "Pendente",
+                    DataPedido = DateTime.Now
+                };
+
+                _db.PedidosVendedor.Add(pedido);
+                await _db.SaveChangesAsync();
+
+                // Enviar email para administradores
+                await EnviarEmailNoticePedidoVendedor(comprador, pedido);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Pedido enviado com sucesso! Aguarde aprovação do administrador."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Erro ao processar pedido: {ex.Message}" });
+            }
+        }
+
+        private async Task EnviarEmailNoticePedidoVendedor(Comprador comprador, PedidoVendedor pedido)
+        {
+            try
+            {
+                // Buscar emails dos administradores
+                var admins = await _userManager.GetUsersInRoleAsync("Administrador");
+
+                foreach (var admin in admins)
+                {
+                    if (!string.IsNullOrWhiteSpace(admin.Email))
+                    {
+                        var subject = "🔔 Novo Pedido para Tornar-se Vendedor - 404 Ride";
+                        var message = $@"
+                            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                                <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;'>
+                                    <h1 style='color: white; margin: 0;'>404 Ride</h1>
+                                    <p style='color: white; margin: 10px 0 0 0;'>Marketplace de Veículos Usados</p>
+                                </div>
+                                <div style='background: #f7f7f7; padding: 30px;'>
+                                    <h2 style='color: #333; margin-top: 0;'>Novo Pedido de Vendedor</h2>
+                                    <p>Um comprador solicitou tornar-se vendedor na plataforma:</p>
+
+                                    <div style='background: white; padding: 20px; border-radius: 8px; margin: 20px 0;'>
+                                        <p><strong>Nome:</strong> {comprador.Nome}</p>
+                                        <p><strong>Email:</strong> {comprador.Email}</p>
+                                        <p><strong>NIF:</strong> {pedido.Nif}</p>
+                                        <p><strong>Data do Pedido:</strong> {pedido.DataPedido:dd/MM/yyyy HH:mm}</p>
+                                        <hr style='border: none; border-top: 1px solid #eee; margin: 15px 0;'>
+                                        <p><strong>Motivação:</strong></p>
+                                        <p style='background: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 3px solid #667eea;'>
+                                            {pedido.Motivacao}
+                                        </p>
+                                        {(!string.IsNullOrWhiteSpace(pedido.DadosFaturacao) ? $@"
+                                        <p><strong>Dados de Faturação:</strong></p>
+                                        <p style='background: #f9f9f9; padding: 15px; border-radius: 5px;'>
+                                            {pedido.DadosFaturacao}
+                                        </p>" : "")}
+                                    </div>
+
+                                    <p style='text-align: center; margin: 30px 0;'>
+                                        <a href='{Url.Action("Index", "Administrador", null, Request.Scheme)}#validar-vendedores'
+                                           style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                                            Gerir Pedidos
+                                        </a>
+                                    </p>
+
+                                    <p style='color: #666; font-size: 12px; text-align: center;'>
+                                        Este é um email automático do sistema 404 Ride.<br>
+                                        Por favor, não responda a este email.
+                                    </p>
+                                </div>
+                            </div>";
+
+                        await _emailSender.SendAsync(admin.Email, subject, message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't fail the request
+                Console.WriteLine($"Erro ao enviar email: {ex.Message}");
+            }
+        }
+
         public async Task<IActionResult> PromoteMe()
         {
             var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");

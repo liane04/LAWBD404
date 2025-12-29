@@ -13,6 +13,10 @@ namespace Marketplace.Models
         [StringLength(20)]
         public string? Nif { get; set; }
 
+        [StringLength(21)]
+        [Display(Name = "NIB")]
+        public string? Nib { get; set; }
+
         public ICollection<Contactos> Contactos { get; set; } = new List<Contactos>();
         public ICollection<Anuncio> Anuncios { get; set; } = new List<Anuncio>();
         public ICollection<Visita> Visitas { get; set; } = new List<Visita>();
