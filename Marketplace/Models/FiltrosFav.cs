@@ -20,6 +20,7 @@ namespace Marketplace.Models
         public int? MarcaId { get; set; }
         public int? ModeloId { get; set; }
         public int? TipoId { get; set; }
+        public int? CategoriaId { get; set; }
         public int? CombustivelId { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]

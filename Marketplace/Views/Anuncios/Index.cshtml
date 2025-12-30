@@ -51,6 +51,7 @@
                                        marcaId = filtro.MarcaId,
                                        modeloId = filtro.ModeloId,
                                        tipoId = filtro.TipoId,
+                                       categoriaId = filtro.CategoriaId,
                                        combustivelId = filtro.CombustivelId,
                                        precoMax = filtro.PrecoMax,
                                        anoMin = filtro.AnoMin,
@@ -117,17 +118,16 @@
                         </select>
                     </div>
 
-                    <!-- Filtro de Preço -->
                     <div class="filter-group">
                         <label for="preco" class="filter-label">
                             <i class="bi bi-currency-euro me-2"></i>Preço Máximo
                         </label>
                         <div class="price-range-container">
-                            <input type="range" class="form-range" name="precoMax" min="0" max="100000" step="1000" id="preco" value="@(ViewBag.PrecoMax ?? 50000)" oninput="updatePriceLabel(this.value)">
+                            <input type="range" class="form-range" name="precoMax" min="0" max="100000" step="1000" id="preco" value="@(ViewBag.PrecoMax ?? 100000)" oninput="updatePriceLabel(this.value)">
                             <div class="d-flex justify-content-between mt-2">
                                 <span class="text-muted small">0 €</span>
-                                <span class="price-value fw-bold text-primary" id="precoValue">@(ViewBag.PrecoMax != null ? ((decimal)ViewBag.PrecoMax).ToString("N0") : "50.000") €</span>
-                                <span class="text-muted small">100k €</span>
+                                <span class="price-value fw-bold text-primary" id="precoValue">@(ViewBag.PrecoMax != null && (decimal)ViewBag.PrecoMax < 100000 ? ((decimal)ViewBag.PrecoMax).ToString("N0") + " €" : "Sem limite")</span>
+                                <span class="text-muted small">100k+ €</span>
                             </div>
                         </div>
                     </div>
@@ -408,12 +408,15 @@
 @section Scripts {
     <script>
         function updatePriceLabel(value) {
-            const formatted = new Intl.NumberFormat('pt-PT').format(value);
-            document.getElementById('precoValue').textContent = formatted + ' €';
+            if (value >= 100000) {
+                document.getElementById('precoValue').textContent = 'Sem limite';
+            } else {
+                const formatted = new Intl.NumberFormat('pt-PT').format(value);
+                document.getElementById('precoValue').textContent = formatted + ' €';
+            }
         }
 
         function resetFilters() {
-            // Redireciona para a página sem filtros
             window.location.href = '@Url.Action("Index", "Anuncios")';
         }
 
@@ -428,24 +431,38 @@
             data.append('marcaId', form.elements['marcaId'] ? form.elements['marcaId'].value : '');
             data.append('modeloId', form.elements['modeloId'] ? form.elements['modeloId'].value : '');
             data.append('tipoId', form.elements['tipoId'] ? form.elements['tipoId'].value : '');
+            data.append('categoriaId', form.elements['categoriaId'] ? form.elements['categoriaId'].value : '');
             const combSel = form.querySelector('input[name="combustivelId"]:checked');
             data.append('combustivelId', combSel ? combSel.value : '');
-            data.append('precoMax', form.elements['precoMax'] ? form.elements['precoMax'].value : '');
+            
+            const precoVal = form.elements['precoMax'] ? form.elements['precoMax'].value : '';
+            // Se for >= 100000, consideramos "sem limite", logo não guardamos o preço máximo
+            if (precoVal && parseInt(precoVal) < 100000) {
+                data.append('precoMax', precoVal);
+            }
+            
             data.append('anoMin', form.elements['anoMin'] ? form.elements['anoMin'].value : '');
             data.append('anoMax', form.elements['anoMax'] ? form.elements['anoMax'].value : '');
             data.append('kmMax', form.elements['kmMax'] ? form.elements['kmMax'].value : '');
             data.append('caixa', form.elements['caixa'] ? form.elements['caixa'].value : '');
             data.append('localizacao', form.elements['localizacao'] ? form.elements['localizacao'].value : '');
             data.append('ordenacao', form.elements['ordenacao'] ? form.elements['ordenacao'].value : '');
+            
             const marcaSel = form.elements['marcaId'];
             const modeloSel = form.elements['modeloId'];
             const marcaNome = marcaSel && marcaSel.selectedIndex > 0 ? marcaSel.options[marcaSel.selectedIndex].text : '';
             const modeloNome = modeloSel && modeloSel.selectedIndex > 0 ? modeloSel.options[modeloSel.selectedIndex].text : '';
-            const preco = form.elements['precoMax'] ? form.elements['precoMax'].value : '';
-            const sugerido = `${marcaNome} ${modeloNome} ${preco ? '≤ ' + new Intl.NumberFormat('pt-PT').format(preco) + '€' : ''}`.trim();
+            
+            let sugerido = `${marcaNome} ${modeloNome}`.trim();
+            if (precoVal && parseInt(precoVal) < 100000) {
+                sugerido += ` ≤ ${new Intl.NumberFormat('pt-PT').format(precoVal)}€`;
+            }
+            sugerido = sugerido.trim();
+            
             const nome = prompt('Nome da pesquisa para guardar:', sugerido || 'Pesquisa');
             if (nome === null) return;
             data.append('nome', nome);
+            
             fetch('@Url.Action("GuardarFiltro","Anuncios")', { method: 'POST', body: data, credentials: 'same-origin' })
                 .then(res => { if (res.redirected) { window.location.href = res.url; } else { alert('Pesquisa guardada.'); window.location.reload(); } })
                 .catch(() => alert('Não foi possível guardar a pesquisa.'));

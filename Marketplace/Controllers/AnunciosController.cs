@@ -148,7 +148,7 @@ namespace Marketplace.Controllers
         [HttpPost]
         public async Task<IActionResult> GuardarFiltro(
             string? nome,
-            int? marcaId, int? modeloId, int? tipoId, int? combustivelId,
+            int? marcaId, int? modeloId, int? tipoId, int? categoriaId, int? combustivelId,
             decimal? precoMax, int? anoMin, int? anoMax, int? kmMax, string? caixa, string? localizacao,
             string? ordenacao)
         {
@@ -178,7 +178,15 @@ namespace Marketplace.Controllers
                     .FirstOrDefaultAsync();
                 if (!string.IsNullOrWhiteSpace(modeloNome)) partes.Add(modeloNome);
             }
-            if (precoMax.HasValue) partes.Add($"≤ {precoMax.Value:N0}€");
+            if (categoriaId.HasValue)
+            {
+                var catNome = await _context.Categorias
+                    .Where(c => c.Id == categoriaId.Value)
+                    .Select(c => c.Nome)
+                    .FirstOrDefaultAsync();
+                if (!string.IsNullOrWhiteSpace(catNome)) partes.Add(catNome);
+            }
+            if (precoMax.HasValue && precoMax < 100000) partes.Add($"≤ {precoMax.Value:N0}€");
             if (anoMin.HasValue || anoMax.HasValue) partes.Add($"Ano {(anoMin?.ToString() ?? "?")}–{(anoMax?.ToString() ?? "?")}");
             var computedNome = string.IsNullOrWhiteSpace(nome) ? (partes.Count > 0 ? string.Join(" ", partes) : "Pesquisa") : nome!.Trim();
 
@@ -189,6 +197,7 @@ namespace Marketplace.Controllers
                 MarcaId = marcaId,
                 ModeloId = modeloId,
                 TipoId = tipoId,
+                CategoriaId = categoriaId,
                 CombustivelId = combustivelId,
                 PrecoMax = precoMax,
                 AnoMin = anoMin,
@@ -206,7 +215,7 @@ namespace Marketplace.Controllers
             TempData["Success"] = "Pesquisa guardada. Receberá alertas de novidades.";
             return RedirectToAction(nameof(Index), new
             {
-                marcaId, modeloId, tipoId, combustivelId,
+                marcaId, modeloId, tipoId, categoriaId, combustivelId,
                 precoMax, anoMin, anoMax, kmMax, caixa, localizacao,
                 ordenacao
             });
