@@ -44,9 +44,9 @@ namespace Marketplace.Models
 
         public ICollection<AcaoUser> AcoesUser { get; set; } = new List<AcaoUser>();
         public ICollection<DenunciaUser> DenunciasRecebidas { get; set; } = new List<DenunciaUser>();
-        public ICollection<PesquisasPassadas> PesquisasPassadas { get; set; } = new List<PesquisasPassadas>();
         public ICollection<AnuncioFav> AnunciosFavoritos { get; set; } = new List<AnuncioFav>();
         public ICollection<MarcasFav> MarcasFavoritas { get; set; } = new List<MarcasFav>();
+        public ICollection<PesquisasPassadas> PesquisasPassadas { get; set; } = new List<PesquisasPassadas>();
 
     }
 }

@@ -228,13 +228,6 @@ namespace Marketplace.Data
             modelBuilder.Entity<Utilizador>()
                 .HasIndex(u => u.IdentityUserId)
                 .IsUnique();
-
-            // Pesquisas Passadas - Cascade delete ao apagar Utilizador
-            modelBuilder.Entity<PesquisasPassadas>()
-                .HasOne(p => p.Utilizador)
-                .WithMany(u => u.PesquisasPassadas)
-                .HasForeignKey(p => p.UtilizadorId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

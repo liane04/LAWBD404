@@ -241,14 +241,6 @@ namespace Marketplace.Controllers
                         .ToListAsync();
                     ViewBag.MarcasFavoritas = marcasFav;
                     ViewBag.MarcasFavoritasCount = marcasFav.Count;
-
-                    // Carregar histórico de pesquisas
-                    var historicoPesquisas = await _db.PesquisasPassadas
-                        .Where(p => p.UtilizadorId == vendedor.Id)
-                        .OrderByDescending(p => p.Data)
-                        .Take(10)
-                        .ToListAsync();
-                    ViewBag.HistoricoPesquisas = historicoPesquisas;
                 }
             }
             // Se o usuário for comprador, carregar seus favoritos
@@ -384,14 +376,14 @@ namespace Marketplace.Controllers
                         .ToListAsync();
                     ViewBag.MarcasFavoritas = marcasFav;
                     ViewBag.MarcasFavoritasCount = marcasFav.Count;
-                    
-                    // Carregar histórico de pesquisas
-                    var historicoPesquisas = await _db.PesquisasPassadas
-                        .Where(p => p.UtilizadorId == comprador.Id)
+
+                    // Pesquisas Passadas (Histórico)
+                    var pesquisasPassadas = await _db.PesquisasPassadas
+                        .Where(p => p.CompradorId == comprador.Id)
                         .OrderByDescending(p => p.Data)
-                        .Take(10)
+                        .Take(20) // Mostrar apenas as últimas 20
                         .ToListAsync();
-                    ViewBag.HistoricoPesquisas = historicoPesquisas;
+                    ViewBag.PesquisasPassadas = pesquisasPassadas;
                 }
             }
 

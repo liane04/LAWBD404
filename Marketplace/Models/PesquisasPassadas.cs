@@ -9,17 +9,19 @@ namespace Marketplace.Models
         public int Id { get; set; }
 
         [Required]
-        public DateTime Data { get; set; } = DateTime.UtcNow;
+        public DateTime Data { get; set; }
+
+        public int Count { get; set; }
+
+        public int CompradorId { get; set; }
+        [ForeignKey("CompradorId")]
+        public Utilizador Comprador { get; set; } = null!;
 
         [StringLength(500)]
-        public string? QueryString { get; set; } // Stores the full query string e.g. "?marcaId=1&precoMax=5000"
+        public string? Parametros { get; set; }
 
         [StringLength(200)]
-        public string? Descricao { get; set; } // Human readable description e.g. "BMW, < 5000€"
-
-        public int UtilizadorId { get; set; }
-        [ForeignKey("UtilizadorId")]
-        public Utilizador Utilizador { get; set; } = null!;
+        public string? Descricao { get; set; }
 
         public ICollection<Notificacoes> Notificacoes { get; set; } = new List<Notificacoes>();
     }

@@ -115,6 +115,14 @@
                                 <i class="bi bi-chevron-right ms-auto"></i>
                             </a>
                         }
+                        @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
+                        {
+                            <a href="#historico-pesquisa" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-clock-history"></i>
+                                <span>Histórico de Pesquisa</span>
+                                <i class="bi bi-chevron-right ms-auto"></i>
+                            </a>
+                        }
                         <a href="#definicoes" class="perfil-nav-item" data-bs-toggle="tab">
                             <i class="bi bi-gear-fill"></i>
                             <span>Definições</span>
@@ -2300,6 +2308,53 @@
                         }
                     }
                 </div>
+                <div class="tab-pane fade" id="historico-pesquisa">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-primary"></i>Histórico de Pesquisa</h4>
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Anuncios" asp-action="Index">Nova Pesquisa</a>
+                    </div>
+                    <p class="text-muted mb-4">Consulte as suas pesquisas recentes e repita-as facilmente</p>
+
+                    @{
+                        var history = ViewBag.PesquisasPassadas as List<Marketplace.Models.PesquisasPassadas> ?? new List<Marketplace.Models.PesquisasPassadas>();
+                    }
+                    @if (!history.Any())
+                    {
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="bi bi-clock-history text-muted" style="font-size: 4rem;"></i>
+                            </div>
+                            <h4 class="text-muted mb-2">Sem histórico recente</h4>
+                            <p class="text-muted mb-4">As suas pesquisas de veículos aparecerão aqui</p>
+                            <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                <i class="bi bi-search me-2"></i>Pesquisar Veículos
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group shadow-sm">
+                            @foreach (var p in history)
+                            {
+                                <a href="@Url.Action("Index", "Anuncios")?@p.Parametros" class="list-group-item list-group-item-action p-3 border-start border-4 border-primary border-start-0-hover">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <h6 class="mb-1 fw-bold text-dark">@p.Descricao</h6>
+                                        <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>@p.Data.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-end mt-2">
+                                        <small class="text-muted text-truncate w-75">
+                                            <i class="bi bi-sliders me-1"></i>Filtros: @(string.IsNullOrEmpty(p.Parametros) ? "Nenhum" : p.Parametros.Replace("&", ", ").Replace("=", ": "))
+                                        </small>
+                                        <span class="badge bg-light text-dark border">
+                                           @p.Count resultados
+                                        </span>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+
                 <div class="tab-pane fade" id="definicoes">
                     <!-- Cabeçalho da Página -->
                     <div class="mb-4">

@@ -146,6 +146,22 @@ if (app.Environment.IsDevelopment())
     try
     {
         db.Database.Migrate();
+
+        // FIX TMP: Garantir colunas novas na tabela PesquisasPassadas (Emergency Migration)
+        // Como o ambiente pode não ter migrations configuradas corretamente via CLI
+        await db.Database.ExecuteSqlRawAsync(@"
+            IF EXISTS(SELECT 1 FROM sys.tables WHERE Name = 'PesquisasPassadas')
+            BEGIN
+                IF NOT EXISTS(SELECT 1 FROM sys.columns WHERE Name = N'Parametros' AND Object_ID = Object_ID(N'PesquisasPassadas'))
+                BEGIN
+                    ALTER TABLE PesquisasPassadas ADD Parametros NVARCHAR(500);
+                END
+                IF NOT EXISTS(SELECT 1 FROM sys.columns WHERE Name = N'Descricao' AND Object_ID = Object_ID(N'PesquisasPassadas'))
+                BEGIN
+                    ALTER TABLE PesquisasPassadas ADD Descricao NVARCHAR(200);
+                END
+            END
+        ");
         await ReferenceDataSeeder.SeedAsync(db, env.ContentRootPath, Console.WriteLine);
         await UserSeeder.SeedAsync(userManager, roleManager, db, env.ContentRootPath, Console.WriteLine);
         await AnuncioSeeder.SeedAsync(db, env.ContentRootPath, Console.WriteLine);
