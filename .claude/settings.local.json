@@ -39,7 +39,8 @@
       "Bash(Select-String \"succeeded|failed|Error\")",
       "Bash(powershell.exe -Command \"dotnet build Marketplace/Marketplace.csproj 2>&1 | Select-String ''succeeded|failed|Error''\")",
       "Bash(powershell.exe -Command \"Get-Content ''C:\\\\Users\\\\bruno\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-bruno-Desktop-utad-a-1-semestre-3-ano-Laboratotio-web-bd-app\\\\tasks\\\\beafcac.output'' | Select-Object -Last 50\")",
-      "Bash(powershell.exe -Command \"Get-Content ''C:\\\\Users\\\\bruno\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-bruno-Desktop-utad-a-1-semestre-3-ano-Laboratotio-web-bd-app\\\\tasks\\\\beafcac.output'' -Tail 30\")"
+      "Bash(powershell.exe -Command \"Get-Content ''C:\\\\Users\\\\bruno\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-bruno-Desktop-utad-a-1-semestre-3-ano-Laboratotio-web-bd-app\\\\tasks\\\\beafcac.output'' -Tail 30\")",
+      "Bash(git commit:*)"
     ]
   }
 }
