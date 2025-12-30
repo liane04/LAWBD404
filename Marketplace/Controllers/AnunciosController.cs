@@ -68,7 +68,7 @@ namespace Marketplace.Controllers
             if (combustivelId.HasValue)
                 query = query.Where(a => a.CombustivelId == combustivelId.Value);
 
-            if (precoMax.HasValue)
+            if (precoMax.HasValue && precoMax < 100000)
                 query = query.Where(a => a.Preco <= precoMax.Value);
 
             if (anoMin.HasValue)
@@ -701,10 +701,16 @@ namespace Marketplace.Controllers
 
         // API endpoint para obter modelos filtrados por marca
         [HttpGet]
-        public async Task<IActionResult> GetModelosByMarca(int marcaId)
+        public async Task<IActionResult> GetModelosByMarca(int? marcaId)
         {
-            var modelos = await _context.Set<Modelo>()
-                .Where(m => m.MarcaId == marcaId)
+            var query = _context.Set<Modelo>().AsQueryable();
+
+            if (marcaId.HasValue)
+            {
+                query = query.Where(m => m.MarcaId == marcaId.Value);
+            }
+
+            var modelos = await query
                 .OrderBy(m => m.Nome)
                 .Select(m => new { id = m.Id, nome = m.Nome })
                 .ToListAsync();

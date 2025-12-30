@@ -93,7 +93,7 @@
                         <label for="marcaId" class="filter-label">
                             <i class="bi bi-bookmark-fill me-2"></i>Marca
                         </label>
-                        <select name="marcaId" id="marcaId" class="form-select" onchange="this.form.submit()">
+                        <select name="marcaId" id="marcaId" class="form-select">
                             <option value="">Todas as Marcas</option>
                             @foreach (var marca in marcas)
                             {
@@ -109,7 +109,7 @@
                         <label for="modeloId" class="filter-label">
                             <i class="bi bi-tags-fill me-2"></i>Modelo
                         </label>
-                        <select name="modeloId" id="modeloId" class="form-select" onchange="this.form.submit()">
+                        <select name="modeloId" id="modeloId" class="form-select">
                             <option value="">Todos os Modelos</option>
                             @foreach (var modelo in modelos)
                             {
@@ -709,4 +709,54 @@
     </script>
 
     <script src="~/js/favoritos.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const marcaSelect = document.getElementById('marcaId');
+            const modeloSelect = document.getElementById('modeloId');
+
+            function updateModelos(keepSelection) {
+                const marcaId = marcaSelect.value;
+                const previousValue = modeloSelect.value;
+
+                modeloSelect.innerHTML = '<option value="">A carregar...</option>';
+
+                // Determine correct URL
+                let url = '/Anuncios/GetModelosByMarca';
+                if (marcaId) url += '?marcaId=' + marcaId;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        modeloSelect.innerHTML = '<option value="">Todos os Modelos</option>';
+                        data.forEach(m => {
+                            const option = document.createElement('option');
+                            option.value = m.id;
+                            option.text = m.nome;
+                            modeloSelect.appendChild(option);
+                        });
+
+                        // Restore selection if requested and valid
+                        if (keepSelection && previousValue) {
+                            modeloSelect.value = previousValue;
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Erro ao buscar modelos:', err);
+                        modeloSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+                    });
+            }
+
+            if (marcaSelect && modeloSelect) {
+                marcaSelect.addEventListener('change', function () {
+                    // Update models, clearing selection (false)
+                    updateModelos(false);
+                });
+
+                // On load: if brand is selected, filter models but try to keep selection
+                if (marcaSelect.value) {
+                    updateModelos(true);
+                }
+            }
+        });
+    </script>
 }
