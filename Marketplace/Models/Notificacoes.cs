@@ -32,6 +32,6 @@ namespace Marketplace.Models
 
         public int CompradorId { get; set; }
         [ForeignKey("CompradorId")]
-        public Comprador Comprador { get; set; } = null!;
+        public Utilizador Utilizador { get; set; } = null!;
     }
 }

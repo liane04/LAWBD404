@@ -13,7 +13,8 @@ namespace Marketplace.Models
         public ICollection<Compra> Compras { get; set; } = new List<Compra>();
         public ICollection<Visita> Visitas { get; set; } = new List<Visita>();
         // PesquisasPassadas movido para Utilizador
-        public ICollection<Notificacoes> Notificacoes { get; set; } = new List<Notificacoes>();
+        // PesquisasPassadas movido para Utilizador
+        // Notificacoes movido para Utilizador
         public ICollection<FiltrosFav> FiltrosFavoritos { get; set; } = new List<FiltrosFav>();
         // AnunciosFavoritos movido para Utilizador
         // AnunciosFavoritos movido para Utilizador

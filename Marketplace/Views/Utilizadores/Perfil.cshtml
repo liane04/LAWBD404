@@ -2292,11 +2292,6 @@
                                             <div class="text-muted small">Criado: @f.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
                                         </div>
                                         <div class="d-flex gap-2">
-                                            <form asp-controller="Anuncios" asp-action="ToggleFiltro" method="post" class="d-inline">
-                                                <input type="hidden" name="id" value="@f.Id" />
-                                                <input type="hidden" name="ativo" value="@(!f.Ativo)" />
-                                                <button type="submit" class="btn btn-sm @(f.Ativo ? "btn-outline-secondary" : "btn-outline-primary")">@(f.Ativo ? "Desativar" : "Ativar")</button>
-                                            </form>
                                             <form asp-controller="Anuncios" asp-action="DeleteFiltro" method="post" class="d-inline" onsubmit="return confirm('Remover esta pesquisa?');">
                                                 <input type="hidden" name="id" value="@f.Id" />
                                                 <button type="submit" class="btn btn-sm btn-outline-danger">Apagar</button>

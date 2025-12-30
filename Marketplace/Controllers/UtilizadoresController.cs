@@ -41,6 +41,31 @@ namespace Marketplace.Controllers
 
         // GET: Utilizadores
         public IActionResult Index() => View();
+        
+        // GET: Utilizadores/Notificacoes
+        [Authorize]
+        public async Task<IActionResult> Notificacoes()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            
+            // Tentar encontrar como Comprador ou Vendedor
+            // Nota: Notificações estão associadas ao Utilizador (via CompradorId na BD)
+            var utilizador = await _db.Set<Utilizador>().FirstOrDefaultAsync(u => u.IdentityUserId == userId);
+
+            if (utilizador == null) return RedirectToAction("Index", "Home");
+
+            var notificacoes = await _db.Notificacoes
+                .Where(n => n.CompradorId == utilizador.Id)
+                .Include(n => n.Utilizador)
+                .Include(n => n.FiltrosFav)
+                .Include(n => n.MarcasFav)
+                .ThenInclude(mf => mf.Marca)
+                .OrderByDescending(n => n.Data)
+                .Take(50)
+                .ToListAsync();
+
+            return View(notificacoes);
+        }
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> CheckUsername(string username)

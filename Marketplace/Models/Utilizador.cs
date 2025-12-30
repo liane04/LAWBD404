@@ -47,6 +47,7 @@ namespace Marketplace.Models
         public ICollection<AnuncioFav> AnunciosFavoritos { get; set; } = new List<AnuncioFav>();
         public ICollection<MarcasFav> MarcasFavoritas { get; set; } = new List<MarcasFav>();
         public ICollection<PesquisasPassadas> PesquisasPassadas { get; set; } = new List<PesquisasPassadas>();
+        public ICollection<Notificacoes> Notificacoes { get; set; } = new List<Notificacoes>();
 
     }
 }

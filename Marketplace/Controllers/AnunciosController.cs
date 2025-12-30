@@ -312,23 +312,7 @@ namespace Marketplace.Controllers
             });
         }
 
-        // POST: Anuncios/ToggleFiltro
-        [Authorize(Roles = "Comprador")]
-        [HttpPost]
-        public async Task<IActionResult> ToggleFiltro(int id, bool ativo)
-        {
-            var identityIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(identityIdStr, out var identityId)) return Forbid();
-            var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
-            if (comprador == null) return Forbid();
 
-            var filtro = await _context.FiltrosFavoritos.FirstOrDefaultAsync(f => f.Id == id && f.CompradorId == comprador.Id);
-            if (filtro == null) return NotFound();
-
-            filtro.Ativo = ativo;
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         [Authorize(Roles = "Comprador")]
         [HttpPost]

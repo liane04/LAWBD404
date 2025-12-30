@@ -152,10 +152,11 @@ namespace Marketplace.Data
                 .WithMany(u => u.AcoesUser)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Notificacoes - desativa cascade para Comprador
+            // Notificacoes - desativa cascade para Utilizador (antes era Comprador)
             modelBuilder.Entity<Notificacoes>()
-                .HasOne(n => n.Comprador)
-                .WithMany(c => c.Notificacoes)
+                .HasOne(n => n.Utilizador) // Propriedade alterada para Utilizador
+                .WithMany(u => u.Notificacoes)
+                .HasForeignKey(n => n.CompradorId) // Coluna da DB mantém-se (CompradorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Compras - desativa cascade
