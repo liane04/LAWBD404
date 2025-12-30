@@ -2828,7 +2828,7 @@
                     <div class="card-body text-center p-4">
                         <div class="d-flex justify-content-center align-items-baseline mb-3">
                             <span class="display-4 fw-bold text-warning">1,99€</span>
-                            <span class="text-muted ms-2">/ 7 dias</span>
+                            <span class="text-muted ms-2">/ 30 dias</span>
                         </div>
                         <p class="text-muted small mb-0">
                             <i class="bi bi-info-circle me-1"></i>Renovação automática desativada por padrão
@@ -2848,7 +2848,7 @@
                     <i class="bi bi-x-circle me-1"></i>Cancelar
                 </button>
                 <button type="button" class="btn btn-warning text-white" id="btnConfirmarDestaque">
-                    <i class="bi bi-star-fill me-2"></i>Destacar por 9,99€
+                    <i class="bi bi-star-fill me-2"></i>Destacar por 1,99€
                 </button>
             </div>
         </div>
@@ -3361,102 +3361,65 @@
             // Confirmar destaque
             if (btnConfirmarDestaque) {
                 btnConfirmarDestaque.addEventListener('click', function() {
-                    if (!anuncioAtual) return;
+                    if (!anuncioAtual) {
+                        alert('Por favor, selecione um anúncio para destacar.');
+                        return;
+                    }
+
+                    const anuncioId = anuncioAtual.getAttribute('data-id');
+                    if (!anuncioId) {
+                        alert('Erro ao obter ID do anúncio.');
+                        return;
+                    }
 
                     // Feedback visual no botão
-                    const btnOriginalText = this.innerHTML;
                     this.disabled = true;
-                    this.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>A processar...';
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>A processar pagamento...';
 
-                    // Simular processamento
-                    setTimeout(() => {
-                        // Transformar anúncio em destacado
-                        anuncioAtual.classList.add('anuncio-destacado');
-                        anuncioAtual.classList.add('border-warning');
-                        anuncioAtual.setAttribute('data-destacado', 'true');
+                    // Criar e submeter form para o backend
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/Anuncios/ProcessarDestaque';
 
-                        // Adicionar informação de destaque na meta
-                        const anuncioMeta = anuncioAtual.querySelector('.anuncio-meta');
-                        const dataExpiracao = new Date();
-                        dataExpiracao.setDate(dataExpiracao.getDate() + 7);
-                        const dataFormatada = dataExpiracao.toLocaleDateString('pt-PT');
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'id';
+                    input.value = anuncioId;
 
-                        const metaDestaque = document.createElement('span');
-                        metaDestaque.className = 'anuncio-meta-item text-warning';
-                        metaDestaque.innerHTML = `<i class="bi bi-star-fill me-1"></i>Destaque até ${dataFormatada}`;
-                        anuncioMeta.appendChild(metaDestaque);
-
-                        // Trocar botão "Destacar" por "Renovar"
-                        const actions = anuncioAtual.querySelector('.anuncio-actions');
-                        const btnDestacar = actions.querySelector('.btn-destacar');
-                        if (btnDestacar) {
-                            btnDestacar.className = 'btn btn-sm btn-success btn-renovar-destaque w-100';
-                            btnDestacar.title = 'Renovar Destaque';
-                            btnDestacar.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>Renovar';
-                            btnDestacar.removeAttribute('data-bs-toggle');
-                            btnDestacar.removeAttribute('data-bs-target');
-                        }
-
-                        // Feedback de sucesso
-                        this.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Destacado!';
-                        this.classList.remove('btn-warning');
-                        this.classList.add('btn-success');
-
-                        setTimeout(() => {
-                            // Fechar modal
-                            const modalInstance = bootstrap.Modal.getInstance(destacarModal);
-                            if (modalInstance) {
-                                modalInstance.hide();
-                            }
-
-                            // Resetar botão
-                            this.innerHTML = btnOriginalText;
-                            this.classList.remove('btn-success');
-                            this.classList.add('btn-warning');
-                            this.disabled = false;
-
-                            // Scroll suave até o anúncio
-                            anuncioAtual.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                            // Notificação de sucesso
-                            alert('✨ Anúncio destacado com sucesso! O seu veículo irá aparecer no topo das listagens durante 7 dias.');
-                        }, 1500);
-
-                        // Aqui você implementaria a chamada AJAX para o backend
-                        console.log('Destacar anúncio:', anuncioAtual.getAttribute('data-id'));
-                    }, 1500);
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
                 });
             }
 
             // Botões de renovar destaque
             btnRenovarDestaque.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    if (confirm('Renovar destaque por mais 7 dias?\n\nCusto: 9,99€')) {
-                        const btnOriginalText = this.innerHTML;
+                    if (confirm('Renovar destaque por mais 30 dias?\n\nCusto: 1,99€')) {
+                        const anuncioCard = this.closest('.anuncio-card');
+                        const anuncioId = anuncioCard?.getAttribute('data-id');
+
+                        if (!anuncioId) {
+                            alert('Erro ao obter ID do anúncio.');
+                            return;
+                        }
+
                         this.disabled = true;
                         this.innerHTML = '<i class="bi bi-hourglass-split"></i>';
 
-                        setTimeout(() => {
-                            this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Renovado';
+                        // Criar e submeter form para o backend
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/Anuncios/ProcessarDestaque';
 
-                            // Atualizar data de expiração no anúncio
-                            const anuncioCard = this.closest('.anuncio-card');
-                            const metaDestaque = anuncioCard.querySelector('.anuncio-meta-item.text-warning');
-                            if (metaDestaque && metaDestaque.textContent.includes('Destaque até')) {
-                                const novaData = new Date();
-                                novaData.setDate(novaData.getDate() + 7);
-                                metaDestaque.innerHTML = `<i class="bi bi-star-fill me-1"></i>Destaque até ${novaData.toLocaleDateString('pt-PT')}`;
-                            }
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'id';
+                        input.value = anuncioId;
 
-                            setTimeout(() => {
-                                this.innerHTML = btnOriginalText;
-                                this.disabled = false;
-                                alert('✨ Destaque renovado com sucesso!');
-                            }, 1500);
-
-                            // Aqui você implementaria a chamada AJAX para o backend
-                            console.log('Renovar destaque do anúncio');
-                        }, 1500);
+                        form.appendChild(input);
+                        document.body.appendChild(form);
+                        form.submit();
                     }
                 });
             });

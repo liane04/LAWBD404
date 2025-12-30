@@ -2178,6 +2178,13 @@ body.home-page .navbar:not(.scrolled) {
     padding: 1rem 1.5rem;
 }
 
+.card-footer-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
 /* Pagination Enhancements */
 .pagination .page-link {
     color: var(--primary-color);

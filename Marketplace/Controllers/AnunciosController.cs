@@ -86,17 +86,24 @@ namespace Marketplace.Controllers
             if (!string.IsNullOrWhiteSpace(localizacao))
                 query = query.Where(a => a.Localizacao != null && a.Localizacao.ToLower().Contains(localizacao.ToLower()));
 
-            // Aplicar ordenação
+            // Aplicar ordenação (anúncios destacados sempre primeiro)
             query = ordenacao switch
             {
-                "preco-asc" => query.OrderBy(a => a.Preco),
-                "preco-desc" => query.OrderByDescending(a => a.Preco),
-                "ano-desc" => query.OrderByDescending(a => a.Ano),
-                "km-asc" => query.OrderBy(a => a.Quilometragem),
+                "preco-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                                    .ThenBy(a => a.Preco),
+                "preco-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                                     .ThenByDescending(a => a.Preco),
+                "ano-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                                   .ThenByDescending(a => a.Ano),
+                "km-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                                 .ThenBy(a => a.Quilometragem),
 
-                "relevancia" => query.OrderByDescending(a => a.NVisualizacoes).ThenByDescending(a => a.Id),
+                "relevancia" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                                     .ThenByDescending(a => a.NVisualizacoes)
+                                     .ThenByDescending(a => a.Id),
 
-                _ => query.OrderByDescending(a => a.Id)
+                _ => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                          .ThenByDescending(a => a.Id)
             };
 
             var anuncios = await query.ToListAsync();
@@ -666,7 +673,7 @@ namespace Marketplace.Controllers
                 var imagemDb = new Imagem
                 {
                     AnuncioId = anuncioId,
-                    ImagemCaminho = $"/images/anuncios/{anuncioId}/{nomeUnico}"
+                    ImagemCaminho = $"/imagens/anuncios/{anuncioId}/{nomeUnico}"
                 };
 
                 _context.Imagens.Add(imagemDb);
@@ -704,6 +711,163 @@ namespace Marketplace.Controllers
                 .ToListAsync();
 
             return Json(modelos);
+        }
+
+        // GET: Anuncios/DestacarAnuncio/5
+        [Authorize(Roles = "Vendedor")]
+        public async Task<IActionResult> DestacarAnuncio(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var anuncio = await _context.Anuncios
+                .Include(a => a.Vendedor)
+                .ThenInclude(v => v.IdentityUser)
+                .Include(a => a.Imagens)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (anuncio == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar se o anúncio pertence ao vendedor atual
+            var userId = User.Identity?.Name;
+            if (anuncio.Vendedor.IdentityUser.UserName != userId)
+            {
+                return Forbid();
+            }
+
+            // Verificar se o anúncio já está destacado e ativo
+            if (anuncio.Destacado && anuncio.DestaqueAte.HasValue && anuncio.DestaqueAte.Value > DateTime.Now)
+            {
+                TempData["ErrorMessage"] = "Este anúncio já está destacado até " + anuncio.DestaqueAte.Value.ToString("dd/MM/yyyy");
+                return RedirectToAction("Details", new { id = anuncio.Id });
+            }
+
+            return View(anuncio);
+        }
+
+        // POST: Anuncios/ProcessarDestaque/5
+        [HttpPost]
+        [Authorize(Roles = "Vendedor")]
+        public async Task<IActionResult> ProcessarDestaque(int id)
+        {
+            var anuncio = await _context.Anuncios
+                .Include(a => a.Vendedor)
+                .ThenInclude(v => v.IdentityUser)
+                .Include(a => a.Imagens)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (anuncio == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar se o anúncio pertence ao vendedor atual
+            var userId = User.Identity?.Name;
+            if (anuncio.Vendedor.IdentityUser.UserName != userId)
+            {
+                return Forbid();
+            }
+
+            // Valor fixo para destaque: 1.99€ por 30 dias
+            decimal valorDestaque = 1.99m;
+            int diasDestaque = 30;
+
+            // Configurar Stripe
+            var domain = $"{Request.Scheme}://{Request.Host}";
+            var options = new Stripe.Checkout.SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<Stripe.Checkout.SessionLineItemOptions>
+                {
+                    new Stripe.Checkout.SessionLineItemOptions
+                    {
+                        PriceData = new Stripe.Checkout.SessionLineItemPriceDataOptions
+                        {
+                            Currency = "eur",
+                            UnitAmount = (long)(valorDestaque * 100), // Converter para cêntimos
+                            ProductData = new Stripe.Checkout.SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = $"Destaque de Anúncio - {anuncio.Titulo}",
+                                Description = $"Destaque do seu anúncio por {diasDestaque} dias",
+                                Images = anuncio.Imagens.Any()
+                                    ? new List<string> { $"{domain}{anuncio.Imagens.First().ImagemCaminho}" }
+                                    : null
+                            }
+                        },
+                        Quantity = 1
+                    }
+                },
+                Mode = "payment",
+                SuccessUrl = $"{domain}/Anuncios/DestaqueSuccess?session_id={{CHECKOUT_SESSION_ID}}",
+                CancelUrl = $"{domain}/Anuncios/Details/{anuncio.Id}?destaqueCancelado=true",
+                Metadata = new Dictionary<string, string>
+                {
+                    { "anuncio_id", anuncio.Id.ToString() },
+                    { "dias_destaque", diasDestaque.ToString() },
+                    { "tipo", "destaque" }
+                }
+            };
+
+            var service = new Stripe.Checkout.SessionService();
+            var session = await service.CreateAsync(options);
+
+            return Redirect(session.Url);
+        }
+
+        // GET: Anuncios/DestaqueSuccess
+        [Authorize(Roles = "Vendedor")]
+        public async Task<IActionResult> DestaqueSuccess(string session_id)
+        {
+            if (string.IsNullOrEmpty(session_id))
+            {
+                return BadRequest();
+            }
+
+            // Recuperar sessão do Stripe
+            var service = new Stripe.Checkout.SessionService();
+            var session = await service.GetAsync(session_id);
+
+            if (session.PaymentStatus != "paid")
+            {
+                TempData["ErrorMessage"] = "Pagamento não confirmado.";
+                return RedirectToAction("Index");
+            }
+
+            // Obter ID do anúncio e dias de destaque dos metadados
+            var anuncioId = int.Parse(session.Metadata["anuncio_id"]);
+            var diasDestaque = int.Parse(session.Metadata["dias_destaque"]);
+
+            var anuncio = await _context.Anuncios
+                .Include(a => a.Vendedor)
+                .ThenInclude(v => v.IdentityUser)
+                .FirstOrDefaultAsync(m => m.Id == anuncioId);
+
+            if (anuncio == null)
+            {
+                return NotFound();
+            }
+
+            // Verificar se o anúncio pertence ao vendedor atual
+            var userId = User.Identity?.Name;
+            if (anuncio.Vendedor.IdentityUser.UserName != userId)
+            {
+                return Forbid();
+            }
+
+            // Atualizar anúncio para destacado
+            anuncio.Destacado = true;
+            anuncio.DataDestaque = DateTime.Now;
+            anuncio.DestaqueAte = DateTime.Now.AddDays(diasDestaque);
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Anúncio destacado com sucesso até {anuncio.DestaqueAte.Value:dd/MM/yyyy}!";
+            return RedirectToAction("Details", new { id = anuncio.Id });
         }
 
         private bool AnuncioExists(int id)

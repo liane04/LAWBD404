@@ -777,6 +777,124 @@ Adicionada na Fase 3, permite ao comprador ver histórico completo:
 - Categorias
 - FAQs
 
+### 5.9 Sistema de Comparação de Veículos
+
+**Descrição:**
+O sistema de comparação permite aos visitantes do site (autenticados ou não) comparar até 3 veículos lado a lado, facilitando a tomada de decisão na compra.
+
+**Funcionalidades:**
+
+**Seleção de Veículos:**
+- Botão "COMPARAR" em cada card de veículo na listagem
+- Estados visuais do botão:
+  - Normal: Ícone bi-arrow-left-right + "Comparar"
+  - Ativo: Ícone bi-check-circle-fill + "Adicionado" (background azul)
+- Máximo de 3 veículos simultaneamente
+- Toggle: clicar novamente remove da comparação
+
+**Barra Flutuante de Comparação:**
+- Aparece automaticamente na parte inferior quando há veículos selecionados
+- Animação smooth ao aparecer/desaparecer
+- Exibe:
+  - Contador de veículos selecionados (badge)
+  - Thumbnails dos veículos com título e preço
+  - Placeholders visuais para slots vazios (até 3)
+  - Botão "Limpar" para remover todos
+  - Botão "Comparar" (ativado apenas com ≥2 veículos)
+- Ajusta automaticamente o padding do body para não sobrepor conteúdo
+
+**Página de Comparação (`/Anuncios/Compare`):**
+- Tabela responsiva com scroll horizontal
+- Primeira coluna fixa (sticky) com características
+- Colunas dinâmicas para cada veículo
+- Informações comparadas:
+  - **Básicas:** Preço, Ano, Quilometragem, Combustível
+  - **Técnicas:** Transmissão (Caixa), Potência (cv), Cilindrada (cm³)
+  - **Extras (mockup):** GPS, Câmara Traseira, AC Automático, Sensores, LED
+- Header visual com imagens dos veículos
+- Botão para remover veículos individualmente
+- Botão "Ver Detalhes" para cada veículo
+- Breadcrumb navigation
+
+**Persistência:**
+- Dados armazenados em `localStorage` do browser
+- Chaves utilizadas:
+  - `compareVehicles`: Array de objetos completos com todos os dados
+  - `compareIds`: Array de IDs (para verificação rápida)
+- Estado persiste entre:
+  - Navegações entre páginas
+  - Recarregamento da página
+  - Sessões do browser
+- Estado dos botões restaurado automaticamente ao revisitar `/Anuncios`
+
+**Validações:**
+- Alert informativo quando tenta adicionar mais de 3 veículos
+- Desativa botão "Comparar" quando há menos de 2 veículos
+- Verifica se veículo já está na comparação (toggle)
+- Limpa automaticamente comparação quando restam menos de 2 veículos
+
+**Implementação Técnica:**
+
+**JavaScript (`Views/Anuncios/Index.cshtml`, linhas 473-647):**
+```javascript
+const MAX_COMPARE = 3;
+
+// Funções principais:
+- addToCompare(id, titulo, imagem, preco, ano, km, combustivel, caixa, potencia, cilindrada, button)
+- removeFromComparison(id)
+- clearComparison()
+- updateComparisonBar()
+- loadComparison() / saveComparison()
+```
+
+**CSS Responsivo (`wwwroot/css/site.css`, linhas 2593-3005):**
+- `.comparison-bar`: Barra flutuante com transições smooth
+- `.btn-compare.active`: Estado ativo do botão
+- `.comparison-table`: Tabela com sticky columns e overflow horizontal
+- `.comparison-item`: Cards dos veículos na barra flutuante
+- Media queries para mobile (≤768px) e tablet (≤992px)
+
+**Controller (`Controllers/AnunciosController.cs`, linha 615-621):**
+```csharp
+// GET: Anuncios/Compare
+public IActionResult Compare()
+{
+    // View simples - dados carregados via localStorage no client
+    return View();
+}
+```
+
+**Vantagens do Design:**
+- Totalmente client-side (sem chamadas AJAX desnecessárias)
+- Performance excelente (dados em memória local)
+- Funciona offline após primeira carga
+- Não requer autenticação
+- UX fluída com feedback visual imediato
+- Responsivo em todos os dispositivos
+
+**Cenários de Uso:**
+
+1. **Comparação Rápida:**
+   - Visitante navega em `/Anuncios`
+   - Seleciona 2-3 veículos de interesse
+   - Clica "Comparar" na barra flutuante
+   - Analisa especificações lado a lado
+   - Decide qual veículo se adequa melhor
+
+2. **Pesquisa Refinada:**
+   - Aplica filtros (marca, preço, ano)
+   - Seleciona candidatos para comparação
+   - Compara características técnicas
+   - Remove veículos menos interessantes
+   - Adiciona outros para nova comparação
+
+3. **Decisão de Compra:**
+   - Compara finalistas antes de reservar
+   - Analisa diferenças de preço vs especificações
+   - Verifica extras incluídos
+   - Clica "Ver Detalhes" no favorito
+   - Procede com reserva ou compra
+
 ---
 
 ## 6. ARQUITETURA E TECNOLOGIAS
@@ -1044,6 +1162,98 @@ Marketplace/
 **Solução Ideal (Produção):**
 - Usar User Secrets em desenvolvimento
 - Usar Azure Key Vault ou variáveis de ambiente em produção
+
+### 8.5 Inconsistência de Caminhos de Imagens
+
+**Desafio:**
+- Imagens dos anúncios não apareciam na aplicação
+- Tabela `Imagens` na base de dados estava vazia (0 registos)
+- 21 anúncios existentes sem imagens associadas
+- Ficheiros físicos de imagens existiam em `wwwroot/imagens/anuncios/`
+
+**Investigação:**
+Ao analisar o código, descobrimos inconsistência nos caminhos:
+- `AnuncioSeeder.cs` (linha 176): Usava `/imagens/anuncios/` (português) ✅
+- `AnunciosController.cs` (linha 669): Usava `/images/anuncios/` (inglês) ❌
+- Diretório físico: `wwwroot/imagens/` (português) ✅
+
+**Problema Identificado:**
+Quando um vendedor adicionava imagens através do controller, o caminho era guardado como `/images/anuncios/{id}/{foto.jpg}`, mas o ficheiro físico estava em `/imagens/anuncios/{id}/{foto.jpg}`. Resultado: 404 Not Found ao carregar imagens.
+
+**Solução Implementada:**
+
+**1. Correção do Controller** (`Controllers/AnunciosController.cs`)
+```csharp
+// ❌ ANTES (linha 669)
+var imagemDb = new Imagem
+{
+    AnuncioId = anuncioId,
+    ImagemCaminho = $"/images/anuncios/{anuncioId}/{nomeUnico}"
+};
+
+// ✅ DEPOIS
+var imagemDb = new Imagem
+{
+    AnuncioId = anuncioId,
+    ImagemCaminho = $"/imagens/anuncios/{anuncioId}/{nomeUnico}"
+};
+```
+
+**2. Script SQL de Correção** (`fix_image_paths.sql`)
+```sql
+-- Corrige caminhos existentes com inconsistência
+UPDATE Imagens
+SET ImagemCaminho = REPLACE(ImagemCaminho, '/images/', '/imagens/')
+WHERE ImagemCaminho LIKE '/images/%';
+```
+- Execução: `sqlcmd -S "(localdb)\mssqllocaldb" -d MarketplaceDb -i fix_image_paths.sql`
+- Resultado: 0 registos atualizados (tabela estava vazia)
+
+**3. Script SQL de População** (`populate_images.sql`)
+```sql
+-- Adiciona 3 imagens para cada anúncio existente
+DECLARE @AnuncioId INT = 1;
+DECLARE @MaxAnuncio INT;
+
+SELECT @MaxAnuncio = MAX(Id) FROM Anuncios;
+
+WHILE @AnuncioId <= @MaxAnuncio
+BEGIN
+    IF EXISTS (SELECT 1 FROM Anuncios WHERE Id = @AnuncioId)
+    BEGIN
+        INSERT INTO Imagens (ImagemCaminho, AnuncioId)
+        VALUES
+            ('/imagens/anuncios/' + CAST(@AnuncioId AS VARCHAR(10)) + '/foto-01.jpg', @AnuncioId),
+            ('/imagens/anuncios/' + CAST(@AnuncioId AS VARCHAR(10)) + '/foto-02.jpg', @AnuncioId),
+            ('/imagens/anuncios/' + CAST(@AnuncioId AS VARCHAR(10)) + '/foto-03.jpg', @AnuncioId);
+    END
+    SET @AnuncioId = @AnuncioId + 1;
+END
+```
+- Execução: `sqlcmd -S "(localdb)\mssqllocaldb" -d MarketplaceDb -i populate_images.sql`
+- Resultado: **63 imagens inseridas com sucesso** (21 anúncios × 3 imagens)
+
+**Verificação:**
+```sql
+SELECT COUNT(*) FROM Imagens;  -- Resultado: 63
+SELECT Id, ImagemCaminho, AnuncioId FROM Imagens ORDER BY AnuncioId, Id;
+```
+
+**Lição Aprendida:**
+- Manter consistência de nomenclatura (português vs inglês) em todo o código
+- Sempre validar se os caminhos físicos correspondem aos caminhos na BD
+- Scripts SQL são úteis para corrigir dados inconsistentes sem perder informação
+- Testes de integração devem verificar carregamento real de imagens
+- Considerar usar constantes para paths frequentemente usados:
+  ```csharp
+  public const string IMAGE_BASE_PATH = "/imagens/anuncios";
+  ```
+
+**Impacto:**
+- ✅ Todas as imagens agora carregam corretamente
+- ✅ Novas imagens adicionadas via controller usam caminho correto
+- ✅ Listagem de anúncios exibe thumbnails
+- ✅ Galeria de imagens funcional na página de detalhes
 - Nunca commitar `appsettings.json` com secrets reais
 
 ### 8.5 Erros de Sintaxe Razor

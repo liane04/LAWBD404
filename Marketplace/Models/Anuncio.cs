@@ -51,6 +51,11 @@ namespace Marketplace.Models
         [StringLength(20)]
         public string Estado { get; set; } = "Ativo";
 
+        // Sistema de Destaque
+        public bool Destacado { get; set; } = false;
+        public DateTime? DataDestaque { get; set; }
+        public DateTime? DestaqueAte { get; set; }
+
         // Relações com outras entidades
         public int VendedorId { get; set; }
         [ForeignKey("VendedorId")]

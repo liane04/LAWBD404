@@ -1,9 +1,9 @@
 # CONTEXTO DO PROJETO - DriveDeal (404 Car Marketplace)
 
 > **Ficheiro de contexto para sessões futuras com Claude Code**
-> **Última atualização:** 2025-12-27 (Correções: Secção Minhas Compras + Sistema de Anúncios Vendidos)
+> **Última atualização:** 2025-12-30 (Sistema de Destaque de Anúncios + Comparação + Imagens)
 > **Fase atual:** Fase 3 (em desenvolvimento ativo - Sprint final)
-> **Prazo de entrega:** 5 de janeiro de 2026 (9 dias restantes ⚠️)
+> **Prazo de entrega:** 5 de janeiro de 2026 (6 dias restantes ⚠️)
 
 ---
 
@@ -993,6 +993,263 @@ git push origin main
 ---
 
 ## 18. CORREÇÕES RECENTES
+
+### 30/12/2025 (Tarde) - Sistema de Destaque de Anúncios com Stripe
+
+**Contexto:** Implementação completa de um sistema de destaque pago para anúncios, permitindo que vendedores paguem para ter seus anúncios em destaque no topo das listagens.
+
+**Alterações no Modelo de Dados:**
+
+Migration: `AdicionarCamposDestaque` (20251230230024)
+
+**Campos adicionados à tabela `Anuncios`:**
+```csharp
+public bool Destacado { get; set; } = false;
+public DateTime? DataDestaque { get; set; }
+public DateTime? DestaqueAte { get; set; }
+```
+
+**Funcionalidades Implementadas:**
+
+1. **Sistema de Pagamento via Stripe** ✅
+   - **Preço fixo:** 9,99€ por 30 dias de destaque
+   - **Integração completa** com Stripe Checkout
+   - **Metadata:** Inclui `anuncio_id`, `dias_destaque`, `tipo` (destaque)
+   - **Callback de sucesso:** `DestaqueSuccess` confirma pagamento e ativa destaque
+
+2. **Actions do Controller** (`Controllers/AnunciosController.cs`)
+   - **`DestacarAnuncio(id)`** (linhas 709-744):
+     - GET action para mostrar página de confirmação
+     - Verifica se anúncio pertence ao vendedor atual
+     - Valida se anúncio já está destacado
+
+   - **`ProcessarDestaque(id)`** (linhas 746-813):
+     - POST action que cria sessão Stripe
+     - Configura line items com valor e descrição
+     - Redireciona para checkout Stripe
+
+   - **`DestaqueSuccess(session_id)`** (linhas 815-864):
+     - Valida pagamento via Stripe
+     - Atualiza campos `Destacado`, `DataDestaque`, `DestaqueAte`
+     - Redireciona para detalhes do anúncio
+
+3. **Ordenação de Listagem** (`Controllers/AnunciosController.cs`, linhas 89-107)
+   - **Anúncios destacados sempre primeiro** independentemente da ordenação
+   - Ordenação aplicada: `OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)`
+   - Funciona com todos os tipos de ordenação: preço, ano, km, relevância
+
+4. **View de Confirmação** (`Views/Anuncios/DestacarAnuncio.cshtml`)
+   - **Página de confirmação elegante** antes do pagamento
+   - Mostra:
+     - Informações do anúncio (imagem, título, preço)
+     - Plano de destaque com benefícios
+     - Valor (9,99€) e duração (30 dias)
+     - Botão de pagamento Stripe
+   - **Benefícios destacados:**
+     - Aparecer no topo das listagens
+     - Badge "Destaque" visível
+     - Maior visibilidade
+     - Venda mais rápido
+
+5. **Badges Visuais** ✅
+   - **Na listagem** (`Views/Anuncios/Index.cshtml`, linhas 312-315):
+     ```razor
+     @if (anuncio.Destacado && anuncio.DestaqueAte.HasValue && anuncio.DestaqueAte.Value > DateTime.Now)
+     {
+         <span class="badge bg-warning text-dark">
+             <i class="bi bi-star-fill me-1"></i>Destaque
+         </span>
+     }
+     ```
+
+   - **Na página de detalhes** (`Views/Anuncios/Details.cshtml`, linhas 61-64):
+     - Badge "Destaque" no topo da página
+     - Dinâmico baseado no estado real do anúncio
+
+6. **Botão de Destaque para Vendedores** (`Views/Anuncios/Details.cshtml`, linhas 492-507)
+   - **Visível apenas para o próprio vendedor**
+   - **Estados:**
+     - Se **não destacado**: Botão "Destacar Anúncio" (amarelo/warning)
+     - Se **já destacado**: Alert informativo com data de expiração
+   - Localizado na secção "Gerir o seu anúncio"
+
+**Validações de Segurança:**
+- ✅ Apenas vendedores podem destacar
+- ✅ Verificação de proprietário do anúncio
+- ✅ Validação de pagamento via Stripe
+- ✅ Verificação de duplicação (se já destacado)
+- ✅ Role `[Authorize(Roles = "Vendedor")]` em todas as actions
+
+**Fluxo Completo:**
+1. Vendedor acede aos detalhes do seu anúncio
+2. Clica no botão "Destacar Anúncio"
+3. Visualiza página de confirmação com benefícios
+4. Clica "Pagar com Stripe"
+5. Completa pagamento no Stripe Checkout
+6. Sistema valida pagamento
+7. Anúncio é marcado como destacado por 30 dias
+8. Anúncio aparece no topo de todas as listagens
+9. Badge "Destaque" fica visível em listagem e detalhes
+
+**Ficheiros Modificados:**
+- ✅ `Models/Anuncio.cs` - Campos de destaque
+- ✅ `Controllers/AnunciosController.cs` - 3 novas actions + ordenação
+- ✅ `Views/Anuncios/Index.cshtml` - Badge de destaque
+- ✅ `Views/Anuncios/Details.cshtml` - Badge + botão de destaque
+- ✅ `Views/Anuncios/DestacarAnuncio.cshtml` - Nova view (criada)
+
+**Migration:**
+- ✅ `20251230230024_AdicionarCamposDestaque` - Aplicada com sucesso
+
+**Testes:**
+- ✅ Build bem-sucedido (0 erros)
+- ✅ Migration aplicada à base de dados
+
+---
+
+### 30/12/2025 (Manhã) - Funcionalidade de Comparação de Veículos + Correção de Caminhos de Imagens
+
+**Contexto:** A funcionalidade de comparação de veículos estava previamente implementada mas tinha sido perdida durante o desenvolvimento. As imagens dos anúncios não estavam a aparecer devido a inconsistência nos caminhos.
+
+**Soluções Implementadas:**
+
+1. **Funcionalidade de Comparação Restaurada** ✅
+
+   **a) Botão "COMPARAR" nos Cards de Veículos** (`Views/Anuncios/Index.cshtml`, linhas 340-361)
+   - Adicionado botão "COMPARAR" em cada card de veículo
+   - Posicionado verticalmente (por baixo do botão "Ver Detalhes")
+   - Integrado com JavaScript existente via `onclick="addToCompare(...)"`
+   - Passa todos os dados do veículo: id, titulo, imagem, preço, ano, km, combustível, caixa, potência, cilindrada
+   - Estados do botão:
+     - Normal: `<i class="bi bi-arrow-left-right"></i> Comparar`
+     - Ativo: `<i class="bi bi-check-circle-fill"></i> Adicionado`
+
+   **b) CSS para Layout Vertical** (`wwwroot/css/site.css`, linhas 2181-2186)
+   ```css
+   .card-footer-actions {
+       display: flex;
+       flex-direction: column;
+       gap: 0.5rem;
+       margin-top: 1rem;
+   }
+   ```
+
+   **c) Infraestrutura Existente (já implementada anteriormente):**
+   - **JavaScript** (`Views/Anuncios/Index.cshtml`, linhas 473-647):
+     - `addToCompare()` - Adiciona/remove veículos (max 3)
+     - `removeFromComparison()` - Remove veículo específico
+     - `clearComparison()` - Limpa toda a comparação
+     - `updateComparisonBar()` - Atualiza barra flutuante
+     - localStorage para persistência de dados
+
+   - **Barra Flutuante de Comparação** (`Views/Anuncios/Index.cshtml`, linhas 384-408):
+     - Aparece na parte inferior quando há veículos selecionados
+     - Mostra thumbnails, títulos e preços
+     - Botão "Comparar" (ativado com ≥2 veículos)
+     - Botão "Limpar" para resetar seleção
+
+   - **Página de Comparação** (`Views/Anuncios/Compare.cshtml`):
+     - Tabela side-by-side com especificações completas
+     - Comparação de: preço, ano, km, combustível, transmissão, potência, cilindrada
+     - Mockup de extras (GPS, câmara, AC, sensores, LED)
+     - Carregamento dinâmico via localStorage
+
+   - **Controller** (`Controllers/AnunciosController.cs`, linhas 615-621):
+     - Ação `Compare()` retorna a view
+     - Dados carregados do localStorage no client-side
+
+   - **CSS Completo** (`wwwroot/css/site.css`, linhas 2593-3005):
+     - `.comparison-bar` - Barra flutuante com animação
+     - `.btn-compare.active` - Estado ativo do botão
+     - `.comparison-table` - Tabela de comparação responsiva
+     - Media queries para mobile
+
+2. **Correção de Caminhos de Imagens** ✅
+
+   **Problema Identificado:**
+   - **AnuncioSeeder.cs** usava: `/imagens/anuncios/{id}/foto-XX.jpg` (português)
+   - **AnunciosController.cs** usava: `/images/anuncios/{id}/foto-XX.jpg` (inglês)
+   - Diretório físico: `wwwroot/imagens/` (português)
+   - Resultado: Imagens adicionadas via controller não carregavam
+
+   **Solução:**
+
+   **a) Controller Corrigido** (`Controllers/AnunciosController.cs`, linha 669)
+   ```csharp
+   // ❌ ANTES
+   ImagemCaminho = $"/images/anuncios/{anuncioId}/{nomeUnico}"
+
+   // ✅ DEPOIS
+   ImagemCaminho = $"/imagens/anuncios/{anuncioId}/{nomeUnico}"
+   ```
+
+   **b) Scripts SQL Criados:**
+
+   - **`fix_image_paths.sql`** - Corretor de caminhos existentes:
+     ```sql
+     UPDATE Imagens
+     SET ImagemCaminho = REPLACE(ImagemCaminho, '/images/', '/imagens/')
+     WHERE ImagemCaminho LIKE '/images/%';
+     ```
+     - Resultado: 0 registos a corrigir (tabela estava vazia)
+
+   - **`populate_images.sql`** - Populador da tabela Imagens:
+     ```sql
+     -- Para cada anúncio (1-21), insere 3 imagens
+     INSERT INTO Imagens (ImagemCaminho, AnuncioId)
+     VALUES ('/imagens/anuncios/{id}/foto-01.jpg', {id}),
+            ('/imagens/anuncios/{id}/foto-02.jpg', {id}),
+            ('/imagens/anuncios/{id}/foto-03.jpg', {id});
+     ```
+     - Executado com sucesso via `sqlcmd`
+     - Resultado: **63 imagens inseridas** (21 anúncios × 3 imagens)
+
+**Funcionalidades Completas:**
+
+1. **Fluxo de Comparação:**
+   - Utilizador navega em `/Anuncios`
+   - Clica "COMPARAR" em até 3 veículos
+   - Barra flutuante aparece na parte inferior
+   - Botão "Comparar" fica ativo (≥2 veículos)
+   - Redireciona para `/Anuncios/Compare`
+   - Tabela mostra comparação lado a lado
+   - Pode remover veículos individualmente
+   - Pode limpar toda a comparação
+
+2. **Persistência:**
+   - Dados guardados em `localStorage`
+   - Chaves: `compareVehicles` (objetos completos), `compareIds` (apenas IDs)
+   - Estado dos botões restaurado ao recarregar página
+   - Comparação persiste entre navegações
+
+3. **Validações:**
+   - Máximo 3 veículos simultaneamente
+   - Alert quando tenta adicionar mais que 3
+   - Mínimo 2 veículos para ativar botão "Comparar"
+   - Toggle: clicar novamente remove da comparação
+
+**Ficheiros Criados:**
+- `fix_image_paths.sql` - Script de correção de caminhos
+- `populate_images.sql` - Script de população de imagens
+
+**Ficheiros Modificados:**
+- ✅ `Views/Anuncios/Index.cshtml` - Botão "COMPARAR" adicionado (linhas 340-361)
+- ✅ `wwwroot/css/site.css` - CSS para layout vertical (linhas 2181-2186)
+- ✅ `Controllers/AnunciosController.cs` - Caminho corrigido (linha 669)
+
+**Testes Realizados:**
+- ✅ Build bem-sucedido (0 erros, 0 warnings)
+- ✅ Scripts SQL executados com sucesso
+- ✅ 63 imagens inseridas na base de dados
+- ✅ Aplicação iniciada em http://localhost:5184
+
+**Notas Técnicas:**
+- A funcionalidade de comparação é totalmente client-side (JavaScript + localStorage)
+- Não requer autenticação - disponível para todos os visitantes
+- CSS totalmente responsivo com media queries para mobile
+- Integração perfeita com design existente (Bootstrap 5 + cores do tema)
+
+---
 
 ### 27/12/2025 - Sistema de Compra Completo com Stripe
 
