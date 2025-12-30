@@ -64,6 +64,9 @@ namespace Marketplace.Services
                         .AsNoTracking()
                         .ToListAsync(stoppingToken);
 
+                    // Rastreio de notificações de filtro para evitar duplicados nas marcas
+                    var processedUserAds = new HashSet<(int UserId, int AnuncioId)>();
+
                     foreach (var f in filtros)
                     {
                         // Construir query aplicando os critérios guardados
@@ -84,10 +87,51 @@ namespace Marketplace.Services
                         if (!string.IsNullOrWhiteSpace(f.Caixa)) query = query.Where(a => a.Caixa != null && a.Caixa.ToLower() == f.Caixa.ToLower());
                         if (!string.IsNullOrWhiteSpace(f.Localizacao)) query = query.Where(a => a.Localizacao != null && a.Localizacao.ToLower().Contains(f.Localizacao.ToLower()));
 
-                        // Heurística: considerar apenas IDs acima do último notificado
+                        // Heurística: considerar apenas IDs acima do último notificado E criados DEPOIS da pesquisa ser guardada
                         if (f.MaxAnuncioIdNotificado > 0)
                         {
                             query = query.Where(a => a.Id > f.MaxAnuncioIdNotificado);
+                        }
+                        else
+                        {
+                            // Se é a primeira vez que verificamos este filtro, ignorar anúncios antigos (anteriores à criação do filtro)
+                            // Isto evita spam de "novos anúncios" quando se cria uma pesquisa que já tem muitos resultados existentes.
+                            // Nota: Como não temos CreatedAt no Anuncio, usamos uma aproximação baseada em IDs ou assumimos que 
+                            // anúncios existentes já foram vistos pelo utilizador aquando da criação da pesquisa.
+                            // Mas para ser seguro, vamos usar o MaxAnuncioIdNotificado que deve ser inicializado ao criar o filtro.
+                            // Como alternativa, podemos filtrar apenas anúncios criados (ou com ID superior ao max existente na altura da criação).
+                        }
+
+                        // Filtro crucial: apenas anúncios processados pelo serviço como "novos" nesta iteração
+                        // O 'novosAnuncios' no início do método pegou em tudo > lastProcessedId. 
+                        // Mas aqui estamos a re-consultar a BD. 
+                        // Vamos simplificar: Apenas notificar anúncios cujo ID seja superior ao MaxAnuncioId da tabela de anúncios
+                        // no momento em que o filtro foi criado. 
+                        // Corrigindo: O filtro deve ter um campo 'StartsFromAnuncioId' ou similar. 
+                        // Como não temos, vamos usar o LastCheckedAt como referência temporal, mas não temos CreatedAt no Anuncio.
+                        // Solução pragmática: Filtrar IDs > _lastProcessedAnuncioId (que representa o topo da pilha global)
+                        // OU usar o MaxAnuncioIdNotificado que agora vamos garantir que é inicializado correctamente no Controller.
+                        
+                        // Assumindo que o Controller inicializa MaxAnuncioIdNotificado com o ID máximo atual quando cria o filtro,
+                        // esta cláusula Where(Id > Max...) funcionará perfeitamente para ignorar os antigos.
+                        if (f.MaxAnuncioIdNotificado > 0)
+                        {
+                            query = query.Where(a => a.Id > f.MaxAnuncioIdNotificado);
+                        }
+                        else
+                        {
+                           // Fallback safety: se for 0 (filtro antigo ou erro), assume-se apenas novos globais
+                           // query = query.Where(a => a.Id > _lastProcessedAnuncioId);
+                           // Melhor: Se é 0, atualizamos para o Max atual e não notificamos nada nesta primeira passagem,
+                           // para evitar spam de 100 anúncios velhos.
+                           var currentMax = await db.Anuncios.MaxAsync(a => (int?)a.Id) ?? 0;
+                           f.MaxAnuncioIdNotificado = currentMax;
+                           // Salvar mudanças e continue para o próximo (skip notification now)
+                           db.Entry(f).State = EntityState.Modified; 
+                           // Note: save is tricky inside foreach loop with ASYNC enumerable if context is shared poorly
+                           // But here we are fine to defer save or just mark it.
+                           // Vamos forçar o update no fim ou já aqui.
+                           continue; 
                         }
 
                         var novos = await query
@@ -97,6 +141,9 @@ namespace Marketplace.Services
 
                         if (novos.Count > 0)
                         {
+                            // Registar para não duplicar na notificação de marca
+                            foreach (var n in novos) processedUserAds.Add((f.CompradorId, n.Id));
+
                             // Criar uma notificação agregada (mensagem concisa)
                             var topTitulos = string.Join(
                                 ", ",
@@ -139,7 +186,15 @@ namespace Marketplace.Services
                     
                     var currentMaxId = await db.Anuncios.MaxAsync(a => (int?)a.Id) ?? 0;
                     
-                    if (currentMaxId > _lastProcessedAnuncioId)
+                    // Proteção de segurança: Se o serviço arrancou agora (_lastProcessedAnuncioId == 0) 
+                    // e já existem anúncios na BD (currentMaxId > 0), assumimos que são antigos.
+                    // Atualizamos apenas o ponteiro e não notificamos para evitar spam de histórico.
+                    // Se a BD estiver vazia (currentMaxId == 0), tudo bem, o próximo novo será notificado.
+                    if (_lastProcessedAnuncioId == 0 && currentMaxId > 0)
+                    {
+                         _lastProcessedAnuncioId = currentMaxId;
+                    }
+                    else if (currentMaxId > _lastProcessedAnuncioId)
                     {
                         var anunciosRecentes = await db.Anuncios
                             .Include(a => a.Marca)
@@ -156,8 +211,9 @@ namespace Marketplace.Services
                             
                             foreach (var interesse in marcasInteressadas)
                             {
-                                // Verificar se já notificámos este utilizador recentemente sobre este carro (via filtro)
-                                // para evitar duplicação chata, mas por simplicidade enviamos.
+                                // Se já notificámos este utilizador sobre este anúncio via Pesquisa Guardada, ignorar
+                                if (processedUserAds.Contains((interesse.CompradorId, anuncio.Id))) continue;
+
                                 // O utilizador pode ter interesse na marca E um filtro específico.
                                 
                                 var conteudo = $"Novo anúncio da sua marca favorita {anuncio.Marca?.Nome}: {anuncio.Titulo}";

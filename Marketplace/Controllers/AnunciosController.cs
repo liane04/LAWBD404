@@ -281,6 +281,9 @@ namespace Marketplace.Controllers
             if (anoMin.HasValue || anoMax.HasValue) partes.Add($"Ano {(anoMin?.ToString() ?? "?")}–{(anoMax?.ToString() ?? "?")}");
             var computedNome = string.IsNullOrWhiteSpace(nome) ? (partes.Count > 0 ? string.Join(" ", partes) : "Pesquisa") : nome!.Trim();
 
+            // Obter o ID máximo atual dos anúncios para não notificar sobre anúncios já existentes
+            var maxAnuncioId = await _context.Anuncios.MaxAsync(a => (int?)a.Id) ?? 0;
+
             var filtro = new FiltrosFav
             {
                 CompradorId = comprador.Id,
@@ -297,7 +300,8 @@ namespace Marketplace.Controllers
                 Caixa = string.IsNullOrWhiteSpace(caixa) ? null : caixa,
                 Localizacao = string.IsNullOrWhiteSpace(localizacao) ? null : localizacao,
                 Ativo = true,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                MaxAnuncioIdNotificado = maxAnuncioId // Inicializar com o ID atual
             };
 
             _context.FiltrosFavoritos.Add(filtro);
