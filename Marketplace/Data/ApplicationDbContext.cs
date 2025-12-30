@@ -97,10 +97,11 @@ namespace Marketplace.Data
                 .OnDelete(DeleteBehavior.Restrict);
             */
 
-            // MarcasFavoritas - desativa cascade para Comprador
+            // MarcasFavoritas - desativa cascade para Utilizador (antes era Comprador)
             modelBuilder.Entity<MarcasFav>()
-                .HasOne(mf => mf.Comprador)
-                .WithMany(c => c.MarcasFavoritas)
+                .HasOne(mf => mf.Comprador) // A propriedade chama-se Comprador mas é do tipo Utilizador
+                .WithMany(u => u.MarcasFavoritas)
+                .HasForeignKey(mf => mf.CompradorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Conversas - desativa cascade para evitar múltiplos paths
@@ -227,6 +228,13 @@ namespace Marketplace.Data
             modelBuilder.Entity<Utilizador>()
                 .HasIndex(u => u.IdentityUserId)
                 .IsUnique();
+
+            // Pesquisas Passadas - Cascade delete ao apagar Utilizador
+            modelBuilder.Entity<PesquisasPassadas>()
+                .HasOne(p => p.Utilizador)
+                .WithMany(u => u.PesquisasPassadas)
+                .HasForeignKey(p => p.UtilizadorId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

@@ -141,6 +141,30 @@ namespace Marketplace.Controllers
             return Json(new { success = true, favoritos = favoritos });
         }
 
+        // POST: Favoritos/RemoveMarca - Remove marca favorita (do perfil)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveMarca(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Utilizadores");
+
+            var utilizador = await _context.Set<Utilizador>().FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
+            if (utilizador == null) return RedirectToAction("Perfil", "Utilizadores");
+
+            var fav = await _context.MarcasFavoritas
+                .FirstOrDefaultAsync(mf => mf.Id == id && mf.CompradorId == utilizador.Id);
+
+            if (fav != null)
+            {
+                _context.MarcasFavoritas.Remove(fav);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Marca removida dos favoritos.";
+            }
+
+            return RedirectToAction("Perfil", "Utilizadores", null, "favoritos-marcas");
+        }
+
         // DELETE: Favoritos/Remove - Remove favorito (da página de favoritos)
         [HttpPost]
         public async Task<IActionResult> Remove(int id)
@@ -165,6 +189,85 @@ namespace Marketplace.Controllers
 
             return RedirectToAction("Index");
         }
+    
+    
+
+    // POST: Favoritos/ToggleMarca - Adiciona ou remove marca favorita (AJAX)
+    [HttpPost]
+    public async Task<IActionResult> ToggleMarca([FromBody] int marcaId)
+    {
+        try
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Json(new { success = false, message = "Utilizador não autenticado" });
+
+            // Tentar encontrar Utilizador associado (Comprador ou Vendedor)
+            var utilizador = await _context.Set<Utilizador>().FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
+
+            if (utilizador == null) return Json(new { success = false, message = "Perfil de utilizador não encontrado" });
+
+            // Verifica se marca existe
+            var marca = await _context.Marcas.FindAsync(marcaId);
+            if (marca == null) return Json(new { success = false, message = "Marca não encontrada" });
+
+            var fav = await _context.MarcasFavoritas
+                .FirstOrDefaultAsync(mf => mf.CompradorId == utilizador.Id && mf.MarcaId == marcaId);
+
+            bool adicionado;
+            if (fav != null)
+            {
+                _context.MarcasFavoritas.Remove(fav);
+                adicionado = false;
+            }
+            else
+            {
+                var novo = new MarcasFav
+                {
+                    CompradorId = utilizador.Id,
+                    MarcaId = marcaId
+                };
+                _context.MarcasFavoritas.Add(novo);
+                adicionado = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Contar total
+            var total = await _context.MarcasFavoritas.CountAsync(mf => mf.CompradorId == utilizador.Id);
+
+            return Json(new { success = true, adicionado, total, message = adicionado ? "Marca adicionada aos favoritos" : "Marca removida dos favoritos" });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = "Erro: " + ex.Message });
+        }
+    }
+
+    // GET: Favoritos/GetBrandsForSelection - Retorna todas as marcas e status de favorito
+    [HttpGet]
+    public async Task<IActionResult> GetBrandsForSelection()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return Json(new { success = false, message = "Não autenticado" });
+
+        var utilizador = await _context.Set<Utilizador>().FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
+        if (utilizador == null) return Json(new { success = false, message = "Perfil não encontrado" });
+
+        var allBrands = await _context.Marcas.OrderBy(m => m.Nome).ToListAsync();
+        var myFavs = await _context.MarcasFavoritas
+            .Where(mf => mf.CompradorId == utilizador.Id)
+            .Select(mf => mf.MarcaId)
+            .ToListAsync();
+
+        var result = allBrands.Select(b => new
+        {
+            b.Id,
+            b.Nome,
+            IsFavorito = myFavs.Contains(b.Id)
+        });
+
+        return Json(new { success = true, brands = result });
+    }
     }
 }
 

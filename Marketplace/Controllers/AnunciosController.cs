@@ -122,7 +122,7 @@ namespace Marketplace.Controllers
             ViewBag.Localizacao = localizacao;
             ViewBag.Ordenacao = ordenacao;
 
-            // Carregar pesquisas guardadas do comprador autenticado
+            // Carregar pesquisas guardadas (Saved Filters) - Mantido para Comprador, pode ser expandido se necessário
             if (User.Identity?.IsAuthenticated == true && User.IsInRole("Comprador"))
             {
                 var identityIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -136,6 +136,79 @@ namespace Marketplace.Controllers
                             .OrderByDescending(f => f.CreatedAt)
                             .ToListAsync();
                         ViewBag.SavedFilters = filtros;
+                    }
+                }
+            }
+
+            // --- Lógica para guardar Histórico de Pesquisa (Pesquisas Passadas) ---
+            // Apenas se houver filtros aplicados e utilizador autenticado
+            bool hasFilters = marcaId.HasValue || modeloId.HasValue || tipoId.HasValue || 
+                              categoriaId.HasValue || combustivelId.HasValue || 
+                              precoMax.HasValue || anoMin.HasValue || anoMax.HasValue || 
+                              kmMax.HasValue || !string.IsNullOrWhiteSpace(caixa) || 
+                              !string.IsNullOrWhiteSpace(localizacao);
+            
+            if (hasFilters && User.Identity?.IsAuthenticated == true)
+            {
+                var identityIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (int.TryParse(identityIdStr, out var identityId))
+                {
+                    // Buscar Utilizador genérico (Comprador ou Vendedor)
+                    var utilizador = await _context.Set<Utilizador>().FirstOrDefaultAsync(u => u.IdentityUserId == identityId);
+
+                    if (utilizador != null)
+                    {
+                        // Construir Descrição
+                        var descParts = new List<string>();
+                        if (marcaId.HasValue) 
+                        {
+                            var m = await _context.Marcas.FindAsync(marcaId.Value); 
+                            if(m != null) descParts.Add(m.Nome); 
+                        }
+                        if (modeloId.HasValue) 
+                        {
+                            var mod = await _context.Modelos.FindAsync(modeloId.Value);
+                            if(mod != null) descParts.Add(mod.Nome);
+                        }
+                        if (precoMax.HasValue) descParts.Add($"< {precoMax}€");
+                        if (anoMin.HasValue) descParts.Add($"> {anoMin}");
+                        
+                        string descricao = descParts.Count > 0 ? string.Join(", ", descParts) : "Pesquisa Avançada";
+                        
+                        // Construir QueryString
+                        var queryParams = new List<string>();
+                        if(marcaId.HasValue) queryParams.Add($"marcaId={marcaId}");
+                        if(modeloId.HasValue) queryParams.Add($"modeloId={modeloId}");
+                        if(tipoId.HasValue) queryParams.Add($"tipoId={tipoId}");
+                        if(categoriaId.HasValue) queryParams.Add($"categoriaId={categoriaId}");
+                        if(combustivelId.HasValue) queryParams.Add($"combustivelId={combustivelId}");
+                        if(precoMax.HasValue) queryParams.Add($"precoMax={precoMax}");
+                        if(anoMin.HasValue) queryParams.Add($"anoMin={anoMin}");
+                        if(anoMax.HasValue) queryParams.Add($"anoMax={anoMax}");
+                        if(kmMax.HasValue) queryParams.Add($"kmMax={kmMax}");
+                        if(!string.IsNullOrEmpty(caixa)) queryParams.Add($"caixa={caixa}");
+                        if(!string.IsNullOrEmpty(localizacao)) queryParams.Add($"localizacao={localizacao}");
+
+                        string queryString = "?" + string.Join("&", queryParams);
+
+                        // Verificar se a última pesquisa é idêntica para evitar duplicados seguidos
+                        var lastSearch = await _context.PesquisasPassadas
+                            .Where(p => p.UtilizadorId == utilizador.Id)
+                            .OrderByDescending(p => p.Data)
+                            .FirstOrDefaultAsync();
+
+                        if (lastSearch == null || lastSearch.QueryString != queryString)
+                        {
+                            var novaPesquisa = new PesquisasPassadas
+                            {
+                                UtilizadorId = utilizador.Id,
+                                Data = DateTime.UtcNow,
+                                Descricao = descricao,
+                                QueryString = queryString
+                            };
+                            _context.PesquisasPassadas.Add(novaPesquisa);
+                            await _context.SaveChangesAsync();
+                        }
                     }
                 }
             }

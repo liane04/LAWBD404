@@ -84,6 +84,14 @@
                                 <span class="badge bg-danger rounded-pill ms-auto" id="favoritos-badge-nav">@(ViewBag.FavoritosCount ?? 0)</span>
                             </a>
                         }
+                        @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
+                        {
+                            <a href="#favoritos-marcas" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-tags-fill"></i>
+                                <span>Marcas Favoritas</span>
+                                <span class="badge bg-secondary rounded-pill ms-auto" id="marcas-fav-badge-nav">@(ViewBag.MarcasFavoritasCount ?? 0)</span>
+                            </a>
+                        }
                         @if (User.IsInRole("Comprador"))
                         {
                             <a href="#minhas-reservas" class="perfil-nav-item" data-bs-toggle="tab">
@@ -1647,6 +1655,89 @@
                             </a>
                         </div>
                     }
+                    </div>
+                }
+
+                <!-- Aba: Marcas Favoritas (para Compradores e Vendedores) -->
+                @{
+                    var marcasFavoritas = ViewBag.MarcasFavoritas as List<Marketplace.Models.MarcasFav> ?? new List<Marketplace.Models.MarcasFav>();
+                    var marcasFavoritasCount = ViewBag.MarcasFavoritasCount ?? 0;
+                }
+                @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
+                {
+                    <div class="tab-pane fade" id="favoritos-marcas">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h3 class="mb-1 fw-bold">
+                                    <i class="bi bi-tags-fill text-secondary me-2"></i>Marcas Favoritas
+                                </h3>
+                                <p class="text-muted mb-0">As suas marcas preferidas para acesso rápido</p>
+                            </div>
+                            <div class="favoritos-stats d-flex gap-3">
+                                <div class="stat-item text-center">
+                                    <div class="stat-value text-secondary fw-bold">@marcasFavoritasCount</div>
+                                    <div class="stat-label text-muted small">Marcas</div>
+                                </div>
+                                @if (marcasFavoritas.Any())
+                                {
+                                    <button type="button" class="btn btn-outline-primary btn-sm align-self-center" data-bs-toggle="modal" data-bs-target="#modalSelecionarMarcas">
+                                        <i class="bi bi-plus-lg me-1"></i>Adicionar Nova
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        @if (marcasFavoritas.Any())
+                        {
+                            <div class="row g-3">
+                                @foreach (var fav in marcasFavoritas)
+                                {
+                                    <div class="col-md-4 col-sm-6">
+                                        <div class="card shadow-sm h-100 border-0 hover-lift">
+                                            <div class="card-body d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                                                <div class="mb-3">
+                                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                                        <i class="bi bi-car-front-fill fs-1 text-secondary"></i>
+                                                    </div>
+                                                </div>
+                                                <h5 class="fw-bold mb-3">@fav.Marca?.Nome</h5>
+                                                <div class="d-flex gap-2 w-100">
+                                                    <a href="@Url.Action("Index", "Anuncios", new { marcaId = fav.MarcaId })" class="btn btn-primary btn-sm flex-grow-1">
+                                                        Ver Anúncios
+                                                    </a>
+                                                    <form asp-controller="Favoritos" asp-action="RemoveMarca" asp-route-id="@fav.Id" method="post" onsubmit="return confirm('Remover esta marca dos favoritos?');">
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Remover">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="col-md-4 col-sm-6">
+                                    <a href="#" class="card shadow-sm h-100 border-2 border-dashed border-secondary bg-light text-decoration-none d-flex align-items-center justify-content-center hover-lift" style="min-height: 200px;" data-bs-toggle="modal" data-bs-target="#modalSelecionarMarcas">
+                                        <div class="text-center text-secondary">
+                                            <i class="bi bi-plus-circle fs-1 mb-2"></i>
+                                            <h6 class="fw-bold m-0">Adicionar Marca</h6>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-tags text-muted" style="font-size: 4rem;"></i>
+                                </div>
+                                <h4 class="text-muted mb-2">Ainda não tem marcas favoritas</h4>
+                                <p class="text-muted mb-4">Adicione marcas para ver rapidamente os novos anúncios</p>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSelecionarMarcas">
+                                    <i class="bi bi-search me-2"></i>Explorar Marcas
+                                </button>
+                            </div>
+                        }
                     </div>
                 }
 
@@ -4123,3 +4214,201 @@
     });
 </script>
 }
+
+<!-- Modal Selecionar Marcas -->
+<div class="modal fade" id="modalSelecionarMarcas" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-tags-fill text-primary me-2"></i>Gerir Marcas Favoritas
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4 position-relative">
+                    <input type="text" id="paramsSearchMarcas" class="form-control ps-5" placeholder="Pesquisar marcas...">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                </div>
+                
+                <div id="loadingMarcas" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">A carregar...</span>
+                    </div>
+                </div>
+
+                <div id="containerMarcas" class="row g-3" style="display: none;">
+                    <!-- Marcas injetadas via JS -->
+                </div>
+                
+                <div id="emptyMarcas" class="text-center py-5 d-none">
+                    <p class="text-muted">Nenhuma marca encontrada com esse nome.</p>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalMarcas = document.getElementById('modalSelecionarMarcas');
+        const containerMarcas = document.getElementById('containerMarcas');
+        const searchInput = document.getElementById('paramsSearchMarcas');
+        const loadingDiv = document.getElementById('loadingMarcas');
+        const emptyDiv = document.getElementById('emptyMarcas');
+        let brandsData = [];
+        let hasChanges = false;
+
+        if (modalMarcas) {
+            modalMarcas.addEventListener('show.bs.modal', function() {
+                loadBrands();
+            });
+
+            modalMarcas.addEventListener('hidden.bs.modal', function() {
+                if (hasChanges) {
+                    window.location.reload();
+                }
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase();
+                filterBrands(term);
+            });
+        }
+
+        async function loadBrands() {
+            loadingDiv.style.display = 'block';
+            containerMarcas.style.display = 'none';
+            emptyDiv.classList.add('d-none');
+            
+            try {
+                const response = await fetch('/Favoritos/GetBrandsForSelection');
+                const data = await response.json();
+                
+                if (data.success) {
+                    brandsData = data.brands;
+                    renderBrands(brandsData);
+                } else {
+                    console.error('Erro ao carregar marcas:', data.message);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+            } finally {
+                loadingDiv.style.display = 'none';
+                containerMarcas.style.display = 'flex';
+            }
+        }
+
+        function renderBrands(brands) {
+            containerMarcas.innerHTML = '';
+            
+            if (brands.length === 0) {
+                emptyDiv.classList.remove('d-none');
+                return;
+            } else {
+                emptyDiv.classList.add('d-none');
+            }
+
+            brands.forEach(brand => {
+                const div = document.createElement('div');
+                div.className = 'col-md-4 col-sm-6';
+                
+                const isFav = brand.isFavorito;
+                const btnClass = isFav ? 'btn-danger' : 'btn-outline-secondary';
+                const iconClass = isFav ? 'bi-heart-fill' : 'bi-heart';
+                const text = isFav ? 'Remover' : 'Seguir';
+                
+                div.innerHTML = `
+                    <div class="card h-100 shadow-sm border-0 bg-light brand-item">
+                        <div class="card-body d-flex align-items-center justify-content-between p-3">
+                            <div class="d-flex align-items-center overflow-hidden">
+                                <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center me-3 flex-shrink-0" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-car-front-fill text-secondary"></i>
+                                </div>
+                                <h6 class="mb-0 fw-bold text-truncate" title="${brand.nome}">${brand.nome}</h6>
+                            </div>
+                            <button class="btn btn-sm ${btnClass} btn-toggle-fav rounded-pill px-3" data-id="${brand.id}" onclick="toggleBrandFav(${brand.id}, this)">
+                                <i class="bi ${iconClass}"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                containerMarcas.appendChild(div);
+            });
+        }
+
+        function filterBrands(term) {
+            const filtered = brandsData.filter(b => b.nome.toLowerCase().includes(term));
+            renderBrands(filtered);
+        }
+
+        // Expor para o global para ser chamado pelo onclick
+        window.toggleBrandFav = async function(id, btn) {
+            // Estado visual otimista
+            const isFav = btn.classList.contains('btn-danger');
+            
+            // Toggle visual imediato
+            updateBtnVisual(btn, !isFav);
+
+            try {
+                const response = await fetch('/Favoritos/ToggleMarca', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(id)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    hasChanges = true;
+                    // Atualiza o dado em memória para que o filtro funcione corretamente
+                    const brand = brandsData.find(b => b.id === id);
+                    if (brand) brand.isFavorito = !isFav;
+                } else {
+                    // Reverte se der erro
+                    updateBtnVisual(btn, isFav);
+                    console.error(result.message);
+                }
+            } catch (error) {
+                // Reverte se der erro
+                updateBtnVisual(btn, isFav);
+                console.error(error);
+            }
+        };
+
+        function updateBtnVisual(btn, isActive) {
+            if (isActive) {
+                btn.classList.remove('btn-outline-secondary');
+                btn.classList.add('btn-danger', 'heart-beat');
+                btn.innerHTML = '<i class="bi bi-heart-fill"></i>';
+                setTimeout(() => btn.classList.remove('heart-beat'), 300);
+            } else {
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-outline-secondary');
+                btn.innerHTML = '<i class="bi bi-heart"></i>';
+            }
+        }
+    });
+</script>
+
+<style>
+    .brand-item { transition: transform 0.2s; }
+    .brand-item:hover { transform: translateY(-2px); }
+    
+    @@keyframes heartBeat {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.3); }
+        100% { transform: scale(1); }
+    }
+    .heart-beat i {
+        animation: heartBeat 0.3s ease-in-out;
+        display: inline-block;
+    }
+</style>

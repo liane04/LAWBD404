@@ -233,6 +233,22 @@ namespace Marketplace.Controllers
 
                     ViewBag.MeusFavoritos = favoritosVendedor;
                     ViewBag.FavoritosCount = favoritosVendedor.Count;
+
+                    // Marcas Favoritas
+                    var marcasFav = await _db.Set<MarcasFav>()
+                        .Include(m => m.Marca)
+                        .Where(m => m.CompradorId == vendedor.Id)
+                        .ToListAsync();
+                    ViewBag.MarcasFavoritas = marcasFav;
+                    ViewBag.MarcasFavoritasCount = marcasFav.Count;
+
+                    // Carregar histórico de pesquisas
+                    var historicoPesquisas = await _db.PesquisasPassadas
+                        .Where(p => p.UtilizadorId == vendedor.Id)
+                        .OrderByDescending(p => p.Data)
+                        .Take(10)
+                        .ToListAsync();
+                    ViewBag.HistoricoPesquisas = historicoPesquisas;
                 }
             }
             // Se o usuário for comprador, carregar seus favoritos
@@ -360,6 +376,22 @@ namespace Marketplace.Controllers
                         .OrderByDescending(f => f.CreatedAt)
                         .ToListAsync();
                     ViewBag.SavedFilters = filtros;
+
+                    // Marcas Favoritas
+                    var marcasFav = await _db.Set<MarcasFav>()
+                        .Include(m => m.Marca)
+                        .Where(m => m.CompradorId == comprador.Id)
+                        .ToListAsync();
+                    ViewBag.MarcasFavoritas = marcasFav;
+                    ViewBag.MarcasFavoritasCount = marcasFav.Count;
+                    
+                    // Carregar histórico de pesquisas
+                    var historicoPesquisas = await _db.PesquisasPassadas
+                        .Where(p => p.UtilizadorId == comprador.Id)
+                        .OrderByDescending(p => p.Data)
+                        .Take(10)
+                        .ToListAsync();
+                    ViewBag.HistoricoPesquisas = historicoPesquisas;
                 }
             }
 

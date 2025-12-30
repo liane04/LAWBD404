@@ -12,11 +12,12 @@ namespace Marketplace.Models
         public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
         public ICollection<Compra> Compras { get; set; } = new List<Compra>();
         public ICollection<Visita> Visitas { get; set; } = new List<Visita>();
-        public ICollection<PesquisasPassadas> PesquisasPassadas { get; set; } = new List<PesquisasPassadas>();
+        // PesquisasPassadas movido para Utilizador
         public ICollection<Notificacoes> Notificacoes { get; set; } = new List<Notificacoes>();
         public ICollection<FiltrosFav> FiltrosFavoritos { get; set; } = new List<FiltrosFav>();
         // AnunciosFavoritos movido para Utilizador
-        public ICollection<MarcasFav> MarcasFavoritas { get; set; } = new List<MarcasFav>();
+        // AnunciosFavoritos movido para Utilizador
+        // MarcasFavoritas movido para Utilizador
 
         public ICollection<Conversa> Conversas { get; set; } = new List<Conversa>();
         public ICollection<Denuncia> Denuncias { get; set; } = new List<Denuncia>();
