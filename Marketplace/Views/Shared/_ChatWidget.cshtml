@@ -116,12 +116,14 @@
   <div id="chatBody" class="chat-body">
     <div class="bubble bot">
       <div class="msg bot">
-        Olá! Sou o assistente 404. Posso ajudar com dúvidas sobre registo, publicar anúncios, reservas, mensagens ou denúncias. Em que posso ajudar?
+        Olá! Sou o assistente 404 Ride. Posso ajudar com dúvidas sobre conta, anúncios, reservas, visitas, mensagens, pagamentos, segurança e privacidade. Em que posso ajudar?
         <div class="chip-row mt-2">
           <button class="chip" data-quick="Como me registo?">Registo</button>
           <button class="chip" data-quick="Como criar um anúncio?">Criar anúncio</button>
+          <button class="chip" data-quick="Como destacar anúncio?">Destacar</button>
           <button class="chip" data-quick="Como faço uma reserva?">Reservas</button>
-          <button class="chip" data-quick="Onde vejo mensagens?">Mensagens</button>
+          <button class="chip" data-quick="Como ativar 2FA?">2FA</button>
+          <button class="chip" data-quick="Como denunciar?">Denúncias</button>
         </div>
       </div>
     </div>
@@ -131,7 +133,7 @@
       <input id="chatInput" type="text" class="form-control" placeholder="Escreva a sua mensagem..." aria-label="Mensagem para o assistente">
       <button id="chatSend" class="btn btn-primary" type="button"><i class="bi bi-send-fill"></i></button>
     </div>
-    <div class="mt-2 small text-muted">Este é um protótipo (sem backend).</div>
+    <div class="mt-2 small text-muted">Para mais ajuda, consulte nossa <a href="/Faq" class="link-primary">FAQ</a> ou contacte <a href="mailto:404ride@gmail.com">suporte</a>.</div>
   </div>
 </div>
 
@@ -189,28 +191,88 @@
 
     function replyFor(text) {
       const t = text.toLowerCase();
-      if (t.includes('regist') || t.includes('criar conta')) {
-        return 'Para criar conta, clique em "Entrar/Registar" e preencha os dados. Pode começar aqui: <a href="/Utilizadores/Registar" class="link-primary">Registar</a>.';
+
+      // Conta e Acesso
+      if (t.includes('regist') || t.includes('criar conta') || t.includes('cadastro')) {
+        return 'Para criar conta, vá a <a href="/Utilizadores/Registar" class="link-primary">Registar</a>, escolha Comprador ou Vendedor e preencha nome, email, username e password. Receberá confirmação por email.';
       }
-      if (t.includes('anúncio') || t.includes('anuncio') || t.includes('publicar')) {
-        return 'Para publicar, vá a <a href="/Anuncios/Create" class="link-primary">Criar Anúncio</a> e preencha os campos do veículo.';
+      if (t.includes('2fa') || t.includes('dois fatores') || t.includes('autenticação')) {
+        return 'Ative 2FA em Perfil → Definições → Segurança. Use uma app Authenticator para gerar códigos de 6 dígitos. Códigos de recuperação são gerados para emergências.';
       }
-      if (t.includes('reserva')) {
-        return 'As reservas permitem agendar visita/test-drive. Procure um anúncio e use o botão "Reservar" (quando disponível).';
+      if (t.includes('password') || t.includes('palavra-passe') || t.includes('recuperar senha') || t.includes('alterar senha')) {
+        return 'Para <strong>alterar</strong>: Perfil → Definições → Segurança → Alterar Password. Para <strong>recuperar</strong>: em <a href="/Utilizadores/Login" class="link-primary">Login</a>, clique "Esqueci-me da password".';
       }
-      if (t.includes('mensagem')) {
-        return 'As mensagens ficam no seu painel. Após contactar um vendedor, aceda ao seu perfil para acompanhar as conversas.';
+      if (t.includes('vendedor') && t.includes('comprador')) {
+        return 'Sim! Crie conta como comprador e, quando quiser vender, peça validação como vendedor (dados fiscais e contacto). O admin ativa mantendo o mesmo login.';
       }
-      if (t.includes('denúnc') || t.includes('denunc')) {
-        return 'Para denúncias, use o botão "Denunciar" no anúncio ou contacte suporte indicando o motivo e evidências.';
+
+      // Anúncios
+      if (t.includes('publicar') || (t.includes('criar') && t.includes('anúncio'))) {
+        return 'Aceda a <a href="/Anuncios/Create" class="link-primary">Criar Anúncio</a>, preencha dados do veículo e carregue imagens (JPEG/PNG/WebP até 10 MB). O anúncio entra em validação (objetivo: 24h úteis).';
       }
-      if (t.includes('privacidade') || t.includes('termos')) {
-        return 'Pode consultar os documentos em <a href="/Home/Privacy" class="link-primary">Política de Privacidade</a> e Termos (em breve).';
+      if (t.includes('validação') || t.includes('aprovação') || t.includes('quanto tempo')) {
+        return 'A validação demora até 24h úteis. Receberá notificação quando for aprovado ou se precisarmos de ajustes (ex.: fotos desfocadas, dados incompletos).';
       }
-      if (t.includes('faq') || t.includes('ajuda')) {
-        return 'Aceda à nossa página de FAQ (brevemente) para respostas rápidas. Posso ajudar com registo, anúncios, reservas, mensagens e denúncias.';
+      if (t.includes('editar') || t.includes('pausar') || t.includes('remover')) {
+        return 'Em Perfil → Meus Anúncios pode editar dados, atualizar fotos, pausar ou remover. Se remover, as reservas associadas são canceladas.';
       }
-      return 'Obrigado! Registei a sua questão. Por agora sou um protótipo; em breve terei respostas mais completas e pesquisa por FAQ.';
+      if (t.includes('destacar') || t.includes('topo') || t.includes('premium')) {
+        return 'Para destacar seu anúncio no topo das listagens, use o botão "Destacar" em Meus Anúncios. Custa 1,99€ por 30 dias e inclui badge "Destaque" visível. Pagamento via Stripe.';
+      }
+      if (t.includes('foto') || t.includes('imagem') || t.includes('requisitos')) {
+        return 'Formatos aceites: JPEG, PNG, WebP. Tamanho: até 10 MB cada. Use fotos nítidas do exterior, interior, painel e documentação (sem expor dados sensíveis).';
+      }
+
+      // Reservas e Visitas
+      if (t.includes('reserva') || t.includes('visita') || t.includes('agendar')) {
+        return 'Na página do anúncio, use "Reservar" ou "Agendar Visita". Escolha data/hora disponível. Pode ver o histórico em Perfil → Reservas/Visitas.';
+      }
+      if (t.includes('cancelar') || t.includes('reagendar')) {
+        return 'Sim, pode cancelar ou reagendar. Fale com o vendedor na conversa ou cancele pelo painel. Se houver sinal, verifique as condições acordadas.';
+      }
+      if (t.includes('disponibilidade') || t.includes('horário')) {
+        return 'O vendedor configura horários em Perfil → Disponibilidade. Apenas slots livres são exibidos para marcação de visitas.';
+      }
+
+      // Mensagens e Alertas
+      if (t.includes('mensagem') || t.includes('conversa') || t.includes('chat')) {
+        return 'Após contactar um anúncio, a conversa fica no painel de Mensagens e no Perfil. Notificamos novas mensagens por badge e, se ativo, por email.';
+      }
+      if (t.includes('alerta') || t.includes('favorito') || t.includes('pesquisa guardada')) {
+        return 'Guarde uma pesquisa na listagem. O sistema verifica novos anúncios que correspondam aos filtros e cria notificações automáticas (Perfil → Pesquisas Guardadas).';
+      }
+
+      // Pagamentos
+      if (t.includes('pagamento') || t.includes('sinal')) {
+        return 'O valor de sinal é combinado entre comprador e vendedor. Registe-o no fluxo de Reserva para ficar associado ao anúncio e visível no histórico.';
+      }
+      if (t.includes('fatura') || t.includes('recibo') || t.includes('nif')) {
+        return 'Vendedores podem preencher dados de faturação e NIF no Perfil. A emissão de recibo/fatura é tratada diretamente entre comprador e vendedor.';
+      }
+
+      // Segurança
+      if (t.includes('segurança') || t.includes('protecção') || t.includes('proteção')) {
+        return 'Usamos ASP.NET Identity, passwords hash, lockout após tentativas falhadas e 2FA opcional. Sessões podem ser terminadas em Perfil → Segurança → Sessões Ativas.';
+      }
+      if (t.includes('denúnc') || t.includes('denunc') || t.includes('fraude') || t.includes('abuso')) {
+        return 'Use o botão "Denunciar" no anúncio ou perfil do utilizador, indicando motivo e evidências. A equipa revê, pode suspender e notifica as partes envolvidas.';
+      }
+
+      // Privacidade
+      if (t.includes('privacidade') || t.includes('dados') || t.includes('gdpr')) {
+        return 'Guardamos dados de conta, anúncios, mensagens e reservas para operar o marketplace. Não partilhamos com terceiros sem consentimento. Pode pedir exportação ou remoção via <a href="mailto:404ride@gmail.com">suporte</a>.';
+      }
+      if (t.includes('notificaç') || t.includes('email') || t.includes('newsletter')) {
+        return 'Em Perfil → Definições ajuste notificações por email e alertas de favoritos/pesquisas. Pode sair da newsletter a qualquer momento.';
+      }
+
+      // Ajuda geral
+      if (t.includes('faq') || t.includes('ajuda') || t.includes('suporte')) {
+        return 'Consulte nossa <a href="/Faq" class="link-primary">página de FAQ</a> para respostas detalhadas. Para questões específicas, contacte <a href="mailto:404ride@gmail.com">404ride@gmail.com</a> (resposta &lt; 24h úteis).';
+      }
+
+      // Resposta padrão melhorada
+      return 'Não encontrei uma resposta específica. Tente perguntar sobre: <strong>registo, anúncios, destacar, reservas, 2FA, mensagens, pagamentos, denúncias ou privacidade</strong>. Ou consulte nossa <a href="/Faq" class="link-primary">FAQ completa</a>.';
     }
 
     function handleSend(text) {
