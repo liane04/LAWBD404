@@ -393,51 +393,56 @@
             <!-- Seller Card -->
             <div class="seller-card card shadow-sm sticky-top mb-4" style="top: 80px;">
                 <div class="card-body text-center">
-                    <div class="position-relative d-inline-block mb-3">
-                        <img src="https://placehold.co/100x100/0d6efd/ffffff?text=@(Model.Vendedor?.Nome?.Substring(0, 1) ?? "V")" class="rounded-circle seller-avatar" alt="Foto do Vendedor">
-                        <span class="badge-verified"><i class="bi bi-patch-check-fill"></i></span>
-                    </div>
-                    <h5 class="card-title mb-1">@(Model.Vendedor?.Nome ?? "Vendedor")</h5>
-                    <p class="text-muted mb-2">
-                        @if (!string.IsNullOrEmpty(Model.Vendedor?.Email))
-                        {
-                            <small><i class="bi bi-envelope me-1"></i>@Model.Vendedor.Email</small>
-                        }
-                        else
-                        {
-                            <span>Vendedor</span>
-                        }
-                    </p>
-
-                    <!-- Rating -->
-                    <div class="seller-rating mb-3">
-                        <div class="stars mb-1">
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-half text-warning"></i>
+                    <div class="cursor-pointer p-2 rounded hover-bg-light" onclick="openSellerDetails(@Model.VendedorId)" title="Ver perfil completo">
+                        <div class="position-relative d-inline-block mb-3">
+                            <img src="https://placehold.co/100x100/0d6efd/ffffff?text=@(Model.Vendedor?.Nome?.Substring(0, 1) ?? "V")" class="rounded-circle seller-avatar" alt="Foto do Vendedor">
+                            <span class="badge-verified"><i class="bi bi-patch-check-fill"></i></span>
                         </div>
-                        <small class="text-muted">4.5 (avaliações em breve)</small>
-                    </div>
+                        <h5 class="card-title mb-1">@(Model.Vendedor?.Nome ?? "Vendedor")</h5>
+                        <p class="text-muted mb-2">
+                            @if (!string.IsNullOrEmpty(Model.Vendedor?.Email))
+                            {
+                                <small><i class="bi bi-envelope me-1"></i>@Model.Vendedor.Email</small>
+                            }
+                            else
+                            {
+                                <span>Vendedor</span>
+                            }
+                        </p>
 
-                    <!-- Seller Stats -->
-                    <div class="seller-stats mb-3">
-                        <div class="row text-center g-2">
-                            <div class="col-6">
-                                <div class="stat-box p-2 bg-light rounded">
-                                    <div class="stat-number text-primary fw-bold">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </div>
-                                    <div class="stat-label small text-muted">@Model.NVisualizacoes visualizações</div>
-                                </div>
+                        <!-- Rating -->
+                        <div class="seller-rating mb-3">
+                            <div class="stars mb-1">
+                                @{
+                                    var rating = Model.Vendedor?.NotaMedia ?? 0;
+                                    var fullStars = (int)rating;
+                                    var hasHalfStar = rating - fullStars >= 0.5;
+                                }
+                                @for(int i = 0; i < fullStars; i++) { <i class="bi bi-star-fill text-warning"></i> }
+                                @if(hasHalfStar) { <i class="bi bi-star-half text-warning"></i> }
+                                @for(int i = (hasHalfStar ? fullStars + 1 : fullStars); i < 5; i++) { <i class="bi bi-star text-muted opacity-25"></i> }
                             </div>
-                            <div class="col-6">
-                                <div class="stat-box p-2 bg-light rounded">
-                                    <div class="stat-number text-success fw-bold">
-                                        <i class="bi bi-check-circle-fill"></i>
+                            <small class="text-muted">@rating.ToString("0.0") (@(Model.Vendedor?.NumeroAvaliacoes ?? 0) avaliações)</small>
+                        </div>
+
+                        <!-- Seller Stats -->
+                        <div class="seller-stats mb-3">
+                            <div class="row text-center g-2">
+                                <div class="col-6">
+                                    <div class="stat-box p-2 bg-light rounded">
+                                        <div class="stat-number text-primary fw-bold">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </div>
+                                        <div class="stat-label small text-muted">@Model.NVisualizacoes visualizações</div>
                                     </div>
-                                    <div class="stat-label small text-muted">Verificado</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-box p-2 bg-light rounded">
+                                        <div class="stat-number text-success fw-bold">
+                                            <i class="bi bi-person-badge-fill"></i>
+                                        </div>
+                                        <div class="stat-label small text-muted">Ver Perfil</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1298,3 +1303,35 @@
 </script>
 
 <script src="~/js/favoritos.js" asp-append-version="true"></script>
+
+<!-- Modal: Detalhes do Vendedor -->
+<div class="modal fade" id="sellerDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="sellerDetailsContent">
+            <div class="modal-body text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">A carregar...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openSellerDetails(sellerId) {
+        var modal = new bootstrap.Modal(document.getElementById('sellerDetailsModal'));
+        modal.show();
+
+        // Load content via AJAX
+        fetch('/Anuncios/GetSellerDetails/' + sellerId)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sellerDetailsContent').innerHTML = html;
+            })
+            .catch(error => {
+                document.getElementById('sellerDetailsContent').innerHTML = 
+                    '<div class="modal-body text-center text-danger"><p>Erro ao carregar detalhes do vendedor.</p></div>';
+                console.error('Error:', error);
+            });
+    }
+</script>

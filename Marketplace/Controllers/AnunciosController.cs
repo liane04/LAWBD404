@@ -393,6 +393,24 @@ namespace Marketplace.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Anuncios/GetSellerDetails/5
+        public async Task<IActionResult> GetSellerDetails(int id)
+        {
+            var vendedor = await _context.Vendedores
+                .Include(v => v.Morada)
+                .Include(v => v.Anuncios)
+                .Include(v => v.AvaliacoesRecebidas)
+                    .ThenInclude(a => a.Comprador)
+                .FirstOrDefaultAsync(v => v.Id == id);
+
+            if (vendedor == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView("_SellerDetailsModal", vendedor);
+        }
+
         // GET: Anuncios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
