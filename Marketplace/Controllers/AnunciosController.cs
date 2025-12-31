@@ -639,7 +639,7 @@ namespace Marketplace.Controllers
             }
 
             // Criar diretório se não existir
-            string uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "anuncios", anuncioId.ToString());
+            string uploadsFolder = Path.Combine(_environment.WebRootPath, "imagens", "anuncios", anuncioId.ToString());
             Directory.CreateDirectory(uploadsFolder);
 
             foreach (var imagem in imagens)
