@@ -37,12 +37,22 @@ namespace Marketplace.Controllers
             if (user == null)
                 return RedirectToAction("Login", "Utilizadores");
 
-            // Buscar comprador
+            // Buscar comprador (vendedores também podem ter reservas após criarem comprador)
             var comprador = await _context.Compradores
                 .FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
             if (comprador == null)
-                return Forbid();
+            {
+                // Se não tem comprador, verificar se é vendedor
+                var vendedor = await _context.Vendedores
+                    .FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+
+                if (vendedor == null)
+                    return Forbid();
+
+                // Ainda não tem reservas pois não tem comprador
+                return View(new List<Reserva>());
+            }
 
             var reservas = await _context.Reservas
                 .Include(r => r.Anuncio)
@@ -80,19 +90,51 @@ namespace Marketplace.Controllers
 
             // Verificar se o usuário não é o vendedor
             var user = await _userManager.GetUserAsync(User);
+
+            // Verificar se o usuário é o vendedor do anúncio
+            var vendedor = await _context.Vendedores
+                .FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+
+            if (vendedor != null && anuncio.VendedorId == vendedor.Id)
+            {
+                TempData["Error"] = "Não pode reservar o seu próprio anúncio.";
+                return RedirectToAction("Details", "Anuncios", new { id = anuncioId });
+            }
+
+            // Obter ou criar comprador (vendedores também podem comprar)
             var comprador = await _context.Compradores
                 .FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
             if (comprador == null)
             {
-                TempData["Error"] = "Apenas compradores podem fazer reservas.";
-                return RedirectToAction("Details", "Anuncios", new { id = anuncioId });
-            }
+                // Se não existe comprador mas existe vendedor, criar comprador automaticamente
+                if (vendedor != null)
+                {
+                    comprador = new Comprador
+                    {
+                        IdentityUserId = user.Id,
+                        Username = user.UserName ?? "",
+                        Email = user.Email ?? "",
+                        Nome = vendedor.Nome,
+                        Estado = "Ativo",
+                        Tipo = "Comprador",
+                        ImagemPerfil = vendedor.ImagemPerfil,
+                        MoradaId = vendedor.MoradaId
+                    };
+                    _context.Compradores.Add(comprador);
+                    await _context.SaveChangesAsync();
 
-            if (anuncio.VendedorId == comprador.Id)
-            {
-                TempData["Error"] = "Não pode reservar o seu próprio anúncio.";
-                return RedirectToAction("Details", "Anuncios", new { id = anuncioId });
+                    // Adicionar role "Comprador" ao utilizador se não tiver
+                    if (!await _userManager.IsInRoleAsync(user, "Comprador"))
+                    {
+                        await _userManager.AddToRoleAsync(user, "Comprador");
+                    }
+                }
+                else
+                {
+                    TempData["Error"] = "É necessário ter uma conta de comprador ou vendedor para fazer reservas.";
+                    return RedirectToAction("Details", "Anuncios", new { id = anuncioId });
+                }
             }
 
             // Verificar se já existe reserva ativa
@@ -119,11 +161,16 @@ namespace Marketplace.Controllers
         public async Task<IActionResult> CreateCheckoutSession(int anuncioId)
         {
             var user = await _userManager.GetUserAsync(User);
+
+            // Buscar comprador (deve já existir após Create)
             var comprador = await _context.Compradores
                 .FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
             if (comprador == null)
-                return Forbid();
+            {
+                TempData["Error"] = "Erro ao processar reserva. Tente novamente.";
+                return RedirectToAction("Details", "Anuncios", new { id = anuncioId });
+            }
 
             var anuncio = await _context.Anuncios
                 .Include(a => a.Marca)
@@ -304,11 +351,22 @@ namespace Marketplace.Controllers
                 return NotFound();
 
             var user = await _userManager.GetUserAsync(User);
+
+            // Buscar comprador
             var comprador = await _context.Compradores
                 .FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
             if (comprador == null)
-                return Forbid();
+            {
+                // Verificar se é vendedor
+                var vendedor = await _context.Vendedores
+                    .FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+
+                if (vendedor == null)
+                    return Forbid();
+
+                return NotFound(); // Vendedor sem comprador não tem reservas
+            }
 
             var reserva = await _context.Reservas
                 .Include(r => r.Anuncio)
@@ -337,11 +395,22 @@ namespace Marketplace.Controllers
         public async Task<IActionResult> CancelReserva(int id)
         {
             var user = await _userManager.GetUserAsync(User);
+
+            // Buscar comprador
             var comprador = await _context.Compradores
                 .FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
             if (comprador == null)
-                return Forbid();
+            {
+                // Verificar se é vendedor
+                var vendedor = await _context.Vendedores
+                    .FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+
+                if (vendedor == null)
+                    return Forbid();
+
+                return NotFound(); // Vendedor sem comprador não tem reservas para cancelar
+            }
 
             var reserva = await _context.Reservas
                 .Include(r => r.Anuncio)

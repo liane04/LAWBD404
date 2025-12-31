@@ -225,10 +225,10 @@ namespace Marketplace.Data
                 .WithMany(e => e.AnuncioExtras)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Identity linkage: cada Utilizador do domínio aponta para um ApplicationUser (único)
+            // Identity linkage: cada Utilizador do domínio aponta para um ApplicationUser
+            // Removido IsUnique() para permitir que um utilizador possa ser Comprador E Vendedor
             modelBuilder.Entity<Utilizador>()
-                .HasIndex(u => u.IdentityUserId)
-                .IsUnique();
+                .HasIndex(u => u.IdentityUserId);
         }
 
     }

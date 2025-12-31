@@ -773,9 +773,9 @@ namespace Marketplace.Controllers
                 return Forbid();
             }
 
-            // Valor fixo para destaque: 1.99€ por 30 dias
+            // Valor fixo para destaque: 1.99€ por 7 dias
             decimal valorDestaque = 1.99m;
-            int diasDestaque = 30;
+            int diasDestaque = 7;
 
             // Configurar Stripe
             var domain = $"{Request.Scheme}://{Request.Host}";

@@ -37,11 +37,22 @@ namespace Marketplace.Controllers
             if (user == null)
                 return RedirectToAction("Login", "Utilizadores");
 
+            // Buscar comprador (vendedores também podem ter compras após criarem comprador)
             var comprador = await _context.Compradores
                 .FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
             if (comprador == null)
-                return Forbid();
+            {
+                // Se não tem comprador, verificar se é vendedor
+                var vendedor = await _context.Vendedores
+                    .FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+
+                if (vendedor == null)
+                    return Forbid();
+
+                // Ainda não tem compras pois não tem comprador
+                return View(new List<Compra>());
+            }
 
             var compras = await _context.Compras
                 .Include(c => c.Anuncio)
@@ -67,11 +78,15 @@ namespace Marketplace.Controllers
             if (user == null)
                 return Json(new { temReserva = false, valorSinal = 0 });
 
+            // Buscar comprador
             var comprador = await _context.Compradores
                 .FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
 
             if (comprador == null)
+            {
+                // Se não tem comprador, não tem reserva
                 return Json(new { temReserva = false, valorSinal = 0 });
+            }
 
             // Buscar reserva ativa do comprador para este anúncio
             var reserva = await _context.Reservas
@@ -101,11 +116,6 @@ namespace Marketplace.Controllers
         public async Task<IActionResult> CreateCheckoutSession(int anuncioId)
         {
             var user = await _userManager.GetUserAsync(User);
-            var comprador = await _context.Compradores
-                .FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
-
-            if (comprador == null)
-                return Forbid();
 
             var anuncio = await _context.Anuncios
                 .Include(a => a.Marca)
@@ -117,11 +127,50 @@ namespace Marketplace.Controllers
             if (anuncio == null)
                 return NotFound();
 
-            // Verificar se o comprador é o vendedor
-            if (anuncio.VendedorId == comprador.Id)
+            // Verificar se o usuário é o vendedor do anúncio
+            var vendedor = await _context.Vendedores
+                .FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+
+            if (vendedor != null && anuncio.VendedorId == vendedor.Id)
             {
                 TempData["Error"] = "Não pode comprar o seu próprio anúncio.";
                 return RedirectToAction("Details", "Anuncios", new { id = anuncioId });
+            }
+
+            // Obter ou criar comprador (vendedores também podem comprar)
+            var comprador = await _context.Compradores
+                .FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
+
+            if (comprador == null)
+            {
+                // Se não existe comprador mas existe vendedor, criar comprador automaticamente
+                if (vendedor != null)
+                {
+                    comprador = new Comprador
+                    {
+                        IdentityUserId = user.Id,
+                        Username = user.UserName ?? "",
+                        Email = user.Email ?? "",
+                        Nome = vendedor.Nome,
+                        Estado = "Ativo",
+                        Tipo = "Comprador",
+                        ImagemPerfil = vendedor.ImagemPerfil,
+                        MoradaId = vendedor.MoradaId
+                    };
+                    _context.Compradores.Add(comprador);
+                    await _context.SaveChangesAsync();
+
+                    // Adicionar role "Comprador" ao utilizador se não tiver
+                    if (!await _userManager.IsInRoleAsync(user, "Comprador"))
+                    {
+                        await _userManager.AddToRoleAsync(user, "Comprador");
+                    }
+                }
+                else
+                {
+                    TempData["Error"] = "É necessário ter uma conta de comprador ou vendedor para fazer compras.";
+                    return RedirectToAction("Details", "Anuncios", new { id = anuncioId });
+                }
             }
 
             // Verificar se já comprou
