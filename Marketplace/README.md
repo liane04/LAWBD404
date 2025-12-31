@@ -23,23 +23,24 @@ Inspirado em plataformas como StandVirtual e Auto.pt, permite a interação entr
 ## 🎯 Funcionalidades Principais
 
 ### 👥 Para Visitantes (Não Autenticados)
-- ✅ Visualizar e pesquisar veículos
+- ✅ Visualizar e pesquisar veículos (paginação de 12 por página)
 - ✅ Filtros avançados (marca, modelo, preço, ano, km, combustível, localização)
-- ✅ Ordenação (mais recentes, preço, quilometragem)
+- ✅ Ordenação (relevância, preço, ano, quilometragem)
 - ✅ Detalhes completos do veículo
-- ✅ Comparar veículos (até 2)
-- ✅ ChatBot informativo (FAQ)
+- ✅ Comparar veículos (até 3)
+- ✅ ChatBot informativo com 20+ respostas FAQ
 
 ### 🛒 Para Compradores
-- ✅ Reservar veículos (com prazo de expiração)
+- ✅ Reservar veículos com pagamento (€50-200, via Stripe)
 - ✅ Marcar visitas (data/hora)
-- ⏳ Realizar compras (simulação checkout)
+- ✅ Realizar compras completas (checkout via Stripe)
 - ✅ Guardar anúncios favoritos
-- ⏳ Definir marcas favoritas
-- ⏳ Filtros guardados com notificações
+- ✅ Definir marcas favoritas
+- ✅ Filtros guardados com notificações automáticas
 - ✅ Mensagens com vendedores
-- ⏳ Denunciar anúncios/utilizadores
+- ⏳ Denunciar anúncios/utilizadores (modelos criados)
 - ✅ Editar perfil e foto
+- ✅ Histórico de compras e reservas
 
 ### 🏪 Para Vendedores
 - ✅ Criar/editar/remover anúncios
@@ -47,9 +48,10 @@ Inspirado em plataformas como StandVirtual e Auto.pt, permite a interação entr
 - ✅ Gerir estado dos anúncios (ativo, reservado, vendido, pausado)
 - ✅ Ver veículos reservados e vendidos
 - ✅ Responder a mensagens
-- ⏳ Gerir visitas agendadas
+- ✅ Gerir visitas agendadas
+- ✅ Destacar anúncios (€1.99 por 7 dias, topo das listagens)
+- ✅ Funcionalidade dual: vendedores podem comprar/reservar veículos
 - ⏳ Estatísticas de desempenho
-- ⏳ Destacar anúncios (topo das listagens)
 
 ### 👨‍💼 Para Administradores (Backoffice)
 - ✅ Dashboard com estatísticas
@@ -70,7 +72,9 @@ Inspirado em plataformas como StandVirtual e Auto.pt, permite a interação entr
 - **ORM:** Entity Framework Core 9.0.10 (Code-First)
 - **Base de Dados:** SQL Server LocalDB
 - **Autenticação:** ASP.NET Core Identity
+- **Pagamentos:** Stripe API (checkout, reservas, destaque)
 - **Email:** SMTP (Gmail)
+- **Background Services:** Notificações de filtros guardados
 
 ### Frontend
 - **View Engine:** Razor Views (.cshtml)
@@ -176,20 +180,25 @@ Marketplace/
 
 ## 📈 Progresso do Projeto
 
-**Fase Atual:** Fase 3 (60% completo)
+**Fase Atual:** Fase 3 (72% completo)
 
 **Infraestrutura:** ✅ 100%
-- Modelos e BD
-- Migrações
-- Autenticação (Identity)
+- Modelos e BD (32 entidades)
+- Migrações (índices de performance aplicados)
+- Autenticação (Identity + 2FA)
 - Views e Design
+- Integrações (Stripe, Gmail, OAuth Google)
 
 **Funcionalidades Core:**
-- ✅ CRUD Anúncios: 85%
-- ✅ Gestão Utilizadores: 90%
-- ⏳ Reservas/Visitas: 30%
-- ⏳ Upload Imagens: 50%
-- ⏳ Dashboard Admin: 50%
+- ✅ CRUD Anúncios: 100% (com paginação)
+- ✅ Gestão Utilizadores: 95%
+- ✅ Reservas/Compras: 100% (Stripe integrado)
+- ✅ Upload Imagens: 100% (até 20 por anúncio)
+- ✅ Sistema de Favoritos: 100%
+- ✅ Sistema de Mensagens: 100%
+- ✅ Destaque de Anúncios: 100%
+- ⏳ Dashboard Admin: 60%
+- ⏳ Sistema de Denúncias: 40% (modelos criados)
 
 **Prazo Final:** 5 de janeiro de 2026
 **Apresentação:** 6-10 de janeiro de 2026
@@ -276,34 +285,44 @@ Para testar a aplicação:
 
 ## 🐛 Problemas Conhecidos
 
-- ⚠️ Upload de múltiplas imagens em fase de testes
-- ⚠️ Paginação de anúncios por implementar
-- ⚠️ Sistema de denúncias (requisito de exame)
+- ⚠️ Sistema de denúncias (requisito de exame - parcialmente implementado)
 - ⚠️ Ficheiro "nul" não rastreado no repositório
+
+## ✨ Melhorias Recentes (dez 2025)
+
+- ✅ **Paginação implementada:** 12 anúncios por página com navegação dinâmica
+- ✅ **Índices de performance:** Queries otimizadas com índices em BD
+- ✅ **Otimização de imagens:** Apenas primeira imagem carregada em listagens
+- ✅ **Dual-role:** Vendedores podem comprar/reservar veículos
+- ✅ **Stripe integrado:** Pagamentos reais para reservas, compras e destaque
+- ✅ **ChatBot melhorado:** 20+ respostas específicas para FAQ
+- ✅ **Notificações automáticas:** Background service para filtros guardados
+- ✅ **Comparação de veículos:** Até 3 veículos simultaneamente
 
 ---
 
 ## 🔄 Roadmap
 
-**Próximas Semanas (até 2 dez):**
-- 🔥 Upload de imagens funcional
-- 🔥 Paginação de listagens
-- ⏳ User Secrets para SMTP
+**✅ Completado (nov-dez 2025):**
+- ✅ Upload de imagens funcional (até 20 por anúncio)
+- ✅ Paginação de listagens (12 por página)
+- ✅ Sistema de Reservas completo (com Stripe)
+- ✅ Sistema de Compras completo (com Stripe)
+- ✅ Sistema de Visitas completo
+- ✅ Sistema de Favoritos (anúncios + marcas)
+- ✅ Sistema de Notificações (filtros guardados)
+- ✅ Sistema de Mensagens (chat vendedor-comprador)
+- ✅ Sistema de Destaque de Anúncios (€1.99/7 dias)
+- ✅ Índices de performance em BD
+- ✅ Otimizações de queries
 
-**Semanas 3-4 (3-16 dez):**
-- 🔥 Sistema de Reservas completo
-- 🔥 Sistema de Visitas completo
-- ⏳ Dashboard Admin com estatísticas
-
-**Semanas 5-6 (17-30 dez):**
-- ⏳ Sistema de Favoritos
-- ⏳ Sistema de Notificações
-- ⏳ Sistema de Mensagens
-
-**Última Semana (31 dez - 5 jan):**
+**⏳ Em Andamento (31 dez - 5 jan):**
+- 🔥 Sistema de Denúncias (requisito de exame)
+- 🔥 Dashboard Admin com estatísticas completas
 - 🔥 Relatório Fase 3
-- 🔥 Testes finais
+- 🔥 Testes finais e correções
 - 🔥 Preparar apresentação
+- ⏳ User Secrets para SMTP (opcional)
 
 ---
 
@@ -327,6 +346,6 @@ Projeto académico desenvolvido para a UC de Laboratório de Aplicações Web e 
 
 ---
 
-**Última atualização:** 2025-11-19
+**Última atualização:** 2025-12-31
 
 🚗 **Drive safe, deal smart - 404 Ride** 🚗

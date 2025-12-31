@@ -62,6 +62,19 @@ namespace Marketplace.Data
                 .HasIndex(m => new { m.Nome, m.MarcaId })
                 .IsUnique();
 
+            // Performance indexes
+            modelBuilder.Entity<Anuncio>()
+                .HasIndex(a => a.VendedorId);
+
+            modelBuilder.Entity<Anuncio>()
+                .HasIndex(a => a.Estado);
+
+            modelBuilder.Entity<Anuncio>()
+                .HasIndex(a => new { a.Destacado, a.DestaqueAte });
+
+            modelBuilder.Entity<Reserva>()
+                .HasIndex(r => new { r.CompradorId, r.Estado });
+
             // Base seed for Tipos
             modelBuilder.Entity<Tipo>().HasData(
                 new Tipo { Id = 1, Nome = "Carro" },

@@ -104,10 +104,30 @@ namespace Marketplace.Controllers
                         .Include(a => a.Tipo)
                         .Include(a => a.Categoria)
                         .Include(a => a.Combustivel)
-                        .Include(a => a.Imagens)
                         .Where(a => a.VendedorId == vendedor.Id)
                         .OrderByDescending(a => a.Id)
                         .ToListAsync();
+
+                    // Carregar apenas a primeira imagem de cada anúncio (otimização de performance)
+                    if (anuncios.Any())
+                    {
+                        var anuncioIds = anuncios.Select(a => a.Id).ToList();
+                        var primeiraImagemPorAnuncio = await _db.Imagens
+                            .Where(i => i.AnuncioId.HasValue && anuncioIds.Contains(i.AnuncioId.Value))
+                            .GroupBy(i => i.AnuncioId.Value)
+                            .Select(g => g.OrderBy(i => i.Id).First())
+                            .ToListAsync();
+
+                        // Associar primeira imagem a cada anúncio
+                        foreach (var anuncio in anuncios)
+                        {
+                            var primeiraImagem = primeiraImagemPorAnuncio.FirstOrDefault(i => i.AnuncioId == anuncio.Id);
+                            if (primeiraImagem != null)
+                            {
+                                anuncio.Imagens = new List<Imagem> { primeiraImagem };
+                            }
+                        }
+                    }
 
                     ViewBag.MeusAnuncios = anuncios;
                     ViewBag.AnunciosCount = anuncios.Count;
@@ -266,6 +286,32 @@ namespace Marketplace.Controllers
                         .ToListAsync();
                     ViewBag.MarcasFavoritas = marcasFav;
                     ViewBag.MarcasFavoritasCount = marcasFav.Count;
+
+                    // Pesquisas Guardadas e Histórico (se o vendedor tiver criado um Comprador)
+                    var compradorDoVendedor = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+                    if (compradorDoVendedor != null)
+                    {
+                        // Pesquisas guardadas (Filtros Favoritos)
+                        var filtrosVendedor = await _db.FiltrosFavoritos
+                            .Where(f => f.CompradorId == compradorDoVendedor.Id)
+                            .OrderByDescending(f => f.CreatedAt)
+                            .ToListAsync();
+                        ViewBag.SavedFilters = filtrosVendedor;
+
+                        // Pesquisas Passadas (Histórico)
+                        var pesquisasPassadasVendedor = await _db.PesquisasPassadas
+                            .Where(p => p.CompradorId == compradorDoVendedor.Id)
+                            .OrderByDescending(p => p.Data)
+                            .Take(20)
+                            .ToListAsync();
+                        ViewBag.PesquisasPassadas = pesquisasPassadasVendedor;
+                    }
+                    else
+                    {
+                        // Se ainda não tem Comprador, inicializar listas vazias
+                        ViewBag.SavedFilters = new List<FiltrosFav>();
+                        ViewBag.PesquisasPassadas = new List<PesquisasPassadas>();
+                    }
                 }
             }
             // Se o usuário for comprador, carregar seus favoritos

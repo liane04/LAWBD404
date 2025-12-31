@@ -2275,41 +2275,117 @@
 
                 <!-- Aba: Definições -->
 
-                <!-- Aba: Pesquisas Guardadas (Comprador) -->
+                <!-- Aba: Pesquisas Guardadas -->
                 <div class="tab-pane fade" id="pesquisas-guardadas">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0"><i class="bi bi-bookmark-heart me-2"></i>Pesquisas Guardadas</h4>
-                        <a class="btn btn-sm btn-outline-primary" asp-controller="Anuncios" asp-action="Index">Ir para Anúncios</a>
+                        <h4 class="mb-0 fw-bold"><i class="bi bi-bookmark-heart-fill me-2 text-primary"></i>Pesquisas Guardadas</h4>
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Anuncios" asp-action="Index">
+                            <i class="bi bi-search me-1"></i>Ir para Anúncios
+                        </a>
                     </div>
-                    @if (User.IsInRole("Comprador"))
+                    <p class="text-muted mb-4">Aceda rapidamente às suas pesquisas favoritas e receba notificações de novos anúncios</p>
+
+                    @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
                     {
                         var saved = ViewBag.SavedFilters as List<Marketplace.Models.FiltrosFav> ?? new List<Marketplace.Models.FiltrosFav>();
                         if (saved.Count == 0)
                         {
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle me-2"></i>Ainda não tem pesquisas guardadas. Vá a <a asp-controller="Anuncios" asp-action="Index">Anúncios</a> e clique em "Guardar Pesquisa".
+                            <div class="text-center py-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-bookmark-heart text-muted" style="font-size: 4rem;"></i>
+                                </div>
+                                <h4 class="text-muted mb-2">Sem pesquisas guardadas</h4>
+                                <p class="text-muted mb-4">Guarde as suas pesquisas favoritas para acesso rápido e notificações automáticas</p>
+                                <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary">
+                                    <i class="bi bi-search me-2"></i>Pesquisar Veículos
+                                </a>
                             </div>
                         }
                         else
                         {
-                            <div class="list-group">
+                            <div class="row row-cols-1 row-cols-md-2 g-3">
                                 @foreach (var f in saved)
                                 {
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="fw-semibold">@f.Nome</div>
-                                            <div class="text-muted small">Criado: @f.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <form asp-controller="Anuncios" asp-action="DeleteFiltro" method="post" class="d-inline" onsubmit="return confirm('Remover esta pesquisa?');">
-                                                <input type="hidden" name="id" value="@f.Id" />
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">Apagar</button>
-                                            </form>
+                                    <div class="col">
+                                        <div class="card h-100 border-start border-4 border-primary shadow-sm">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title mb-0">
+                                                        <i class="bi bi-bookmark-fill text-primary me-2"></i>
+                                                        @f.Nome
+                                                    </h5>
+                                                    <span class="badge bg-success" title="Notificações ativas">
+                                                        <i class="bi bi-bell-fill"></i>
+                                                    </span>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-calendar3 me-1"></i>
+                                                        Criado em @f.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                                    </small>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    @{
+                                                        var filtros = new List<string>();
+                                                        if (f.MarcaId.HasValue) filtros.Add($"Marca: {f.MarcaId}");
+                                                        if (f.ModeloId.HasValue) filtros.Add($"Modelo: {f.ModeloId}");
+                                                        if (f.PrecoMax.HasValue) filtros.Add($"Até {f.PrecoMax:N0}€");
+                                                        if (f.AnoMin.HasValue || f.AnoMax.HasValue)
+                                                            filtros.Add($"Ano: {f.AnoMin ?? 0}-{f.AnoMax ?? DateTime.Now.Year}");
+                                                    }
+                                                    @if (filtros.Any())
+                                                    {
+                                                        <div class="d-flex flex-wrap gap-1">
+                                                            @foreach (var filtro in filtros.Take(3))
+                                                            {
+                                                                <span class="badge bg-light text-dark border">@filtro</span>
+                                                            }
+                                                            @if (filtros.Count > 3)
+                                                            {
+                                                                <span class="badge bg-light text-dark border">+@(filtros.Count - 3) mais</span>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </div>
+
+                                                <div class="d-grid gap-2">
+                                                    <a href="@Url.Action("Index", "Anuncios", new {
+                                                        marcaId = f.MarcaId,
+                                                        modeloId = f.ModeloId,
+                                                        tipoId = f.TipoId,
+                                                        categoriaId = f.CategoriaId,
+                                                        combustivelId = f.CombustivelId,
+                                                        precoMax = f.PrecoMax,
+                                                        anoMin = f.AnoMin,
+                                                        anoMax = f.AnoMax,
+                                                        kmMax = f.KmMax,
+                                                        caixa = f.Caixa,
+                                                        localizacao = f.Localizacao
+                                                    })" class="btn btn-sm btn-primary">
+                                                        <i class="bi bi-search me-1"></i>Aplicar Filtros
+                                                    </a>
+                                                    <form asp-controller="Anuncios" asp-action="DeleteFiltro" method="post" onsubmit="return confirm('Remover esta pesquisa guardada? Deixará de receber notificações.');">
+                                                        <input type="hidden" name="id" value="@f.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                                            <i class="bi bi-trash me-1"></i>Remover
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 }
                             </div>
                         }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Apenas compradores e vendedores podem guardar pesquisas.
+                        </div>
                     }
                 </div>
                 <div class="tab-pane fade" id="historico-pesquisa">
