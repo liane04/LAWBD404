@@ -44,6 +44,7 @@ namespace Marketplace.Data
         public DbSet<AnuncioExtra> AnuncioExtras { get; set; }
         public DbSet<DisponibilidadeVendedor> DisponibilidadesVendedor { get; set; }
         public DbSet<PedidoVendedor> PedidosVendedor { get; set; }
+        public DbSet<Avaliacao> Avaliacoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -223,6 +224,16 @@ namespace Marketplace.Data
             modelBuilder.Entity<AnuncioExtra>()
                 .HasOne(ae => ae.Extra)
                 .WithMany(e => e.AnuncioExtras)
+                .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Avaliacao>()
+                .HasOne(a => a.Vendedor)
+                .WithMany(v => v.AvaliacoesRecebidas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Avaliacao>()
+                .HasOne(a => a.Comprador)
+                .WithMany(c => c.AvaliacoesFeitas)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Identity linkage: cada Utilizador do domínio aponta para um ApplicationUser
