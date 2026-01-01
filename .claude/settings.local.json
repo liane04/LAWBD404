@@ -44,7 +44,9 @@
       "Bash(powershell.exe -Command \"Stop-Process -Id 29316 -Force\")",
       "Bash(powershell.exe:*)",
       "Bash(dotnet run:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(Select-String \"error\")",
+      "Bash(timeout /t 8 /nobreak)"
     ]
   }
 }

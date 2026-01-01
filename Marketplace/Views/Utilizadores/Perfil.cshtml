@@ -3841,12 +3841,15 @@
 
         const loadNotificationStatus = async () => {
             try {
-                const res = await fetch('/Utilizadores/NotificationSettings');
+                const res = await fetch('/Utilizadores/GetNotificationPreferences');
                 if (!res.ok) throw new Error();
                 const data = await res.json();
                 setToggleUI(switchEmailNotif, !!data.email);
                 setToggleUI(switchNovos, !!data.novos);
                 setToggleUI(switchPreco, !!data.preco);
+                // Newsletter switch
+                const switchNewsletter = document.getElementById('switchNewsletter');
+                setToggleUI(switchNewsletter, !!data.newsletter);
             } catch {
                 showSecurityAlert('warning', 'Não foi possível carregar as preferências de notificação.');
             }
@@ -3858,7 +3861,7 @@
             formData.append('tipo', tipo);
             formData.append('ativo', ativo ? 'true' : 'false');
             if (token) formData.append('__RequestVerificationToken', token);
-            const res = await fetch('/Utilizadores/SetNotification', { method: 'POST', body: formData });
+            const res = await fetch('/Utilizadores/UpdateNotificationPreference', { method: 'POST', body: formData });
             if (!res.ok) {
                 showSecurityAlert('danger', 'Não foi possível atualizar notificações.');
                 return false;
@@ -4011,6 +4014,8 @@
         bindNotifToggle(switchEmailNotif, 'email');
         bindNotifToggle(switchNovos, 'novos');
         bindNotifToggle(switchPreco, 'preco');
+        const switchNewsletter = document.getElementById('switchNewsletter');
+        bindNotifToggle(switchNewsletter, 'newsletter');
 
         const loadPrivacyStatus = async () => {
             try {

@@ -52,6 +52,97 @@ namespace Marketplace.Services
         }
 
         /// <summary>
+        /// Gera o template de email para notificação de novo anúncio.
+        /// </summary>
+        /// <param name="anuncioTitulo">Título do anúncio.</param>
+        /// <param name="anuncioUrl">URL do anúncio.</param>
+        /// <param name="preco">Preço do veículo.</param>
+        /// <param name="imagem">URL da imagem do veículo.</param>
+        /// <returns>A string HTML completa do email.</returns>
+        public static string NewListingAlert(string anuncioTitulo, string anuncioUrl, decimal preco, string? imagem = null)
+        {
+            var safeTitle = HtmlEncoder.Default.Encode(anuncioTitulo);
+            var safeUrl = HtmlEncoder.Default.Encode(anuncioUrl);
+            var safePreco = preco.ToString("N2");
+            var imageHtml = !string.IsNullOrEmpty(imagem)
+                ? $"<img src='{HtmlEncoder.Default.Encode(imagem)}' style='width:100%;max-width:500px;border-radius:8px;margin-bottom:16px' alt='Veículo'>"
+                : "";
+
+            return BaseWrapper($@"
+                <h2 style='margin:0 0 16px;color:{DarkColor};font-weight:700'>Novo Anúncio Disponível!</h2>
+                {imageHtml}
+                <p style='margin:0 0 16px;color:#334155'>Encontrámos um novo veículo que corresponde às suas preferências.</p>
+                <div style='background:#f8fafc;padding:16px;border-radius:8px;margin:0 0 24px'>
+                    <h3 style='margin:0 0 8px;color:{DarkColor};font-size:18px'>{safeTitle}</h3>
+                    <p style='margin:0;color:{PrimaryColor};font-size:24px;font-weight:700'>{safePreco} €</p>
+                </div>
+                <a href='{safeUrl}' style='background:{PrimaryColor};color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;display:inline-block;font-weight:600'>Ver Anúncio</a>
+                <p style='margin:16px 0 0;color:#64748b;font-size:12px'>Pode gerir as suas preferências de notificação nas definições da conta.</p>
+            ");
+        }
+
+        /// <summary>
+        /// Gera o template de email para alerta de redução de preço.
+        /// </summary>
+        /// <param name="anuncioTitulo">Título do anúncio.</param>
+        /// <param name="anuncioUrl">URL do anúncio.</param>
+        /// <param name="precoAntigo">Preço anterior.</param>
+        /// <param name="precoNovo">Preço novo.</param>
+        /// <param name="imagem">URL da imagem do veículo.</param>
+        /// <returns>A string HTML completa do email.</returns>
+        public static string PriceDropAlert(string anuncioTitulo, string anuncioUrl, decimal precoAntigo, decimal precoNovo, string? imagem = null)
+        {
+            var safeTitle = HtmlEncoder.Default.Encode(anuncioTitulo);
+            var safeUrl = HtmlEncoder.Default.Encode(anuncioUrl);
+            var desconto = precoAntigo - precoNovo;
+            var percentagem = (desconto / precoAntigo * 100).ToString("N0");
+            var imageHtml = !string.IsNullOrEmpty(imagem)
+                ? $"<img src='{HtmlEncoder.Default.Encode(imagem)}' style='width:100%;max-width:500px;border-radius:8px;margin-bottom:16px' alt='Veículo'>"
+                : "";
+
+            return BaseWrapper($@"
+                <h2 style='margin:0 0 16px;color:{DarkColor};font-weight:700'>🎉 Redução de Preço!</h2>
+                {imageHtml}
+                <p style='margin:0 0 16px;color:#334155'>Um veículo que marcou como favorito teve uma redução de preço.</p>
+                <div style='background:#f8fafc;padding:16px;border-radius:8px;margin:0 0 24px'>
+                    <h3 style='margin:0 0 12px;color:{DarkColor};font-size:18px'>{safeTitle}</h3>
+                    <div style='display:flex;align-items:center;gap:12px;margin-bottom:8px'>
+                        <span style='color:#94a3b8;text-decoration:line-through;font-size:18px'>{precoAntigo:N2} €</span>
+                        <span style='background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;font-weight:600'>-{percentagem}%</span>
+                    </div>
+                    <p style='margin:0;color:{PrimaryColor};font-size:28px;font-weight:700'>{precoNovo:N2} €</p>
+                    <p style='margin:8px 0 0;color:#22c55e;font-weight:600'>Poupa {desconto:N2} €!</p>
+                </div>
+                <a href='{safeUrl}' style='background:{PrimaryColor};color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;display:inline-block;font-weight:600'>Ver Oferta</a>
+                <p style='margin:16px 0 0;color:#64748b;font-size:12px'>Esta é uma oportunidade limitada. Não perca!</p>
+            ");
+        }
+
+        /// <summary>
+        /// Gera o template de email para newsletter.
+        /// </summary>
+        /// <param name="titulo">Título da newsletter.</param>
+        /// <param name="conteudo">Conteúdo da newsletter (HTML).</param>
+        /// <param name="ctaTexto">Texto do botão de ação.</param>
+        /// <param name="ctaUrl">URL do botão de ação.</param>
+        /// <returns>A string HTML completa do email.</returns>
+        public static string Newsletter(string titulo, string conteudo, string ctaTexto, string ctaUrl)
+        {
+            var safeTitle = HtmlEncoder.Default.Encode(titulo);
+            var safeCta = HtmlEncoder.Default.Encode(ctaTexto);
+            var safeUrl = HtmlEncoder.Default.Encode(ctaUrl);
+
+            return BaseWrapper($@"
+                <h2 style='margin:0 0 16px;color:{DarkColor};font-weight:700'>{safeTitle}</h2>
+                <div style='color:#334155;line-height:1.6;margin-bottom:24px'>
+                    {conteudo}
+                </div>
+                <a href='{safeUrl}' style='background:{PrimaryColor};color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;display:inline-block;font-weight:600'>{safeCta}</a>
+                <p style='margin:16px 0 0;color:#64748b;font-size:12px'>Pode cancelar a subscrição da newsletter a qualquer momento nas definições da conta.</p>
+            ");
+        }
+
+        /// <summary>
         /// Envolve o conteúdo HTML num wrapper de layout de email base (responsivo).
         /// </summary>
         /// <param name="innerHtml">O conteúdo central do email (já considerado seguro).</param>

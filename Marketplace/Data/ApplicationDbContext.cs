@@ -44,6 +44,7 @@ namespace Marketplace.Data
         public DbSet<AnuncioExtra> AnuncioExtras { get; set; }
         public DbSet<DisponibilidadeVendedor> DisponibilidadesVendedor { get; set; }
         public DbSet<PedidoVendedor> PedidosVendedor { get; set; }
+        public DbSet<NotificationPreferences> NotificationPreferences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -242,6 +243,11 @@ namespace Marketplace.Data
             // Removido IsUnique() para permitir que um utilizador possa ser Comprador E Vendedor
             modelBuilder.Entity<Utilizador>()
                 .HasIndex(u => u.IdentityUserId);
+
+            // NotificationPreferences - um conjunto de preferências por utilizador
+            modelBuilder.Entity<NotificationPreferences>()
+                .HasIndex(np => np.IdentityUserId)
+                .IsUnique();
         }
 
     }

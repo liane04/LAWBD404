@@ -1540,6 +1540,93 @@ namespace Marketplace.Controllers
             return Json(new { success = true, message = "Sessões em outros dispositivos foram terminadas." });
         }
 
+        // GET: Utilizadores/GetNotificationPreferences
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetNotificationPreferences()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var prefs = await _db.NotificationPreferences
+                .FirstOrDefaultAsync(np => np.IdentityUserId == user.Id.ToString());
+
+            if (prefs == null)
+            {
+                // Criar preferências padrão se não existirem
+                prefs = new NotificationPreferences
+                {
+                    IdentityUserId = user.Id.ToString(),
+                    EmailNotifications = true,
+                    NewListingsAlerts = true,
+                    PriceDropAlerts = false,
+                    Newsletter = true,
+                    UpdatedAt = DateTime.UtcNow
+                };
+                _db.NotificationPreferences.Add(prefs);
+                await _db.SaveChangesAsync();
+            }
+
+            return Json(new
+            {
+                success = true,
+                email = prefs.EmailNotifications,
+                novos = prefs.NewListingsAlerts,
+                preco = prefs.PriceDropAlerts,
+                newsletter = prefs.Newsletter
+            });
+        }
+
+        // POST: Utilizadores/UpdateNotificationPreference
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateNotificationPreference(string tipo, bool ativo)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var prefs = await _db.NotificationPreferences
+                .FirstOrDefaultAsync(np => np.IdentityUserId == user.Id.ToString());
+
+            if (prefs == null)
+            {
+                prefs = new NotificationPreferences
+                {
+                    IdentityUserId = user.Id.ToString(),
+                    EmailNotifications = true,
+                    NewListingsAlerts = true,
+                    PriceDropAlerts = false,
+                    Newsletter = true
+                };
+                _db.NotificationPreferences.Add(prefs);
+            }
+
+            // Atualizar a preferência específica
+            switch (tipo.ToLower())
+            {
+                case "email":
+                    prefs.EmailNotifications = ativo;
+                    break;
+                case "novos":
+                    prefs.NewListingsAlerts = ativo;
+                    break;
+                case "preco":
+                    prefs.PriceDropAlerts = ativo;
+                    break;
+                case "newsletter":
+                    prefs.Newsletter = ativo;
+                    break;
+                default:
+                    return Json(new { success = false, message = "Tipo de notificação inválido." });
+            }
+
+            prefs.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Preferência atualizada com sucesso." });
+        }
+
         // POST: Utilizadores/UploadFotoPerfil
         [Authorize]
         [HttpPost]
