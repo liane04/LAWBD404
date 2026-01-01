@@ -1,4 +1,5 @@
 ﻿using Marketplace.Models;
+using System.Linq;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,5 +23,14 @@ namespace Marketplace.Models
         public ICollection<Visita> Visitas { get; set; } = new List<Visita>();
         public ICollection<Conversa> Conversas { get; set; } = new List<Conversa>();
         public ICollection<DenunciaAnuncio> DenunciasRespondidas { get; set; } = new List<DenunciaAnuncio>();
+        public ICollection<Avaliacao> AvaliacoesRecebidas { get; set; } = new List<Avaliacao>();
+
+        [NotMapped]
+        public double NotaMedia => AvaliacoesRecebidas != null && AvaliacoesRecebidas.Any() 
+            ? Math.Round(AvaliacoesRecebidas.Average(a => a.Nota), 1) 
+            : 0;
+
+        [NotMapped]
+        public int NumeroAvaliacoes => AvaliacoesRecebidas?.Count ?? 0;
     }
 }

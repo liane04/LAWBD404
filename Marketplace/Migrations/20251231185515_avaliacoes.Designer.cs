@@ -4,6 +4,7 @@ using Marketplace.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marketplace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251231185515_avaliacoes")]
+    partial class avaliacoes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,8 +122,6 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("CombustivelId");
 
-                    b.HasIndex("Estado");
-
                     b.HasIndex("MarcaId");
 
                     b.HasIndex("ModeloId");
@@ -128,8 +129,6 @@ namespace Marketplace.Migrations
                     b.HasIndex("TipoId");
 
                     b.HasIndex("VendedorId");
-
-                    b.HasIndex("Destacado", "DestaqueAte");
 
                     b.ToTable("Anuncios");
                 });
@@ -858,41 +857,6 @@ namespace Marketplace.Migrations
                     b.ToTable("Notificacoes");
                 });
 
-            modelBuilder.Entity("Marketplace.Models.NotificationPreferences", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("EmailNotifications")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("IdentityUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("NewListingsAlerts")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Newsletter")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("PriceDropAlerts")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdentityUserId")
-                        .IsUnique();
-
-                    b.ToTable("NotificationPreferences");
-                });
-
             modelBuilder.Entity("Marketplace.Models.PedidoVendedor", b =>
                 {
                     b.Property<int>("Id")
@@ -1003,7 +967,7 @@ namespace Marketplace.Migrations
 
                     b.HasIndex("AnuncioId");
 
-                    b.HasIndex("CompradorId", "Estado");
+                    b.HasIndex("CompradorId");
 
                     b.ToTable("Reservas");
                 });

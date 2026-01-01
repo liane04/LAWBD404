@@ -94,7 +94,10 @@ namespace Marketplace.Controllers
             // Se o usuário for vendedor, carregar seus anúncios
             if (User.IsInRole("Vendedor"))
             {
-                var vendedor = await _db.Vendedores.Include(v => v.Morada).FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+                var vendedor = await _db.Vendedores
+                    .Include(v => v.Morada)
+                    .Include(v => v.AvaliacoesRecebidas)
+                    .FirstOrDefaultAsync(v => v.IdentityUserId == userId);
 
                 if (vendedor != null)
                 {
@@ -1856,6 +1859,87 @@ namespace Marketplace.Controllers
                 return Content("Promoted!");
             }
             return Content("Not found");
+        }
+        // POST: Utilizadores/AvaliarVendedor
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AvaliarVendedor(int vendedorId, int nota, string? comentario, string? returnUrl)
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            
+            // Obter o perfil de comprador do utilizador logado
+            var comprador = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+            
+            if (comprador == null)
+            {
+                // Se for um vendedor a avaliar outro, verificar se existe perfil de comprador (criado anteriormente para msgs) ou criar
+                if (User.IsInRole("Vendedor"))
+                {
+                    // Tentar encontrar/criar perfil de comprador para o vendedor
+                    var vendedorLogado = await _db.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+                    if (vendedorLogado != null && vendedorLogado.Id != vendedorId) // Não auto-avaliar
+                    {
+                        comprador = new Comprador
+                        {
+                            IdentityUserId = userId,
+                            Username = vendedorLogado.Username,
+                            Email = vendedorLogado.Email,
+                            Nome = vendedorLogado.Nome,
+                            PasswordHash = vendedorLogado.PasswordHash,
+                            Estado = vendedorLogado.Estado,
+                            ImagemPerfil = vendedorLogado.ImagemPerfil,
+                            MoradaId = vendedorLogado.MoradaId
+                        };
+                        _db.Compradores.Add(comprador);
+                        await _db.SaveChangesAsync();
+                    }
+                }
+                
+                if (comprador == null)
+                {
+                    TempData["ErroAvaliacao"] = "Apenas compradores podem avaliar vendedores.";
+                    return !string.IsNullOrEmpty(returnUrl) ? Redirect(returnUrl) : RedirectToAction("Index", "Home");
+                }
+            }
+
+            // Validar dados
+            if (nota < 1 || nota > 5)
+            {
+                TempData["ErroAvaliacao"] = "A nota deve ser entre 1 e 5 estrelas.";
+                return !string.IsNullOrEmpty(returnUrl) ? Redirect(returnUrl) : RedirectToAction("Index", "Home");
+            }
+
+            // Verificar se já avaliou recentemente (Intervalo de segurança de 1 semana)
+            var ultimaAvaliacao = await _db.Avaliacoes
+                .Where(a => a.VendedorId == vendedorId && a.CompradorId == comprador.Id)
+                .OrderByDescending(a => a.Data)
+                .FirstOrDefaultAsync();
+
+            if (ultimaAvaliacao != null && ultimaAvaliacao.Data > DateTime.Now.AddDays(-7))
+            {
+                var diasRestantes = (ultimaAvaliacao.Data.AddDays(7).Date - DateTime.Now.Date).Days;
+                // Se for 0 dias (mas horas diferentes), dizemos "amanhã" ou "brevemente"
+                var avisoTempo = diasRestantes > 0 ? $"{diasRestantes} dias" : "brevemente";
+                
+                TempData["ErroAvaliacao"] = $"Já avaliou este vendedor recentemente. Poderá avaliar novamente em {avisoTempo}.";
+                return !string.IsNullOrEmpty(returnUrl) ? Redirect(returnUrl) : RedirectToAction("Index", "Home");
+            }
+
+            var avaliacao = new Avaliacao
+            {
+                VendedorId = vendedorId,
+                CompradorId = comprador.Id,
+                Nota = nota,
+                Comentario = comentario,
+                Data = DateTime.Now
+            };
+
+            _db.Avaliacoes.Add(avaliacao);
+            await _db.SaveChangesAsync();
+
+            TempData["SucessoAvaliacao"] = "Avaliação enviada com sucesso!";
+            return !string.IsNullOrEmpty(returnUrl) ? Redirect(returnUrl) : RedirectToAction("Index", "Home");
         }
     }
 }

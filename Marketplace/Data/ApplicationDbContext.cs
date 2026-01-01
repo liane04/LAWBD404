@@ -239,6 +239,16 @@ namespace Marketplace.Data
                 .WithMany(e => e.AnuncioExtras)
                 .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Avaliacao>()
+                .HasOne(a => a.Vendedor)
+                .WithMany(v => v.AvaliacoesRecebidas)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Avaliacao>()
+                .HasOne(a => a.Comprador)
+                .WithMany(c => c.AvaliacoesFeitas)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Identity linkage: cada Utilizador do domínio aponta para um ApplicationUser
             // Removido IsUnique() para permitir que um utilizador possa ser Comprador E Vendedor
             modelBuilder.Entity<Utilizador>()

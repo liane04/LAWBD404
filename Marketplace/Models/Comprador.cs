@@ -22,5 +22,6 @@ namespace Marketplace.Models
 
         public ICollection<Conversa> Conversas { get; set; } = new List<Conversa>();
         public ICollection<Denuncia> Denuncias { get; set; } = new List<Denuncia>();
+        public ICollection<Avaliacao> AvaliacoesFeitas { get; set; } = new List<Avaliacao>();
     }
 }

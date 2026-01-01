@@ -251,17 +251,35 @@ namespace Marketplace.Controllers
             
             if (comprador == null)
             {
-                // Se for um vendedor a tentar comprar, talvez precisemos de lógica extra ou impedir.
-                // Por agora, assumimos que apenas Compradores iniciam conversas.
-                // Se o user for Vendedor, ele também pode ser Comprador? O sistema parece separar roles.
-                // Se for Vendedor, não pode iniciar conversa como Comprador.
-                
-                if (User.IsInRole("Vendedor"))
+                // Se não existir perfil de Comprador, verificar se é Vendedor e criar perfil
+                var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+
+                if (vendedor != null)
                 {
-                     TempData["Error"] = "Apenas contas de Comprador podem iniciar conversas de compra.";
-                     return RedirectToAction("Details", "Anuncios", new { id = anuncioId });
+                    comprador = new Comprador
+                    {
+                        IdentityUserId = userId,
+                        Username = vendedor.Username,
+                        Email = vendedor.Email,
+                        Nome = vendedor.Nome,
+                        PasswordHash = vendedor.PasswordHash,
+                        Estado = vendedor.Estado,
+                        ImagemPerfil = vendedor.ImagemPerfil,
+                        MoradaId = vendedor.MoradaId
+                    };
+                    
+                    _context.Compradores.Add(comprador);
+                    await _context.SaveChangesAsync();
                 }
-                return NotFound("Perfil de comprador não encontrado.");
+                else
+                {
+                    if (User.IsInRole("Vendedor"))
+                    {
+                         TempData["Error"] = "Não foi possível encontrar o perfil de utilizador.";
+                         return RedirectToAction("Details", "Anuncios", new { id = anuncioId });
+                    }
+                    return NotFound("Perfil de comprador não encontrado.");
+                }
             }
 
             var novaConversa = new Conversa
