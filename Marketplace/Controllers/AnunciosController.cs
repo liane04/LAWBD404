@@ -35,6 +35,7 @@ namespace Marketplace.Controllers
                 .Include(a => a.Modelo)
                 .Include(a => a.Tipo)
                 .Include(a => a.Vendedor)
+                    .ThenInclude(v => v.AvaliacoesRecebidas)
                 .Include(a => a.Imagens)
                 .Where(a => a.Estado == "Ativo" || a.Estado == "Reservado") // Mostrar apenas ativos e reservados
                 .AsQueryable();
@@ -426,6 +427,7 @@ namespace Marketplace.Controllers
                 .Include(a => a.Modelo)
                 .Include(a => a.Tipo)
                 .Include(a => a.Vendedor)
+                    .ThenInclude(v => v.AvaliacoesRecebidas)
                 .Include(a => a.Imagens)
                 .FirstOrDefaultAsync(m => m.Id == id);
 

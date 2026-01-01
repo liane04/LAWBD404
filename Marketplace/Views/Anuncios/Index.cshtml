@@ -320,9 +320,35 @@
                                     </div>
                                     <h5 class="card-title">@anuncio.Titulo</h5>
                                     <div class="card-price">@anuncio.Preco.ToString("C")</div>
-                                    <p class="card-text text-muted small flex-grow-1">
+                                    <p class="card-text text-muted small flex-grow-1 mb-1">
                                         @anuncio.Marca?.Nome @anuncio.Modelo?.Nome
                                     </p>
+                                    <div class="mb-2 small">
+                                        @{
+                                            var rating = anuncio.Vendedor?.NotaMedia ?? 0;
+                                            var fullStars = (int)rating;
+                                            var hasHalfStar = rating - fullStars >= 0.5;
+                                            var reviewCount = anuncio.Vendedor?.NumeroAvaliacoes ?? 0;
+                                        }
+                                        <div class="d-flex align-items-center" title="Vendedor: @(anuncio.Vendedor?.Nome ?? "N/A")">
+                                            <i class="bi bi-person-circle text-secondary me-1"></i>
+                                            <span class="text-muted me-2 text-truncate" style="max-width: 80px;">@(anuncio.Vendedor?.Nome ?? "Vendedor")</span>
+                                            
+                                            @if (reviewCount > 0)
+                                            {
+                                                <span class="text-warning d-flex align-items-center">
+                                                    @for(int i = 0; i < fullStars; i++) { <i class="bi bi-star-fill"></i> }
+                                                    @if(hasHalfStar) { <i class="bi bi-star-half"></i> }
+                                                    @for(int i = (hasHalfStar ? fullStars + 1 : fullStars); i < 5; i++) { <i class="bi bi-star text-muted opacity-25"></i> }
+                                                </span>
+                                                <span class="ms-1 text-muted">(@rating.ToString("0.0"))</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-light text-dark border ms-1">Novo</span>
+                                            }
+                                        </div>
+                                    </div>
                                     <div class="anuncio-details-grid mt-auto">
                                         @if (anuncio.Ano.HasValue)
                                         {
