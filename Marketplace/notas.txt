@@ -27,7 +27,7 @@ Update-Database -Context ApplicationDbContext
 
 
   pagamentos strip:
-  cartao de teste:  4242 4242 4242 4242
+  cartao de teste:  plicação 
   data: qualquer 
   csv: qualquer
 

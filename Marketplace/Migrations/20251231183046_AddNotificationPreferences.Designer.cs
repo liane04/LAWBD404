@@ -4,6 +4,7 @@ using Marketplace.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marketplace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251231183046_AddNotificationPreferences")]
+    partial class AddNotificationPreferences
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,39 +259,6 @@ namespace Marketplace.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Marketplace.Models.Avaliacao", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comentario")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("CompradorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Data")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Nota")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VendedorId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompradorId");
-
-                    b.HasIndex("VendedorId");
-
-                    b.ToTable("Avaliacoes");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Categoria", b =>
@@ -1462,25 +1432,6 @@ namespace Marketplace.Migrations
                     b.Navigation("Comprador");
                 });
 
-            modelBuilder.Entity("Marketplace.Models.Avaliacao", b =>
-                {
-                    b.HasOne("Marketplace.Models.Comprador", "Comprador")
-                        .WithMany("AvaliacoesFeitas")
-                        .HasForeignKey("CompradorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Marketplace.Models.Vendedor", "Vendedor")
-                        .WithMany("AvaliacoesRecebidas")
-                        .HasForeignKey("VendedorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Comprador");
-
-                    b.Navigation("Vendedor");
-                });
-
             modelBuilder.Entity("Marketplace.Models.Compra", b =>
                 {
                     b.HasOne("Marketplace.Models.Anuncio", "Anuncio")
@@ -2001,8 +1952,6 @@ namespace Marketplace.Migrations
 
             modelBuilder.Entity("Marketplace.Models.Comprador", b =>
                 {
-                    b.Navigation("AvaliacoesFeitas");
-
                     b.Navigation("Compras");
 
                     b.Navigation("Contactos");
@@ -2021,8 +1970,6 @@ namespace Marketplace.Migrations
             modelBuilder.Entity("Marketplace.Models.Vendedor", b =>
                 {
                     b.Navigation("Anuncios");
-
-                    b.Navigation("AvaliacoesRecebidas");
 
                     b.Navigation("Contactos");
 

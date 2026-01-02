@@ -39,41 +39,50 @@
                 @if (savedFilters != null && savedFilters.Any())
                 {
                     <div class="saved-searches-section mb-4 pb-3 border-bottom">
-                        <label class="form-label text-primary fw-bold mb-2">
-                            <i class="bi bi-star-fill me-2"></i>Pesquisas Favoritas
-                        </label>
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary w-100 dropdown-toggle d-flex justify-content-between align-items-center" type="button" id="dropdownSavedFilters" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="text-truncate">Selecione uma pesquisa...</span>
-                            </button>
-                            <ul class="dropdown-menu w-100 shadow" aria-labelledby="dropdownSavedFilters">
-                                @foreach (var filtro in savedFilters)
-                                {
-                                    <li class="d-flex justify-content-between align-items-center pe-2 border-bottom">
-                                        <a class="dropdown-item text-truncate flex-grow-1 py-2"
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="form-label text-primary fw-bold mb-0">
+                                <i class="bi bi-bookmark-heart-fill me-2"></i>Pesquisas Guardadas
+                            </label>
+                            <span class="badge bg-primary rounded-pill">@savedFilters.Count</span>
+                        </div>
+
+                        <div class="list-group shadow-sm">
+                            @foreach (var filtro in savedFilters)
+                            {
+                                <div class="list-group-item list-group-item-action p-0 border-0 border-bottom">
+                                    <div class="d-flex align-items-center">
+                                        <a class="flex-grow-1 text-decoration-none text-dark p-3 pe-2"
                                            href="@Url.Action("Index", "Anuncios", new {
-                                           marcaId = filtro.MarcaId,
-                                           modeloId = filtro.ModeloId,
-                                           tipoId = filtro.TipoId,
-                                           categoriaId = filtro.CategoriaId,
-                                           combustivelId = filtro.CombustivelId,
-                                           precoMax = filtro.PrecoMax,
-                                           anoMin = filtro.AnoMin,
-                                           anoMax = filtro.AnoMax,
-                                           kmMax = filtro.KmMax,
-                                           caixa = filtro.Caixa,
-                                           localizacao = filtro.Localizacao
-                                       })">
-                                            @filtro.Nome
+                                               marcaId = filtro.MarcaId,
+                                               modeloId = filtro.ModeloId,
+                                               tipoId = filtro.TipoId,
+                                               categoriaId = filtro.CategoriaId,
+                                               combustivelId = filtro.CombustivelId,
+                                               precoMax = filtro.PrecoMax,
+                                               anoMin = filtro.AnoMin,
+                                               anoMax = filtro.AnoMax,
+                                               kmMax = filtro.KmMax,
+                                               caixa = filtro.Caixa,
+                                               localizacao = filtro.Localizacao
+                                           })">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-search text-primary me-2"></i>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-semibold text-truncate">@filtro.Nome</div>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-clock me-1"></i>@filtro.CreatedAt.ToLocalTime().ToString("dd/MM/yy")
+                                                    </small>
+                                                </div>
+                                            </div>
                                         </a>
-                                        <form asp-action="DeleteFiltro" asp-route-id="@filtro.Id" method="post" class="ms-1" onsubmit="return confirm('Apagar esta pesquisa guardada?');">
-                                            <button type="submit" class="btn btn-sm btn-link text-danger p-0 px-2" title="Apagar">
+                                        <form asp-action="DeleteFiltro" asp-route-id="@filtro.Id" method="post" class="me-2" onsubmit="return confirm('Apagar esta pesquisa?');">
+                                            <button type="submit" class="btn btn-sm btn-link text-danger p-1" title="Apagar">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
-                                    </li>
-                                }
-                            </ul>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 }
@@ -235,7 +244,7 @@
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="bi bi-search me-2"></i>Aplicar Filtros
                         </button>
-                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Comprador"))
+                        @if (User.Identity?.IsAuthenticated == true && (User.IsInRole("Comprador") || User.IsInRole("Vendedor")))
                         {
                             <button type="button" class="btn btn-outline-secondary" onclick="saveFiltersPost()">
                                 <i class="bi bi-bookmark-heart me-2"></i>Guardar Pesquisa
@@ -252,7 +261,7 @@
             <div class="results-toolbar">
                 <div class="results-info">
                     <h6 class="mb-0">
-                        <span class="results-count">@Model.Count() Veículos</span>
+                        <span class="results-count">@(ViewBag.TotalAnuncios ?? 0) Veículos</span>
                         <span class="text-muted small">encontrados</span>
                     </h6>
                 </div>
@@ -406,24 +415,137 @@
                 }
             </div>
             <!-- Paginação -->
-            <nav aria-label="Navegação de página" class="mt-5">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Navegação de página" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        @{
+                            int currentPage = ViewBag.CurrentPage ?? 1;
+                            int totalPages = ViewBag.TotalPages ?? 1;
+                            int startPage = Math.Max(1, currentPage - 2);
+                            int endPage = Math.Min(totalPages, currentPage + 2);
+                        }
+
+                        <!-- Previous Button -->
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                               href="@Url.Action("Index", new {
+                                   marcaId = ViewBag.MarcaIdSelecionada,
+                                   modeloId = ViewBag.ModeloIdSelecionado,
+                                   tipoId = ViewBag.TipoIdSelecionado,
+                                   categoriaId = ViewBag.CategoriaIdSelecionada,
+                                   combustivelId = ViewBag.CombustivelIdSelecionado,
+                                   precoMax = ViewBag.PrecoMax,
+                                   anoMin = ViewBag.AnoMin,
+                                   anoMax = ViewBag.AnoMax,
+                                   kmMax = ViewBag.KmMax,
+                                   caixa = ViewBag.Caixa,
+                                   localizacao = ViewBag.Localizacao,
+                                   ordenacao = ViewBag.Ordenacao,
+                                   pagina = currentPage - 1
+                               })"
+                               tabindex="-1">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- First Page -->
+                        @if (startPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new {
+                                    marcaId = ViewBag.MarcaIdSelecionada,
+                                    modeloId = ViewBag.ModeloIdSelecionado,
+                                    tipoId = ViewBag.TipoIdSelecionado,
+                                    categoriaId = ViewBag.CategoriaIdSelecionada,
+                                    combustivelId = ViewBag.CombustivelIdSelecionado,
+                                    precoMax = ViewBag.PrecoMax,
+                                    anoMin = ViewBag.AnoMin,
+                                    anoMax = ViewBag.AnoMax,
+                                    kmMax = ViewBag.KmMax,
+                                    caixa = ViewBag.Caixa,
+                                    localizacao = ViewBag.Localizacao,
+                                    ordenacao = ViewBag.Ordenacao,
+                                    pagina = 1
+                                })">1</a>
+                            </li>
+                            @if (startPage > 2)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                        }
+
+                        <!-- Page Numbers -->
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new {
+                                    marcaId = ViewBag.MarcaIdSelecionada,
+                                    modeloId = ViewBag.ModeloIdSelecionado,
+                                    tipoId = ViewBag.TipoIdSelecionado,
+                                    categoriaId = ViewBag.CategoriaIdSelecionada,
+                                    combustivelId = ViewBag.CombustivelIdSelecionado,
+                                    precoMax = ViewBag.PrecoMax,
+                                    anoMin = ViewBag.AnoMin,
+                                    anoMax = ViewBag.AnoMax,
+                                    kmMax = ViewBag.KmMax,
+                                    caixa = ViewBag.Caixa,
+                                    localizacao = ViewBag.Localizacao,
+                                    ordenacao = ViewBag.Ordenacao,
+                                    pagina = i
+                                })">@i</a>
+                            </li>
+                        }
+
+                        <!-- Last Page -->
+                        @if (endPage < totalPages)
+                        {
+                            @if (endPage < totalPages - 1)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new {
+                                    marcaId = ViewBag.MarcaIdSelecionada,
+                                    modeloId = ViewBag.ModeloIdSelecionado,
+                                    tipoId = ViewBag.TipoIdSelecionado,
+                                    categoriaId = ViewBag.CategoriaIdSelecionada,
+                                    combustivelId = ViewBag.CombustivelIdSelecionado,
+                                    precoMax = ViewBag.PrecoMax,
+                                    anoMin = ViewBag.AnoMin,
+                                    anoMax = ViewBag.AnoMax,
+                                    kmMax = ViewBag.KmMax,
+                                    caixa = ViewBag.Caixa,
+                                    localizacao = ViewBag.Localizacao,
+                                    ordenacao = ViewBag.Ordenacao,
+                                    pagina = totalPages
+                                })">@totalPages</a>
+                            </li>
+                        }
+
+                        <!-- Next Button -->
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new {
+                                marcaId = ViewBag.MarcaIdSelecionada,
+                                modeloId = ViewBag.ModeloIdSelecionado,
+                                tipoId = ViewBag.TipoIdSelecionado,
+                                categoriaId = ViewBag.CategoriaIdSelecionada,
+                                combustivelId = ViewBag.CombustivelIdSelecionado,
+                                precoMax = ViewBag.PrecoMax,
+                                anoMin = ViewBag.AnoMin,
+                                anoMax = ViewBag.AnoMax,
+                                kmMax = ViewBag.KmMax,
+                                caixa = ViewBag.Caixa,
+                                localizacao = ViewBag.Localizacao,
+                                ordenacao = ViewBag.Ordenacao,
+                                pagina = currentPage + 1
+                            })">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            }
         </div>
     </div>
 </div>

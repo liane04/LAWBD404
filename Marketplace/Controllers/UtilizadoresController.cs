@@ -107,10 +107,30 @@ namespace Marketplace.Controllers
                         .Include(a => a.Tipo)
                         .Include(a => a.Categoria)
                         .Include(a => a.Combustivel)
-                        .Include(a => a.Imagens)
                         .Where(a => a.VendedorId == vendedor.Id)
                         .OrderByDescending(a => a.Id)
                         .ToListAsync();
+
+                    // Carregar apenas a primeira imagem de cada anúncio (otimização de performance)
+                    if (anuncios.Any())
+                    {
+                        var anuncioIds = anuncios.Select(a => a.Id).ToList();
+                        var primeiraImagemPorAnuncio = await _db.Imagens
+                            .Where(i => i.AnuncioId.HasValue && anuncioIds.Contains(i.AnuncioId.Value))
+                            .GroupBy(i => i.AnuncioId.Value)
+                            .Select(g => g.OrderBy(i => i.Id).First())
+                            .ToListAsync();
+
+                        // Associar primeira imagem a cada anúncio
+                        foreach (var anuncio in anuncios)
+                        {
+                            var primeiraImagem = primeiraImagemPorAnuncio.FirstOrDefault(i => i.AnuncioId == anuncio.Id);
+                            if (primeiraImagem != null)
+                            {
+                                anuncio.Imagens = new List<Imagem> { primeiraImagem };
+                            }
+                        }
+                    }
 
                     ViewBag.MeusAnuncios = anuncios;
                     ViewBag.AnunciosCount = anuncios.Count;
@@ -269,6 +289,32 @@ namespace Marketplace.Controllers
                         .ToListAsync();
                     ViewBag.MarcasFavoritas = marcasFav;
                     ViewBag.MarcasFavoritasCount = marcasFav.Count;
+
+                    // Pesquisas Guardadas e Histórico (se o vendedor tiver criado um Comprador)
+                    var compradorDoVendedor = await _db.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+                    if (compradorDoVendedor != null)
+                    {
+                        // Pesquisas guardadas (Filtros Favoritos)
+                        var filtrosVendedor = await _db.FiltrosFavoritos
+                            .Where(f => f.CompradorId == compradorDoVendedor.Id)
+                            .OrderByDescending(f => f.CreatedAt)
+                            .ToListAsync();
+                        ViewBag.SavedFilters = filtrosVendedor;
+
+                        // Pesquisas Passadas (Histórico)
+                        var pesquisasPassadasVendedor = await _db.PesquisasPassadas
+                            .Where(p => p.CompradorId == compradorDoVendedor.Id)
+                            .OrderByDescending(p => p.Data)
+                            .Take(20)
+                            .ToListAsync();
+                        ViewBag.PesquisasPassadas = pesquisasPassadasVendedor;
+                    }
+                    else
+                    {
+                        // Se ainda não tem Comprador, inicializar listas vazias
+                        ViewBag.SavedFilters = new List<FiltrosFav>();
+                        ViewBag.PesquisasPassadas = new List<PesquisasPassadas>();
+                    }
                 }
             }
             // Se o usuário for comprador, carregar seus favoritos
@@ -1495,6 +1541,93 @@ namespace Marketplace.Controllers
             await _signInManager.RefreshSignInAsync(user);
 
             return Json(new { success = true, message = "Sessões em outros dispositivos foram terminadas." });
+        }
+
+        // GET: Utilizadores/GetNotificationPreferences
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetNotificationPreferences()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var prefs = await _db.NotificationPreferences
+                .FirstOrDefaultAsync(np => np.IdentityUserId == user.Id.ToString());
+
+            if (prefs == null)
+            {
+                // Criar preferências padrão se não existirem
+                prefs = new NotificationPreferences
+                {
+                    IdentityUserId = user.Id.ToString(),
+                    EmailNotifications = true,
+                    NewListingsAlerts = true,
+                    PriceDropAlerts = false,
+                    Newsletter = true,
+                    UpdatedAt = DateTime.UtcNow
+                };
+                _db.NotificationPreferences.Add(prefs);
+                await _db.SaveChangesAsync();
+            }
+
+            return Json(new
+            {
+                success = true,
+                email = prefs.EmailNotifications,
+                novos = prefs.NewListingsAlerts,
+                preco = prefs.PriceDropAlerts,
+                newsletter = prefs.Newsletter
+            });
+        }
+
+        // POST: Utilizadores/UpdateNotificationPreference
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateNotificationPreference(string tipo, bool ativo)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var prefs = await _db.NotificationPreferences
+                .FirstOrDefaultAsync(np => np.IdentityUserId == user.Id.ToString());
+
+            if (prefs == null)
+            {
+                prefs = new NotificationPreferences
+                {
+                    IdentityUserId = user.Id.ToString(),
+                    EmailNotifications = true,
+                    NewListingsAlerts = true,
+                    PriceDropAlerts = false,
+                    Newsletter = true
+                };
+                _db.NotificationPreferences.Add(prefs);
+            }
+
+            // Atualizar a preferência específica
+            switch (tipo.ToLower())
+            {
+                case "email":
+                    prefs.EmailNotifications = ativo;
+                    break;
+                case "novos":
+                    prefs.NewListingsAlerts = ativo;
+                    break;
+                case "preco":
+                    prefs.PriceDropAlerts = ativo;
+                    break;
+                case "newsletter":
+                    prefs.Newsletter = ativo;
+                    break;
+                default:
+                    return Json(new { success = false, message = "Tipo de notificação inválido." });
+            }
+
+            prefs.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Preferência atualizada com sucesso." });
         }
 
         // POST: Utilizadores/UploadFotoPerfil

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Marketplace.Data;
 using Marketplace.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Marketplace.Controllers
 {
@@ -15,17 +16,19 @@ namespace Marketplace.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AnunciosController(ApplicationDbContext context, IWebHostEnvironment environment)
+        public AnunciosController(ApplicationDbContext context, IWebHostEnvironment environment, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _environment = environment;
+            _userManager = userManager;
         }
 
         // GET: Anuncios
         public async Task<IActionResult> Index(int? marcaId, int? modeloId, int? tipoId, int? categoriaId, string? categoria, int? combustivelId,
             decimal? precoMax, int? anoMin, int? anoMax, int? kmMax, string? caixa, string? localizacao,
-            string? ordenacao)
+            string? ordenacao, int pagina = 1)
         {
             // Carregar todos os anúncios com informações relacionadas
             var query = _context.Anuncios
@@ -107,7 +110,19 @@ namespace Marketplace.Controllers
                           .ThenByDescending(a => a.Id)
             };
 
-            var anuncios = await query.ToListAsync();
+            // Implementar paginação (12 anúncios por página)
+            const int pageSize = 12;
+            int pageNumber = pagina < 1 ? 1 : pagina;
+
+            var totalAnuncios = await query.CountAsync();
+            var anuncios = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalAnuncios / (double)pageSize);
+            ViewBag.TotalAnuncios = totalAnuncios;
 
             // Carregar dados para os filtros
             ViewBag.Marcas = await _context.Set<Marca>().OrderBy(m => m.Nome).ToListAsync();
@@ -141,25 +156,27 @@ namespace Marketplace.Controllers
 
                     if (utilizador != null)
                     {
-                        // 1. Carregar Filtros Favoritos (apenas se for comprador para manter compatibilidade, ou mudar para todos)
-                        // Por enquanto mantemos a lógica original de carregar filtros apenas para Comprador, mas podia ser geral
-                        if (User.IsInRole("Comprador"))
+                        // Obter Comprador associado (necessário para filtros guardados e histórico)
+                        var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
+
+                        // 1. Carregar Filtros Favoritos (comprador ou vendedor)
+                        if ((User.IsInRole("Comprador") || User.IsInRole("Vendedor")) && comprador != null)
                         {
                             var filtros = await _context.FiltrosFavoritos
-                                .Where(f => f.CompradorId == utilizador.Id)
+                                .Where(f => f.CompradorId == comprador.Id)
                                 .OrderByDescending(f => f.CreatedAt)
                                 .ToListAsync();
                             ViewBag.SavedFilters = filtros;
                         }
 
-                        // 2. Gravar histórico de pesquisa se houver filtros ativos
+                        // 2. Gravar histórico de pesquisa se houver filtros ativos (apenas se tiver Comprador)
                         // Verifica se algum filtro relevante foi usado
-                        bool temFiltros = marcaId.HasValue || modeloId.HasValue || tipoId.HasValue || categoriaId.HasValue || 
+                        bool temFiltros = marcaId.HasValue || modeloId.HasValue || tipoId.HasValue || categoriaId.HasValue ||
                                           !string.IsNullOrWhiteSpace(categoria) || combustivelId.HasValue || precoMax.HasValue ||
                                           anoMin.HasValue || anoMax.HasValue || kmMax.HasValue || !string.IsNullOrWhiteSpace(caixa) ||
                                           !string.IsNullOrWhiteSpace(localizacao);
 
-                        if (temFiltros)
+                        if (temFiltros && comprador != null)
                         {
                             // Construir descrição e query string
                             var queryParams = new List<string>();
@@ -209,19 +226,19 @@ namespace Marketplace.Controllers
                             // Mas para evitar spam no refresh, podíamos verificar a última.
                             
                             var ultimaPesquisa = await _context.PesquisasPassadas
-                                .Where(p => p.CompradorId == utilizador.Id)
+                                .Where(p => p.CompradorId == comprador.Id)
                                 .OrderByDescending(p => p.Data)
                                 .FirstOrDefaultAsync();
 
-                            bool criarNova = ultimaPesquisa == null || 
-                                             ultimaPesquisa.Parametros != queryString || 
+                            bool criarNova = ultimaPesquisa == null ||
+                                             ultimaPesquisa.Parametros != queryString ||
                                              (DateTime.UtcNow - ultimaPesquisa.Data).TotalMinutes > 5;
 
                             if (criarNova && !string.IsNullOrEmpty(queryString))
                             {
                                 var novaPesquisa = new PesquisasPassadas
                                 {
-                                    CompradorId = utilizador.Id,
+                                    CompradorId = comprador.Id,
                                     Data = DateTime.UtcNow,
                                     Parametros = queryString,
                                     Descricao = descricao.Length > 200 ? descricao.Substring(0, 197) + "..." : descricao,
@@ -243,7 +260,7 @@ namespace Marketplace.Controllers
         }
 
         // POST: Anuncios/GuardarFiltro
-        [Authorize(Roles = "Comprador")]
+        [Authorize(Roles = "Comprador,Vendedor")]
         [HttpPost]
         public async Task<IActionResult> GuardarFiltro(
             string? nome,
@@ -255,9 +272,46 @@ namespace Marketplace.Controllers
             if (!int.TryParse(identityIdStr, out var identityId))
                 return Forbid();
 
-            var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
-            if (comprador == null)
+            var user = await _userManager.FindByIdAsync(identityId.ToString());
+            if (user == null)
                 return Forbid();
+
+            // Obter ou criar comprador (vendedores também podem guardar pesquisas)
+            var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
+
+            if (comprador == null)
+            {
+                // Verificar se é vendedor
+                var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == identityId);
+
+                if (vendedor != null)
+                {
+                    // Criar comprador automaticamente para o vendedor
+                    comprador = new Comprador
+                    {
+                        IdentityUserId = identityId,
+                        Username = user.UserName ?? "",
+                        Email = user.Email ?? "",
+                        Nome = vendedor.Nome,
+                        Estado = "Ativo",
+                        Tipo = "Comprador",
+                        ImagemPerfil = vendedor.ImagemPerfil,
+                        MoradaId = vendedor.MoradaId
+                    };
+                    _context.Compradores.Add(comprador);
+                    await _context.SaveChangesAsync();
+
+                    // Adicionar role "Comprador" ao utilizador se não tiver
+                    if (!await _userManager.IsInRoleAsync(user, "Comprador"))
+                    {
+                        await _userManager.AddToRoleAsync(user, "Comprador");
+                    }
+                }
+                else
+                {
+                    return Forbid();
+                }
+            }
 
             // Computar nome sugerido (opcionalmente inclui nomes de marca/modelo)
             var partes = new List<string>();
@@ -377,12 +431,13 @@ namespace Marketplace.Controllers
         }
 
         // POST: Anuncios/DeleteFiltro
-        [Authorize(Roles = "Comprador")]
+        [Authorize(Roles = "Comprador,Vendedor")]
         [HttpPost]
         public async Task<IActionResult> DeleteFiltro(int id)
         {
             var identityIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (!int.TryParse(identityIdStr, out var identityId)) return Forbid();
+
             var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == identityId);
             if (comprador == null) return Forbid();
 
