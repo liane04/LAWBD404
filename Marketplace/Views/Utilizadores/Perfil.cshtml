@@ -4,15 +4,7 @@
     var perfilReservasCount = ViewBag.MinhasReservasCount ?? 0;
     var perfilVisitasCount = 0;
 
-    if (User.IsInRole("Vendedor"))
-    {
-        perfilVisitasCount = ViewBag.VisitasAgendadasCount ?? 0;
-    }
-    else
-    {
-        var listaVisitas = ViewBag.MinhasVisitasComprador as System.Collections.Generic.List<Marketplace.Models.Visita>;
-        perfilVisitasCount = listaVisitas?.Count ?? 0;
-    }
+
 }
 
 <div class="container mt-5 pt-5 mb-5 pb-5">
@@ -108,11 +100,6 @@
                                 <i class="bi bi-bookmark-star-fill"></i>
                                 <span>Minhas Reservas</span>
                                 <span class="badge bg-warning rounded-pill ms-auto">@perfilReservasCount</span>
-                            </a>
-                            <a href="#minhas-visitas" class="perfil-nav-item" data-bs-toggle="tab">
-                                <i class="bi bi-calendar-check-fill"></i>
-                                <span>Minhas Visitas</span>
-                                <span class="badge bg-info rounded-pill ms-auto">@perfilVisitasCount</span>
                             </a>
                             <a href="#minhas-compras" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-bag-check-fill"></i>
@@ -2390,8 +2377,8 @@
                                                         <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-sm btn-primary">
                                                             <i class="bi bi-car-front me-1"></i>Ver Anúncio
                                                         </a>
-                                                        <a href="mailto:@anuncio.Vendedor?.Email" class="btn btn-sm btn-outline-primary">
-                                                            <i class="bi bi-envelope me-1"></i>Contactar Vendedor
+                                                        <a asp-controller="Mensagens" asp-action="IniciarConversa" asp-route-anuncioId="@anuncio.Id" class="btn btn-sm btn-success">
+                                                            <i class="bi bi-chat-dots-fill me-1"></i>Contactar Vendedor
                                                         </a>
                                                     </div>
                                                 </div>
