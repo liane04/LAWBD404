@@ -6,7 +6,7 @@ Update-Database -Context ApplicationDbContext
 
  1. Administrador: admin@email.com / Admin123
   2. Vendedor: vendedor@email.com / Vende1234
-  3. Comprador: comprador@email.com / Compr123
+  3. Comprador: comprador@email.com / Compr1234
   PALAVRA PASSE GERAL: Demo123!
 
 *Se der erro no login :
@@ -26,8 +26,8 @@ Update-Database -Context ApplicationDbContext
   Update-Database -Context ApplicationDbContext
 
 
-  pagamentos strip:
-  cartao de teste:  plicação 
+  pagamentos strip: 
+  cartao de teste:  4242 4242 4242 4242
   data: qualquer 
   csv: qualquer
 

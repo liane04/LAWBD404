@@ -994,6 +994,137 @@ git push origin main
 
 ## 18. CORREÇÕES RECENTES
 
+### 02/01/2026 - Correção de Erros em Visitas Agendadas por Vendedores
+
+**Problemas Reportados:**
+
+1. **Erro 403 - Acesso Negado:**
+   Quando um vendedor agendava uma visita a um anúncio de outro vendedor (agindo como comprador), os botões "Ver Detalhes", "Ver Anúncio", "Editar" e "Cancelar" na página de perfil retornavam erro **403 - Acesso Negado**.
+
+2. **Erro de Entity Framework Tracking:**
+   Ao cancelar uma visita agendada, ocorria erro:
+   ```
+   InvalidOperationException: The instance of entity type 'Comprador' cannot be tracked because another instance with the same key value for {'Id'} is already being tracked.
+   ```
+
+**Causas Raiz:**
+
+1. **Problema de Autorização (403):**
+   O sistema estava a usar queries separadas para buscar utilizadores em `_context.Compradores` e `_context.Vendedores` (DbSets com discriminadores TPH diferentes). Isto causava problemas quando um vendedor tentava aceder às suas próprias visitas agendadas, porque o código não estava a encontrar corretamente o utilizador no contexto de domínio.
+
+2. **Problema de Entity Tracking:**
+   O código criava novos objetos `Comprador` e `Vendedor` e atribuía-os às propriedades de navegação da visita **antes** de chamar `SaveChangesAsync()`. Isto causava conflito de tracking no EF porque:
+   - A visita já estava sendo tracked pelo contexto
+   - Os novos objetos Comprador/Vendedor tinham IDs que já existiam no contexto (do `domainUser`)
+   - EF tentava fazer tracking de múltiplas instâncias com o mesmo ID
+
+**Código Problemático 1 - Autorização:**
+```csharp
+// Buscar utilizador de domínio
+Utilizador? domainUser = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
+if (domainUser == null)
+    domainUser = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+
+if (domainUser == null || (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId))
+    return Forbid();
+```
+
+**Código Problemático 2 - Entity Tracking:**
+```csharp
+// PROBLEMA: Cria novos objetos e atribui à visita ANTES de SaveChanges
+var utilizadorComprador = await _context.Set<Utilizador>()
+    .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+
+visita.Comprador = new Comprador  // ← Causa conflito de tracking!
+{
+    Id = utilizadorComprador.Id,
+    Nome = utilizadorComprador.Nome,
+    Email = utilizadorComprador.Email
+};
+
+visita.Estado = "Cancelada";
+await _context.SaveChangesAsync(); // ← ERRO aqui!
+```
+
+**Soluções Implementadas:**
+
+1. **Solução Autorização:**
+   Buscar diretamente na tabela base `Utilizador` usando `_context.Set<Utilizador>()`:
+
+   ```csharp
+   // Buscar utilizador de domínio (independente do discriminador TPH)
+   var domainUser = await _context.Set<Utilizador>()
+       .FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
+
+   if (domainUser == null)
+   {
+       Console.WriteLine($"[ERRO] Utilizador não encontrado: {user.Id}");
+       return Forbid();
+   }
+
+   // Permitir acesso se for comprador OU vendedor da visita
+   if (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId)
+   {
+       Console.WriteLine($"[ERRO] Acesso negado.");
+       return Forbid();
+   }
+   ```
+
+2. **Solução Entity Tracking:**
+   Usar `.AsNoTracking()` e criar variáveis locais em vez de atribuir à visita:
+
+   ```csharp
+   // Buscar dados SEM anexar ao contexto
+   var utilizadorComprador = await _context.Set<Utilizador>()
+       .AsNoTracking()  // ← Não faz tracking!
+       .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+
+   visita.Estado = "Cancelada";
+   await _context.SaveChangesAsync(); // ✅ Funciona!
+
+   // Usar dados em variável local para email
+   if (utilizadorComprador != null)
+   {
+       await _emailSender.SendAsync(utilizadorComprador.Email, ...);
+   }
+   ```
+
+**Métodos Corrigidos em `Controllers/VisitasController.cs`:**
+
+**Problema 1 (Autorização 403):**
+1. ✅ **Details** (GET) - Linha 150
+2. ✅ **Edit** (GET) - Linha 515
+3. ✅ **Edit** (POST) - Linha 590
+4. ✅ **Cancelar** (POST) - Linha 760
+5. ✅ **Delete** (GET) - Linha 872
+6. ✅ **Delete** (POST) - Linha 930
+
+**Problema 2 (Entity Tracking):**
+7. ✅ **Confirmar** (POST) - Linha 700 - Adicionado `.AsNoTracking()`
+8. ✅ **Cancelar** (POST) - Linha 760 - Adicionado `.AsNoTracking()`
+9. ✅ **Edit** (POST) - Linha 650 - Adicionado `.AsNoTracking()` em queries de email
+
+**Logs de Debug Adicionados:**
+Para facilitar diagnóstico futuro, foram adicionados logs `Console.WriteLine` em cada validação:
+- Log de sucesso quando acesso é permitido
+- Log de erro quando utilizador não é encontrado
+- Log de erro quando acesso é negado (com IDs para debug)
+
+**Impacto:**
+- ✅ Vendedores podem agora aceder, editar e cancelar visitas que agendaram
+- ✅ Sistema mantém segurança: apenas intervenientes da visita (comprador OU vendedor) têm acesso
+- ✅ Elimina a necessidade de criar contas separadas de Comprador e Vendedor
+- ✅ Resolve problema de design TPH onde utilizador só pode ter um discriminador
+
+**Teste Recomendado:**
+1. Login como vendedor
+2. Agendar visita a anúncio de outro vendedor
+3. Aceder ao perfil → Aba "Visitas Agendadas"
+4. Clicar nos botões: Ver Detalhes, Editar, Cancelar
+5. Verificar que não há mais erro 403
+
+---
+
 ### 30/12/2025 (Tarde) - Sistema de Destaque de Anúncios com Stripe
 
 **Contexto:** Implementação completa de um sistema de destaque pago para anúncios, permitindo que vendedores paguem para ter seus anúncios em destaque no topo das listagens.
