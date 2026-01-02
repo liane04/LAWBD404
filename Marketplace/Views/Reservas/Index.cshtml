@@ -30,7 +30,7 @@
         </div>
     }
 
-    @if (Model.Any())
+    @if (Model != null && Model.Any())
     {
         <div class="row">
             @foreach (var reserva in Model)
@@ -141,11 +141,11 @@
     }
     else
     {
-        <div class="text-center py-5">
-            <i class="bi bi-inbox" style="font-size: 5rem; color: #e0e0e0;"></i>
-            <h4 class="text-muted mt-3">Sem reservas</h4>
+        <div class="text-center py-5 bg-light rounded-3">
+            <i class="bi bi-inbox" style="font-size: 5rem; color: #a0a0a0;"></i>
+            <h4 class="text-muted mt-3 fw-bold">Sem reservas</h4>
             <p class="text-muted">Ainda não fez nenhuma reserva de veículo.</p>
-            <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary mt-3">
+            <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary mt-3 btn-lg">
                 <i class="bi bi-search me-2"></i>Explorar Veículos
             </a>
         </div>

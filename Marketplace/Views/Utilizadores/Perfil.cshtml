@@ -1758,8 +1758,8 @@
                     </div>
                 }
 
-                <!-- Aba: Minhas Reservas (para Compradores) -->
-                @if (User.IsInRole("Comprador"))
+                <!-- Aba: Minhas Reservas (para Compradores e Vendedores) -->
+                @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
                 {
                     <div class="tab-pane fade" id="minhas-reservas">
                     <!-- Cabeçalho da Página -->
@@ -2114,8 +2114,8 @@
                     </div>
                 }
 
-                <!-- Aba: Minhas Compras (Comprador) -->
-                @if (User.IsInRole("Comprador"))
+                <!-- Aba: Minhas Compras (Comprador e Vendedor) -->
+                @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
                 {
                     var compras = ViewBag.Compras as List<Marketplace.Models.Compra> ?? new List<Marketplace.Models.Compra>();
                     <div class="tab-pane fade" id="minhas-compras">

@@ -45,6 +45,7 @@ namespace Marketplace.Data
         public DbSet<DisponibilidadeVendedor> DisponibilidadesVendedor { get; set; }
         public DbSet<PedidoVendedor> PedidosVendedor { get; set; }
         public DbSet<NotificationPreferences> NotificationPreferences { get; set; }
+        public DbSet<Avaliacao> Avaliacoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
