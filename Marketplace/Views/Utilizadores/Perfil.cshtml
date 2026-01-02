@@ -81,6 +81,10 @@
                                 <span>Reservas Recebidas</span>
                                 <span class="badge bg-success rounded-pill ms-auto">@((ViewBag.ReservasRecebidasCount ?? 0))</span>
                             </a>
+                            <a href="#desempenho-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-graph-up-arrow"></i>
+                                <span>Desempenho</span>
+                            </a>
                             <a href="#visitas-agendadas-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-calendar-event"></i>
                                 <span>Visitas Agendadas</span>
@@ -644,6 +648,122 @@
                             </div>
                         }
                     </div>
+                    </div>
+
+                    <!-- Aba: Desempenho (para Vendedores) -->
+                    <div class="tab-pane fade" id="desempenho-vendedor">
+                        <!-- Cabeçalho -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h3 class="mb-1 fw-bold">
+                                    <i class="bi bi-graph-up-arrow text-primary me-2"></i>Desempenho dos Anúncios
+                                </h3>
+                                <p class="text-muted mb-0">Estatísticas e métricas de performance dos seus anúncios</p>
+                            </div>
+                            
+                            <!-- Nota do Vendedor -->
+                            <div class="card bg-warning bg-opacity-10 border-warning">
+                                <div class="card-body py-2 px-4 d-flex align-items-center">
+                                    <div class="me-3 text-center">
+                                        <h2 class="mb-0 fw-bold text-warning">@(ViewBag.NotaMedia?.ToString("0.0") ?? "0.0")</h2>
+                                        <div class="small text-warning">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= (double)(ViewBag.NotaMedia ?? 0))
+                                                {
+                                                    <i class="bi bi-star-fill"></i>
+                                                }
+                                                else if (i - 0.5 <= (double)(ViewBag.NotaMedia ?? 0))
+                                                {
+                                                    <i class="bi bi-star-half"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-star"></i>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="border-start border-warning ps-3">
+                                        <div class="fw-bold text-dark">Classificação Geral</div>
+                                        <div class="text-muted small">Baseado em @(ViewBag.TotalAvaliacoes ?? 0) avaliações</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KPIs -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                                                <i class="bi bi-eye-fill text-primary fs-4"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-0">Total Visualizações</h6>
+                                        </div>
+                                        <h3 class="fw-bold mb-0">@ViewBag.TotalVisualizacoes</h3>
+                                        <small class="text-muted">em todos os anúncios</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-success bg-opacity-10 rounded p-2 me-3">
+                                                <i class="bi bi-calendar-check-fill text-success fs-4"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-0">Marcações / Visitas</h6>
+                                        </div>
+                                        <h3 class="fw-bold mb-0">@(ViewBag.VisitasRecebidasCount ?? 0)</h3>
+                                        <small class="text-muted">recebidas</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-warning bg-opacity-10 rounded p-2 me-3">
+                                                <i class="bi bi-bookmark-check-fill text-warning fs-4"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-0">Reservas</h6>
+                                        </div>
+                                        <h3 class="fw-bold mb-0">@(ViewBag.ReservasRecebidasCount ?? 0)</h3>
+                                        <small class="text-muted">pedidos de reserva</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-info bg-opacity-10 rounded p-2 me-3">
+                                                <i class="bi bi-megaphone-fill text-info fs-4"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-0">Anúncios Ativos</h6>
+                                        </div>
+                                        <h3 class="fw-bold mb-0">@(ViewBag.AnunciosAtivos ?? 0)</h3>
+                                        <small class="text-muted">visíveis no site</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gráficos e Tabelas (Placeholder para expansão futura) -->
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-list-check me-2"></i>Resumo Geral
+                                </h5>
+                            </div>
+                            <div class="card-body text-center py-5">
+                                <img src="~/imagens/performance_chart_placeholder.png" alt="Gráfico de Desempenho" class="img-fluid mb-3" style="max-height: 200px; opacity: 0.5;">
+                                <p class="text-muted">Mais detalhes e gráficos de desempenho estarão disponíveis em breve.</p>
+                            </div>
+                        </div>
                 </div>
 
                     var visitasRecebidas = ViewBag.VisitasRecebidas as List<Marketplace.Models.Visita> ?? new List<Marketplace.Models.Visita>();

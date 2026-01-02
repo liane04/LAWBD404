@@ -141,6 +141,19 @@ namespace Marketplace.Controllers
                     ViewBag.AnunciosVendidos = anuncios.Count(a => a.Estado == "Vendido");
                     ViewBag.AnunciosPausados = anuncios.Count(a => a.Estado == "Pausado");
 
+                    // Métricas de Desempenho
+                    ViewBag.TotalVisualizacoes = anuncios.Sum(a => a.NVisualizacoes);
+                    if (vendedor.AvaliacoesRecebidas != null && vendedor.AvaliacoesRecebidas.Any())
+                    {
+                        ViewBag.NotaMedia = vendedor.AvaliacoesRecebidas.Average(a => a.Nota);
+                        ViewBag.TotalAvaliacoes = vendedor.AvaliacoesRecebidas.Count;
+                    }
+                    else
+                    {
+                        ViewBag.NotaMedia = 0;
+                        ViewBag.TotalAvaliacoes = 0;
+                    }
+
                     // Carregar reservas RECEBIDAS (nos meus anúncios - como vendedor)
                     var reservasRecebidas = await _db.Reservas
                         .Include(r => r.Anuncio)
