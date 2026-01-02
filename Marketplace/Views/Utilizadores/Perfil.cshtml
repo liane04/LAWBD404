@@ -1,5 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Meu Perfil";
+
+    var perfilReservasCount = ViewBag.MinhasReservasCount ?? 0;
+    var perfilVisitasCount = 0;
+
+    if (User.IsInRole("Vendedor"))
+    {
+        perfilVisitasCount = ViewBag.VisitasAgendadasCount ?? 0;
+    }
+    else
+    {
+        var listaVisitas = ViewBag.MinhasVisitasComprador as System.Collections.Generic.List<Marketplace.Models.Visita>;
+        perfilVisitasCount = listaVisitas?.Count ?? 0;
+    }
 }
 
 <div class="container mt-5 pt-5 mb-5 pb-5">
@@ -86,12 +99,12 @@
                             <a href="#minhas-reservas" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-bookmark-star-fill"></i>
                                 <span>Minhas Reservas</span>
-                                <span class="badge bg-warning rounded-pill ms-auto">1</span>
+                                <span class="badge bg-warning rounded-pill ms-auto">@perfilReservasCount</span>
                             </a>
                             <a href="#minhas-visitas" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-calendar-check-fill"></i>
                                 <span>Minhas Visitas</span>
-                                <span class="badge bg-info rounded-pill ms-auto">1</span>
+                                <span class="badge bg-info rounded-pill ms-auto">@perfilVisitasCount</span>
                             </a>
                             <a href="#minhas-compras" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-bag-check-fill"></i>

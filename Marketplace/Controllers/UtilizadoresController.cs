@@ -308,6 +308,45 @@ namespace Marketplace.Controllers
                             .Take(20)
                             .ToListAsync();
                         ViewBag.PesquisasPassadas = pesquisasPassadasVendedor;
+
+                        // Carregar compras do vendedor (como comprador)
+                        var comprasVendedor = await _db.Compras
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Marca)
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Modelo)
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Imagens)
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Combustivel)
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Vendedor)
+                            .Where(c => c.CompradorId == compradorDoVendedor.Id)
+                            .OrderByDescending(c => c.Data)
+                            .ToListAsync();
+                        ViewBag.Compras = comprasVendedor;
+                        ViewBag.ComprasCount = comprasVendedor.Count;
+
+                        // Carregar reservas FEITAS pelo vendedor (como comprador)
+                        var reservasFeitas = await _db.Reservas
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Marca)
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Modelo)
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Imagens)
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Vendedor)
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Combustivel)
+                            .Where(r => r.CompradorId == compradorDoVendedor.Id)
+                            .OrderByDescending(r => r.Data)
+                            .ToListAsync();
+
+                        ViewBag.MinhasReservas = reservasFeitas;
+                        ViewBag.MinhasReservasCount = reservasFeitas.Count;
+                        ViewBag.ReservasAtivasComprador = reservasFeitas.Count(r => r.Estado == "Ativa");
+                        ViewBag.ReservasExpiradas = reservasFeitas.Count(r => r.Estado == "Expirada");
                     }
                     else
                     {
