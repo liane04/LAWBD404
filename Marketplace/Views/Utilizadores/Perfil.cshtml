@@ -68,6 +68,14 @@
                             <i class="bi bi-chevron-right ms-auto"></i>
                         </a>
 
+                        @if (User.IsInRole("Vendedor"))
+                        {
+                            <a href="#desempenho-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-graph-up-arrow"></i>
+                                <span>Desempenho</span>
+                            </a>
+                        }
+
                         <!-- Seção: Como Vendedor -->
                         @if (User.IsInRole("Vendedor"))
                         {
@@ -80,10 +88,6 @@
                                 <i class="bi bi-bookmark-check-fill"></i>
                                 <span>Reservas Recebidas</span>
                                 <span class="badge bg-success rounded-pill ms-auto">@((ViewBag.ReservasRecebidasCount ?? 0))</span>
-                            </a>
-                            <a href="#desempenho-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
-                                <i class="bi bi-graph-up-arrow"></i>
-                                <span>Desempenho</span>
                             </a>
                             <a href="#visitas-agendadas-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-calendar-event"></i>
