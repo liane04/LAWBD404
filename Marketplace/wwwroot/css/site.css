@@ -4805,3 +4805,191 @@ img {
 .hero-section .badge.bg-light i {
     opacity: 1 !important;
 }
+
+/* ===================================
+   MELHORIAS DE RESPONSIVIDADE MOBILE
+   =================================== */
+
+/* Sidebar do Perfil - Mobile */
+@media (max-width: 991.98px) {
+    .perfil-sidebar {
+        margin-bottom: 1.5rem;
+    }
+    
+    .perfil-nav-menu {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .perfil-nav-item span {
+        font-size: 0.9rem;
+    }
+}
+
+/* Touch Targets - Mínimo 44x44px para iOS */
+@media (max-width: 767.98px) {
+    .btn, .perfil-nav-item, .dropdown-item {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .btn-sm {
+        min-height: 38px;
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Evitar Overflow de Texto */
+.card-title, .card-text, h1, h2, h3, h4, h5, h6 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Tabelas Responsivas */
+@media (max-width: 767.98px) {
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        min-width: 600px;
+    }
+    
+    /* Esconder colunas menos importantes em mobile */
+    .table .d-none-mobile {
+        display: none !important;
+    }
+}
+
+/* Formulários Mobile */
+@media (max-width: 575.98px) {
+    .form-control, .form-select {
+        font-size: 16px; /* Evita zoom no iOS */
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-fullscreen-sm-down {
+        max-width: 100%;
+        margin: 0;
+        height: 100vh;
+    }
+}
+
+/* Cards de Anúncios - Mobile */
+@media (max-width: 575.98px) {
+    .anuncio-card {
+        font-size: 0.9rem;
+    }
+    
+    .card-title {
+        font-size: 1rem;
+    }
+    
+    .card-price {
+        font-size: 1.3rem;
+    }
+}
+
+/* Navegação Fixa em Mobile */
+@media (max-width: 991.98px) {
+    #mainNavbar {
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+    }
+}
+
+/* Espaçamento Consistente em Mobile */
+@media (max-width: 767.98px) {
+    .container, .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .row {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+    }
+    
+    [class*="col-"] {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+/* Imagens Responsivas */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.card-img-top, .card-img-wrapper img {
+    object-fit: cover;
+    width: 100%;
+}
+
+/* Melhorar Clickable Areas */
+@media (hover: none) and (pointer: coarse) {
+    a, button {
+        cursor: pointer;
+    }
+    
+    .btn {
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Badge Counters - Mobile */
+@media (max-width: 575.98px) {
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.25em 0.5em;
+    }
+}
+
+/* Scrollbar Personalizada para Mobile */
+@media (max-width: 767.98px) {
+    .perfil-nav-menu::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .perfil-nav-menu::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    .perfil-nav-menu::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+}
+
+/* Prevent Horizontal Scroll */
+body {
+    overflow-x: hidden;
+}
+
+.container-fluid, .row {
+    max-width: 100%;
+}
+
+/* Safe Area para iPhones com Notch */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    
+    #mainNavbar {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+}
