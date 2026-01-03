@@ -491,6 +491,19 @@ namespace Marketplace.Controllers
                 return NotFound();
             }
 
+            // Buscar anúncios semelhantes (mesma categoria ou marca, excluindo o atual)
+            var anunciosSemelhantes = await _context.Anuncios
+                .Include(a => a.Marca)
+                .Include(a => a.Imagens)
+                .Where(a => a.Id != id &&
+                           a.Estado == "Ativo" &&
+                           (a.CategoriaId == anuncio.CategoriaId || a.MarcaId == anuncio.MarcaId))
+                .OrderByDescending(a => a.DataPublicacao)
+                .Take(4)
+                .ToListAsync();
+
+            ViewBag.AnunciosSemelhantes = anunciosSemelhantes;
+
             // Incrementar visualizações
             anuncio.NVisualizacoes++;
             await _context.SaveChangesAsync();

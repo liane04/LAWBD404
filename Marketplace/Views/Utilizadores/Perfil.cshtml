@@ -1773,9 +1773,9 @@
                                                         <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-primary flex-grow-1">
                                                             <i class="bi bi-eye me-2"></i>Ver Detalhes
                                                         </a>
-                                                        <button class="btn btn-outline-primary" title="Contactar Vendedor">
-                                                            <i class="bi bi-chat-dots"></i>
-                                                        </button>
+                                                        <a asp-controller="Mensagens" asp-action="IniciarConversa" asp-route-anuncioId="@anuncio.Id" class="btn btn-success" title="Contactar Vendedor">
+                                                            <i class="bi bi-chat-dots-fill"></i>
+                                                        </a>
                                                         <form asp-controller="Favoritos" asp-action="Remove" asp-route-id="@favorito.Id" method="post" class="d-inline remove-favorito-form-perfil">
                                                             <button type="submit" class="btn btn-outline-danger" title="Remover dos favoritos">
                                                                 <i class="bi bi-trash"></i>

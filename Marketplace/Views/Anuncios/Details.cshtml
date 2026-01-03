@@ -574,103 +574,56 @@
     </div>
 
     <!-- Anúncios Relacionados -->
-    <section class="related-listings-section mt-5 pt-4 border-top">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3><i class="bi bi-grid-3x3-gap-fill me-2"></i>Anúncios Semelhantes</h3>
-                <a href="/Anuncios" class="btn btn-outline-primary">Ver mais</a>
-            </div>
-            <div class="row g-4">
-                <!-- Related Card 1 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 shadow-sm related-card">
-                        <div class="card-img-wrapper-related">
-                            <img src="~/imagens/audiA3.jpg" class="card-img-top" alt="Audi A3">
-                            <button class="btn-favorito-small" onclick="toggleFavoritoDetails(this)">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-title mb-2">Audi A3 Sportback 2.0 TDI</h6>
-                            <p class="text-primary fw-bold fs-5 mb-2">22.900 €</p>
-                            <div class="small text-muted mb-2">
-                                <i class="bi bi-calendar3 me-1"></i>2018 • <i class="bi bi-speedometer2 me-1"></i>115.000 km
-                            </div>
-                            <div class="small text-muted">
-                                <i class="bi bi-geo-alt-fill me-1"></i>Lisboa
-                            </div>
-                        </div>
-                    </div>
+    @{
+        var anunciosSemelhantes = ViewBag.AnunciosSemelhantes as List<Marketplace.Models.Anuncio> ?? new List<Marketplace.Models.Anuncio>();
+    }
+    @if (anunciosSemelhantes.Any())
+    {
+        <section class="related-listings-section mt-5 pt-4 border-top">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3><i class="bi bi-grid-3x3-gap-fill me-2"></i>Anúncios Semelhantes</h3>
+                    <a href="/Anuncios" class="btn btn-outline-primary">Ver mais</a>
                 </div>
-
-                <!-- Related Card 2 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 shadow-sm related-card">
-                        <div class="card-img-wrapper-related">
-                            <img src="~/imagens/mercedesBenz.jpg" class="card-img-top" alt="Mercedes">
-                            <button class="btn-favorito-small" onclick="toggleFavoritoDetails(this)">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-title mb-2">Mercedes-Benz Classe C 220d</h6>
-                            <p class="text-primary fw-bold fs-5 mb-2">31.500 €</p>
-                            <div class="small text-muted mb-2">
-                                <i class="bi bi-calendar3 me-1"></i>2020 • <i class="bi bi-speedometer2 me-1"></i>75.000 km
-                            </div>
-                            <div class="small text-muted">
-                                <i class="bi bi-geo-alt-fill me-1"></i>Porto
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Related Card 3 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 shadow-sm related-card">
-                        <div class="card-img-wrapper-related">
-                            <img src="~/imagens/bmwSerie1.jpg" class="card-img-top" alt="BMW">
-                            <button class="btn-favorito-small" onclick="toggleFavoritoDetails(this)">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-title mb-2">BMW 320d Efficient Dynamics</h6>
-                            <p class="text-primary fw-bold fs-5 mb-2">26.200 €</p>
-                            <div class="small text-muted mb-2">
-                                <i class="bi bi-calendar3 me-1"></i>2019 • <i class="bi bi-speedometer2 me-1"></i>92.000 km
-                            </div>
-                            <div class="small text-muted">
-                                <i class="bi bi-geo-alt-fill me-1"></i>Coimbra
+                <div class="row g-4">
+                    @foreach (var anuncioSemelhante in anunciosSemelhantes)
+                    {
+                        var imagemPrincipal = anuncioSemelhante.Imagens?.FirstOrDefault()?.Url ?? "/imagens/placeholder.jpg";
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card h-100 shadow-sm related-card">
+                                <a href="@Url.Action("Details", "Anuncios", new { id = anuncioSemelhante.Id })" class="text-decoration-none">
+                                    <div class="card-img-wrapper-related">
+                                        <img src="@imagemPrincipal" class="card-img-top" alt="@anuncioSemelhante.Titulo"
+                                             onerror="this.onerror=null; this.src='/imagens/placeholder.jpg';">
+                                        @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
+                                        {
+                                            <button class="btn-favorito-small" onclick="event.preventDefault(); toggleFavoritoDetails(this, @anuncioSemelhante.Id)">
+                                                <i class="bi bi-heart"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                    <div class="card-body">
+                                        <h6 class="card-title mb-2 text-dark">@anuncioSemelhante.Titulo</h6>
+                                        <p class="text-primary fw-bold fs-5 mb-2">@anuncioSemelhante.Preco.ToString("N0") €</p>
+                                        <div class="small text-muted mb-2">
+                                            <i class="bi bi-calendar3 me-1"></i>@anuncioSemelhante.Ano •
+                                            <i class="bi bi-speedometer2 me-1"></i>@anuncioSemelhante.Quilometragem.ToString("N0") km
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(anuncioSemelhante.Localizacao))
+                                        {
+                                            <div class="small text-muted">
+                                                <i class="bi bi-geo-alt-fill me-1"></i>@anuncioSemelhante.Localizacao
+                                            </div>
+                                        }
+                                    </div>
+                                </a>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Related Card 4 -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 shadow-sm related-card">
-                        <div class="card-img-wrapper-related">
-                            <img src="~/imagens/Jeep_mercedes.png" class="card-img-top" alt="Mercedes G-Class">
-                            <button class="btn-favorito-small" onclick="toggleFavoritoDetails(this)">
-                                <i class="bi bi-heart"></i>
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-title mb-2">Mercedes-Benz G 350d AMG</h6>
-                            <p class="text-primary fw-bold fs-5 mb-2">89.900 €</p>
-                            <div class="small text-muted mb-2">
-                                <i class="bi bi-calendar3 me-1"></i>2020 • <i class="bi bi-speedometer2 me-1"></i>65.000 km
-                            </div>
-                            <div class="small text-muted">
-                                <i class="bi bi-geo-alt-fill me-1"></i>Lisboa
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    }
 </div>
 
 <!-- Modal: Reservar Veículo -->
