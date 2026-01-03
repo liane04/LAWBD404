@@ -46,7 +46,8 @@
       "Bash(dotnet run:*)",
       "Bash(git checkout:*)",
       "Bash(Select-String \"error\")",
-      "Bash(timeout /t 8 /nobreak)"
+      "Bash(timeout /t 8 /nobreak)",
+      "Bash(dotnet add:*)"
     ]
   }
 }
