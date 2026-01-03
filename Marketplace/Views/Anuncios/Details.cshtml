@@ -588,7 +588,7 @@
                 <div class="row g-4">
                     @foreach (var anuncioSemelhante in anunciosSemelhantes)
                     {
-                        var imagemPrincipal = anuncioSemelhante.Imagens?.FirstOrDefault()?.Url ?? "/imagens/placeholder.jpg";
+                        var imagemPrincipal = anuncioSemelhante.Imagens?.FirstOrDefault()?.ImagemCaminho ?? "/imagens/placeholder.jpg";
                         <div class="col-md-6 col-lg-3">
                             <div class="card h-100 shadow-sm related-card">
                                 <a href="@Url.Action("Details", "Anuncios", new { id = anuncioSemelhante.Id })" class="text-decoration-none">
@@ -604,10 +604,10 @@
                                     </div>
                                     <div class="card-body">
                                         <h6 class="card-title mb-2 text-dark">@anuncioSemelhante.Titulo</h6>
-                                        <p class="text-primary fw-bold fs-5 mb-2">@anuncioSemelhante.Preco.ToString("N0") €</p>
+                                        <p class="text-primary fw-bold fs-5 mb-2">@string.Format("{0:N0}", anuncioSemelhante.Preco) €</p>
                                         <div class="small text-muted mb-2">
                                             <i class="bi bi-calendar3 me-1"></i>@anuncioSemelhante.Ano •
-                                            <i class="bi bi-speedometer2 me-1"></i>@anuncioSemelhante.Quilometragem.ToString("N0") km
+                                            <i class="bi bi-speedometer2 me-1"></i>@string.Format("{0:N0}", anuncioSemelhante.Quilometragem ?? 0) km
                                         </div>
                                         @if (!string.IsNullOrEmpty(anuncioSemelhante.Localizacao))
                                         {

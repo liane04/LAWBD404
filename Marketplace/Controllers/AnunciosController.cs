@@ -498,7 +498,7 @@ namespace Marketplace.Controllers
                 .Where(a => a.Id != id &&
                            a.Estado == "Ativo" &&
                            (a.CategoriaId == anuncio.CategoriaId || a.MarcaId == anuncio.MarcaId))
-                .OrderByDescending(a => a.DataPublicacao)
+                .OrderByDescending(a => a.Id)
                 .Take(4)
                 .ToListAsync();
 
