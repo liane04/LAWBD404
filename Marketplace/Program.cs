@@ -12,6 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 
+// Fix para PostgreSQL - usar timestamp sem timezone
+// Necessário para compatibilidade com DateTime do .NET
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // DbContext (Identity + domínio)

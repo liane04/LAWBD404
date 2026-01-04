@@ -190,8 +190,8 @@
                                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                     O vendedor ainda não configurou seus horários de disponibilidade. Por favor, escolha uma data e hora e aguarde a confirmação do vendedor.
                                 </div>
-                                <input asp-for="Data" type="datetime-local" class="form-control form-control-lg"
-                                       min="@minDate" required />
+                                <input asp-for="Data" type="datetime-local" class="form-control form-control-lg datetime-picker-custom"
+                                       min="@minDate" step="1800" required />
                                 <span asp-validation-for="Data" class="text-danger small"></span>
                                 <div class="form-text">
                                     <i class="bi bi-info-circle me-1"></i>
@@ -204,8 +204,8 @@
                                     <i class="bi bi-info-circle-fill me-2"></i>
                                     Não há horários disponíveis nos próximos 30 dias. Por favor, contacte o vendedor diretamente.
                                 </div>
-                                <input asp-for="Data" type="datetime-local" class="form-control form-control-lg"
-                                       min="@minDate" required />
+                                <input asp-for="Data" type="datetime-local" class="form-control form-control-lg datetime-picker-custom"
+                                       min="@minDate" step="1800" required />
                                 <span asp-validation-for="Data" class="text-danger small"></span>
                             }
                         </div>
@@ -304,6 +304,39 @@
 
                 // Remover mensagem de erro se existir
                 $('span[data-valmsg-for="Data"]').text('');
+            });
+
+            // Arredondar datetime-local para intervalos de 30 minutos
+            $('.datetime-picker-custom').on('change', function() {
+                var value = $(this).val();
+                if (value) {
+                    var date = new Date(value);
+                    var minutes = date.getMinutes();
+
+                    // Arredondar para o intervalo de 30 minutos mais próximo
+                    if (minutes < 15) {
+                        date.setMinutes(0);
+                    } else if (minutes < 45) {
+                        date.setMinutes(30);
+                    } else {
+                        date.setMinutes(0);
+                        date.setHours(date.getHours() + 1);
+                    }
+
+                    // Zerar segundos e milissegundos
+                    date.setSeconds(0);
+                    date.setMilliseconds(0);
+
+                    // Formatar para datetime-local (YYYY-MM-DDTHH:mm)
+                    var year = date.getFullYear();
+                    var month = String(date.getMonth() + 1).padStart(2, '0');
+                    var day = String(date.getDate()).padStart(2, '0');
+                    var hours = String(date.getHours()).padStart(2, '0');
+                    var mins = String(date.getMinutes()).padStart(2, '0');
+
+                    var newValue = year + '-' + month + '-' + day + 'T' + hours + ':' + mins;
+                    $(this).val(newValue);
+                }
             });
 
             // Loading spinner ao submeter
