@@ -2380,7 +2380,83 @@
                                                         <a asp-controller="Mensagens" asp-action="IniciarConversa" asp-route-anuncioId="@anuncio.Id" class="btn btn-sm btn-success">
                                                             <i class="bi bi-chat-dots-fill me-1"></i>Contactar Vendedor
                                                         </a>
+                                                        <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#avaliarVendedorModal_@compra.Id">
+                                                            <i class="bi bi-star-fill me-1"></i>Avaliar Vendedor
+                                                        </button>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal de Avaliação do Vendedor -->
+                                    <div class="modal fade" id="avaliarVendedorModal_@compra.Id" tabindex="-1" aria-labelledby="avaliarVendedorModalLabel_@compra.Id" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-warning bg-opacity-10 border-bottom-0">
+                                                    <h5 class="modal-title fw-bold" id="avaliarVendedorModalLabel_@compra.Id">
+                                                        <i class="bi bi-star-fill text-warning me-2"></i>Avaliar Vendedor
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- Informações do Vendedor -->
+                                                    <div class="text-center mb-4">
+                                                        @if (!string.IsNullOrEmpty(anuncio.Vendedor?.ImagemPerfil))
+                                                        {
+                                                            <img src="@anuncio.Vendedor.ImagemPerfil" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;" alt="@anuncio.Vendedor.Nome">
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="rounded-circle mx-auto mb-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                                                <i class="bi bi-person-fill fs-2"></i>
+                                                            </div>
+                                                        }
+                                                        <h5 class="fw-bold mb-1">@anuncio.Vendedor?.Nome</h5>
+                                                        <p class="text-muted small mb-0">@anuncio.Titulo</p>
+                                                    </div>
+
+                                                    <!-- Formulário de Avaliação -->
+                                                    <form asp-controller="Utilizadores" asp-action="AvaliarVendedor" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="vendedorId" value="@anuncio.VendedorId" />
+                                                        <input type="hidden" name="returnUrl" value="@Url.Action("Perfil", "Utilizadores")" />
+
+                                                        <div class="mb-4">
+                                                            <label class="form-label fw-semibold">Classificação:</label>
+                                                            <div class="rating-css">
+                                                                <div class="star-icon">
+                                                                    <input type="radio" name="nota" value="5" id="rating5_@compra.Id" required>
+                                                                    <label for="rating5_@compra.Id" class="bi bi-star-fill"></label>
+
+                                                                    <input type="radio" name="nota" value="4" id="rating4_@compra.Id">
+                                                                    <label for="rating4_@compra.Id" class="bi bi-star-fill"></label>
+
+                                                                    <input type="radio" name="nota" value="3" id="rating3_@compra.Id">
+                                                                    <label for="rating3_@compra.Id" class="bi bi-star-fill"></label>
+
+                                                                    <input type="radio" name="nota" value="2" id="rating2_@compra.Id">
+                                                                    <label for="rating2_@compra.Id" class="bi bi-star-fill"></label>
+
+                                                                    <input type="radio" name="nota" value="1" id="rating1_@compra.Id">
+                                                                    <label for="rating1_@compra.Id" class="bi bi-star-fill"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Comentário (opcional):</label>
+                                                            <textarea name="comentario" class="form-control" rows="4" placeholder="Partilhe a sua experiência com este vendedor..." maxlength="500"></textarea>
+                                                            <div class="form-text">Máximo 500 caracteres</div>
+                                                        </div>
+
+                                                        <div class="d-grid gap-2">
+                                                            <button type="submit" class="btn btn-warning">
+                                                                <i class="bi bi-send-fill me-2"></i>Enviar Avaliação
+                                                            </button>
+                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
@@ -2402,6 +2478,33 @@
                                 </a>
                             </div>
                         }
+
+                        <!-- CSS para Rating de Estrelas -->
+                        <style>
+                            .rating-css .star-icon {
+                                display: flex;
+                                flex-direction: row-reverse;
+                                justify-content: center;
+                                gap: 5px;
+                            }
+                            .rating-css input {
+                                display: none;
+                            }
+                            .rating-css label {
+                                font-size: 28px;
+                                color: #ddd;
+                                cursor: pointer;
+                                transition: color 0.2s;
+                            }
+                            .rating-css input:checked ~ label,
+                            .rating-css input:checked + label {
+                                color: #ffc107;
+                            }
+                            .rating-css label:hover,
+                            .rating-css label:hover ~ label {
+                                color: #ffc107;
+                            }
+                        </style>
                     </div>
                 }
 
