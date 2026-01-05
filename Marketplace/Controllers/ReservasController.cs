@@ -255,6 +255,9 @@ namespace Marketplace.Controllers
 
                     if (reservaExistente == null)
                     {
+                        // Obter valor pago do Stripe (em euros, não centavos)
+                        var valorPago = (session.AmountTotal ?? 0) / 100m;
+
                         // Criar a reserva
                         var reserva = new Reserva
                         {
@@ -262,7 +265,8 @@ namespace Marketplace.Controllers
                             CompradorId = compradorId,
                             Data = DateTime.Now,
                             Estado = "Ativa",
-                            DataExpiracao = DateTime.Now.AddDays(7) // Reserva válida por 7 dias
+                            DataExpiracao = DateTime.Now.AddDays(7), // Reserva válida por 7 dias
+                            ValorSinal = valorPago // ✅ Guardar valor efetivamente pago
                         };
 
                         _context.Reservas.Add(reserva);

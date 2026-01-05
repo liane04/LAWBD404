@@ -16,6 +16,9 @@ namespace Marketplace.Models
 
         public DateTime? DataExpiracao { get; set; }
 
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal ValorSinal { get; set; }
+
         public int CompradorId { get; set; }
         [ForeignKey("CompradorId")]
         public Comprador Comprador { get; set; } = null!;
