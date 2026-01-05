@@ -512,16 +512,59 @@
             font-size: 0.875rem;
         }
 
+        /* ===== BOTÃO VOLTAR (MOBILE) ===== */
+        .btn-back-mobile {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            font-size: 1.25rem;
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-back-mobile:hover {
+            color: var(--primary-color);
+        }
+
         /* ===== RESPONSIVO ===== */
         @@media (max-width: 768px) {
             .chat-sidebar {
                 width: 100%;
                 position: absolute;
                 z-index: 10;
+                transition: transform 0.3s ease;
             }
 
-            .chat-conversation-area.mobile-hidden {
-                display: none;
+            .chat-sidebar.mobile-hidden {
+                transform: translateX(-100%);
+            }
+
+            .chat-conversation-area {
+                width: 100%;
+            }
+
+            .btn-back-mobile {
+                display: inline-block;
+            }
+
+            .chat-header {
+                padding: 1rem;
+            }
+
+            .chat-header-avatar {
+                width: 40px;
+                height: 40px;
+            }
+
+            .chat-header-name {
+                font-size: 1rem;
+            }
+
+            .chat-header-status {
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -587,6 +630,9 @@
             <div id="chatContent" style="display: none; height: 100%; flex-direction: column;">
                 <!-- Header da Conversa -->
                 <div class="chat-header" id="chatHeader">
+                    <button class="btn-back-mobile" onclick="voltarParaLista()" title="Voltar">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
                     <img src="" alt="Avatar" class="chat-header-avatar" id="chatAvatar" />
                     <div class="chat-header-info">
                         <div class="chat-header-name" id="chatName">Nome</div>
@@ -793,14 +839,20 @@
 
         function abrirConversa(id) {
             currentConversaId = id;
-            
+
             // Atualizar seleção visual na lista
             document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
             // (Idealmente re-renderizariamos a lista para marcar o ativo, mas por agora ok)
-            
+
             // Mostrar loading ou limpar área
             document.getElementById('emptyState').style.display = 'none';
             document.getElementById('chatContent').style.display = 'flex';
+
+            // MOBILE: Esconder sidebar e mostrar chat
+            if (window.innerWidth <= 768) {
+                document.querySelector('.chat-sidebar').classList.add('mobile-hidden');
+                document.querySelector('.chat-conversation-area').classList.remove('mobile-hidden');
+            }
             
             fetch(`/Mensagens/GetMensagens?conversaId=${id}`)
                 .then(response => response.json())
@@ -848,6 +900,19 @@
                     carregarConversas();
                 })
                 .catch(err => console.error('Erro ao carregar mensagens:', err));
+        }
+
+        function voltarParaLista() {
+            // MOBILE: Mostrar sidebar e esconder chat
+            if (window.innerWidth <= 768) {
+                document.querySelector('.chat-sidebar').classList.remove('mobile-hidden');
+                document.querySelector('.chat-conversation-area').classList.add('mobile-hidden');
+
+                // Resetar para o estado vazio
+                document.getElementById('emptyState').style.display = 'flex';
+                document.getElementById('chatContent').style.display = 'none';
+                currentConversaId = null;
+            }
         }
 
         function enviarMensagem() {

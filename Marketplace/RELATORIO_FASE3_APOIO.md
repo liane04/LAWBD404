@@ -1613,6 +1613,19 @@ git checkout -b NovaBranch
 
 ---
 
+### 02/01/2026 - Atualização de Branding nos Emails de Confirmação
+
+- O email de confirmação de registo passa a utilizar o nome oficial "404 Ride" (antes "DriveDeal") e o assunto foi ajustado.
+- O template base de email inclui agora o logotipo (`https://404ride.b-host.me/imagens/logo.png`) no cabeçalho.
+
+### 02/01/2026 - Obrigatoriedade de Email Confirmado para Login
+
+- `RequireConfirmedEmail` ativado na configuração Identity; login bloqueado até confirmação do email.
+- Mensagem clara no fluxo de login a indicar a necessidade de confirmar e opção de reenviar.
+- Removida a confirmação automática em caso de falha no envio do email de registo.
+
+---
+
 **Fim do Documento de Apoio ao Relatório - Fase 3**
 
 > Este documento fornece uma visão completa das funcionalidades, integrações e implementações da Fase 3 do projeto 404 Ride, focando nas explicações funcionais e nas integrações externas realizadas.

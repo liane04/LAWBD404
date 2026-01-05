@@ -1103,6 +1103,48 @@ namespace Marketplace.Controllers
 
             await _emailSender.SendAsync(vendedor.Email, subject, message);
         }
+        // POST: Administrador/ExportarTodosAnuncios
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExportarTodosAnuncios()
+        {
+            var anuncios = await _db.Anuncios
+                                .Include(a => a.Vendedor)
+                                .Include(a => a.Marca)
+                                .Include(a => a.Modelo)
+                                .Include(a => a.Categoria)
+                                .Include(a => a.Combustivel)
+                                .Include(a => a.Tipo)
+                                .OrderByDescending(a => a.Id)
+                                .ToListAsync();
+
+            var sb = new System.Text.StringBuilder();
+            // Cabeçalho com todos os atributos
+            sb.AppendLine("Id;Titulo;Preco;Estado;Vendedor;VendedorId;Marca;Modelo;Categoria;Combustivel;Tipo;Ano;Quilometragem;Cor;Caixa;Portas;Lugares;Potencia;Cilindrada;Localizacao;ValorSinal;Visualizacoes;Destacado;DestaqueAte;Descricao");
+
+            foreach (var anuncio in anuncios)
+            {
+                // Tratamento de strings para CSV
+                string SafeStr(string? input) => input?.Replace(";", ",").Replace("\n", " ").Replace("\r", "") ?? "";
+
+                var titulo = SafeStr(anuncio.Titulo);
+                var vendedor = SafeStr(anuncio.Vendedor?.Nome);
+                var marca = SafeStr(anuncio.Marca?.Nome);
+                var modelo = SafeStr(anuncio.Modelo?.Nome);
+                var categoria = SafeStr(anuncio.Categoria?.Nome);
+                var combustivel = SafeStr(anuncio.Combustivel?.Tipo);
+                var tipo = SafeStr(anuncio.Tipo?.Nome);
+                var cor = SafeStr(anuncio.Cor);
+                var caixa = SafeStr(anuncio.Caixa);
+                var localizacao = SafeStr(anuncio.Localizacao);
+                var descricao = SafeStr(anuncio.Descricao);
+                
+                sb.AppendLine($"{anuncio.Id};{titulo};{anuncio.Preco};{anuncio.Estado};{vendedor};{anuncio.VendedorId};{marca};{modelo};{categoria};{combustivel};{tipo};{anuncio.Ano};{anuncio.Quilometragem};{cor};{caixa};{anuncio.Portas};{anuncio.Lugares};{anuncio.Potencia};{anuncio.Cilindrada};{localizacao};{anuncio.ValorSinal};{anuncio.NVisualizacoes};{anuncio.Destacado};{anuncio.DestaqueAte};{descricao}");
+            }
+
+            var fileName = $"todos_anuncios_full_{DateTime.Now:yyyyMMddHHmm}.csv";
+            return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", fileName);
+        }
     }
 }
 

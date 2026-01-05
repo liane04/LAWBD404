@@ -141,6 +141,19 @@ namespace Marketplace.Controllers
                     ViewBag.AnunciosVendidos = anuncios.Count(a => a.Estado == "Vendido");
                     ViewBag.AnunciosPausados = anuncios.Count(a => a.Estado == "Pausado");
 
+                    // Métricas de Desempenho
+                    ViewBag.TotalVisualizacoes = anuncios.Sum(a => a.NVisualizacoes);
+                    if (vendedor.AvaliacoesRecebidas != null && vendedor.AvaliacoesRecebidas.Any())
+                    {
+                        ViewBag.NotaMedia = vendedor.AvaliacoesRecebidas.Average(a => a.Nota);
+                        ViewBag.TotalAvaliacoes = vendedor.AvaliacoesRecebidas.Count;
+                    }
+                    else
+                    {
+                        ViewBag.NotaMedia = 0;
+                        ViewBag.TotalAvaliacoes = 0;
+                    }
+
                     // Carregar reservas RECEBIDAS (nos meus anúncios - como vendedor)
                     var reservasRecebidas = await _db.Reservas
                         .Include(r => r.Anuncio)
@@ -308,6 +321,45 @@ namespace Marketplace.Controllers
                             .Take(20)
                             .ToListAsync();
                         ViewBag.PesquisasPassadas = pesquisasPassadasVendedor;
+
+                        // Carregar compras do vendedor (como comprador)
+                        var comprasVendedor = await _db.Compras
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Marca)
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Modelo)
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Imagens)
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Combustivel)
+                            .Include(c => c.Anuncio)
+                                .ThenInclude(a => a.Vendedor)
+                            .Where(c => c.CompradorId == compradorDoVendedor.Id)
+                            .OrderByDescending(c => c.Data)
+                            .ToListAsync();
+                        ViewBag.Compras = comprasVendedor;
+                        ViewBag.ComprasCount = comprasVendedor.Count;
+
+                        // Carregar reservas FEITAS pelo vendedor (como comprador)
+                        var reservasFeitas = await _db.Reservas
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Marca)
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Modelo)
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Imagens)
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Vendedor)
+                            .Include(r => r.Anuncio)
+                                .ThenInclude(a => a.Combustivel)
+                            .Where(r => r.CompradorId == compradorDoVendedor.Id)
+                            .OrderByDescending(r => r.Data)
+                            .ToListAsync();
+
+                        ViewBag.MinhasReservas = reservasFeitas;
+                        ViewBag.MinhasReservasCount = reservasFeitas.Count;
+                        ViewBag.ReservasAtivasComprador = reservasFeitas.Count(r => r.Estado == "Ativa");
+                        ViewBag.ReservasExpiradas = reservasFeitas.Count(r => r.Estado == "Expirada");
                     }
                     else
                     {
@@ -952,8 +1004,8 @@ namespace Marketplace.Controllers
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
                 var link = Url.Action("ConfirmarEmail", "Utilizadores", new { userId = appUser.Id, token }, Request.Scheme)!;
-                var html = Marketplace.Services.EmailTemplates.ConfirmEmail("DriveDeal", link);
-                await _emailSender.SendAsync(email, "Confirmação de Email - DriveDeal", html);
+                var html = Marketplace.Services.EmailTemplates.ConfirmEmail("404 Ride", link);
+                await _emailSender.SendAsync(email, "Confirmação de Email - 404 Ride", html);
                 emailEnviado = true;
             }
             catch (Exception ex)
@@ -962,16 +1014,9 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"⚠️  Erro ao enviar email de confirmação: {ex.Message}");
             }
 
-            // Confirmar email automaticamente se o envio falhou (para desenvolvimento)
-            if (!emailEnviado && !appUser.EmailConfirmed)
-            {
-                appUser.EmailConfirmed = true;
-                await _userManager.UpdateAsync(appUser);
-            }
-
             TempData["RegistarSucesso"] = emailEnviado
                 ? "Conta criada. Verifique o seu email para confirmar."
-                : "Conta criada com sucesso! Pode agora fazer login.";
+                : "Conta criada com sucesso! Reenvie a confirmação se não recebeu o email.";
             return RedirectToAction("Login");
         }
 
@@ -1000,14 +1045,19 @@ namespace Marketplace.Controllers
                 return View();
             }
 
-            // NOTA: EmailConfirmed não é verificado aqui porque RequireConfirmedEmail = false no Program.cs
-
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, password, rememberMe, lockoutOnFailure: true);
             if (result.IsLockedOut)
             {
                 var lockoutEnd = user.LockoutEnd.HasValue ? user.LockoutEnd.Value.LocalDateTime.ToString("dd/MM/yyyy HH:mm") : "indefinidamente";
                 
                 TempData["LoginError"] = $"A sua conta encontra-se bloqueada até {lockoutEnd}.";
+                return View();
+            }
+
+            if (result.IsNotAllowed)
+            {
+                TempData["LoginError"] = "Tem de confirmar o seu email antes de iniciar sessão. Verifique a sua caixa de entrada.";
+                TempData["LoginInfo"] = "Se não recebeu o email, use a opção \"Reenviar confirmação\".";
                 return View();
             }
 
@@ -1207,8 +1257,8 @@ namespace Marketplace.Controllers
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var link = Url.Action("ConfirmarEmail", "Utilizadores", new { userId = user.Id, token }, Request.Scheme)!;
-            var html = Marketplace.Services.EmailTemplates.ConfirmEmail("DriveDeal", link);
-            await _emailSender.SendAsync(email, "Confirmação de Email - DriveDeal", html);
+            var html = Marketplace.Services.EmailTemplates.ConfirmEmail("404 Ride", link);
+            await _emailSender.SendAsync(email, "Confirmação de Email - 404 Ride", html);
             TempData["LoginInfo"] = "Link de confirmação reenviado.";
             return RedirectToAction("Login");
         }

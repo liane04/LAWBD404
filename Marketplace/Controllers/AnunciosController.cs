@@ -38,6 +38,7 @@ namespace Marketplace.Controllers
                 .Include(a => a.Modelo)
                 .Include(a => a.Tipo)
                 .Include(a => a.Vendedor)
+                    .ThenInclude(v => v.AvaliacoesRecebidas)
                 .Include(a => a.Imagens)
                 .Where(a => a.Estado == "Ativo" || a.Estado == "Reservado") // Mostrar apenas ativos e reservados
                 .AsQueryable();
@@ -92,20 +93,20 @@ namespace Marketplace.Controllers
             // Aplicar ordenação (anúncios destacados sempre primeiro)
             query = ordenacao switch
             {
-                "preco-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "preco-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                     .ThenBy(a => a.Preco),
-                "preco-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "preco-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                      .ThenByDescending(a => a.Preco),
-                "ano-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "ano-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                    .ThenByDescending(a => a.Ano),
-                "km-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "km-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                  .ThenBy(a => a.Quilometragem),
 
-                "relevancia" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "relevancia" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                      .ThenByDescending(a => a.NVisualizacoes)
                                      .ThenByDescending(a => a.Id),
 
-                _ => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                _ => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                           .ThenByDescending(a => a.Id)
             };
 
@@ -481,6 +482,7 @@ namespace Marketplace.Controllers
                 .Include(a => a.Modelo)
                 .Include(a => a.Tipo)
                 .Include(a => a.Vendedor)
+                    .ThenInclude(v => v.AvaliacoesRecebidas)
                 .Include(a => a.Imagens)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -488,6 +490,19 @@ namespace Marketplace.Controllers
             {
                 return NotFound();
             }
+
+            // Buscar anúncios semelhantes (mesma categoria ou marca, excluindo o atual)
+            var anunciosSemelhantes = await _context.Anuncios
+                .Include(a => a.Marca)
+                .Include(a => a.Imagens)
+                .Where(a => a.Id != id &&
+                           a.Estado == "Ativo" &&
+                           (a.CategoriaId == anuncio.CategoriaId || a.MarcaId == anuncio.MarcaId))
+                .OrderByDescending(a => a.Id)
+                .Take(4)
+                .ToListAsync();
+
+            ViewBag.AnunciosSemelhantes = anunciosSemelhantes;
 
             // Incrementar visualizações
             anuncio.NVisualizacoes++;
@@ -934,8 +949,8 @@ namespace Marketplace.Controllers
 
             // Atualizar anúncio para destacado
             anuncio.Destacado = true;
-            anuncio.DataDestaque = DateTime.Now;
-            anuncio.DestaqueAte = DateTime.Now.AddDays(diasDestaque);
+            anuncio.DataDestaque = DateTimeOffset.UtcNow;
+            anuncio.DestaqueAte = DateTimeOffset.UtcNow.AddDays(diasDestaque);
 
             await _context.SaveChangesAsync();
 
@@ -946,6 +961,52 @@ namespace Marketplace.Controllers
         private bool AnuncioExists(int id)
         {
             return _context.Anuncios.Any(e => e.Id == id);
+        }
+        // POST: Anuncios/ExportarMeusAnuncios
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Vendedor")]
+        public async Task<IActionResult> ExportarMeusAnuncios()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == userId);
+
+            if (vendedor == null) return NotFound();
+
+            var anuncios = await _context.Anuncios
+                .Include(a => a.Marca)
+                .Include(a => a.Modelo)
+                .Include(a => a.Categoria)
+                .Include(a => a.Combustivel)
+                .Include(a => a.Tipo)
+                .Where(a => a.VendedorId == vendedor.Id)
+                .OrderByDescending(a => a.Id)
+                .ToListAsync();
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Id;Titulo;Preco;Estado;Marca;Modelo;Categoria;Combustivel;Tipo;Ano;Quilometragem;Cor;Caixa;Portas;Lugares;Potencia;Cilindrada;Localizacao;ValorSinal;Visualizacoes;Destacado;DestaqueAte;Descricao");
+
+            foreach (var anuncio in anuncios)
+            {
+                // Tratamento de strings para CSV
+                string SafeStr(string? input) => input?.Replace(";", ",").Replace("\n", " ").Replace("\r", "") ?? "";
+
+                var titulo = SafeStr(anuncio.Titulo);
+                var marca = SafeStr(anuncio.Marca?.Nome);
+                var modelo = SafeStr(anuncio.Modelo?.Nome);
+                var categoria = SafeStr(anuncio.Categoria?.Nome);
+                var combustivel = SafeStr(anuncio.Combustivel?.Tipo);
+                var tipo = SafeStr(anuncio.Tipo?.Nome);
+                var cor = SafeStr(anuncio.Cor);
+                var caixa = SafeStr(anuncio.Caixa);
+                var localizacao = SafeStr(anuncio.Localizacao);
+                var descricao = SafeStr(anuncio.Descricao);
+                
+                sb.AppendLine($"{anuncio.Id};{titulo};{anuncio.Preco};{anuncio.Estado};{marca};{modelo};{categoria};{combustivel};{tipo};{anuncio.Ano};{anuncio.Quilometragem};{cor};{caixa};{anuncio.Portas};{anuncio.Lugares};{anuncio.Potencia};{anuncio.Cilindrada};{localizacao};{anuncio.ValorSinal};{anuncio.NVisualizacoes};{anuncio.Destacado};{anuncio.DestaqueAte};{descricao}");
+            }
+
+            var fileName = $"meus_anuncios_full_{DateTime.Now:yyyyMMddHHmm}.csv";
+            return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", fileName);
         }
     }
 }

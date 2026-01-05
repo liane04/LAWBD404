@@ -17,7 +17,7 @@ namespace Marketplace.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -50,8 +50,8 @@ namespace Marketplace.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime?>("DataDestaque")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("DataDestaque")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Descricao")
                         .HasMaxLength(2000)
@@ -60,8 +60,8 @@ namespace Marketplace.Migrations
                     b.Property<bool>("Destacado")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("DestaqueAte")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("DestaqueAte")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Estado")
                         .IsRequired()

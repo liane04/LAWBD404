@@ -1,5 +1,10 @@
 ﻿@{
     ViewData["Title"] = "Meu Perfil";
+
+    var perfilReservasCount = ViewBag.MinhasReservasCount ?? 0;
+    var perfilVisitasCount = 0;
+
+
 }
 
 <div class="container mt-5 pt-5 mb-5 pb-5">
@@ -55,6 +60,14 @@
                             <i class="bi bi-chevron-right ms-auto"></i>
                         </a>
 
+                        @if (User.IsInRole("Vendedor"))
+                        {
+                            <a href="#desempenho-vendedor" class="perfil-nav-item" data-bs-toggle="tab">
+                                <i class="bi bi-graph-up-arrow"></i>
+                                <span>Desempenho</span>
+                            </a>
+                        }
+
                         <!-- Seção: Como Vendedor -->
                         @if (User.IsInRole("Vendedor"))
                         {
@@ -86,12 +99,7 @@
                             <a href="#minhas-reservas" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-bookmark-star-fill"></i>
                                 <span>Minhas Reservas</span>
-                                <span class="badge bg-warning rounded-pill ms-auto">1</span>
-                            </a>
-                            <a href="#minhas-visitas" class="perfil-nav-item" data-bs-toggle="tab">
-                                <i class="bi bi-calendar-check-fill"></i>
-                                <span>Minhas Visitas</span>
-                                <span class="badge bg-info rounded-pill ms-auto">1</span>
+                                <span class="badge bg-warning rounded-pill ms-auto">@perfilReservasCount</span>
                             </a>
                             <a href="#minhas-compras" class="perfil-nav-item" data-bs-toggle="tab">
                                 <i class="bi bi-bag-check-fill"></i>
@@ -422,9 +430,17 @@
                             </h3>
                             <p class="text-muted mb-0">Gerir os seus veículos anunciados na plataforma</p>
                         </div>
-                        <a asp-controller="Anuncios" asp-action="Create" class="btn btn-success">
-                            <i class="bi bi-plus-circle me-2"></i>Criar Novo Anúncio
-                        </a>
+                        <div class="d-flex align-items-center gap-2">
+                            <form method="post" asp-controller="Anuncios" asp-action="ExportarMeusAnuncios" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-success">
+                                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>Exportar CSV
+                                </button>
+                            </form>
+                            <a asp-controller="Anuncios" asp-action="Create" class="btn btn-success">
+                                <i class="bi bi-plus-circle me-2"></i>Criar Novo Anúncio
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Filtros/Tabs de Estado -->
@@ -623,6 +639,122 @@
                             </div>
                         }
                     </div>
+                    </div>
+
+                    <!-- Aba: Desempenho (para Vendedores) -->
+                    <div class="tab-pane fade" id="desempenho-vendedor">
+                        <!-- Cabeçalho -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h3 class="mb-1 fw-bold">
+                                    <i class="bi bi-graph-up-arrow text-primary me-2"></i>Desempenho dos Anúncios
+                                </h3>
+                                <p class="text-muted mb-0">Estatísticas e métricas de performance dos seus anúncios</p>
+                            </div>
+                            
+                            <!-- Nota do Vendedor -->
+                            <div class="card bg-warning bg-opacity-10 border-warning">
+                                <div class="card-body py-2 px-4 d-flex align-items-center">
+                                    <div class="me-3 text-center">
+                                        <h2 class="mb-0 fw-bold text-warning">@(ViewBag.NotaMedia?.ToString("0.0") ?? "0.0")</h2>
+                                        <div class="small text-warning">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= (double)(ViewBag.NotaMedia ?? 0))
+                                                {
+                                                    <i class="bi bi-star-fill"></i>
+                                                }
+                                                else if (i - 0.5 <= (double)(ViewBag.NotaMedia ?? 0))
+                                                {
+                                                    <i class="bi bi-star-half"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-star"></i>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="border-start border-warning ps-3">
+                                        <div class="fw-bold text-dark">Classificação Geral</div>
+                                        <div class="text-muted small">Baseado em @(ViewBag.TotalAvaliacoes ?? 0) avaliações</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KPIs -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                                                <i class="bi bi-eye-fill text-primary fs-4"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-0">Total Visualizações</h6>
+                                        </div>
+                                        <h3 class="fw-bold mb-0">@ViewBag.TotalVisualizacoes</h3>
+                                        <small class="text-muted">em todos os anúncios</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-success bg-opacity-10 rounded p-2 me-3">
+                                                <i class="bi bi-calendar-check-fill text-success fs-4"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-0">Marcações / Visitas</h6>
+                                        </div>
+                                        <h3 class="fw-bold mb-0">@(ViewBag.VisitasRecebidasCount ?? 0)</h3>
+                                        <small class="text-muted">recebidas</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-warning bg-opacity-10 rounded p-2 me-3">
+                                                <i class="bi bi-bookmark-check-fill text-warning fs-4"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-0">Reservas</h6>
+                                        </div>
+                                        <h3 class="fw-bold mb-0">@(ViewBag.ReservasRecebidasCount ?? 0)</h3>
+                                        <small class="text-muted">pedidos de reserva</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-info bg-opacity-10 rounded p-2 me-3">
+                                                <i class="bi bi-megaphone-fill text-info fs-4"></i>
+                                            </div>
+                                            <h6 class="text-muted mb-0">Anúncios Ativos</h6>
+                                        </div>
+                                        <h3 class="fw-bold mb-0">@(ViewBag.AnunciosAtivos ?? 0)</h3>
+                                        <small class="text-muted">visíveis no site</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gráficos e Tabelas (Placeholder para expansão futura) -->
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-semibold">
+                                    <i class="bi bi-list-check me-2"></i>Resumo Geral
+                                </h5>
+                            </div>
+                            <div class="card-body text-center py-5">
+                                <img src="~/imagens/performance_chart_placeholder.png" alt="Gráfico de Desempenho" class="img-fluid mb-3" style="max-height: 200px; opacity: 0.5;">
+                                <p class="text-muted">Mais detalhes e gráficos de desempenho estarão disponíveis em breve.</p>
+                            </div>
+                        </div>
                 </div>
 
                     var visitasRecebidas = ViewBag.VisitasRecebidas as List<Marketplace.Models.Visita> ?? new List<Marketplace.Models.Visita>();
@@ -1641,9 +1773,9 @@
                                                         <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-primary flex-grow-1">
                                                             <i class="bi bi-eye me-2"></i>Ver Detalhes
                                                         </a>
-                                                        <button class="btn btn-outline-primary" title="Contactar Vendedor">
-                                                            <i class="bi bi-chat-dots"></i>
-                                                        </button>
+                                                        <a asp-controller="Mensagens" asp-action="IniciarConversa" asp-route-anuncioId="@anuncio.Id" class="btn btn-success" title="Contactar Vendedor">
+                                                            <i class="bi bi-chat-dots-fill"></i>
+                                                        </a>
                                                         <form asp-controller="Favoritos" asp-action="Remove" asp-route-id="@favorito.Id" method="post" class="d-inline remove-favorito-form-perfil">
                                                             <button type="submit" class="btn btn-outline-danger" title="Remover dos favoritos">
                                                                 <i class="bi bi-trash"></i>
@@ -1758,8 +1890,8 @@
                     </div>
                 }
 
-                <!-- Aba: Minhas Reservas (para Compradores) -->
-                @if (User.IsInRole("Comprador"))
+                <!-- Aba: Minhas Reservas (para Compradores e Vendedores) -->
+                @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
                 {
                     <div class="tab-pane fade" id="minhas-reservas">
                     <!-- Cabeçalho da Página -->
@@ -1872,7 +2004,7 @@
                                                     <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@reserva.AnuncioId" class="btn btn-primary">
                                                         <i class="bi bi-eye me-1"></i>Ver Anúncio
                                                     </a>
-                                                    <a href="mailto:@reserva.Anuncio?.Vendedor?.Email" class="btn btn-success">
+                                                    <a asp-controller="Mensagens" asp-action="IniciarConversa" asp-route-anuncioId="@reserva.AnuncioId" class="btn btn-success">
                                                         <i class="bi bi-chat-dots-fill me-1"></i>Contactar Vendedor
                                                     </a>
                                                     @if (reserva.Estado == "Ativa")
@@ -2114,8 +2246,8 @@
                     </div>
                 }
 
-                <!-- Aba: Minhas Compras (Comprador) -->
-                @if (User.IsInRole("Comprador"))
+                <!-- Aba: Minhas Compras (Comprador e Vendedor) -->
+                @if (User.IsInRole("Comprador") || User.IsInRole("Vendedor"))
                 {
                     var compras = ViewBag.Compras as List<Marketplace.Models.Compra> ?? new List<Marketplace.Models.Compra>();
                     <div class="tab-pane fade" id="minhas-compras">
@@ -2245,8 +2377,8 @@
                                                         <a asp-controller="Anuncios" asp-action="Details" asp-route-id="@anuncio.Id" class="btn btn-sm btn-primary">
                                                             <i class="bi bi-car-front me-1"></i>Ver Anúncio
                                                         </a>
-                                                        <a href="mailto:@anuncio.Vendedor?.Email" class="btn btn-sm btn-outline-primary">
-                                                            <i class="bi bi-envelope me-1"></i>Contactar Vendedor
+                                                        <a asp-controller="Mensagens" asp-action="IniciarConversa" asp-route-anuncioId="@anuncio.Id" class="btn btn-sm btn-success">
+                                                            <i class="bi bi-chat-dots-fill me-1"></i>Contactar Vendedor
                                                         </a>
                                                     </div>
                                                 </div>

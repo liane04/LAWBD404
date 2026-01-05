@@ -53,8 +53,8 @@ namespace Marketplace.Models
 
         // Sistema de Destaque
         public bool Destacado { get; set; } = false;
-        public DateTime? DataDestaque { get; set; }
-        public DateTime? DestaqueAte { get; set; }
+        public DateTimeOffset? DataDestaque { get; set; }
+        public DateTimeOffset? DestaqueAte { get; set; }
 
         // Relações com outras entidades
         public int VendedorId { get; set; }

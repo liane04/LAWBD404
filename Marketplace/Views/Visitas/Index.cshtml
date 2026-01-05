@@ -78,12 +78,12 @@
         </div>
     }
 
-    @if (!Model.Any())
+    @if (Model == null || !Model.Any())
     {
         <!-- Estado Vazio -->
         <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <div class="card shadow-sm border-0 text-center py-5">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 text-center py-5 bg-light">
                     <div class="card-body">
                         <div class="mb-4">
                             <i class="bi bi-calendar-x text-muted" style="font-size: 5rem;"></i>
@@ -93,14 +93,14 @@
                         {
                             <p class="text-muted mb-4">
                                 Ainda não há visitas agendadas aos seus anúncios.
-                                Quando alguém agendar uma visita, aparecerá aqui.
+                                <br>Quando alguém agendar uma visita, aparecerá aqui.
                             </p>
                         }
                         else
                         {
                             <p class="text-muted mb-4">
-                                Ainda não agendou nenhuma visita. Comece por explorar os veículos disponíveis
-                                e agende uma visita ao veículo que lhe interessar.
+                                Ainda não agendou nenhuma visita. 
+                                <br>Comece por explorar os veículos disponíveis e agende uma visita ao veículo que lhe interessar.
                             </p>
                             <a asp-controller="Anuncios" asp-action="Index" class="btn btn-primary btn-lg">
                                 <i class="bi bi-search me-2"></i>Explorar Veículos

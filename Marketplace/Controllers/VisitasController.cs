@@ -204,14 +204,24 @@ namespace Marketplace.Controllers
             if (user == null)
                 return RedirectToAction("Login", "Utilizadores");
 
-            // Buscar utilizador de domínio
-            Utilizador? domainUser = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
+            // Buscar utilizador de domínio (usa Set<Utilizador> para buscar independentemente do discriminador TPH)
+            var domainUser = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
+
             if (domainUser == null)
-                domainUser = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
-
-            if (domainUser == null || (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId))
+            {
+                Console.WriteLine($"[ERRO Details] Utilizador de domínio não encontrado para IdentityUserId: {user.Id}");
                 return Forbid();
+            }
 
+            // Permitir acesso se for o comprador OU o vendedor da visita
+            if (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId)
+            {
+                Console.WriteLine($"[ERRO Details] Acesso negado. DomainUser.Id={domainUser.Id}, CompradorId={visita.CompradorId}, VendedorId={visita.VendedorId}");
+                return Forbid();
+            }
+
+            Console.WriteLine($"[DEBUG Details] Acesso permitido. DomainUser.Id={domainUser.Id}, Nome={domainUser.Nome}");
             return View(visita);
         }
 
@@ -550,17 +560,27 @@ namespace Marketplace.Controllers
             if (user == null)
                 return RedirectToAction("Login", "Utilizadores");
 
-            // Buscar utilizador de domínio
-            Utilizador? domainUser = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
-            if (domainUser == null)
-                domainUser = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+            // Buscar utilizador de domínio (usa Set<Utilizador> para buscar independentemente do discriminador TPH)
+            var domainUser = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
 
-            if (domainUser == null || (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId))
+            if (domainUser == null)
+            {
+                Console.WriteLine($"[ERRO Edit] Utilizador de domínio não encontrado para IdentityUserId: {user.Id}");
                 return Forbid();
+            }
+
+            // Permitir acesso se for o comprador OU o vendedor da visita
+            if (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId)
+            {
+                Console.WriteLine($"[ERRO Edit] Acesso negado. DomainUser.Id={domainUser.Id}, CompradorId={visita.CompradorId}, VendedorId={visita.VendedorId}");
+                return Forbid();
+            }
 
             ViewBag.IsVendedor = domainUser.Id == visita.VendedorId;
             ViewBag.MinDate = DateTime.Now.AddHours(1).ToString("yyyy-MM-ddTHH:mm");
 
+            Console.WriteLine($"[DEBUG Edit] Acesso permitido. DomainUser.Id={domainUser.Id}, Nome={domainUser.Nome}");
             return View(visita);
         }
 
@@ -576,14 +596,22 @@ namespace Marketplace.Controllers
             if (user == null)
                 return RedirectToAction("Login", "Utilizadores");
 
-            // Buscar utilizador de domínio
-            Utilizador? domainUser = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
-            if (domainUser == null)
-                domainUser = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+            // Buscar utilizador de domínio (usa Set<Utilizador> para buscar independentemente do discriminador TPH)
+            var domainUser = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
 
-            // Verificar permissões
-            if (domainUser == null || (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId))
+            if (domainUser == null)
+            {
+                Console.WriteLine($"[ERRO Edit POST] Utilizador de domínio não encontrado para IdentityUserId: {user.Id}");
                 return Forbid();
+            }
+
+            // Permitir acesso se for o comprador OU o vendedor da visita
+            if (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId)
+            {
+                Console.WriteLine($"[ERRO Edit POST] Acesso negado. DomainUser.Id={domainUser.Id}, CompradorId={visita.CompradorId}, VendedorId={visita.VendedorId}");
+                return Forbid();
+            }
 
             var visitaOriginal = await _context.Visitas.AsNoTracking().FirstOrDefaultAsync(v => v.Id == id);
             if (visitaOriginal == null)
@@ -619,13 +647,13 @@ namespace Marketplace.Controllers
                     _context.Update(visita);
                     await _context.SaveChangesAsync();
 
-                    // Enviar notificação de alteração
-                    var anuncio = await _context.Anuncios.FindAsync(visita.AnuncioId);
-                    var comprador = await _context.Compradores.FindAsync(visita.CompradorId);
-                    var vendedor = await _context.Vendedores.FindAsync(visita.VendedorId);
+                    // Enviar notificação de alteração - buscar dados sem tracking
+                    var anuncio = await _context.Anuncios.AsNoTracking().FirstOrDefaultAsync(a => a.Id == visita.AnuncioId);
+                    var utilizadorComprador = await _context.Set<Utilizador>().AsNoTracking().FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+                    var utilizadorVendedor = await _context.Set<Utilizador>().AsNoTracking().FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
 
-                    string destinatario = domainUser.Id == visita.VendedorId ? comprador.Email : vendedor.Email;
-                    string nomeDestinatario = domainUser.Id == visita.VendedorId ? comprador.Nome : vendedor.Nome;
+                    string destinatario = domainUser.Id == visita.VendedorId ? utilizadorComprador?.Email : utilizadorVendedor?.Email;
+                    string nomeDestinatario = domainUser.Id == visita.VendedorId ? utilizadorComprador?.Nome : utilizadorVendedor?.Nome;
 
                     try
                     {
@@ -678,48 +706,43 @@ namespace Marketplace.Controllers
             if (visita == null)
                 return NotFound();
 
-            // Carregar Comprador manualmente
-            var utilizadorComprador = await _context.Set<Utilizador>()
-                .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
-            if (utilizadorComprador != null)
-            {
-                visita.Comprador = new Comprador
-                {
-                    Id = utilizadorComprador.Id,
-                    Nome = utilizadorComprador.Nome,
-                    Email = utilizadorComprador.Email
-                };
-            }
-
             var user = await _userManager.GetUserAsync(User);
             var vendedor = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
 
             if (vendedor == null || vendedor.Id != visita.VendedorId)
                 return Forbid();
 
+            // Carregar dados do comprador para enviar email (sem anexar ao contexto)
+            var utilizadorComprador = await _context.Set<Utilizador>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+
             visita.Estado = "Confirmada";
             visita.DataAtualizacao = DateTime.Now;
             await _context.SaveChangesAsync();
 
             // Notificar comprador
-            try
+            if (utilizadorComprador != null)
             {
-                await _emailSender.SendAsync(
-                    visita.Comprador.Email,
-                    "Visita Confirmada - 404 Ride",
-                    $@"<h2>Visita Confirmada</h2>
-                    <p>Olá {visita.Comprador.Nome},</p>
-                    <p>A sua visita ao anúncio <strong>{visita.Anuncio.Titulo}</strong> foi confirmada!</p>
-                    <ul>
-                        <li><strong>Data:</strong> {visita.Data:dd/MM/yyyy HH:mm}</li>
-                        <li><strong>Localização:</strong> {visita.Anuncio.Localizacao}</li>
-                    </ul>
-                    <p>Até breve!</p>"
-                );
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro ao enviar email: {ex.Message}");
+                try
+                {
+                    await _emailSender.SendAsync(
+                        utilizadorComprador.Email,
+                        "Visita Confirmada - 404 Ride",
+                        $@"<h2>Visita Confirmada</h2>
+                        <p>Olá {utilizadorComprador.Nome},</p>
+                        <p>A sua visita ao anúncio <strong>{visita.Anuncio.Titulo}</strong> foi confirmada!</p>
+                        <ul>
+                            <li><strong>Data:</strong> {visita.Data:dd/MM/yyyy HH:mm}</li>
+                            <li><strong>Localização:</strong> {visita.Anuncio.Localizacao}</li>
+                        </ul>
+                        <p>Até breve!</p>"
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao enviar email: {ex.Message}");
+                }
             }
 
             TempData["SuccessMessage"] = "Visita confirmada com sucesso!";
@@ -738,42 +761,35 @@ namespace Marketplace.Controllers
             if (visita == null)
                 return NotFound();
 
-            // Carregar Comprador e Vendedor manualmente
-            var utilizadorComprador = await _context.Set<Utilizador>()
-                .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
-            if (utilizadorComprador != null)
-            {
-                visita.Comprador = new Comprador
-                {
-                    Id = utilizadorComprador.Id,
-                    Nome = utilizadorComprador.Nome,
-                    Email = utilizadorComprador.Email
-                };
-            }
-
-            var utilizadorVendedor = await _context.Set<Utilizador>()
-                .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
-            if (utilizadorVendedor != null)
-            {
-                visita.Vendedor = new Vendedor
-                {
-                    Id = utilizadorVendedor.Id,
-                    Nome = utilizadorVendedor.Nome,
-                    Email = utilizadorVendedor.Email
-                };
-            }
-
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToAction("Login", "Utilizadores");
 
-            // Buscar utilizador de domínio
-            Utilizador? domainUser = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
-            if (domainUser == null)
-                domainUser = await _context.Vendedores.FirstOrDefaultAsync(v => v.IdentityUserId == user.Id);
+            // Buscar utilizador de domínio (usa Set<Utilizador> para buscar independentemente do discriminador TPH)
+            var domainUser = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
 
-            if (domainUser == null || (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId))
+            if (domainUser == null)
+            {
+                Console.WriteLine($"[ERRO Cancelar] Utilizador de domínio não encontrado para IdentityUserId: {user.Id}");
                 return Forbid();
+            }
+
+            // Permitir acesso se for o comprador OU o vendedor da visita
+            if (domainUser.Id != visita.CompradorId && domainUser.Id != visita.VendedorId)
+            {
+                Console.WriteLine($"[ERRO Cancelar] Acesso negado. DomainUser.Id={domainUser.Id}, CompradorId={visita.CompradorId}, VendedorId={visita.VendedorId}");
+                return Forbid();
+            }
+
+            // Carregar dados do comprador e vendedor para enviar email (sem anexar ao contexto)
+            var utilizadorComprador = await _context.Set<Utilizador>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == visita.CompradorId);
+
+            var utilizadorVendedor = await _context.Set<Utilizador>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == visita.VendedorId);
 
             visita.Estado = "Cancelada";
             visita.Observacoes = $"Cancelada: {motivo ?? "Sem motivo especificado"}";
@@ -781,8 +797,8 @@ namespace Marketplace.Controllers
             await _context.SaveChangesAsync();
 
             // Notificar a outra parte
-            string destinatario = domainUser.Id == visita.VendedorId ? visita.Comprador.Email : visita.Vendedor.Email;
-            string nomeDestinatario = domainUser.Id == visita.VendedorId ? visita.Comprador.Nome : visita.Vendedor.Nome;
+            string destinatario = domainUser.Id == visita.VendedorId ? utilizadorComprador?.Email : utilizadorVendedor?.Email;
+            string nomeDestinatario = domainUser.Id == visita.VendedorId ? utilizadorComprador?.Nome : utilizadorVendedor?.Nome;
 
             try
             {
@@ -869,12 +885,20 @@ namespace Marketplace.Controllers
                 };
             }
 
-            // Apenas comprador pode deletar
+            // Apenas quem agendou (comprador da visita) pode deletar
             var user = await _userManager.GetUserAsync(User);
-            var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
+            if (user == null)
+                return RedirectToAction("Login", "Utilizadores");
 
-            if (comprador == null || comprador.Id != visita.CompradorId)
+            // Buscar utilizador de domínio (usa Set<Utilizador> para buscar independentemente do discriminador TPH)
+            var domainUser = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
+
+            if (domainUser == null || domainUser.Id != visita.CompradorId)
+            {
+                Console.WriteLine($"[ERRO Delete] Acesso negado. DomainUser.Id={domainUser?.Id}, CompradorId={visita.CompradorId}");
                 return Forbid();
+            }
 
             return View(visita);
         }
@@ -889,12 +913,20 @@ namespace Marketplace.Controllers
             if (visita == null)
                 return NotFound();
 
-            // Apenas comprador pode deletar
+            // Apenas quem agendou (comprador da visita) pode deletar
             var user = await _userManager.GetUserAsync(User);
-            var comprador = await _context.Compradores.FirstOrDefaultAsync(c => c.IdentityUserId == user.Id);
+            if (user == null)
+                return RedirectToAction("Login", "Utilizadores");
 
-            if (comprador == null || comprador.Id != visita.CompradorId)
+            // Buscar utilizador de domínio (usa Set<Utilizador> para buscar independentemente do discriminador TPH)
+            var domainUser = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
+
+            if (domainUser == null || domainUser.Id != visita.CompradorId)
+            {
+                Console.WriteLine($"[ERRO Delete POST] Acesso negado. DomainUser.Id={domainUser?.Id}, CompradorId={visita.CompradorId}");
                 return Forbid();
+            }
 
             _context.Visitas.Remove(visita);
             await _context.SaveChangesAsync();

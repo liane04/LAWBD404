@@ -434,6 +434,83 @@ namespace Marketplace.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // POST: Reservas/Cancelar
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cancelar(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login", "Utilizadores");
+
+            // Buscar utilizador de domínio (usa Set<Utilizador> para buscar independentemente do discriminador TPH)
+            var domainUser = await _context.Set<Utilizador>()
+                .FirstOrDefaultAsync(u => u.IdentityUserId == user.Id);
+
+            if (domainUser == null)
+            {
+                Console.WriteLine($"[ERRO Cancelar Reserva] Utilizador de domínio não encontrado para IdentityUserId: {user.Id}");
+                return Forbid();
+            }
+
+            // Buscar reserva com anúncio e vendedor
+            var reserva = await _context.Reservas
+                .Include(r => r.Anuncio)
+                    .ThenInclude(a => a.Vendedor)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (reserva == null)
+                return NotFound();
+
+            // Verificar se o utilizador é o comprador da reserva
+            if (domainUser.Id != reserva.CompradorId)
+            {
+                Console.WriteLine($"[ERRO Cancelar Reserva] Acesso negado. DomainUser.Id={domainUser.Id}, CompradorId={reserva.CompradorId}");
+                return Forbid();
+            }
+
+            // Guardar informações para email antes de alterar
+            var valorSinal = reserva.Anuncio.ValorSinal;
+            var tituloAnuncio = reserva.Anuncio.Titulo;
+            var nomeComprador = domainUser.Nome;
+            var emailVendedor = reserva.Anuncio.Vendedor?.Email;
+            var nomeVendedor = reserva.Anuncio.Vendedor?.Nome;
+
+            // Cancelar reserva - NÃO devolve o sinal
+            reserva.Estado = "Cancelada";
+
+            await _context.SaveChangesAsync();
+
+            // Enviar email ao vendedor notificando o cancelamento
+            if (!string.IsNullOrEmpty(emailVendedor))
+            {
+                try
+                {
+                    await _emailSender.SendAsync(
+                        emailVendedor,
+                        "Reserva Cancelada - 404 Ride",
+                        $@"<h2>Reserva Cancelada</h2>
+                        <p>Olá {nomeVendedor},</p>
+                        <p>A reserva do anúncio <strong>{tituloAnuncio}</strong> foi cancelada pelo comprador.</p>
+                        <ul>
+                            <li><strong>Comprador:</strong> {nomeComprador}</li>
+                            <li><strong>Data do Cancelamento:</strong> {DateTime.Now:dd/MM/yyyy HH:mm}</li>
+                            <li><strong>Valor do Sinal:</strong> {valorSinal:N2}€ (não devolvido)</li>
+                        </ul>
+                        <p>O veículo está novamente disponível para outras reservas.</p>
+                        <p>Cordialmente,<br>Equipa 404 Ride</p>"
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ERRO] Falha ao enviar email de cancelamento: {ex.Message}");
+                }
+            }
+
+            TempData["SuccessMessage"] = $"Reserva cancelada com sucesso. O valor do sinal ({valorSinal:N2}€) não será devolvido.";
+            return RedirectToAction("Perfil", "Utilizadores");
+        }
+
         // Templates de Email Estilizados para Reservas
         private string GetEmailVendedorReserva(Anuncio anuncio, Comprador comprador, decimal valorSinal, string linkAnuncio)
         {

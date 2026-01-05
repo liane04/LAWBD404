@@ -107,7 +107,7 @@ else
                                             <div class="mb-3">
                                                 <div class="rating-css">
                                                     <div class="star-icon">
-                                                        <input type="radio" name="nota" value="5" id="rating5" checked>
+                                                        <input type="radio" name="nota" value="5" id="rating5">
                                                         <label for="rating5" class="bi bi-star-fill"></label>
                                                         
                                                         <input type="radio" name="nota" value="4" id="rating4">
@@ -139,12 +139,26 @@ else
                                 </div>
                                 
                                 <style>
-                                    .rating-css div { color: #ffe400; font-size: 20px; font-family: sans-serif; font-weight: 800; text-align: left; text-transform: uppercase; padding: 0; }
+                                    .rating-css .star-icon {
+                                        display: flex;
+                                        flex-direction: row-reverse;
+                                        justify-content: flex-end;
+                                    }
                                     .rating-css input { display: none; }
-                                    .rating-css input + label { font-size: 20px; text-shadow: 1px 1px 0 #ffe400; cursor: pointer; }
-                                    .rating-css input:checked + label ~ label { color: #838383; }
-                                    .rating-css label:active { transform: scale(0.8); transition: 0.3s all; }
-                                    .star-icon { direction: rtl; display: inline-flex; }
+                                    .rating-css label { 
+                                        font-size: 20px; 
+                                        color: #ccc; 
+                                        cursor: pointer; 
+                                        padding: 0 2px;
+                                    }
+                                    .rating-css input:checked ~ label,
+                                    .rating-css input:checked + label { 
+                                        color: #ffe400; 
+                                    }
+                                    .rating-css label:hover ~ label,
+                                    .rating-css label:hover { 
+                                        color: #ffe400; 
+                                    }
                                 </style>
                             }
                         }
