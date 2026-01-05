@@ -93,20 +93,20 @@ namespace Marketplace.Controllers
             // Aplicar ordenação (anúncios destacados sempre primeiro)
             query = ordenacao switch
             {
-                "preco-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "preco-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                     .ThenBy(a => a.Preco),
-                "preco-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "preco-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                      .ThenByDescending(a => a.Preco),
-                "ano-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "ano-desc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                    .ThenByDescending(a => a.Ano),
-                "km-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "km-asc" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                  .ThenBy(a => a.Quilometragem),
 
-                "relevancia" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                "relevancia" => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                                      .ThenByDescending(a => a.NVisualizacoes)
                                      .ThenByDescending(a => a.Id),
 
-                _ => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTime.Now)
+                _ => query.OrderByDescending(a => a.Destacado && a.DestaqueAte > DateTimeOffset.UtcNow)
                           .ThenByDescending(a => a.Id)
             };
 
@@ -949,8 +949,8 @@ namespace Marketplace.Controllers
 
             // Atualizar anúncio para destacado
             anuncio.Destacado = true;
-            anuncio.DataDestaque = DateTime.Now;
-            anuncio.DestaqueAte = DateTime.Now.AddDays(diasDestaque);
+            anuncio.DataDestaque = DateTimeOffset.UtcNow;
+            anuncio.DestaqueAte = DateTimeOffset.UtcNow.AddDays(diasDestaque);
 
             await _context.SaveChangesAsync();
 

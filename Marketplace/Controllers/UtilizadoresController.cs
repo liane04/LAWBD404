@@ -1004,8 +1004,8 @@ namespace Marketplace.Controllers
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
                 var link = Url.Action("ConfirmarEmail", "Utilizadores", new { userId = appUser.Id, token }, Request.Scheme)!;
-                var html = Marketplace.Services.EmailTemplates.ConfirmEmail("DriveDeal", link);
-                await _emailSender.SendAsync(email, "Confirmação de Email - DriveDeal", html);
+                var html = Marketplace.Services.EmailTemplates.ConfirmEmail("404 Ride", link);
+                await _emailSender.SendAsync(email, "Confirmação de Email - 404 Ride", html);
                 emailEnviado = true;
             }
             catch (Exception ex)
@@ -1014,16 +1014,9 @@ namespace Marketplace.Controllers
                 Console.WriteLine($"⚠️  Erro ao enviar email de confirmação: {ex.Message}");
             }
 
-            // Confirmar email automaticamente se o envio falhou (para desenvolvimento)
-            if (!emailEnviado && !appUser.EmailConfirmed)
-            {
-                appUser.EmailConfirmed = true;
-                await _userManager.UpdateAsync(appUser);
-            }
-
             TempData["RegistarSucesso"] = emailEnviado
                 ? "Conta criada. Verifique o seu email para confirmar."
-                : "Conta criada com sucesso! Pode agora fazer login.";
+                : "Conta criada com sucesso! Reenvie a confirmação se não recebeu o email.";
             return RedirectToAction("Login");
         }
 
@@ -1052,14 +1045,19 @@ namespace Marketplace.Controllers
                 return View();
             }
 
-            // NOTA: EmailConfirmed não é verificado aqui porque RequireConfirmedEmail = false no Program.cs
-
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, password, rememberMe, lockoutOnFailure: true);
             if (result.IsLockedOut)
             {
                 var lockoutEnd = user.LockoutEnd.HasValue ? user.LockoutEnd.Value.LocalDateTime.ToString("dd/MM/yyyy HH:mm") : "indefinidamente";
                 
                 TempData["LoginError"] = $"A sua conta encontra-se bloqueada até {lockoutEnd}.";
+                return View();
+            }
+
+            if (result.IsNotAllowed)
+            {
+                TempData["LoginError"] = "Tem de confirmar o seu email antes de iniciar sessão. Verifique a sua caixa de entrada.";
+                TempData["LoginInfo"] = "Se não recebeu o email, use a opção \"Reenviar confirmação\".";
                 return View();
             }
 
@@ -1259,8 +1257,8 @@ namespace Marketplace.Controllers
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var link = Url.Action("ConfirmarEmail", "Utilizadores", new { userId = user.Id, token }, Request.Scheme)!;
-            var html = Marketplace.Services.EmailTemplates.ConfirmEmail("DriveDeal", link);
-            await _emailSender.SendAsync(email, "Confirmação de Email - DriveDeal", html);
+            var html = Marketplace.Services.EmailTemplates.ConfirmEmail("404 Ride", link);
+            await _emailSender.SendAsync(email, "Confirmação de Email - 404 Ride", html);
             TempData["LoginInfo"] = "Link de confirmação reenviado.";
             return RedirectToAction("Login");
         }

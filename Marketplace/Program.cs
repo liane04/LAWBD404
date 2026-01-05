@@ -43,7 +43,7 @@ builder.Services
     .AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
     {
         // Email & User
-        options.SignIn.RequireConfirmedEmail = false; // DESATIVADO temporariamente para testes
+        options.SignIn.RequireConfirmedEmail = true; // Obrigatório confirmar email antes de login
         options.User.RequireUniqueEmail = true;
 
         // Password policy - Segurança reforçada

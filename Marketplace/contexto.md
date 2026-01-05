@@ -1676,6 +1676,19 @@ public Reserva? Reserva { get; set; }
 
 ---
 
+### 02/01/2026 - Branding do Email de Confirmação
+
+- Email de confirmação de registo passa a mostrar o nome correto "404 Ride" (antes "DriveDeal").
+- Template de email inclui agora o logotipo oficial no cabeçalho (`https://404ride.b-host.me/imagens/logo.png`).
+
+### 02/01/2026 - Obrigatoriedade de Email Confirmado para Login
+
+- `RequireConfirmedEmail` ativado (Program.cs) — utilizador só faz login após confirmar email.
+- Mensagem dedicada no login para contas não confirmadas + instrução de reenvio.
+- Registo deixa de marcar email como confirmado automaticamente em caso de falha de envio.
+
+---
+
 **FIM DO CONTEXTO**
 
 > Este ficheiro será atualizado conforme o projeto evolui.
